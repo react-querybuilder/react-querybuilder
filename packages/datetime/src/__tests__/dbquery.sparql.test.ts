@@ -1,5 +1,3 @@
-// oxlint-disable jest/expect-expect
-
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import { formatQuery } from '@react-querybuilder/core';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
@@ -59,7 +57,7 @@ afterAll(() => {
 
 // ─── Test Runner ──────────────────────────────────────────────────────────────
 
-const runSPARQL = async (
+const expectSPARQL = async (
   query: Parameters<typeof formatQuery>[0],
   expectedResult: (typeof musicians)[number][],
   apiFns: (typeof dateLibraryFunctions)[number][1]
@@ -94,7 +92,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         };
         const expected =
           expectation === 'all' ? musicians : musicians.filter(m => m.last_name === expectation);
-        await runSPARQL(query, expected, apiFns);
+        await expectSPARQL(query, expected, apiFns);
       });
     }
   });

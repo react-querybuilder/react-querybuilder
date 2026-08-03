@@ -1,5 +1,3 @@
-/* oxlint-disable expect-expect */
-
 import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
@@ -28,7 +26,7 @@ const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
   rules: rule ? [rule] : [],
 });
 
-const testParseCEL = (
+const expectParseCEL = (
   parseResult: DefaultRuleGroupType | string,
   expectedResult: DefaultRuleGroupType,
   options?: Except<ParseCELOptionsStandard, 'independentCombinators'>
@@ -41,7 +39,7 @@ const testParseCEL = (
       : parseResult
   ).toEqual(expectedResult);
 };
-const testParseCELic = (
+const expectParseCELic = (
   parseResult: DefaultRuleGroupTypeIC | string,
   expectedResult: DefaultRuleGroupTypeIC,
   options?: Except<ParseCELOptionsIC, 'independentCombinators'>
@@ -54,53 +52,59 @@ const testParseCELic = (
 };
 
 it('works for basic relations', () => {
-  testParseCEL('f1 == "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseCEL('f1.f2 == "Test"', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
-  testParseCEL('f1.f2.f3 == "Test"', wrapRule({ field: 'f1.f2.f3', operator: '=', value: 'Test' }));
-  testParseCEL('(f1 == "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseCEL('f1 != "Test"', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
-  testParseCEL('f1 > 1', wrapRule({ field: 'f1', operator: '>', value: 1 }));
-  testParseCEL('f1 >= 1', wrapRule({ field: 'f1', operator: '>=', value: 1 }));
-  testParseCEL('f1 < 1', wrapRule({ field: 'f1', operator: '<', value: 1 }));
-  testParseCEL('f1 <= 1', wrapRule({ field: 'f1', operator: '<=', value: 1 }));
-  testParseCEL('f1 == 12.14', wrapRule({ field: 'f1', operator: '=', value: 12.14 }));
+  expectParseCEL('f1 == "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  expectParseCEL('f1.f2 == "Test"', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
+  expectParseCEL(
+    'f1.f2.f3 == "Test"',
+    wrapRule({ field: 'f1.f2.f3', operator: '=', value: 'Test' })
+  );
+  expectParseCEL('(f1 == "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  expectParseCEL('f1 != "Test"', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
+  expectParseCEL('f1 > 1', wrapRule({ field: 'f1', operator: '>', value: 1 }));
+  expectParseCEL('f1 >= 1', wrapRule({ field: 'f1', operator: '>=', value: 1 }));
+  expectParseCEL('f1 < 1', wrapRule({ field: 'f1', operator: '<', value: 1 }));
+  expectParseCEL('f1 <= 1', wrapRule({ field: 'f1', operator: '<=', value: 1 }));
+  expectParseCEL('f1 == 12.14', wrapRule({ field: 'f1', operator: '=', value: 12.14 }));
   // TODO: fix hexadecimal processing
   // testParseCEL('f1 == 0x1214', wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
   // testParseCEL('f1 == 0x1214u', wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
-  testParseCEL('f1 == 1214u', wrapRule({ field: 'f1', operator: '=', value: 1214 }));
-  testParseCEL('f1 == null', wrapRule({ field: 'f1', operator: 'null', value: null }));
-  testParseCEL('f1 != null', wrapRule({ field: 'f1', operator: 'notNull', value: null }));
-  testParseCEL('f1 == true', wrapRule({ field: 'f1', operator: '=', value: true }));
-  testParseCEL('f1 == false', wrapRule({ field: 'f1', operator: '=', value: false }));
+  expectParseCEL('f1 == 1214u', wrapRule({ field: 'f1', operator: '=', value: 1214 }));
+  expectParseCEL('f1 == null', wrapRule({ field: 'f1', operator: 'null', value: null }));
+  expectParseCEL('f1 != null', wrapRule({ field: 'f1', operator: 'notNull', value: null }));
+  expectParseCEL('f1 == true', wrapRule({ field: 'f1', operator: '=', value: true }));
+  expectParseCEL('f1 == false', wrapRule({ field: 'f1', operator: '=', value: false }));
   // flips operators
-  testParseCEL('"Test" == f1', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseCEL('"Test" == f1.f2', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
-  testParseCEL('"Test" == f1.f2.f3', wrapRule({ field: 'f1.f2.f3', operator: '=', value: 'Test' }));
-  testParseCEL('1214 > f1', wrapRule({ field: 'f1', operator: '<', value: 1214 }));
-  testParseCEL('1214 >= f1', wrapRule({ field: 'f1', operator: '<=', value: 1214 }));
-  testParseCEL('1214 < f1', wrapRule({ field: 'f1', operator: '>', value: 1214 }));
-  testParseCEL('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
+  expectParseCEL('"Test" == f1', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  expectParseCEL('"Test" == f1.f2', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
+  expectParseCEL(
+    '"Test" == f1.f2.f3',
+    wrapRule({ field: 'f1.f2.f3', operator: '=', value: 'Test' })
+  );
+  expectParseCEL('1214 > f1', wrapRule({ field: 'f1', operator: '<', value: 1214 }));
+  expectParseCEL('1214 >= f1', wrapRule({ field: 'f1', operator: '<=', value: 1214 }));
+  expectParseCEL('1214 < f1', wrapRule({ field: 'f1', operator: '>', value: 1214 }));
+  expectParseCEL('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
 it('negates basic relations', () => {
-  testParseCEL('!(f1 == "Test")', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
-  testParseCEL('!(f1 != "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseCEL('!(f1 > 1)', wrapRule({ field: 'f1', operator: '<=', value: 1 }));
-  testParseCEL('!(f1 >= 1)', wrapRule({ field: 'f1', operator: '<', value: 1 }));
-  testParseCEL('!(f1 < 1)', wrapRule({ field: 'f1', operator: '>=', value: 1 }));
-  testParseCEL('!(f1 <= 1)', wrapRule({ field: 'f1', operator: '>', value: 1 }));
-  testParseCEL('!("Test" == f1)', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
+  expectParseCEL('!(f1 == "Test")', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
+  expectParseCEL('!(f1 != "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  expectParseCEL('!(f1 > 1)', wrapRule({ field: 'f1', operator: '<=', value: 1 }));
+  expectParseCEL('!(f1 >= 1)', wrapRule({ field: 'f1', operator: '<', value: 1 }));
+  expectParseCEL('!(f1 < 1)', wrapRule({ field: 'f1', operator: '>=', value: 1 }));
+  expectParseCEL('!(f1 <= 1)', wrapRule({ field: 'f1', operator: '>', value: 1 }));
+  expectParseCEL('!("Test" == f1)', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
 });
 
 it('handles every letter within strings', () => {
   for (const value of 'abcdefghijklmnopqrstuvwxyz') {
-    testParseCEL(`f1 == "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
+    expectParseCEL(`f1 == "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
   }
 });
 
 it('handles multi-line strings', () => {
   for (const q of `'"`) {
-    testParseCEL(
+    expectParseCEL(
       `f1 == ${q}${q}${q}multi-line\nstring${q}${q}${q}`,
       wrapRule({ field: 'f1', operator: '=', value: 'multi-line\nstring' })
     );
@@ -108,62 +112,62 @@ it('handles multi-line strings', () => {
 });
 
 it('handles "like" comparisons', () => {
-  testParseCEL(
+  expectParseCEL(
     'f1.contains("Test")',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     'f1.f2.f3.contains("Test")',
     wrapRule({ field: 'f1.f2.f3', operator: 'contains', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     'f1.startsWith("Test")',
     wrapRule({ field: 'f1', operator: 'beginsWith', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     'f1.endsWith("Test")',
     wrapRule({ field: 'f1', operator: 'endsWith', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     'f1.contains(f2)',
     wrapRule({ field: 'f1', operator: 'contains', value: 'f2', valueSource: 'field' })
   );
-  testParseCEL(
+  expectParseCEL(
     'f1.startsWith(f2)',
     wrapRule({ field: 'f1', operator: 'beginsWith', value: 'f2', valueSource: 'field' })
   );
-  testParseCEL(
+  expectParseCEL(
     'f1.endsWith(f2)',
     wrapRule({ field: 'f1', operator: 'endsWith', value: 'f2', valueSource: 'field' })
   );
 });
 
 it('negates "like" comparisons', () => {
-  testParseCEL(
+  expectParseCEL(
     '!f1.contains("Test")',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!f1.contains(f2)',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'f2', valueSource: 'field' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!f1.f2.contains("Test")',
     wrapRule({ field: 'f1.f2', operator: 'doesNotContain', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!(f1.contains("Test"))',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!(f1.startsWith("Test"))',
     wrapRule({ field: 'f1', operator: 'doesNotBeginWith', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!(f1.f2.startsWith("Test"))',
     wrapRule({ field: 'f1.f2', operator: 'doesNotBeginWith', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!(f1.endsWith("Test"))',
     wrapRule({ field: 'f1', operator: 'doesNotEndWith', value: 'Test' })
   );
@@ -171,55 +175,55 @@ it('negates "like" comparisons', () => {
 
 it('handles dynamic property accessors', () => {
   // Basic bracket notation
-  testParseCEL(
+  expectParseCEL(
     'obj["property"] == "value"',
     wrapRule({ field: 'obj["property"]', operator: '=', value: 'value' })
   );
 
   // Bracket notation with special characters
-  testParseCEL(
+  expectParseCEL(
     'obj["my$property"] == "value"',
     wrapRule({ field: 'obj["my$property"]', operator: '=', value: 'value' })
   );
 
   // Bracket notation with various special characters
-  testParseCEL(
+  expectParseCEL(
     'obj["property@with@symbols"] == "test"',
     wrapRule({ field: 'obj["property@with@symbols"]', operator: '=', value: 'test' })
   );
 
-  testParseCEL(
+  expectParseCEL(
     'obj["property-with-dashes"] == "test"',
     wrapRule({ field: 'obj["property-with-dashes"]', operator: '=', value: 'test' })
   );
 
-  testParseCEL(
+  expectParseCEL(
     'obj["property_with_underscores"] == "test"',
     wrapRule({ field: 'obj["property_with_underscores"]', operator: '=', value: 'test' })
   );
 
   // Nested bracket and dot notation
-  testParseCEL(
+  expectParseCEL(
     'obj["bracket_property"].dot_property == "value"',
     wrapRule({ field: 'obj["bracket_property"].dot_property', operator: '=', value: 'value' })
   );
 
   // Multiple bracket notations
-  testParseCEL(
+  expectParseCEL(
     'obj["first"]["second"] == "value"',
     wrapRule({ field: 'obj["first"]["second"]', operator: '=', value: 'value' })
   );
 });
 
 it('groups only when necessary', () => {
-  testParseCEL('(f1 == "Test" || f2 == "Test2")', {
+  expectParseCEL('(f1 == "Test" || f2 == "Test2")', {
     combinator: 'or',
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
       { field: 'f2', operator: '=', value: 'Test2' },
     ],
   });
-  testParseCEL('((f1 == "Test" || f2 == "Test2"))', {
+  expectParseCEL('((f1 == "Test" || f2 == "Test2"))', {
     combinator: 'or',
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
@@ -229,7 +233,7 @@ it('groups only when necessary', () => {
 });
 
 it('handles parentheses', () => {
-  testParseCEL('(f1 == "Test" || f2 == "Test2") && f3 == "Test3"', {
+  expectParseCEL('(f1 == "Test" || f2 == "Test2") && f3 == "Test3"', {
     combinator: 'and',
     rules: [
       {
@@ -242,21 +246,21 @@ it('handles parentheses', () => {
       { field: 'f3', operator: '=', value: 'Test3' },
     ],
   });
-  testParseCEL(
+  expectParseCEL(
     '(((f1.contains("Test"))))',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
 });
 
 it('works for conditional and/or', () => {
-  testParseCEL(
+  expectParseCEL(
     'f1 == "Test" && f2 == "Test2"',
     wrapRule([
       { field: 'f1', operator: '=', value: 'Test' },
       { field: 'f2', operator: '=', value: 'Test2' },
     ])
   );
-  testParseCEL(
+  expectParseCEL(
     'f1 == "Test" || f2 == "Test2"',
     wrapRule(
       [
@@ -266,7 +270,7 @@ it('works for conditional and/or', () => {
       'or'
     )
   );
-  testParseCEL('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
+  expectParseCEL('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
     combinator: 'or',
     rules: [
       {
@@ -282,7 +286,7 @@ it('works for conditional and/or', () => {
 });
 
 it('mixed and/or', () => {
-  testParseCEL(`firstName == 'Steve' && lastName == 'Vai' || middleName == null`, {
+  expectParseCEL(`firstName == 'Steve' && lastName == 'Vai' || middleName == null`, {
     combinator: 'or',
     rules: [
       {
@@ -295,7 +299,7 @@ it('mixed and/or', () => {
       { field: 'middleName', operator: 'null', value: null },
     ],
   });
-  testParseCEL(
+  expectParseCEL(
     `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true`,
     {
       combinator: 'or',
@@ -312,7 +316,7 @@ it('mixed and/or', () => {
       ],
     }
   );
-  testParseCEL(
+  expectParseCEL(
     `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true || fieldName == 'Test'`,
     {
       combinator: 'or',
@@ -330,7 +334,7 @@ it('mixed and/or', () => {
       ],
     }
   );
-  testParseCEL(`firstName == 'Steve' || lastName == 'Vai' && middleName == null`, {
+  expectParseCEL(`firstName == 'Steve' || lastName == 'Vai' && middleName == null`, {
     combinator: 'or',
     rules: [
       { field: 'firstName', operator: '=', value: 'Steve' },
@@ -343,7 +347,7 @@ it('mixed and/or', () => {
       },
     ],
   });
-  testParseCEL(`firstName == 'Steve' || lastName == 'Vai' || f1 == 'v1' && f2 == 'v2'`, {
+  expectParseCEL(`firstName == 'Steve' || lastName == 'Vai' || f1 == 'v1' && f2 == 'v2'`, {
     combinator: 'or',
     rules: [
       { field: 'firstName', operator: '=', value: 'Steve' },
@@ -382,17 +386,17 @@ describe('fields and getValueSources', () => {
   const getValueSources = (): ValueSources => ['field'];
 
   it('sets the valueSource when fields are valid', () => {
-    testParseCEL(
+    expectParseCEL(
       parseCEL(`f1 == 'Steve'`, { fields }),
       wrapRule({ field: 'f1', operator: '=', value: 'Steve' })
     );
     // fields as option groups
-    testParseCEL(
+    expectParseCEL(
       parseCEL(`f3 == f1`, { fields: optionGroups }),
       wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
     // fields as object
-    testParseCEL(
+    expectParseCEL(
       parseCEL(`f3 == f1`, { fields: fieldsObject }),
       wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
@@ -400,7 +404,7 @@ describe('fields and getValueSources', () => {
     const baseFields = ['f3', 'f4'];
     for (const baseField of baseFields) {
       for (const f of fields) {
-        testParseCEL(
+        expectParseCEL(
           parseCEL(`${baseField} == ${f.name}`, { fields }),
           f.name === baseField
             ? wrapRule()
@@ -411,23 +415,23 @@ describe('fields and getValueSources', () => {
   });
 
   it('uses the getValueSources option', () => {
-    testParseCEL(
+    expectParseCEL(
       parseCEL(`f5 == f6`, { fields, getValueSources }),
       wrapRule({ field: 'f5', operator: '=', value: 'f6', valueSource: 'field' })
     );
-    testParseCEL(
+    expectParseCEL(
       parseCEL(`f8 == f7`, { fields, getValueSources }),
       wrapRule({ field: 'f8', operator: '=', value: 'f7', valueSource: 'field' })
     );
-    testParseCEL(
+    expectParseCEL(
       parseCEL(`f9 == f1`, { fields, getValueSources }),
       wrapRule({ field: 'f9', operator: '=', value: 'f1', valueSource: 'field' })
     );
-    testParseCEL(
+    expectParseCEL(
       parseCEL(`f10 == f7`, { fields, getValueSources }),
       wrapRule({ field: 'f10', operator: '=', value: 'f7', valueSource: 'field' })
     );
-    testParseCEL(
+    expectParseCEL(
       parseCEL(`f10 == f8`, { fields, getValueSources }),
       wrapRule({ field: 'f10', operator: '=', value: 'f8', valueSource: 'field' })
     );
@@ -435,29 +439,29 @@ describe('fields and getValueSources', () => {
 
   it('ignores invalid fields', () => {
     // `firstName` is not in the field list
-    testParseCEL(parseCEL(`firstName == 'Steve'`, { fields }), wrapRule());
+    expectParseCEL(parseCEL(`firstName == 'Steve'`, { fields }), wrapRule());
     // A field cannot be compared to itself
-    testParseCEL(parseCEL(`f1 == f1`, { fields }), wrapRule());
+    expectParseCEL(parseCEL(`f1 == f1`, { fields }), wrapRule());
     // A field cannot be compared to itself with a "like" comparison
-    testParseCEL(parseCEL(`f1.contains(f1)`, { fields }), wrapRule());
+    expectParseCEL(parseCEL(`f1.contains(f1)`, { fields }), wrapRule());
     // `f1` implicitly forbids the valueSource "field"
-    testParseCEL(parseCEL(`f1 == f2`, { fields }), wrapRule());
+    expectParseCEL(parseCEL(`f1 == f2`, { fields }), wrapRule());
     // `f2` explicitly forbids the valueSource "field"
-    testParseCEL(parseCEL(`f2 == f1`, { fields }), wrapRule());
+    expectParseCEL(parseCEL(`f2 == f1`, { fields }), wrapRule());
     // `f3` explicitly forbids the valueSource "value"
-    testParseCEL(parseCEL(`f3 == 'Steve'`, { fields }), wrapRule());
+    expectParseCEL(parseCEL(`f3 == 'Steve'`, { fields }), wrapRule());
     // `f5` implicitly allows the valueSource "field" through getValueSources,
     // but `f7` is not a valid subordinate field
-    testParseCEL(parseCEL(`f5 == f7`, { fields, getValueSources }), wrapRule());
+    expectParseCEL(parseCEL(`f5 == f7`, { fields, getValueSources }), wrapRule());
     // `f8` implicitly allows the valueSource "field" through getValueSources,
     // but `f6` is not a valid subordinate field
-    testParseCEL(parseCEL(`f8 == f6`, { fields, getValueSources }), wrapRule());
+    expectParseCEL(parseCEL(`f8 == f6`, { fields, getValueSources }), wrapRule());
     // `f9` implicitly allows the valueSource "field" through getValueSources,
     // but `f10` is not a valid subordinate field
-    testParseCEL(parseCEL(`f9 == f10`, { fields, getValueSources }), wrapRule());
+    expectParseCEL(parseCEL(`f9 == f10`, { fields, getValueSources }), wrapRule());
     // `f10` implicitly allows the valueSource "field" through getValueSources,
     // but `f5` is not a valid subordinate field
-    testParseCEL(parseCEL(`f10 == f5`, { fields, getValueSources }), wrapRule());
+    expectParseCEL(parseCEL(`f10 == f5`, { fields, getValueSources }), wrapRule());
     // independent combinators
     const fieldsForIC = (
       [
@@ -465,7 +469,7 @@ describe('fields and getValueSources', () => {
         { name: 'f3', label: 'Field 3', valueSources: ['field'] },
       ] satisfies Field[]
     ).map(o => toFullOption(o));
-    testParseCELic(
+    expectParseCELic(
       parseCEL('f1 == f2 && f3 == "f4" && f3 == f4', {
         fields: fieldsForIC,
         independentCombinators: true,
@@ -476,66 +480,66 @@ describe('fields and getValueSources', () => {
 });
 
 it('handles "in" operator', () => {
-  testParseCEL(
+  expectParseCEL(
     'f1 in ["Test","Test2"]',
     wrapRule({ field: 'f1', operator: 'in', value: 'Test,Test2' })
   );
-  testParseCEL(
+  expectParseCEL(
     'f1 in ["Te,st","Test2"]',
     wrapRule({ field: 'f1', operator: 'in', value: String.raw`Te\,st,Test2` })
   );
-  testParseCEL(
+  expectParseCEL(
     'f1 in [f2,f3]',
     wrapRule({ field: 'f1', operator: 'in', value: 'f2,f3', valueSource: 'field' })
   );
-  testParseCEL(
+  expectParseCEL(
     'f1 in {f2: "v2", "f3": "v3"}',
     wrapRule({ field: 'f1', operator: 'in', value: 'f2,f3' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!(f1 in ["Test","Test2"])',
     wrapRule({ field: 'f1', operator: 'notIn', value: 'Test,Test2' })
   );
 });
 
 it('outputs lists as arrays', () => {
-  testParseCEL(
+  expectParseCEL(
     parseCEL('f1 in ["Test","Test2"]', { listsAsArrays: true }),
     wrapRule({ field: 'f1', operator: 'in', value: ['Test', 'Test2'] })
   );
-  testParseCEL(
+  expectParseCEL(
     parseCEL('f1 in [f2,f3]', { listsAsArrays: true }),
     wrapRule({ field: 'f1', operator: 'in', value: ['f2', 'f3'], valueSource: 'field' })
   );
-  testParseCEL(
+  expectParseCEL(
     parseCEL('f1 in {f2: "v2", "f3": "v3"}', { listsAsArrays: true }),
     wrapRule({ field: 'f1', operator: 'in', value: ['f2', 'f3'] })
   );
 });
 
 it('handles multiple negations', () => {
-  testParseCEL(
+  expectParseCEL(
     '!!!f1.contains("Test")',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!!!!f1.contains("Test")',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!!!(f1.contains("Test"))',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
   );
-  testParseCEL(
+  expectParseCEL(
     '!!!!(f1.contains("Test"))',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
 });
 
 it('handles independent combinators', () => {
-  testParseCELic('(f1 == "Test")', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
-  testParseCELic('f1 == "Test"', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
-  testParseCELic('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
+  expectParseCELic('(f1 == "Test")', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
+  expectParseCELic('f1 == "Test"', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
+  expectParseCELic('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
       'and',
@@ -544,7 +548,7 @@ it('handles independent combinators', () => {
       { field: 'f3', operator: '=', value: 'Test3' },
     ],
   });
-  testParseCELic('!f1.f2.startsWith("Test") && f3 > 26 || !!f4.f5.endsWith("Test")', {
+  expectParseCELic('!f1.f2.startsWith("Test") && f3 > 26 || !!f4.f5.endsWith("Test")', {
     rules: [
       { field: 'f1.f2', operator: 'doesNotBeginWith', value: 'Test' },
       'and',
@@ -556,7 +560,7 @@ it('handles independent combinators', () => {
 });
 
 it('generates IDs', () => {
-  testParseCEL(
+  expectParseCEL(
     `firstName == "Steve"`,
     expect.objectContaining({
       id: expect.any(String),
@@ -578,12 +582,12 @@ it('ignores things', () => {
   ];
 
   for (const pr of expressionsToIgnore) {
-    testParseCEL(pr, wrapRule());
+    expectParseCEL(pr, wrapRule());
   }
 });
 
 it('handles custom expressions', () => {
-  testParseCEL(
+  expectParseCEL(
     'opted_in_at.isBirthday(-1)',
     wrapRule({ field: 'opted_in_at', operator: 'isBirthday' as DefaultOperatorName, value: -1 }),
     {
@@ -614,7 +618,7 @@ it('handles custom expressions in subqueries', () => {
     { name: '', value: '', label: 'Empty Field' },
   ];
 
-  testParseCEL(
+  expectParseCEL(
     'user.features.exists(elem_alias, elem_alias.matches("tall"))',
     wrapRule({
       field: 'user.features',
@@ -675,7 +679,7 @@ describe('subqueries', () => {
 
   describe('.all()', () => {
     it('basic', () => {
-      testParseCEL(
+      expectParseCEL(
         'tourStops.all(elem_alias, elem_alias.city == "Milan")',
         wrapRule({
           field: 'tourStops',
@@ -688,7 +692,7 @@ describe('subqueries', () => {
     });
 
     it('primitive array', () => {
-      testParseCEL(
+      expectParseCEL(
         'stringArray.all(elem_alias, elem_alias.contains("test"))',
         wrapRule({
           field: 'stringArray',
@@ -701,7 +705,7 @@ describe('subqueries', () => {
     });
 
     it('complex condition', () => {
-      testParseCEL(
+      expectParseCEL(
         'users.all(user, user.age >= 18 && user.active == true)',
         wrapRule({
           field: 'users',
@@ -722,7 +726,7 @@ describe('subqueries', () => {
 
   describe('nested subqueries', () => {
     it('parses depth-suffixed element aliases without shadowing', () => {
-      testParseCEL(
+      expectParseCEL(
         'tourStops.exists(elem_alias, elem_alias.users.all(elem_alias_1, elem_alias_1.city == "Milan"))',
         wrapRule({
           field: 'tourStops',
@@ -750,7 +754,7 @@ describe('subqueries', () => {
 
   describe('.exists()', () => {
     it('basic', () => {
-      testParseCEL(
+      expectParseCEL(
         'tourStops.exists(elem_alias, elem_alias.city == "Milan")',
         wrapRule({
           field: 'tourStops',
@@ -763,7 +767,7 @@ describe('subqueries', () => {
     });
 
     it('nested property', () => {
-      testParseCEL(
+      expectParseCEL(
         'products.exists(item, item.category.name == "Electronics")',
         wrapRule({
           field: 'products',
@@ -779,7 +783,7 @@ describe('subqueries', () => {
     });
 
     it('multiple conditions using OR', () => {
-      testParseCEL(
+      expectParseCEL(
         'events.exists(event, event.type == "click" || event.type == "view")',
         wrapRule({
           field: 'events',
@@ -800,7 +804,7 @@ describe('subqueries', () => {
 
   describe('negated .exists() ("none" mode)', () => {
     it('basic negation', () => {
-      testParseCEL(
+      expectParseCEL(
         '!!!tourStops.exists(elem_alias, elem_alias.city == "Milan")',
         {
           combinator: 'and',
@@ -831,7 +835,7 @@ describe('subqueries', () => {
     });
 
     it('basic negation (ic)', () => {
-      testParseCELic(
+      expectParseCELic(
         '!!!tourStops.exists(elem_alias, elem_alias.city == "Milan")',
         {
           not: true,
@@ -849,7 +853,7 @@ describe('subqueries', () => {
     });
 
     it('group negation', () => {
-      testParseCEL(
+      expectParseCEL(
         '!tourStops.all(elem_alias, elem_alias.city == "Milan" || elem_alias.city == "Siena")',
         {
           combinator: 'and',
@@ -874,7 +878,7 @@ describe('subqueries', () => {
     });
 
     it('group negation (ic)', () => {
-      testParseCELic(
+      expectParseCELic(
         '!tourStops.all(elem_alias, elem_alias.city == "Milan" || elem_alias.city == "Siena")',
         {
           not: true,
@@ -898,7 +902,7 @@ describe('subqueries', () => {
     });
 
     it('with parentheses', () => {
-      testParseCEL(
+      expectParseCEL(
         '!(items.exists(item, item.price > 100))',
         {
           combinator: 'and',
@@ -927,7 +931,7 @@ describe('subqueries', () => {
 
   describe('various operators', () => {
     it('contains operator', () => {
-      testParseCEL(
+      expectParseCEL(
         'tags.exists(tag, tag.contains("important"))',
         wrapRule({
           field: 'tags',
@@ -943,7 +947,7 @@ describe('subqueries', () => {
     });
 
     it('startsWith operator', () => {
-      testParseCEL(
+      expectParseCEL(
         'names.all(name, name.startsWith("Mr"))',
         wrapRule({
           field: 'names',
@@ -956,7 +960,7 @@ describe('subqueries', () => {
     });
 
     it('numeric comparison', () => {
-      testParseCEL(
+      expectParseCEL(
         'scores.exists(score, score >= 90)',
         wrapRule({
           field: 'scores',
@@ -969,7 +973,7 @@ describe('subqueries', () => {
     });
 
     it('null checks', () => {
-      testParseCEL(
+      expectParseCEL(
         'users.all(user, user.email != null)',
         wrapRule({
           field: 'users',
@@ -987,7 +991,7 @@ describe('subqueries', () => {
 
   describe('ic', () => {
     it('.exists()', () => {
-      testParseCELic(
+      expectParseCELic(
         'items.exists(item, item.price > 50)',
         {
           rules: [
@@ -1004,7 +1008,7 @@ describe('subqueries', () => {
     });
 
     it('.all()', () => {
-      testParseCELic(
+      expectParseCELic(
         'users.all(user, user.active == true)',
         {
           rules: [
@@ -1022,7 +1026,7 @@ describe('subqueries', () => {
   });
 
   it('complex nested properties', () => {
-    testParseCEL(
+    expectParseCEL(
       'orders.exists(order, order.total > 100 && order.status == "shipped" && order.customer.premium == true)',
       wrapRule({
         field: 'orders',
@@ -1042,7 +1046,7 @@ describe('subqueries', () => {
   });
 
   it('subqueries in larger expressions', () => {
-    testParseCEL(
+    expectParseCEL(
       'status == "active" && items.exists(item, item.price > 100)',
       wrapRule([
         { field: 'status', operator: '=', value: 'active' },
@@ -1056,7 +1060,7 @@ describe('subqueries', () => {
       { fields: subqueryFields }
     );
 
-    testParseCEL(
+    expectParseCEL(
       'users.all(user, user.verified == true) || admins.exists(admin, admin.active == true)',
       wrapRule(
         [
@@ -1084,7 +1088,7 @@ describe('subqueries', () => {
 
   it('returns empty query for invalid subquery syntax', () => {
     // Missing second argument
-    testParseCEL(
+    expectParseCEL(
       'tourStops.all(elem_alias)',
       { combinator: 'and', rules: [] },
       { fields: subqueryFields }
@@ -1099,14 +1103,14 @@ describe('subqueries', () => {
     // );
 
     // Invalid method name
-    testParseCEL(
+    expectParseCEL(
       'tourStops.some(elem_alias, elem_alias.city == "Milan")',
       { combinator: 'and', rules: [] },
       { fields: subqueryFields }
     );
 
     // Non-identifier as field
-    testParseCEL(
+    expectParseCEL(
       '"literal".all(elem_alias, elem_alias == "test")',
       { combinator: 'and', rules: [] },
       { fields: subqueryFields }
@@ -1115,7 +1119,7 @@ describe('subqueries', () => {
 
   describe('alias transformation edge cases', () => {
     it('transforms like expressions with alias', () => {
-      testParseCEL(
+      expectParseCEL(
         'tourStops.exists(tourStop, tourStop.city.contains("Las "))',
         wrapRule({
           field: 'tourStops',
@@ -1131,7 +1135,7 @@ describe('subqueries', () => {
     });
 
     it('transforms negated like expressions with alias', () => {
-      testParseCEL(
+      expectParseCEL(
         'items.exists(item, !item.contains("test"))',
         wrapRule({
           field: 'items',
@@ -1147,7 +1151,7 @@ describe('subqueries', () => {
     });
 
     it('transforms expressions with expression groups', () => {
-      testParseCEL(
+      expectParseCEL(
         'items.exists(item, (item.price > 100))',
         wrapRule({
           field: 'items',
@@ -1160,7 +1164,7 @@ describe('subqueries', () => {
     });
 
     it('transforms expressions with multiple negations', () => {
-      testParseCEL(
+      expectParseCEL(
         'items.all(item, !!(item.active == true))',
         wrapRule({
           field: 'items',
@@ -1173,7 +1177,7 @@ describe('subqueries', () => {
     });
 
     it('transforms like expressions with alias', () => {
-      testParseCEL(
+      expectParseCEL(
         'items.exists(item, item.contains("test"))',
         wrapRule({
           field: 'items',
@@ -1186,7 +1190,7 @@ describe('subqueries', () => {
     });
 
     it('transforms complex nested expressions with negated like expressions', () => {
-      testParseCEL(
+      expectParseCEL(
         'items.exists(item, item.name.contains("test") && !item.description.contains("old"))',
         { combinator: 'and', rules: [] },
         { fields: subqueryFields }

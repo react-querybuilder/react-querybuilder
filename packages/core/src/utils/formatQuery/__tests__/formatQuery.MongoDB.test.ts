@@ -20,22 +20,22 @@ import {
 } from '../formatQueryTestUtils';
 import { defaultMongoDBValueProcessor } from '../index';
 
-const testBoth = (
+const expectBoth = (
   query: RuleGroupTypeAny,
   expectation: unknown,
   fqOptions?: FormatQueryOptions
 ) => {
-  testMongoDB(query, expectation, fqOptions);
-  testMongoDBQuery(query, expectation, fqOptions);
+  expectMongoDB(query, expectation, fqOptions);
+  expectMongoDBQuery(query, expectation, fqOptions);
 };
-const testMongoDB = (
+const expectMongoDB = (
   query: RuleGroupTypeAny,
   expectation: unknown,
   fqOptions?: FormatQueryOptions
 ) => {
   expect(JSON.parse(formatQuery(query, { ...fqOptions, format: 'mongodb' }))).toEqual(expectation);
 };
-const testMongoDBQuery = (
+const expectMongoDBQuery = (
   query: RuleGroupTypeAny,
   expectation: unknown,
   fqOptions?: FormatQueryOptions
@@ -452,29 +452,28 @@ const mongoQueryExpectationForMatchModes = {
   ],
 };
 
-// oxlint-disable-next-line expect-expect
 it('formats to mongo query correctly', () => {
-  testBoth(mongoQuery, mongoQueryExpectation);
-  testBoth(mongoQuery, mongoQueryExpectationForAvoidFieldsAsKeys, {
+  expectBoth(mongoQuery, mongoQueryExpectation);
+  expectBoth(mongoQuery, mongoQueryExpectationForAvoidFieldsAsKeys, {
     context: { avoidFieldsAsKeys: true },
   });
-  testBoth(mongoQueryWithValueSourceField, mongoQueryExpectationForValueSourceField);
+  expectBoth(mongoQueryWithValueSourceField, mongoQueryExpectationForValueSourceField);
   // Test for newline in value
-  testBoth(
+  expectBoth(
     { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'value\nwith newline' }] },
     { f1: 'value\nwith newline' }
   );
-  testMongoDB(mongoQueryWithValueSourceField, mongoQueryExpectationForValueSourceField, {
+  expectMongoDB(mongoQueryWithValueSourceField, mongoQueryExpectationForValueSourceField, {
     format: 'mongodb',
     valueProcessor: defaultMongoDBValueProcessor,
   });
   // Test for `not` at top level
-  testBoth(
+  expectBoth(
     { not: true, combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
     { $nor: [{ f1: 'v1' }] }
   );
   // Test for `not` at top level with multiple rules — exercises the multi-rule $and branch
-  testBoth(
+  expectBoth(
     {
       not: true,
       combinator: 'and',
@@ -486,7 +485,7 @@ it('formats to mongo query correctly', () => {
     { $nor: [{ $and: [{ f1: 'v1' }, { f2: 'v2' }] }] }
   );
   // Test for `not` at nested group level
-  testBoth(
+  expectBoth(
     {
       combinator: 'and',
       rules: [
@@ -504,7 +503,7 @@ it('formats to mongo query correctly', () => {
   );
   // Test for double negation — `not: true` inside a `not: true` group
   // The outer $and wrapper appears because hasChildRules=true prevents the single-item shortcut
-  testBoth(
+  expectBoth(
     {
       not: true,
       combinator: 'and',
@@ -522,7 +521,7 @@ it('formats to mongo query correctly', () => {
     { $nor: [{ $and: [{ $nor: [{ $or: [{ f1: 'v1' }, { f2: 'v2' }] }] }] }] }
   );
   // In expression context (inExpressionContext: true), `$not` must still be used instead of `$nor`
-  testMongoDBQuery(
+  expectMongoDBQuery(
     { not: true, combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
     { $not: { $eq: ['$f1', 'v1'] } },
     { context: { avoidFieldsAsKeys: true, inExpressionContext: true } }
@@ -530,7 +529,7 @@ it('formats to mongo query correctly', () => {
   // End-to-end: match mode `all` with `not: true` inside the value's rule group.
   // Validates that `$not` is used inside $filter.cond (expression context) while
   // `$nor` would be used for the same group in query-predicate context.
-  testMongoDBQuery(
+  expectMongoDBQuery(
     {
       combinator: 'and',
       rules: [
@@ -568,9 +567,9 @@ it('formats to mongo query correctly', () => {
       },
     }
   );
-  testBoth(queryWithMatchModes, mongoQueryExpectationForMatchModes);
+  expectBoth(queryWithMatchModes, mongoQueryExpectationForMatchModes);
   // Just a coverage thing here:
-  testBoth(
+  expectBoth(
     {
       combinator: 'and',
       rules: [
@@ -624,14 +623,12 @@ it.todo(
   // }
 );
 
-// oxlint-disable-next-line expect-expect
 it('escapes quotes when appropriate', () => {
-  testBoth(testQueryDQ, { f1: `Te"st` });
+  expectBoth(testQueryDQ, { f1: `Te"st` });
 });
 
-// oxlint-disable-next-line expect-expect
 it('independent combinators', () => {
-  testBoth(queryIC, {
+  expectBoth(queryIC, {
     $or: [{ $and: [{ firstName: 'Test' }, { middleName: 'Test' }] }, { lastName: 'Test' }],
   });
 });
@@ -658,29 +655,29 @@ describe('validation', () => {
 
     for (const vtd of getValidationTestData(fmt)) {
       if (validationResults[vtd.title] !== undefined) {
-        // oxlint-disable-next-line expect-expect
-        it(vtd.title, () => {
-          (fmt === 'mongodb' ? testMongoDB : testMongoDBQuery)(
-            vtd.query,
-            validationResults[vtd.title],
-            vtd.options
-          );
-        });
+        if (fmt === 'mongodb') {
+          it(vtd.title, () => {
+            expectMongoDB(vtd.query, validationResults[vtd.title], vtd.options);
+          });
+        } else {
+          it(vtd.title, () => {
+            expectMongoDBQuery(vtd.query, validationResults[vtd.title], vtd.options);
+          });
+        }
       }
     }
   }
 });
 
-// oxlint-disable-next-line expect-expect
 it('ruleProcessor', () => {
   const ruleProcessor: RuleProcessor = r =>
     r.operator === 'custom_operator' ? `{"${r.operator}":true}` : defaultRuleProcessorMongoDB(r);
-  testMongoDB(
+  expectMongoDB(
     queryForRuleProcessor,
     { $and: [{ custom_operator: true }, { f2: 'v2' }] },
     { ruleProcessor }
   );
-  testMongoDB(
+  expectMongoDB(
     queryForRuleProcessor,
     { $and: [{ custom_operator: true }, { f2: 'v2' }] },
     { valueProcessor: ruleProcessor }
@@ -688,33 +685,31 @@ it('ruleProcessor', () => {
 
   const ruleProcessorMDBQuery: RuleProcessor = r =>
     r.operator === 'custom_operator' ? { [r.operator]: true } : defaultRuleProcessorMongoDBQuery(r);
-  testMongoDBQuery(
+  expectMongoDBQuery(
     queryForRuleProcessor,
     { $and: [{ custom_operator: true }, { f2: 'v2' }] },
     { ruleProcessor: ruleProcessorMDBQuery }
   );
-  testMongoDBQuery(
+  expectMongoDBQuery(
     queryForRuleProcessor,
     { $and: [{ custom_operator: true }, { f2: 'v2' }] },
     { valueProcessor: ruleProcessorMDBQuery }
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('preserveValueOrder', () => {
-  testMongoDB(
+  expectMongoDB(
     queryForPreserveValueOrder,
     { $and: [{ f1: { $gte: 12, $lte: 14 } }, { f2: { $gte: 12, $lte: 14 } }] },
     {}
   );
-  testMongoDB(
+  expectMongoDB(
     queryForPreserveValueOrder,
     { $and: [{ f1: { $gte: 12, $lte: 14 } }, { f2: { $gte: 14, $lte: 12 } }] },
     { preserveValueOrder: true }
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('parseNumbers', () => {
   const allNumbersParsed = {
     $and: [
@@ -737,6 +732,6 @@ it('parseNumbers', () => {
     { parseNumbers: 'strict' },
     { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
   ] as FormatQueryOptions[]) {
-    testBoth(queryForNumberParsing, allNumbersParsed, opts);
+    expectBoth(queryForNumberParsing, allNumbersParsed, opts);
   }
 });

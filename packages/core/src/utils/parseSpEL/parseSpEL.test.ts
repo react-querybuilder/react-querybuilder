@@ -24,7 +24,7 @@ const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
   rules: rule ? [rule] : [],
 });
 
-const testParseSpEL = (
+const expectParseSpEL = (
   parseResult: DefaultRuleGroupType | string,
   expectedResult: DefaultRuleGroupType,
   options: Except<ParseSpELOptions, 'independentCombinators'> = {}
@@ -33,7 +33,7 @@ const testParseSpEL = (
     expectedResult
   );
 };
-const testParseSpELic = (
+const expectParseSpELic = (
   parseResult: DefaultRuleGroupTypeIC | string,
   expectedResult: DefaultRuleGroupTypeIC,
   options: Except<ParseSpELOptions, 'independentCombinators'> = {}
@@ -46,103 +46,99 @@ const testParseSpELic = (
 };
 const getValueSources = (): ValueSources => ['field'];
 
-// oxlint-disable-next-line jest/expect-expect
 it('works for basic relations', () => {
-  testParseSpEL('f1 == "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseSpEL('f1.f2 == "Test"', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
-  testParseSpEL(
+  expectParseSpEL('f1 == "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  expectParseSpEL('f1.f2 == "Test"', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
+  expectParseSpEL(
     'f1.f2.f3 == "Test"',
     wrapRule({ field: 'f1.f2.f3', operator: '=', value: 'Test' })
   );
-  testParseSpEL('(f1 == "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseSpEL('f1 != "Test"', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
-  testParseSpEL('f1 > 1', wrapRule({ field: 'f1', operator: '>', value: 1 }));
-  testParseSpEL('f1 >= 1', wrapRule({ field: 'f1', operator: '>=', value: 1 }));
-  testParseSpEL('f1 < 1', wrapRule({ field: 'f1', operator: '<', value: 1 }));
-  testParseSpEL('f1 <= 1', wrapRule({ field: 'f1', operator: '<=', value: 1 }));
-  testParseSpEL('f1 == 12.14', wrapRule({ field: 'f1', operator: '=', value: 12.14 }));
-  testParseSpEL('f1 == 1214', wrapRule({ field: 'f1', operator: '=', value: 1214 }));
-  testParseSpEL('f1 == null', wrapRule({ field: 'f1', operator: 'null', value: null }));
-  testParseSpEL('f1 != null', wrapRule({ field: 'f1', operator: 'notNull', value: null }));
-  testParseSpEL('f1 == true', wrapRule({ field: 'f1', operator: '=', value: true }));
-  testParseSpEL('f1 == false', wrapRule({ field: 'f1', operator: '=', value: false }));
+  expectParseSpEL('(f1 == "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  expectParseSpEL('f1 != "Test"', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
+  expectParseSpEL('f1 > 1', wrapRule({ field: 'f1', operator: '>', value: 1 }));
+  expectParseSpEL('f1 >= 1', wrapRule({ field: 'f1', operator: '>=', value: 1 }));
+  expectParseSpEL('f1 < 1', wrapRule({ field: 'f1', operator: '<', value: 1 }));
+  expectParseSpEL('f1 <= 1', wrapRule({ field: 'f1', operator: '<=', value: 1 }));
+  expectParseSpEL('f1 == 12.14', wrapRule({ field: 'f1', operator: '=', value: 12.14 }));
+  expectParseSpEL('f1 == 1214', wrapRule({ field: 'f1', operator: '=', value: 1214 }));
+  expectParseSpEL('f1 == null', wrapRule({ field: 'f1', operator: 'null', value: null }));
+  expectParseSpEL('f1 != null', wrapRule({ field: 'f1', operator: 'notNull', value: null }));
+  expectParseSpEL('f1 == true', wrapRule({ field: 'f1', operator: '=', value: true }));
+  expectParseSpEL('f1 == false', wrapRule({ field: 'f1', operator: '=', value: false }));
   // flips operators
-  testParseSpEL('"Test" == f1', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
-  testParseSpEL('"Test" == f1.f2', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
-  testParseSpEL(
+  expectParseSpEL('"Test" == f1', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  expectParseSpEL('"Test" == f1.f2', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
+  expectParseSpEL(
     '"Test" == f1.f2.f3',
     wrapRule({ field: 'f1.f2.f3', operator: '=', value: 'Test' })
   );
-  testParseSpEL('1214 > f1', wrapRule({ field: 'f1', operator: '<', value: 1214 }));
-  testParseSpEL('1214 >= f1', wrapRule({ field: 'f1', operator: '<=', value: 1214 }));
-  testParseSpEL('1214 < f1', wrapRule({ field: 'f1', operator: '>', value: 1214 }));
-  testParseSpEL('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
+  expectParseSpEL('1214 > f1', wrapRule({ field: 'f1', operator: '<', value: 1214 }));
+  expectParseSpEL('1214 >= f1', wrapRule({ field: 'f1', operator: '<=', value: 1214 }));
+  expectParseSpEL('1214 < f1', wrapRule({ field: 'f1', operator: '>', value: 1214 }));
+  expectParseSpEL('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('handles every letter within strings', () => {
   for (const value of 'abcdefghijklmnopqrstuvwxyz') {
-    testParseSpEL(`f1 == "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
+    expectParseSpEL(`f1 == "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
   }
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('handles "like" comparisons', () => {
-  testParseSpEL(
+  expectParseSpEL(
     'f1 matches "Test"',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
-  testParseSpEL('f1 matches "T"', wrapRule({ field: 'f1', operator: 'contains', value: 'T' }));
-  testParseSpEL(
+  expectParseSpEL('f1 matches "T"', wrapRule({ field: 'f1', operator: 'contains', value: 'T' }));
+  expectParseSpEL(
     '"Test" matches f1',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
-  testParseSpEL(
+  expectParseSpEL(
     'f1.f2.f3 matches "Test"',
     wrapRule({ field: 'f1.f2.f3', operator: 'contains', value: 'Test' })
   );
-  testParseSpEL(
+  expectParseSpEL(
     'f1 matches "^Test"',
     wrapRule({ field: 'f1', operator: 'beginsWith', value: 'Test' })
   );
-  testParseSpEL('f1 matches "^T"', wrapRule({ field: 'f1', operator: 'beginsWith', value: 'T' }));
-  testParseSpEL(
+  expectParseSpEL('f1 matches "^T"', wrapRule({ field: 'f1', operator: 'beginsWith', value: 'T' }));
+  expectParseSpEL(
     'f1 matches "Test$"',
     wrapRule({ field: 'f1', operator: 'endsWith', value: 'Test' })
   );
-  testParseSpEL('f1 matches "T$"', wrapRule({ field: 'f1', operator: 'endsWith', value: 'T' }));
-  testParseSpEL(
+  expectParseSpEL('f1 matches "T$"', wrapRule({ field: 'f1', operator: 'endsWith', value: 'T' }));
+  expectParseSpEL(
     'f1 matches f2',
     wrapRule({ field: 'f1', operator: 'contains', value: 'f2', valueSource: 'field' })
   );
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('negates "matches" comparisons appropriately', () => {
-  testParseSpEL(
+  expectParseSpEL(
     '!(f1 matches "Test")',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
   );
-  testParseSpEL(
+  expectParseSpEL(
     '!(f1 matches "^Test")',
     wrapRule({ field: 'f1', operator: 'doesNotBeginWith', value: 'Test' })
   );
-  testParseSpEL(
+  expectParseSpEL(
     '!(f1 matches "Test$")',
     wrapRule({ field: 'f1', operator: 'doesNotEndWith', value: 'Test' })
   );
 });
 
 it('handles "between" operators', () => {
-  testParseSpEL(
+  expectParseSpEL(
     'f1 between {12,14}',
     wrapRule({ field: 'f1', operator: 'between', value: '12,14' })
   );
-  testParseSpEL(
+  expectParseSpEL(
     'f1 between {14,12}',
     wrapRule({ field: 'f1', operator: 'between', value: '12,14' })
   );
-  testParseSpEL(
+  expectParseSpEL(
     'f1 between {"test,comma","other value"}',
     wrapRule({ field: 'f1', operator: 'between', value: String.raw`other value,test\,comma` })
   );
@@ -152,7 +148,7 @@ it('handles "between" operators', () => {
   expect(parseSpEL('f1 between {14,12}', { listsAsArrays: true })).toEqual(
     wrapRule({ field: 'f1', operator: 'between', value: [12, 14] })
   );
-  testParseSpEL(
+  expectParseSpEL(
     'f1 between {f2,f4}',
     wrapRule({ field: 'f1', operator: 'between', value: 'f2,f4', valueSource: 'field' })
   );
@@ -162,16 +158,15 @@ it('handles "between" operators', () => {
 });
 
 // This is sort of a useless test. See 'handles parentheses' test below.
-// oxlint-disable-next-line jest/expect-expect
 it('groups only when necessary', () => {
-  testParseSpEL('(f1 == "Test" || f2 == "Test2")', {
+  expectParseSpEL('(f1 == "Test" || f2 == "Test2")', {
     combinator: 'or',
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
       { field: 'f2', operator: '=', value: 'Test2' },
     ],
   });
-  testParseSpEL('((f1 == "Test" || f2 == "Test2"))', {
+  expectParseSpEL('((f1 == "Test" || f2 == "Test2"))', {
     combinator: 'or',
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
@@ -181,9 +176,9 @@ it('groups only when necessary', () => {
 });
 
 // FIX: Seems like spel2js doesn't handle parentheses
-// oxlint-disable-next-line expect-expect, no-disabled-tests
+// oxlint-disable-next-line no-disabled-tests
 it.skip('handles parentheses', () => {
-  testParseSpEL('(f1 == "Test" || f2 == "Test2") && f3 == "Test3"', {
+  expectParseSpEL('(f1 == "Test" || f2 == "Test2") && f3 == "Test3"', {
     combinator: 'and',
     rules: [
       {
@@ -196,22 +191,21 @@ it.skip('handles parentheses', () => {
       { field: 'f3', operator: '=', value: 'Test3' },
     ],
   });
-  testParseSpEL(
+  expectParseSpEL(
     '(((f1 matches "Test")))',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('works for conditional and/or', () => {
-  testParseSpEL(
+  expectParseSpEL(
     'f1 == "Test" && f2 == "Test2"',
     wrapRule([
       { field: 'f1', operator: '=', value: 'Test' },
       { field: 'f2', operator: '=', value: 'Test2' },
     ])
   );
-  testParseSpEL(
+  expectParseSpEL(
     'f1 == "Test" || f2 == "Test2"',
     wrapRule(
       [
@@ -221,7 +215,7 @@ it('works for conditional and/or', () => {
       'or'
     )
   );
-  testParseSpEL('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
+  expectParseSpEL('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
     combinator: 'or',
     rules: [
       {
@@ -236,9 +230,8 @@ it('works for conditional and/or', () => {
   });
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('mixed and/or', () => {
-  testParseSpEL(`firstName == 'Steve' && lastName == 'Vai' || middleName == null`, {
+  expectParseSpEL(`firstName == 'Steve' && lastName == 'Vai' || middleName == null`, {
     combinator: 'or',
     rules: [
       {
@@ -251,7 +244,7 @@ it('mixed and/or', () => {
       { field: 'middleName', operator: 'null', value: null },
     ],
   });
-  testParseSpEL(
+  expectParseSpEL(
     parseSpEL(
       `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true`
     ),
@@ -270,7 +263,7 @@ it('mixed and/or', () => {
       ],
     }
   );
-  testParseSpEL(
+  expectParseSpEL(
     parseSpEL(
       `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true || fieldName == 'Test'`
     ),
@@ -290,7 +283,7 @@ it('mixed and/or', () => {
       ],
     }
   );
-  testParseSpEL(`firstName == 'Steve' || lastName == 'Vai' && middleName == null`, {
+  expectParseSpEL(`firstName == 'Steve' || lastName == 'Vai' && middleName == null`, {
     combinator: 'or',
     rules: [
       { field: 'firstName', operator: '=', value: 'Steve' },
@@ -303,7 +296,7 @@ it('mixed and/or', () => {
       },
     ],
   });
-  testParseSpEL(`firstName == 'Steve' || lastName == 'Vai' || f1 == 'v1' && f2 == 'v2'`, {
+  expectParseSpEL(`firstName == 'Steve' || lastName == 'Vai' || f1 == 'v1' && f2 == 'v2'`, {
     combinator: 'or',
     rules: [
       { field: 'firstName', operator: '=', value: 'Steve' },
@@ -340,19 +333,18 @@ describe('fields and getValueSources', () => {
     fieldsObject[f.name] = f;
   }
 
-  // oxlint-disable-next-line jest/expect-expect
   it('sets the valueSource when fields are valid', () => {
-    testParseSpEL(
+    expectParseSpEL(
       parseSpEL(`f1 == 'Steve'`, { fields }),
       wrapRule({ field: 'f1', operator: '=', value: 'Steve' })
     );
     // fields as option groups
-    testParseSpEL(
+    expectParseSpEL(
       parseSpEL(`f3 == f1`, { fields: optionGroups }),
       wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
     // fields as object
-    testParseSpEL(
+    expectParseSpEL(
       parseSpEL(`f3 == f1`, { fields: fieldsObject }),
       wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
@@ -360,7 +352,7 @@ describe('fields and getValueSources', () => {
     const baseFields = ['f3', 'f4'];
     for (const baseField of baseFields) {
       for (const f of fields) {
-        testParseSpEL(
+        expectParseSpEL(
           parseSpEL(`${baseField} == ${f.name}`, { fields }),
           f.name === baseField
             ? wrapRule()
@@ -370,56 +362,54 @@ describe('fields and getValueSources', () => {
     }
   });
 
-  // oxlint-disable-next-line jest/expect-expect
   it('uses the getValueSources option', () => {
-    testParseSpEL(
+    expectParseSpEL(
       parseSpEL(`f5 == f6`, { fields, getValueSources }),
       wrapRule({ field: 'f5', operator: '=', value: 'f6', valueSource: 'field' })
     );
-    testParseSpEL(
+    expectParseSpEL(
       parseSpEL(`f8 == f7`, { fields, getValueSources }),
       wrapRule({ field: 'f8', operator: '=', value: 'f7', valueSource: 'field' })
     );
-    testParseSpEL(
+    expectParseSpEL(
       parseSpEL(`f9 == f1`, { fields, getValueSources }),
       wrapRule({ field: 'f9', operator: '=', value: 'f1', valueSource: 'field' })
     );
-    testParseSpEL(
+    expectParseSpEL(
       parseSpEL(`f10 == f7`, { fields, getValueSources }),
       wrapRule({ field: 'f10', operator: '=', value: 'f7', valueSource: 'field' })
     );
-    testParseSpEL(
+    expectParseSpEL(
       parseSpEL(`f10 == f8`, { fields, getValueSources }),
       wrapRule({ field: 'f10', operator: '=', value: 'f8', valueSource: 'field' })
     );
   });
 
-  // oxlint-disable-next-line jest/expect-expect
   it('ignores invalid fields', () => {
     // `firstName` is not in the field list
-    testParseSpEL(parseSpEL(`firstName == 'Steve'`, { fields }), wrapRule());
+    expectParseSpEL(parseSpEL(`firstName == 'Steve'`, { fields }), wrapRule());
     // A field cannot be compared to itself
-    testParseSpEL(parseSpEL(`f1 == f1`, { fields }), wrapRule());
+    expectParseSpEL(parseSpEL(`f1 == f1`, { fields }), wrapRule());
     // A field cannot be compared to itself with a "like" comparison
-    testParseSpEL(parseSpEL(`f1.contains(f1)`, { fields }), wrapRule());
+    expectParseSpEL(parseSpEL(`f1.contains(f1)`, { fields }), wrapRule());
     // `f1` implicitly forbids the valueSource "field"
-    testParseSpEL(parseSpEL(`f1 == f2`, { fields }), wrapRule());
+    expectParseSpEL(parseSpEL(`f1 == f2`, { fields }), wrapRule());
     // `f2` explicitly forbids the valueSource "field"
-    testParseSpEL(parseSpEL(`f2 == f1`, { fields }), wrapRule());
+    expectParseSpEL(parseSpEL(`f2 == f1`, { fields }), wrapRule());
     // `f3` explicitly forbids the valueSource "value"
-    testParseSpEL(parseSpEL(`f3 == 'Steve'`, { fields }), wrapRule());
+    expectParseSpEL(parseSpEL(`f3 == 'Steve'`, { fields }), wrapRule());
     // `f5` implicitly allows the valueSource "field" through getValueSources,
     // but `f7` is not a valid subordinate field
-    testParseSpEL(parseSpEL(`f5 == f7`, { fields, getValueSources }), wrapRule());
+    expectParseSpEL(parseSpEL(`f5 == f7`, { fields, getValueSources }), wrapRule());
     // `f8` implicitly allows the valueSource "field" through getValueSources,
     // but `f6` is not a valid subordinate field
-    testParseSpEL(parseSpEL(`f8 == f6`, { fields, getValueSources }), wrapRule());
+    expectParseSpEL(parseSpEL(`f8 == f6`, { fields, getValueSources }), wrapRule());
     // `f9` implicitly allows the valueSource "field" through getValueSources,
     // but `f10` is not a valid subordinate field
-    testParseSpEL(parseSpEL(`f9 == f10`, { fields, getValueSources }), wrapRule());
+    expectParseSpEL(parseSpEL(`f9 == f10`, { fields, getValueSources }), wrapRule());
     // `f10` implicitly allows the valueSource "field" through getValueSources,
     // but `f5` is not a valid subordinate field
-    testParseSpEL(parseSpEL(`f10 == f5`, { fields, getValueSources }), wrapRule());
+    expectParseSpEL(parseSpEL(`f10 == f5`, { fields, getValueSources }), wrapRule());
     // independent combinators
     const fieldsForIC = (
       [
@@ -427,7 +417,7 @@ describe('fields and getValueSources', () => {
         { name: 'f3', label: 'Field 3', valueSources: ['field'] },
       ] satisfies Field[]
     ).map(o => toFullOption(o));
-    testParseSpELic(
+    expectParseSpELic(
       parseSpEL('f1 == f2 && f3 == "f4" && f3 == f4', {
         fields: fieldsForIC,
         independentCombinators: true,
@@ -437,9 +427,8 @@ describe('fields and getValueSources', () => {
   });
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('handles multiple negations', () => {
-  testParseSpEL('!!!(f1 matches "Test")', {
+  expectParseSpEL('!!!(f1 matches "Test")', {
     combinator: 'and',
     not: true,
     rules: [
@@ -450,7 +439,7 @@ it('handles multiple negations', () => {
       },
     ],
   });
-  testParseSpEL('!!!!(f1 matches "Test")', {
+  expectParseSpEL('!!!!(f1 matches "Test")', {
     combinator: 'and',
     not: true,
     rules: [
@@ -469,15 +458,14 @@ it('handles multiple negations', () => {
   });
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('handles independent combinators', () => {
-  testParseSpELic('(f1 == "Test")', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
-  testParseSpELic('f1 == "Test"', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
-  testParseSpELic('!(f1 == "Test")', {
+  expectParseSpELic('(f1 == "Test")', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
+  expectParseSpELic('f1 == "Test"', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
+  expectParseSpELic('!(f1 == "Test")', {
     not: true,
     rules: [{ field: 'f1', operator: '=', value: 'Test' }],
   });
-  testParseSpELic('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
+  expectParseSpELic('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
       'and',
@@ -489,7 +477,7 @@ it('handles independent combinators', () => {
 });
 
 it('generates IDs', () => {
-  testParseSpEL(
+  expectParseSpEL(
     `firstName == "Steve"`,
     expect.objectContaining({
       id: expect.any(String),
@@ -499,7 +487,6 @@ it('generates IDs', () => {
   );
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('ignores things', () => {
   const expressionsToIgnore = [
     'f1 == f2 ? f3 : f4',
@@ -512,6 +499,6 @@ it('ignores things', () => {
   ];
 
   for (const pr of expressionsToIgnore) {
-    testParseSpEL(pr, wrapRule());
+    expectParseSpEL(pr, wrapRule());
   }
 });

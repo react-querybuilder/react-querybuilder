@@ -1,5 +1,5 @@
-import type { Equal, Expect, ExpectExtends } from '@rqb-testing';
 import { produce } from 'immer';
+import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { defaultCombinators } from '../defaults';
 import type {
   DefaultRuleGroupType,
@@ -211,20 +211,19 @@ describe('add', () => {
     testQT('bails out', add(rg1, rg2, p(badPath)), rg1, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = add({ ...rg1 }, { ...rg2 }, []);
     const _newDefaultQuery = add(rg1, rg2, []);
     const _newICQuery = add({ ...rgic1 }, { ...rgic2 }, []);
     const _newDefaultICQuery = add(rgic1, rgic2, []);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -277,20 +276,19 @@ describe('remove', () => {
     testQT('bails out', remove(rg1, p(badPath)), rg1, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = remove({ ...rg1 }, [0]);
     const _newDefaultQuery = remove(rg1, [0]);
     const _newICQuery = remove({ ...rgic1 }, [0]);
     const _newDefaultICQuery = remove(rgic1, [0]);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -740,37 +738,35 @@ describe('update', () => {
     });
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types for multiple-property updates', () => {
     const _mapQuery = update(rg1, { combinator: 'and', not: true }, []);
     const _arrQuery = update(rg1, ['combinator', 'not'], ['and', true], []);
     const _mapICQuery = update(rgic1, { disabled: false }, []);
     const _arrICQuery = update(rgic1, ['disabled'], [false], []);
 
-    const _assertion1: Expect<Equal<DefaultRuleGroupType, typeof _mapQuery>> = true;
-    const _assertion2: Expect<Equal<DefaultRuleGroupType, typeof _arrQuery>> = true;
-    const _assertion3: Expect<Equal<DefaultRuleGroupTypeIC, typeof _mapICQuery>> = true;
-    const _assertion4: Expect<Equal<DefaultRuleGroupTypeIC, typeof _arrICQuery>> = true;
+    expectTypeOf(_mapQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_arrQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_mapICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_arrICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 
   describe.each(testLoop)('on bad %s', (_, p) => {
     testQT('bails out', update(rg1wID, 'value', 'test', p(badPath)), rg1wID, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = update({ ...rg1 }, 'combinator', 'and', []);
     const _newDefaultQuery = update(rg1, 'combinator', 'and', []);
     const _newICQuery = update({ ...rgic1 }, 'disabled', false, []);
     const _newDefaultICQuery = update(rgic1, 'disabled', false, []);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -947,20 +943,19 @@ describe('move', () => {
     testQT('bails out', move(rg1wID, p([1]), badPath), rg1wID, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = move({ ...rg1 }, [1], [0]);
     const _newDefaultQuery = move(rg1, [1], [0]);
     const _newICQuery = move({ ...rgic1 }, [1], [0]);
     const _newDefaultICQuery = move(rgic1, [1], [0]);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -1052,20 +1047,19 @@ describe('shift', () => {
     testQT('does not alter query for invalid direction', move(rg3, p([0]), 'x'), rg3, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = move({ ...rg1 }, [1], 'up');
     const _newDefaultQuery = move(rg1, [1], 'up');
     const _newICQuery = move({ ...rgic1 }, [1], 'up');
     const _newDefaultICQuery = move(rgic1, [1], 'up');
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -1187,20 +1181,19 @@ describe('insert', () => {
 
   testQT('bails out on bad path', insert(rg1, rg2, badPath), rg1);
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = insert({ ...rg1 }, { ...rg2 }, []);
     const _newDefaultQuery = insert(rg1, rg2, []);
     const _newICQuery = insert({ ...rgic1 }, { ...rgic2 }, []);
     const _newDefaultICQuery = insert(rgic1, rgic2, []);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -1366,20 +1359,19 @@ describe('group', () => {
     testQT('bails out', group(rg1wID, p([1]), badPath), rg1wID, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = group({ ...rg1 }, [1], [0]);
     const _newDefaultQuery = group(rg1, [1], [0]);
     const _newICQuery = group({ ...rgic1 }, [1], [0]);
     const _newDefaultICQuery = group(rgic1, [1], [0]);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
