@@ -1,14 +1,14 @@
 import { mergeConfig } from 'vitest/config';
-import shared from '../../vitest.shared';
+import shared from '../../vitest.shared.mts';
 
 export default mergeConfig(shared, {
   test: {
     environment: 'jsdom',
-    // Inline primereact so Vite (not Node) resolves its imports.
+    // Inline antd/@ant-design/rc-* so Vite (not Node) resolves their imports.
     // Patterns are tested against resolved absolute paths, so they must not be `^`-anchored.
     server: {
       deps: {
-        inline: [/primereact\//],
+        inline: [/antd\//, /@ant-design\//, /\/rc-/],
       },
     },
   },

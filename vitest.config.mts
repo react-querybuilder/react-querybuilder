@@ -43,7 +43,7 @@ const projects: Record<string, AnsiBg> = {
 export default defineConfig({
   test: {
     projects: Object.entries(projects).map(([dir, color]) => ({
-      extends: `./packages/${dir}/vitest.config.ts`,
+      extends: `./packages/${dir}/vitest.config.mts`,
       // `extends` doesn't inherit the package dir as root; set it so test globs scope correctly.
       root: path.resolve(import.meta.dirname, 'packages', dir),
       // *Bright variants are absent from LabelColor.

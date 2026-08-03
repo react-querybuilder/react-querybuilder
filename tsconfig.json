@@ -34,5 +34,5 @@
     }
   },
   "include": ["./*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"],
-  "exclude": ["vitest.config.ts", "vitest.shared.ts", "vitest.workspace.ts"]
+  "exclude": ["vitest.config.mts", "vitest.shared.mts", "vitest.workspace.ts"]
 }
