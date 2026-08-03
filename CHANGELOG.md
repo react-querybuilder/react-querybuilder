@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.22.0] - 2026-08-03
+
 ### Added
 
 #### History tracking (undo/redo)
@@ -39,8 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Mutations**: `createQueryActions` builds the six mutations a query builder performs (`addRule`, `addGroup`, `propChange`, `removeRuleOrGroup`, `moveRule`, `groupRule`) as pure functions of the current query, each returning the next query or `undefined` when aborted. It owns the policy surrounding the query tools—disabled gating, the confirmation callback protocol (including the replacement-node and replacement-query return values), `maxLevels`, and `LogType` events—so `useQueryBuilderSchema` now supplies only the Redux storage around it.
   - **Miscellaneous**: `derivePathInfo` computes the path and disabled state of each child of a group (`usePathsMemo` wraps it), and `resolveCandidateQuery` applies the controlled/uncontrolled precedence a query builder uses to decide what to render.
   - Two behaviors that had drifted between `useQueryBuilderSetup` and `QueryManager` are now consistent, with the component's taken as canonical: a `getDefaultField` function returning a falsy value leaves the first field in place (rather than producing an empty `field`), and `createRuleGroup` generates the group's `id` before any contained rule's.
-- [#1078] Query tools accept opt-in guard options that block a mutation before it is attempted, reported through `onAbort` with the new reasons `"target-disabled"`, `"parent-disabled"`, and `"max-levels-exceeded"`: `respectDisabled` aborts when the target (or, for `add`/`insert`, the parent) is disabled, either directly or by descending from a disabled group; `queryDisabled` aborts every mutation; and `maxLevels` caps the depth at which a group may be added, leaving rules unaffected. Since `disabled` is a property of the query itself, honoring it is a matter of data integrity—a query saved with a locked rule stays locked when reloaded—though updating a node's own `disabled` property is always permitted, since that is the only way to re-enable it. All three default to off, preserving the existing behavior of the standalone tools, while `QueryManager` enables `respectDisabled` by default to match the `QueryBuilder` component. `getGuardAbortReason` and `exceedsMaxLevels` are exported so a UI layer can apply the same rules before running its own logic.
 - [#1078] Query tools accept an `onAbort` callback, called with an `AbortInfo` object (`reason`, `operation`, `pathOrID`) when an operation returns the query unmodified. Because the tools return the original query whether the target was invalid or the operation simply had nothing to do, this is the only way to tell the two apart. The tools themselves still never throw. `remove` accordingly gains an optional third `options` parameter.
+- [#1078] Query tools accept opt-in guard options that block a mutation before it is attempted, reported through `onAbort` with the new reasons `"target-disabled"`, `"parent-disabled"`, and `"max-levels-exceeded"`: `respectDisabled` aborts when the target (or, for `add`/`insert`, the parent) is disabled, either directly or by descending from a disabled group; `queryDisabled` aborts every mutation; and `maxLevels` caps the depth at which a group may be added, leaving rules unaffected. Since `disabled` is a property of the query itself, honoring it is a matter of data integrity—a query saved with a locked rule stays locked when reloaded—though updating a node's own `disabled` property is always permitted, since that is the only way to re-enable it. All three default to off, preserving the existing behavior of the standalone tools, while `QueryManager` enables `respectDisabled` by default to match the `QueryBuilder` component. `getGuardAbortReason` and `exceedsMaxLevels` are exported so a UI layer can apply the same rules before running its own logic.
 
 #### Miscellaneous
 
@@ -2446,7 +2450,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.0...HEAD
+[v8.22.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.1...v8.22.0
 [v8.21.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.1...v8.21.2
 [v8.21.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.0...v8.21.1
 [v8.21.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.2...v8.21.0
