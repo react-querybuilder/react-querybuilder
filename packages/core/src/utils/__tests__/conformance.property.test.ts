@@ -228,8 +228,9 @@ describe('mutation invariants', () => {
       .toSorted();
 
   /**
-   * Asserts that a non-cloning operation of the given kind never adds or removes rules. Cloning
-   * variants are excluded via `fc.pre` since they intentionally duplicate rules.
+   * Asserts that a successful, non-cloning operation of the given kind never adds or removes
+   * rules. Cloning variants are excluded via `fc.pre` since they intentionally duplicate rules,
+   * and refused operations are excluded since they leave the query untouched.
    */
   const expectRuleMultiset = (kind: 'move' | 'group') => () => {
     fc.assert(
@@ -241,6 +242,7 @@ describe('mutation invariants', () => {
         const after = runViaQueryTools([op], queries[fixture], {
           idGenerator: createIdGenerator(),
         });
+        fc.pre(!after.refused[0]);
 
         expect(sortedRules(after.query)).toEqual(sortedRules(before.query));
       }),
@@ -248,7 +250,7 @@ describe('mutation invariants', () => {
     );
   };
 
-  it('a non-refused move preserves the multiset of rules', expectRuleMultiset('move'));
+  it('a successful move preserves the multiset of rules', expectRuleMultiset('move'));
 
   it('a successful group operation preserves the multiset of rules', expectRuleMultiset('group'));
 
