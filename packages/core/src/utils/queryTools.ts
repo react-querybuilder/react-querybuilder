@@ -373,7 +373,7 @@ const updatePropRank: Record<string, number> = { field: 0, operator: 1, valueSou
 
 /** Stable-sorts `[prop, value]` entries by {@link updatePropRank}. */
 const orderUpdateEntries = (entries: [string, unknown][]): [string, unknown][] =>
-  entries.sort((x, y) => (updatePropRank[x[0]] ?? 3) - (updatePropRank[y[0]] ?? 3));
+  entries.toSorted((x, y) => (updatePropRank[x[0]] ?? 3) - (updatePropRank[y[0]] ?? 3));
 
 /**
  * Normalizes the variadic {@link update}/{@link updateInPlace} arguments (single

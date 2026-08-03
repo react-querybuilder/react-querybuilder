@@ -225,7 +225,7 @@ describe('mutation invariants', () => {
   const sortedRules = (query: RuleGroupTypeAny): string[] =>
     rulesOf(query)
       .map(rule => JSON.stringify(rule))
-      .sort();
+      .toSorted();
 
   it('a non-refused move preserves the multiset of rules', () => {
     fc.assert(
