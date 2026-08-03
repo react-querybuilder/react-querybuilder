@@ -40,6 +40,7 @@
     "typescript/restrict-template-expressions": "off",
     "typescript/unbound-method": "off",
     "jest/no-disabled-tests": "warn",
+    "jest/expect-expect": ["error", { "assertFunctionNames": ["expect", "expect*"] }],
     "jest/require-to-throw-message": "off",
     "jest/valid-title": "off",
     "no-underscore-dangle": "off",

@@ -282,6 +282,13 @@ export interface QueryManagerOptions<
   validator?: QueryValidator;
   /** Generates `id` properties for new rules and groups. Defaults to {@link generateID}. */
   idGenerator?: () => string;
+  /**
+   * Clock used to time history coalescing. Defaults to `Date.now`.
+   *
+   * @internal Test seam. Exists so that history recording can be compared against the
+   * `react-querybuilder/history` implementation without depending on wall-clock timing.
+   */
+  now?: () => number;
 }
 
 /** Everything {@link QueryManager.batch} restores when the batched function throws. */
@@ -374,6 +381,7 @@ export class QueryManager<
   readonly #historyEnabled: boolean;
   readonly #maxHistory: number;
   readonly #coalesceMs: number;
+  readonly #now: () => number;
   #past: RG[] = [];
   #future: RG[] = [];
   #lastSig: string | undefined;
@@ -404,6 +412,7 @@ export class QueryManager<
     this.#historyEnabled = history !== false;
     this.#maxHistory = historyOptions.maxHistory ?? defaultMaxHistory;
     this.#coalesceMs = historyOptions.coalesceMs ?? defaultCoalesceMs;
+    this.#now = options.now ?? Date.now;
 
     const { optionList: fields, optionsMap: fieldMap } = prepareOptionList<F>({
       optionList: options.fields,
@@ -608,7 +617,7 @@ export class QueryManager<
     // nothing when undone.
     if (sig === unchangedSignature) return;
 
-    const now = Date.now();
+    const now = this.#now();
     const canCoalesce =
       sig !== structuralSignature && sig === this.#lastSig && now - this.#lastAt < this.#coalesceMs;
 

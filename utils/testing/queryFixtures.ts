@@ -200,9 +200,9 @@ export interface RunOptions extends GuardOptions {
    */
   idGenerator?: () => string;
   /**
-   * Injected clock. `QueryManager` reads `Date.now()` internally today, so this is currently
-   * only threaded into the result for callers that need it; see Phase 3 of the conformance
-   * plan.
+   * Injected clock, forwarded to `QueryManager`'s internal `now` option. Only meaningful when
+   * history is enabled, which the mutation-conformance interpreters do not do; the history
+   * conformance harness drives it directly.
    */
   now?: () => number;
 }
@@ -350,6 +350,43 @@ export const runViaQueryTools = (
   return { query, aborts, allAborts, refused };
 };
 
+/**
+ * Applies one {@link Op} to a {@link QueryManager}. Extracted so that the history conformance
+ * harness can drive a manager through the same operation DSL without duplicating the dispatch.
+ */
+export const applyOpToQueryManager = (
+  // oxlint-disable-next-line typescript/no-explicit-any
+  qm: QueryManager<any, any, any, any>,
+  op: Op
+): void => {
+  switch (op.kind) {
+    case 'add': {
+      qm.add(op.ruleOrGroup as RuleType, op.parent);
+      break;
+    }
+    case 'update': {
+      qm.update(op.prop, op.value, op.target, updateResolvers);
+      break;
+    }
+    case 'remove': {
+      qm.remove(op.target);
+      break;
+    }
+    case 'move': {
+      qm.move(op.from, op.to, { clone: op.clone });
+      break;
+    }
+    case 'insert': {
+      qm.insert(op.ruleOrGroup as RuleType, op.target, { replace: op.replace });
+      break;
+    }
+    case 'group': {
+      qm.group(op.from, op.to, { clone: op.clone });
+      break;
+    }
+  }
+};
+
 /** Applies `ops` through {@link QueryManager}. */
 export const runViaQueryManager = (
   ops: readonly Op[],
@@ -376,32 +413,7 @@ export const runViaQueryManager = (
   for (const op of ops) {
     opAborts = [];
 
-    switch (op.kind) {
-      case 'add': {
-        qm.add(op.ruleOrGroup as RuleType, op.parent);
-        break;
-      }
-      case 'update': {
-        qm.update(op.prop, op.value, op.target, updateResolvers);
-        break;
-      }
-      case 'remove': {
-        qm.remove(op.target);
-        break;
-      }
-      case 'move': {
-        qm.move(op.from, op.to, { clone: op.clone });
-        break;
-      }
-      case 'insert': {
-        qm.insert(op.ruleOrGroup as RuleType, op.target, { replace: op.replace });
-        break;
-      }
-      case 'group': {
-        qm.group(op.from, op.to, { clone: op.clone });
-        break;
-      }
-    }
+    applyOpToQueryManager(qm, op);
 
     aborts.push(opAborts[0]?.reason ?? null);
     refused.push(opAborts.some(a => strictSet.has(a.reason)));
