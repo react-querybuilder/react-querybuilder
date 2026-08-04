@@ -1,6 +1,6 @@
 import type { ClassValue } from 'clsx';
 import { standardClassnames } from '../defaults';
-import type { Classname, Classnames } from '../types';
+import type { Classname, Classnames, ValidationMap } from '../types';
 import { clsx } from './clsx';
 
 /** Classname keys that have both a standard class and a `controlClassnames` entry. */
@@ -151,6 +151,24 @@ const ruleGroupOuterConditions: readonly ClassnameCondition<RuleClassNameState>[
   { key: 'dndGroup', when: s => s.isOver && s.groupItems },
 ];
 
+/** State that contributes conditional classnames to the query builder's wrapper element. */
+export interface QueryBuilderClassNameState {
+  disabled?: boolean;
+  validationResult?: boolean | ValidationMap;
+}
+
+/**
+ * Conditional classes applied to the query builder's wrapper element.
+ *
+ * Only a `boolean` validation result contributes a class; a {@link ValidationMap} describes
+ * individual rules and groups, not the query as a whole.
+ */
+const queryBuilderOuterConditions: readonly ClassnameCondition<QueryBuilderClassNameState>[] = [
+  { key: 'disabled', when: s => s.disabled },
+  { key: 'valid', when: s => typeof s.validationResult === 'boolean' && s.validationResult },
+  { key: 'invalid', when: s => typeof s.validationResult === 'boolean' && !s.validationResult },
+];
+
 /** Options common to every classname derivation. */
 export interface DeriveClassNamesOptions {
   /** The merged `controlClassnames` for the query builder. */
@@ -252,8 +270,8 @@ export const deriveRuleGroupClassNames = (
 ): Record<RuleGroupClassnameKey, string> =>
   deriveFromSpecs(ruleGroupClassnameSources, options, options);
 
-/** Inputs to {@link deriveRuleOuterClassName} and {@link deriveRuleGroupOuterClassName}. */
-export interface OuterClassNameOptions extends DeriveClassNamesOptions, RuleClassNameState {
+/** Inputs common to every outer (wrapper) classname derivation. */
+export interface OuterClassNameOptionsBase extends DeriveClassNamesOptions {
   /**
    * Classnames contributed by the rule or group itself and its configuration, applied first.
    * For a rule that is the rule/field/operator classnames; for a group, the group and combinator
@@ -264,10 +282,13 @@ export interface OuterClassNameOptions extends DeriveClassNamesOptions, RuleClas
   validationClassName?: Classname;
 }
 
-const deriveOuterClassName = (
-  standardKey: 'rule' | 'ruleGroup',
-  conditions: readonly ClassnameCondition<RuleClassNameState>[],
-  options: OuterClassNameOptions
+/** Inputs to {@link deriveRuleOuterClassName} and {@link deriveRuleGroupOuterClassName}. */
+export interface OuterClassNameOptions extends OuterClassNameOptionsBase, RuleClassNameState {}
+
+const deriveOuterClassName = <S extends OuterClassNameOptionsBase>(
+  standardKey: 'rule' | 'ruleGroup' | 'queryBuilder',
+  conditions: readonly ClassnameCondition<S>[],
+  options: S
 ): string => {
   const {
     classNames,
@@ -304,3 +325,13 @@ export const deriveRuleOuterClassName = (options: OuterClassNameOptions): string
  */
 export const deriveRuleGroupOuterClassName = (options: OuterClassNameOptions): string =>
   deriveOuterClassName('ruleGroup', ruleGroupOuterConditions, options);
+
+/**
+ * The outer (wrapper) classname for the query builder itself, including the conditional
+ * `disabled`, `valid`, and `invalid` state classes.
+ *
+ * @group Query Tools
+ */
+export const deriveQueryBuilderClassNames = (
+  options: OuterClassNameOptionsBase & QueryBuilderClassNameState
+): string => deriveOuterClassName('queryBuilder', queryBuilderOuterConditions, options);

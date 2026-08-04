@@ -1252,9 +1252,10 @@ describe('independent combinators', () => {
 });
 
 describe('validation', () => {
+  const valid = 'my-valid-class';
+  const invalid = 'my-invalid-class';
+
   it('does not validate if no validator function is provided', () => {
-    const valid = 'my-valid-class';
-    const invalid = 'my-invalid-class';
     render(<QueryBuilder controlClassnames={{ valid, invalid }} />);
     expect(screen.getByRole('form')).not.toHaveClass(sc.valid, valid);
     expect(screen.getByRole('form')).not.toHaveClass(sc.invalid, invalid);
@@ -1272,8 +1273,6 @@ describe('validation', () => {
 
   it('uses custom validator function returning false', () => {
     const validator = vi.fn(() => false);
-    const valid = 'my-valid-class';
-    const invalid = 'my-invalid-class';
     render(<QueryBuilder validator={validator} controlClassnames={{ valid, invalid }} />);
     expect(validator).toHaveBeenCalled();
     expect(screen.getByRole('form')).not.toHaveClass(sc.valid, valid);
@@ -1282,8 +1281,6 @@ describe('validation', () => {
 
   it('uses custom validator function returning true', () => {
     const validator = vi.fn(() => true);
-    const valid = 'my-valid-class';
-    const invalid = 'my-invalid-class';
     render(<QueryBuilder validator={validator} controlClassnames={{ valid, invalid }} />);
     expect(validator).toHaveBeenCalled();
     expect(screen.getByRole('form')).toHaveClass(sc.valid, valid);

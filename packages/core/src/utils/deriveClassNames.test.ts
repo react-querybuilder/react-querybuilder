@@ -1,5 +1,6 @@
 import { standardClassnames as sc } from '../defaults';
 import {
+  deriveQueryBuilderClassNames,
   deriveRuleClassName,
   deriveRuleClassNames,
   deriveRuleGroupClassNames,
@@ -315,6 +316,63 @@ describe('deriveRuleGroupOuterClassName', () => {
         isDragging: true,
         isOver: true,
         groupItems: true,
+      })
+    ).toBe('');
+  });
+});
+
+describe('deriveQueryBuilderClassNames', () => {
+  it('applies the standard classname by default', () => {
+    expect(deriveQueryBuilderClassNames({ classNames: {} })).toBe(sc.queryBuilder);
+  });
+
+  it('applies the custom classname', () => {
+    expect(deriveQueryBuilderClassNames({ classNames: { queryBuilder: 'qb' } })).toBe(
+      `${sc.queryBuilder} qb`
+    );
+  });
+
+  it('applies disabled classnames', () => {
+    const result = deriveQueryBuilderClassNames({ classNames: { disabled: 'd' }, disabled: true });
+    expect(result).toContain('d');
+    expect(result).toContain(sc.disabled);
+  });
+
+  it('applies valid classnames', () => {
+    const result = deriveQueryBuilderClassNames({
+      classNames: { valid: 'v', invalid: 'i' },
+      validationResult: true,
+    });
+    expect(result).toContain('v');
+    expect(result).toContain(sc.valid);
+    expect(result).not.toContain(sc.invalid);
+  });
+
+  it('applies invalid classnames', () => {
+    const result = deriveQueryBuilderClassNames({
+      classNames: { valid: 'v', invalid: 'i' },
+      validationResult: false,
+    });
+    expect(result).toContain('i');
+    expect(result).toContain(sc.invalid);
+    expect(result).not.toContain(sc.valid);
+  });
+
+  it('ignores a validation map', () => {
+    const result = deriveQueryBuilderClassNames({
+      classNames: { valid: 'v', invalid: 'i' },
+      validationResult: { r1: true },
+    });
+    expect(result).toBe(sc.queryBuilder);
+  });
+
+  it('omits standard classnames when suppressed', () => {
+    expect(
+      deriveQueryBuilderClassNames({
+        classNames: {},
+        suppressStandardClassnames: true,
+        disabled: true,
+        validationResult: false,
       })
     ).toBe('');
   });

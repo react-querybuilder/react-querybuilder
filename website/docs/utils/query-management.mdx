@@ -458,6 +458,7 @@ Unlike a rule, a group's `validationResult` comes _only_ from the query-level va
 - `deriveRuleGroupClassNames({ classNames, suppressStandardClassnames, ...dndState })` — the per-element classnames for a rule group, including its `header`.
 - `deriveRuleGroupOuterClassName({ ... })` — the group's wrapper classname.
 - `deriveRuleClassName(key, { ... })` — a single rule classname, for cases where only one is needed.
+- `deriveQueryBuilderClassNames({ classNames, suppressStandardClassnames, disabled, validationResult })` — the query builder's own wrapper classname, including the conditional `disabled`, `valid`, and `invalid` classes. Only a `boolean` `validationResult` contributes a class; a `ValidationMap` describes individual rules and groups, not the query as a whole.
 
 :::caution
 

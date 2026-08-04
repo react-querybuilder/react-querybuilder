@@ -15,12 +15,11 @@ import type {
   ValueSourceFullOptions,
 } from '@react-querybuilder/core';
 import {
-  clsx,
   createQueryActions,
+  deriveQueryBuilderClassNames,
   generateAccessibleDescription,
   isRuleGroupTypeIC,
   resolveCandidateQuery,
-  standardClassnames,
 } from '@react-querybuilder/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useControlledOrUncontrolled, useDeprecatedProps, useUndoRedoWarning } from '../hooks/';
@@ -489,29 +488,13 @@ export function useQueryBuilderSchema<
   );
   const wrapperClassName = useMemo(
     () =>
-      clsx(
-        suppressStandardClassnames || standardClassnames.queryBuilder,
-        clsx(controlClassnames.queryBuilder),
-        // custom conditional classes
-        queryDisabled && controlClassnames.disabled,
-        typeof validationResult === 'boolean' && validationResult && controlClassnames.valid,
-        typeof validationResult === 'boolean' && !validationResult && controlClassnames.invalid,
-        // standard conditional classes
-        suppressStandardClassnames || {
-          [standardClassnames.disabled]: queryDisabled,
-          [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
-          [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
-        }
-      ),
-    [
-      controlClassnames.disabled,
-      controlClassnames.invalid,
-      controlClassnames.queryBuilder,
-      controlClassnames.valid,
-      queryDisabled,
-      suppressStandardClassnames,
-      validationResult,
-    ]
+      deriveQueryBuilderClassNames({
+        classNames: controlClassnames,
+        suppressStandardClassnames,
+        disabled: queryDisabled,
+        validationResult,
+      }),
+    [controlClassnames, queryDisabled, suppressStandardClassnames, validationResult]
   );
   // #endregion
 

@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- New `deriveQueryBuilderClassNames` utility in `@react-querybuilder/core` derives the query builder's own wrapper classname (including the conditional `disabled`/`valid`/`invalid` classes), joining the other classname derivations. `useQueryBuilderSchema` now uses it instead of composing that classname itself.
 
 ## [v8.22.0] - 2026-08-03
 
