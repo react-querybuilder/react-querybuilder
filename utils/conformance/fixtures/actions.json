@@ -1,0 +1,3870 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "package": "@react-querybuilder/core",
+    "version": "8.22.0",
+    "source": "utils/conformance/generate.tsx",
+    "renderMode": "renderToStaticMarkup"
+  },
+  "description": "Each curated mutation sequence replayed through QueryManager with a deterministic id generator, with the resulting query, per-op abort reasons, and refusal flags.",
+  "cases": [
+    {
+      "name": "add rule to empty root",
+      "fixture": "empty",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": []
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f9",
+              "operator": "=",
+              "value": "v9",
+              "id": "gen-1"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "add group to flat root",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "combinator": "and",
+            "rules": [
+              {
+                "field": "f9",
+                "operator": "=",
+                "value": "v9"
+              }
+            ]
+          },
+          "parent": []
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "combinator": "and",
+              "rules": [
+                {
+                  "field": "f9",
+                  "operator": "=",
+                  "value": "v9",
+                  "id": "gen-1"
+                }
+              ],
+              "id": "gen-2"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "add to nested group by path",
+      "fixture": "nested",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": [1, 1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f2",
+                  "operator": "=",
+                  "value": "v2",
+                  "path": [1, 0],
+                  "id": "[1,0]"
+                },
+                {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "field": "f3",
+                      "operator": "=",
+                      "value": "v3",
+                      "path": [1, 1, 0],
+                      "id": "[1,1,0]"
+                    },
+                    {
+                      "combinator": "or",
+                      "rules": [
+                        {
+                          "field": "f4",
+                          "operator": "=",
+                          "value": "v4",
+                          "path": [1, 1, 1, 0],
+                          "id": "[1,1,1,0]"
+                        },
+                        {
+                          "field": "f5",
+                          "operator": "=",
+                          "value": "v5",
+                          "path": [1, 1, 1, 1],
+                          "id": "[1,1,1,1]"
+                        }
+                      ],
+                      "path": [1, 1, 1],
+                      "id": "[1,1,1]"
+                    },
+                    {
+                      "field": "f9",
+                      "operator": "=",
+                      "value": "v9",
+                      "id": "gen-1"
+                    }
+                  ],
+                  "path": [1, 1],
+                  "id": "[1,1]"
+                }
+              ],
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f6",
+              "operator": "=",
+              "value": "v6",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "add to nested group by id",
+      "fixture": "nested",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": "[1,1]"
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f2",
+                  "operator": "=",
+                  "value": "v2",
+                  "path": [1, 0],
+                  "id": "[1,0]"
+                },
+                {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "field": "f3",
+                      "operator": "=",
+                      "value": "v3",
+                      "path": [1, 1, 0],
+                      "id": "[1,1,0]"
+                    },
+                    {
+                      "combinator": "or",
+                      "rules": [
+                        {
+                          "field": "f4",
+                          "operator": "=",
+                          "value": "v4",
+                          "path": [1, 1, 1, 0],
+                          "id": "[1,1,1,0]"
+                        },
+                        {
+                          "field": "f5",
+                          "operator": "=",
+                          "value": "v5",
+                          "path": [1, 1, 1, 1],
+                          "id": "[1,1,1,1]"
+                        }
+                      ],
+                      "path": [1, 1, 1],
+                      "id": "[1,1,1]"
+                    },
+                    {
+                      "field": "f9",
+                      "operator": "=",
+                      "value": "v9",
+                      "id": "gen-1"
+                    }
+                  ],
+                  "path": [1, 1],
+                  "id": "[1,1]"
+                }
+              ],
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f6",
+              "operator": "=",
+              "value": "v6",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "remove middle rule by path",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": [1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "remove middle rule by id",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": "[1]"
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "update field triggers reset",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "field",
+          "value": "fX",
+          "target": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "fX",
+              "operator": "=",
+              "value": "",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "update combinator on root",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "combinator",
+          "value": "or",
+          "target": []
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "or",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "remove root is refused",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": []
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["root-not-allowed"],
+        "allAborts": [
+          {
+            "reason": "root-not-allowed",
+            "operation": "remove",
+            "pathOrID": []
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "remove bad path",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": [9, 9, 9]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-not-found"],
+        "allAborts": [
+          {
+            "reason": "target-not-found",
+            "operation": "remove",
+            "pathOrID": [9, 9, 9]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "remove bad id",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": "no-such-id"
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-not-found"],
+        "allAborts": [
+          {
+            "reason": "target-not-found",
+            "operation": "remove",
+            "pathOrID": "no-such-id"
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "add to a rule rather than a group",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["parent-not-a-group"],
+        "allAborts": [
+          {
+            "reason": "parent-not-a-group",
+            "operation": "add",
+            "pathOrID": [0]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "update at bad path",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "x",
+          "target": [9, 9, 9]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-not-found"],
+        "allAborts": [
+          {
+            "reason": "target-not-found",
+            "operation": "update",
+            "pathOrID": [9, 9, 9]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "move from bad path",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [9, 9, 9],
+          "to": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-not-found"],
+        "allAborts": [
+          {
+            "reason": "target-not-found",
+            "operation": "move",
+            "pathOrID": [9, 9, 9]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "no-op edit then real edit",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "v1",
+          "target": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "v1-changed",
+          "target": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1-changed",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["no-change", null],
+        "allAborts": [
+          {
+            "reason": "no-change",
+            "operation": "update",
+            "pathOrID": [0]
+          }
+        ],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "three consecutive no-op edits",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "v1",
+          "target": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "v1",
+          "target": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "operator",
+          "value": "=",
+          "target": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["no-change", "no-change", "no-change"],
+        "allAborts": [
+          {
+            "reason": "no-change",
+            "operation": "update",
+            "pathOrID": [0]
+          },
+          {
+            "reason": "no-change",
+            "operation": "update",
+            "pathOrID": [0]
+          },
+          {
+            "reason": "no-change",
+            "operation": "update",
+            "pathOrID": [0]
+          }
+        ],
+        "refused": [false, false, false]
+      }
+    },
+    {
+      "name": "no-op move to same location, then a real move",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [1],
+          "to": [1]
+        },
+        {
+          "kind": "move",
+          "from": [1],
+          "to": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["same-location", null],
+        "allAborts": [
+          {
+            "reason": "same-location",
+            "operation": "move",
+            "pathOrID": [1]
+          }
+        ],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "move shifts siblings, then target the stale path",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [2],
+          "to": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "stale-path",
+          "target": [1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "stale-path",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "move shifts siblings, then target the same node by id",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [2],
+          "to": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "by-id",
+          "target": "[1]"
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "by-id",
+              "path": [1],
+              "id": "[1]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "remove shifts siblings, then remove the stale path",
+      "fixture": "nested",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": [0]
+        },
+        {
+          "kind": "remove",
+          "target": [1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f2",
+                  "operator": "=",
+                  "value": "v2",
+                  "path": [1, 0],
+                  "id": "[1,0]"
+                },
+                {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "field": "f3",
+                      "operator": "=",
+                      "value": "v3",
+                      "path": [1, 1, 0],
+                      "id": "[1,1,0]"
+                    },
+                    {
+                      "combinator": "or",
+                      "rules": [
+                        {
+                          "field": "f4",
+                          "operator": "=",
+                          "value": "v4",
+                          "path": [1, 1, 1, 0],
+                          "id": "[1,1,1,0]"
+                        },
+                        {
+                          "field": "f5",
+                          "operator": "=",
+                          "value": "v5",
+                          "path": [1, 1, 1, 1],
+                          "id": "[1,1,1,1]"
+                        }
+                      ],
+                      "path": [1, 1, 1],
+                      "id": "[1,1,1]"
+                    }
+                  ],
+                  "path": [1, 1],
+                  "id": "[1,1]"
+                }
+              ],
+              "path": [1],
+              "id": "[1]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "remove shifts siblings, then remove by id",
+      "fixture": "nested",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": [0]
+        },
+        {
+          "kind": "remove",
+          "target": "[2]"
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f2",
+                  "operator": "=",
+                  "value": "v2",
+                  "path": [1, 0],
+                  "id": "[1,0]"
+                },
+                {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "field": "f3",
+                      "operator": "=",
+                      "value": "v3",
+                      "path": [1, 1, 0],
+                      "id": "[1,1,0]"
+                    },
+                    {
+                      "combinator": "or",
+                      "rules": [
+                        {
+                          "field": "f4",
+                          "operator": "=",
+                          "value": "v4",
+                          "path": [1, 1, 1, 0],
+                          "id": "[1,1,1,0]"
+                        },
+                        {
+                          "field": "f5",
+                          "operator": "=",
+                          "value": "v5",
+                          "path": [1, 1, 1, 1],
+                          "id": "[1,1,1,1]"
+                        }
+                      ],
+                      "path": [1, 1, 1],
+                      "id": "[1,1,1]"
+                    }
+                  ],
+                  "path": [1, 1],
+                  "id": "[1,1]"
+                }
+              ],
+              "path": [1],
+              "id": "[1]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "add then immediately move the added node",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": []
+        },
+        {
+          "kind": "move",
+          "from": [3],
+          "to": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f9",
+              "operator": "=",
+              "value": "v9",
+              "id": "gen-1"
+            },
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "clone a rule, then edit the clone",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [0],
+          "to": [2],
+          "clone": true
+        },
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "cloned",
+          "target": [2]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "cloned",
+              "path": [0],
+              "id": "gen-1"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "move up and down",
+      "fixture": "nested",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [2],
+          "to": "up"
+        },
+        {
+          "kind": "move",
+          "from": [0],
+          "to": "down"
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f1",
+                  "operator": "=",
+                  "value": "v1",
+                  "path": [0],
+                  "id": "[0]"
+                },
+                {
+                  "field": "f2",
+                  "operator": "=",
+                  "value": "v2",
+                  "path": [1, 0],
+                  "id": "[1,0]"
+                },
+                {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "field": "f3",
+                      "operator": "=",
+                      "value": "v3",
+                      "path": [1, 1, 0],
+                      "id": "[1,1,0]"
+                    },
+                    {
+                      "combinator": "or",
+                      "rules": [
+                        {
+                          "field": "f4",
+                          "operator": "=",
+                          "value": "v4",
+                          "path": [1, 1, 1, 0],
+                          "id": "[1,1,1,0]"
+                        },
+                        {
+                          "field": "f5",
+                          "operator": "=",
+                          "value": "v5",
+                          "path": [1, 1, 1, 1],
+                          "id": "[1,1,1,1]"
+                        }
+                      ],
+                      "path": [1, 1, 1],
+                      "id": "[1,1,1]"
+                    }
+                  ],
+                  "path": [1, 1],
+                  "id": "[1,1]"
+                },
+                {
+                  "field": "f6",
+                  "operator": "=",
+                  "value": "v6",
+                  "path": [2],
+                  "id": "[2]"
+                }
+              ],
+              "path": [1],
+              "id": "[1]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "move across levels then back",
+      "fixture": "nested",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [0],
+          "to": [1, 1, 1, 0]
+        },
+        {
+          "kind": "move",
+          "from": [0, 0, 1, 0],
+          "to": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f2",
+                  "operator": "=",
+                  "value": "v2",
+                  "path": [1, 0],
+                  "id": "[1,0]"
+                },
+                {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "field": "f3",
+                      "operator": "=",
+                      "value": "v3",
+                      "path": [1, 1, 0],
+                      "id": "[1,1,0]"
+                    },
+                    {
+                      "combinator": "or",
+                      "rules": [
+                        {
+                          "field": "f1",
+                          "operator": "=",
+                          "value": "v1",
+                          "path": [0],
+                          "id": "[0]"
+                        },
+                        {
+                          "field": "f4",
+                          "operator": "=",
+                          "value": "v4",
+                          "path": [1, 1, 1, 0],
+                          "id": "[1,1,1,0]"
+                        },
+                        {
+                          "field": "f5",
+                          "operator": "=",
+                          "value": "v5",
+                          "path": [1, 1, 1, 1],
+                          "id": "[1,1,1,1]"
+                        }
+                      ],
+                      "path": [1, 1, 1],
+                      "id": "[1,1,1]"
+                    }
+                  ],
+                  "path": [1, 1],
+                  "id": "[1,1]"
+                }
+              ],
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f6",
+              "operator": "=",
+              "value": "v6",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, "target-not-found"],
+        "allAborts": [
+          {
+            "reason": "target-not-found",
+            "operation": "move",
+            "pathOrID": [0, 0, 1, 0]
+          }
+        ],
+        "refused": [false, true]
+      }
+    },
+    {
+      "name": "group two siblings",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "group",
+          "from": [0],
+          "to": [1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "combinator": "and",
+              "rules": [
+                {
+                  "field": "f2",
+                  "operator": "=",
+                  "value": "v2",
+                  "path": [1],
+                  "id": "[1]"
+                },
+                {
+                  "field": "f1",
+                  "operator": "=",
+                  "value": "v1",
+                  "path": [0],
+                  "id": "[0]"
+                }
+              ],
+              "id": "gen-1"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "group by id, then group the result again",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "group",
+          "from": "[0]",
+          "to": "[1]"
+        },
+        {
+          "kind": "group",
+          "from": [1],
+          "to": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "combinator": "and",
+              "rules": [
+                {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "field": "f2",
+                      "operator": "=",
+                      "value": "v2",
+                      "path": [1],
+                      "id": "[1]"
+                    },
+                    {
+                      "field": "f1",
+                      "operator": "=",
+                      "value": "v1",
+                      "path": [0],
+                      "id": "[0]"
+                    }
+                  ],
+                  "id": "gen-1"
+                },
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2],
+                  "id": "[2]"
+                }
+              ],
+              "id": "gen-2"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "nested groups approaching maxLevels",
+      "fixture": "nested",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "combinator": "and",
+            "rules": []
+          },
+          "parent": [1, 1]
+        },
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "combinator": "and",
+            "rules": []
+          },
+          "parent": [1, 1, 2]
+        },
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": [1, 1, 2]
+        }
+      ],
+      "options": {
+        "maxLevels": 3
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f2",
+                  "operator": "=",
+                  "value": "v2",
+                  "path": [1, 0],
+                  "id": "[1,0]"
+                },
+                {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "field": "f3",
+                      "operator": "=",
+                      "value": "v3",
+                      "path": [1, 1, 0],
+                      "id": "[1,1,0]"
+                    },
+                    {
+                      "combinator": "or",
+                      "rules": [
+                        {
+                          "field": "f4",
+                          "operator": "=",
+                          "value": "v4",
+                          "path": [1, 1, 1, 0],
+                          "id": "[1,1,1,0]"
+                        },
+                        {
+                          "field": "f5",
+                          "operator": "=",
+                          "value": "v5",
+                          "path": [1, 1, 1, 1],
+                          "id": "[1,1,1,1]"
+                        }
+                      ],
+                      "path": [1, 1, 1],
+                      "id": "[1,1,1]"
+                    },
+                    {
+                      "combinator": "and",
+                      "rules": [
+                        {
+                          "field": "f9",
+                          "operator": "=",
+                          "value": "v9",
+                          "id": "gen-2"
+                        }
+                      ],
+                      "id": "gen-1"
+                    }
+                  ],
+                  "path": [1, 1],
+                  "id": "[1,1]"
+                }
+              ],
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f6",
+              "operator": "=",
+              "value": "v6",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, "max-levels-exceeded", null],
+        "allAborts": [
+          {
+            "reason": "max-levels-exceeded",
+            "operation": "add",
+            "pathOrID": [1, 1, 2]
+          }
+        ],
+        "refused": [false, true, false]
+      }
+    },
+    {
+      "name": "maxLevels exactly at the boundary",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "combinator": "and",
+            "rules": []
+          },
+          "parent": []
+        },
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "combinator": "and",
+            "rules": []
+          },
+          "parent": [3]
+        }
+      ],
+      "options": {
+        "maxLevels": 1
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "combinator": "and",
+              "rules": [],
+              "id": "gen-1"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, "max-levels-exceeded"],
+        "allAborts": [
+          {
+            "reason": "max-levels-exceeded",
+            "operation": "add",
+            "pathOrID": [3]
+          }
+        ],
+        "refused": [false, true]
+      }
+    },
+    {
+      "name": "ic: add rule",
+      "fixture": "ic",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": []
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            "and",
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [2],
+              "id": "[2]"
+            },
+            "or",
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [4],
+              "id": "[4]"
+            },
+            "or",
+            {
+              "field": "f9",
+              "operator": "=",
+              "value": "v9",
+              "id": "gen-1"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "ic: remove middle rule",
+      "fixture": "ic",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": [2]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            "or",
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [4],
+              "id": "[4]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "ic: update a combinator slot",
+      "fixture": "ic",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "combinator",
+          "value": "or",
+          "target": [1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            "or",
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [2],
+              "id": "[2]"
+            },
+            "or",
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [4],
+              "id": "[4]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "ic: update a non-combinator slot",
+      "fixture": "ic",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "combinator",
+          "value": "or",
+          "target": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            "and",
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [2],
+              "id": "[2]"
+            },
+            "or",
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [4],
+              "id": "[4]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["not-a-combinator-slot"],
+        "allAborts": [
+          {
+            "reason": "not-a-combinator-slot",
+            "operation": "update",
+            "pathOrID": [0]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "ic: move into a nested ic group",
+      "fixture": "icNested",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [0],
+          "to": [2, 0]
+        },
+        {
+          "kind": "remove",
+          "target": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "rules": [
+            {
+              "field": "f4",
+              "operator": "=",
+              "value": "v4",
+              "path": [4],
+              "id": "[4]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "ic: group two rules",
+      "fixture": "ic",
+      "ops": [
+        {
+          "kind": "group",
+          "from": [0],
+          "to": [2]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "rules": [
+            {
+              "rules": [
+                {
+                  "field": "f2",
+                  "operator": "=",
+                  "value": "v2",
+                  "path": [2],
+                  "id": "[2]"
+                },
+                "and",
+                {
+                  "field": "f1",
+                  "operator": "=",
+                  "value": "v1",
+                  "path": [0],
+                  "id": "[0]"
+                }
+              ],
+              "id": "gen-1"
+            },
+            "or",
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [4],
+              "id": "[4]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "insert at the head, then edit what was displaced",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "insert",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "target": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "displaced",
+          "target": [1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f9",
+              "operator": "=",
+              "value": "v9",
+              "id": "gen-1"
+            },
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "displaced",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "insert with replace",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "insert",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "target": [1],
+          "replace": true
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f9",
+              "operator": "=",
+              "value": "v9",
+              "id": "gen-1"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "edit a disabled rule",
+      "fixture": "withDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "nope",
+          "target": [1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "disabled": true,
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "disabled": true,
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "update",
+            "pathOrID": [1]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "edit a descendant of a disabled group",
+      "fixture": "withDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "nope",
+          "target": [2, 0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "disabled": true,
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "disabled": true,
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "update",
+            "pathOrID": [2, 0]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "re-enable a disabled rule, then edit it",
+      "fixture": "withDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "disabled",
+          "value": false,
+          "target": [1]
+        },
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "now-allowed",
+          "target": [1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "now-allowed",
+              "disabled": false,
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "disabled": true,
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "disable a rule, then try to edit it",
+      "fixture": "withoutDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "disabled",
+          "value": true,
+          "target": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "nope",
+          "target": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]",
+              "disabled": true
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, "target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "update",
+            "pathOrID": [0]
+          }
+        ],
+        "refused": [false, true]
+      }
+    },
+    {
+      "name": "add to a disabled group",
+      "fixture": "withDisabled",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": [2]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "disabled": true,
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "disabled": true,
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["parent-disabled"],
+        "allAborts": [
+          {
+            "reason": "parent-disabled",
+            "operation": "add",
+            "pathOrID": [2]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "remove a disabled rule",
+      "fixture": "withDisabled",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": [1]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "disabled": true,
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "disabled": true,
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "remove",
+            "pathOrID": [1]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "move a disabled rule",
+      "fixture": "withDisabled",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [1],
+          "to": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "disabled": true,
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "disabled": true,
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "move",
+            "pathOrID": [1]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "group starting from a disabled rule",
+      "fixture": "withDisabled",
+      "ops": [
+        {
+          "kind": "group",
+          "from": [1],
+          "to": [0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "disabled": true,
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "disabled": true,
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "group",
+            "pathOrID": [1]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "move a rule onto a disabled destination",
+      "fixture": "withDisabled",
+      "ops": [
+        {
+          "kind": "move",
+          "from": [0],
+          "to": [2, 0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "disabled": true,
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "disabled": true,
+              "rules": [
+                {
+                  "field": "f1",
+                  "operator": "=",
+                  "value": "v1",
+                  "path": [0],
+                  "id": "[0]"
+                },
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "mutations against a root-disabled query",
+      "fixture": "rootDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "nope",
+          "target": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "disabled",
+          "value": false,
+          "target": [0]
+        },
+        {
+          "kind": "remove",
+          "target": [1]
+        },
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": []
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "disabled": true,
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]",
+              "disabled": false
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled", null, "target-disabled", "parent-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "update",
+            "pathOrID": [0]
+          },
+          {
+            "reason": "target-disabled",
+            "operation": "remove",
+            "pathOrID": [1]
+          },
+          {
+            "reason": "parent-disabled",
+            "operation": "add",
+            "pathOrID": []
+          }
+        ],
+        "refused": [true, false, true, true]
+      }
+    },
+    {
+      "name": "disabledPaths: edit a path-disabled rule",
+      "fixture": "withoutDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "nope",
+          "target": [0]
+        }
+      ],
+      "options": {
+        "disabledPaths": [[0]]
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "update",
+            "pathOrID": [0]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "disabledPaths: edit a descendant of a path-disabled group",
+      "fixture": "withoutDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "nope",
+          "target": [2, 0]
+        }
+      ],
+      "options": {
+        "disabledPaths": [[2]]
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "update",
+            "pathOrID": [2, 0]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "disabledPaths: add to a path-disabled group",
+      "fixture": "withoutDisabled",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": [2]
+        }
+      ],
+      "options": {
+        "disabledPaths": [[2]]
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["parent-disabled"],
+        "allAborts": [
+          {
+            "reason": "parent-disabled",
+            "operation": "add",
+            "pathOrID": [2]
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "disabledPaths: remove and move a path-disabled rule",
+      "fixture": "withoutDisabled",
+      "ops": [
+        {
+          "kind": "remove",
+          "target": [1]
+        },
+        {
+          "kind": "move",
+          "from": [1],
+          "to": [0]
+        },
+        {
+          "kind": "group",
+          "from": [1],
+          "to": [0]
+        }
+      ],
+      "options": {
+        "disabledPaths": [[1]]
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled", "target-disabled", "target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "remove",
+            "pathOrID": [1]
+          },
+          {
+            "reason": "target-disabled",
+            "operation": "move",
+            "pathOrID": [1]
+          },
+          {
+            "reason": "target-disabled",
+            "operation": "group",
+            "pathOrID": [1]
+          }
+        ],
+        "refused": [true, true, true]
+      }
+    },
+    {
+      "name": "disabledPaths: the re-enable exemption still applies",
+      "fixture": "withoutDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "disabled",
+          "value": false,
+          "target": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "disabled",
+          "value": true,
+          "target": [0]
+        }
+      ],
+      "options": {
+        "disabledPaths": [[0]]
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]",
+              "disabled": true
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null],
+        "allAborts": [],
+        "refused": [false, false]
+      }
+    },
+    {
+      "name": "disabledPaths: ignored when respectDisabled is false",
+      "fixture": "withoutDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "allowed",
+          "target": [0]
+        }
+      ],
+      "options": {
+        "disabledPaths": [[0]],
+        "respectDisabled": false
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "allowed",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null],
+        "allAborts": [],
+        "refused": [false]
+      }
+    },
+    {
+      "name": "disabledPaths: targeting by id resolves to the disabled path",
+      "fixture": "withoutDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "nope",
+          "target": "[1]"
+        }
+      ],
+      "options": {
+        "disabledPaths": [[1]]
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            },
+            {
+              "field": "f5",
+              "operator": "=",
+              "value": "v5",
+              "path": [3],
+              "id": "[3]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "update",
+            "pathOrID": "[1]"
+          }
+        ],
+        "refused": [true]
+      }
+    },
+    {
+      "name": "disabledPaths: root path disables everything",
+      "fixture": "flat",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "nope",
+          "target": [0]
+        },
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f9",
+            "operator": "=",
+            "value": "v9"
+          },
+          "parent": []
+        },
+        {
+          "kind": "remove",
+          "target": [1]
+        }
+      ],
+      "options": {
+        "disabledPaths": [[]]
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "field": "f3",
+              "operator": "=",
+              "value": "v3",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled", "parent-disabled", "target-disabled"],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "update",
+            "pathOrID": [0]
+          },
+          {
+            "reason": "parent-disabled",
+            "operation": "add",
+            "pathOrID": []
+          },
+          {
+            "reason": "target-disabled",
+            "operation": "remove",
+            "pathOrID": [1]
+          }
+        ],
+        "refused": [true, true, true]
+      }
+    },
+    {
+      "name": "disabledPaths: unaffected siblings still mutate",
+      "fixture": "withoutDisabled",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "nope",
+          "target": [1]
+        },
+        {
+          "kind": "update",
+          "prop": "value",
+          "value": "yes",
+          "target": [0]
+        },
+        {
+          "kind": "remove",
+          "target": [3]
+        }
+      ],
+      "options": {
+        "disabledPaths": [[1]]
+      },
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "yes",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "path": [1],
+              "id": "[1]"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "path": [2, 0],
+                  "id": "[2,0]"
+                },
+                {
+                  "field": "f4",
+                  "operator": "=",
+                  "value": "v4",
+                  "path": [2, 1],
+                  "id": "[2,1]"
+                }
+              ],
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": ["target-disabled", null, null],
+        "allAborts": [
+          {
+            "reason": "target-disabled",
+            "operation": "update",
+            "pathOrID": [1]
+          }
+        ],
+        "refused": [true, false, false]
+      }
+    },
+    {
+      "name": "build a tree from empty",
+      "fixture": "empty",
+      "ops": [
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f1",
+            "operator": "=",
+            "value": "v1"
+          },
+          "parent": []
+        },
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f2",
+            "operator": "=",
+            "value": "v2"
+          },
+          "parent": []
+        },
+        {
+          "kind": "group",
+          "from": [0],
+          "to": [1]
+        },
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "field": "f3",
+            "operator": "=",
+            "value": "v3"
+          },
+          "parent": [0]
+        },
+        {
+          "kind": "update",
+          "prop": "combinator",
+          "value": "or",
+          "target": [0]
+        },
+        {
+          "kind": "move",
+          "from": [0, 0],
+          "to": []
+        },
+        {
+          "kind": "remove",
+          "target": [1, 0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "field": "f2",
+              "operator": "=",
+              "value": "v2",
+              "id": "gen-2"
+            },
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "field": "f3",
+                  "operator": "=",
+                  "value": "v3",
+                  "id": "gen-4"
+                }
+              ],
+              "id": "gen-3"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null, null, null, null, null, null],
+        "allAborts": [],
+        "refused": [false, false, false, false, false, false, false]
+      }
+    },
+    {
+      "name": "churn on a nested query",
+      "fixture": "nested",
+      "ops": [
+        {
+          "kind": "update",
+          "prop": "not",
+          "value": true,
+          "target": [1]
+        },
+        {
+          "kind": "move",
+          "from": [1, 1, 1],
+          "to": [0]
+        },
+        {
+          "kind": "add",
+          "ruleOrGroup": {
+            "combinator": "and",
+            "rules": [
+              {
+                "field": "f9",
+                "operator": "=",
+                "value": "v9"
+              }
+            ]
+          },
+          "parent": [0]
+        },
+        {
+          "kind": "group",
+          "from": [0, 2],
+          "to": [0, 0]
+        },
+        {
+          "kind": "remove",
+          "target": [2]
+        },
+        {
+          "kind": "update",
+          "prop": "field",
+          "value": "fZ",
+          "target": [0, 0, 0]
+        }
+      ],
+      "options": {},
+      "expected": {
+        "query": {
+          "combinator": "and",
+          "rules": [
+            {
+              "combinator": "or",
+              "rules": [
+                {
+                  "combinator": "and",
+                  "rules": [
+                    {
+                      "field": "fZ",
+                      "operator": "=",
+                      "value": "",
+                      "path": [1, 1, 1, 0],
+                      "id": "[1,1,1,0]"
+                    },
+                    {
+                      "combinator": "and",
+                      "rules": [
+                        {
+                          "field": "f9",
+                          "operator": "=",
+                          "value": "v9",
+                          "id": "gen-1"
+                        }
+                      ],
+                      "id": "gen-2"
+                    }
+                  ],
+                  "id": "gen-3"
+                },
+                {
+                  "field": "f5",
+                  "operator": "=",
+                  "value": "v5",
+                  "path": [1, 1, 1, 1],
+                  "id": "[1,1,1,1]"
+                }
+              ],
+              "path": [1, 1, 1],
+              "id": "[1,1,1]"
+            },
+            {
+              "field": "f1",
+              "operator": "=",
+              "value": "v1",
+              "path": [0],
+              "id": "[0]"
+            },
+            {
+              "field": "f6",
+              "operator": "=",
+              "value": "v6",
+              "path": [2],
+              "id": "[2]"
+            }
+          ],
+          "path": [],
+          "id": "[]"
+        },
+        "aborts": [null, null, null, null, null, null],
+        "allAborts": [],
+        "refused": [false, false, false, false, false, false]
+      }
+    }
+  ]
+}

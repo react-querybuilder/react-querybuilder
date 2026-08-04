@@ -1,0 +1,186 @@
+/**
+ * The props axis of the conformance fixtures.
+ *
+ * The query shapes come from `utils/testing/queryFixtures`, which is already the single source of
+ * truth for the mutation-conformance tests. This module supplies the orthogonal axis: the prop
+ * combinations that actually change the rendered class surface. It is deliberately *curated*
+ * rather than combinatorial — the cartesian product of the boolean display props produces a huge,
+ * high-churn fixture file whose extra entries exercise no additional branch.
+ */
+
+import type {
+  FullCombinator,
+  FullField,
+  FullOperator,
+  QueryBuilderProps,
+  RuleGroupTypeAny,
+} from '../../packages/react-querybuilder/src/index';
+import type { QueryFixtureName } from '../testing/queryFixtures';
+
+/**
+ * Fields covering every `field` name used by the fixture corpus (`f1`..`f9`), so the field
+ * selector renders real options instead of the empty-fields placeholder.
+ */
+export const fields: { name: string; label: string }[] = Array.from({ length: 9 }, (_, i) => ({
+  name: `f${i + 1}`,
+  label: `Field ${i + 1}`,
+}));
+
+/** Every non-IC fixture. IC fixtures render a materially different tree, so they are separated. */
+const standardQueries: QueryFixtureName[] = [
+  'empty',
+  'singleRule',
+  'flat',
+  'nested',
+  'withDisabled',
+  'withoutDisabled',
+  'rootDisabled',
+];
+
+const icQueries: QueryFixtureName[] = ['ic', 'icNested'];
+
+const allQueries: QueryFixtureName[] = [...standardQueries, ...icQueries];
+
+/**
+ * A `validator` that invalidates two well-known nodes. The fixture corpus assigns `id`s equal to
+ * the stringified initial path (see `pathsAsIDs`), so these keys are stable and legible.
+ */
+const validator = () => ({
+  '[0]': false,
+  '[1]': { valid: false, reasons: ['conformance'] },
+});
+
+/**
+ * A non-default accessible description generator. Without this, every
+ * `expectedAccessibleDescriptions` entry would be a pure function of the path and the fixture
+ * would assert nothing a port could plausibly get wrong.
+ */
+const accessibleDescriptionGenerator = ({ path }: { path: number[] }) =>
+  path.length === 0 ? 'Root' : `Group ${path.join('.')}`;
+
+/**
+ * Scenario props are intentionally loose: the point is to vary props freely, not to type-check
+ * them. `QueryBuilderProps` is generic over four parameters that would otherwise have to be
+ * threaded through every scenario for no benefit.
+ */
+type AnyProps = Partial<
+  QueryBuilderProps<RuleGroupTypeAny, FullField, FullOperator, FullCombinator>
+> &
+  Record<string, unknown>;
+
+/** One prop scenario, optionally pinned to its own query rather than the shared corpus. */
+export interface Scenario {
+  name: string;
+  /** Short description, carried into the fixture file so consumers know what a failure means. */
+  description: string;
+  props: AnyProps;
+  /** Named fixtures from the shared corpus. Mutually exclusive with {@link Scenario.query}. */
+  queries?: QueryFixtureName[];
+  /** An inline query, for scenarios the shared corpus does not cover. */
+  query?: unknown;
+}
+
+export const scenarios: Scenario[] = [
+  {
+    name: 'default',
+    description: 'Default props. The baseline class surface every port must reproduce first.',
+    props: { fields },
+    queries: allQueries,
+  },
+  {
+    name: 'allControls',
+    description:
+      'Every optional control turned on: not-toggle, clone, lock, shift, and mute buttons.',
+    props: {
+      fields,
+      showNotToggle: true,
+      showCloneButtons: true,
+      showLockButtons: true,
+      showShiftActions: true,
+      showMuteButtons: true,
+    },
+    queries: allQueries,
+  },
+  {
+    name: 'combinatorsBetweenRules',
+    description:
+      'Standard (non-IC) queries rendered with combinators between rules, which switches the ' +
+      'group body to the inline-combinator layout.',
+    props: { fields, showCombinatorsBetweenRules: true },
+    queries: standardQueries,
+  },
+  {
+    name: 'validation',
+    description:
+      'A validator that invalidates two nodes, producing the `queryBuilder-invalid` classes.',
+    props: { fields, validator },
+    queries: standardQueries,
+  },
+  {
+    name: 'disabled',
+    description:
+      'The whole builder disabled via the `disabled` prop, as distinct from the per-node ' +
+      '`disabled` flags the `withDisabled` fixture carries.',
+    props: { fields, disabled: true, showLockButtons: true },
+    queries: standardQueries,
+  },
+  {
+    name: 'customized',
+    description:
+      'A non-default accessible description generator plus custom control classnames, so the ' +
+      'a11y and classname fixtures assert something beyond the identity function.',
+    props: {
+      fields,
+      accessibleDescriptionGenerator,
+      controlClassnames: {
+        queryBuilder: 'custom-qb',
+        ruleGroup: 'custom-group',
+        rule: 'custom-rule',
+      },
+    },
+    queries: allQueries,
+  },
+  {
+    name: 'matchModes',
+    description:
+      'Subquery rules with match modes. Not in the shared corpus because it requires a field ' +
+      'with `subproperties`; included because the port plan lists match modes as v1 scope.',
+    props: {
+      fields: [
+        {
+          name: 'sub',
+          label: 'Sub',
+          matchModes: true,
+          subproperties: [
+            { name: 's1', label: 'S1' },
+            { name: 's2', label: 'S2' },
+          ],
+        },
+      ],
+    },
+    query: {
+      id: '[]',
+      combinator: 'and',
+      rules: [
+        {
+          id: '[0]',
+          field: 'sub',
+          operator: '=',
+          value: { id: '[0,0]', combinator: 'and', rules: [] },
+          match: { mode: 'all' },
+        },
+        {
+          id: '[1]',
+          field: 'sub',
+          operator: '=',
+          value: {
+            id: '[1,0]',
+            combinator: 'or',
+            rules: [{ id: '[1,0,0]', field: 's1', operator: '=', value: 'x' }],
+          },
+          match: { mode: 'atLeast', threshold: 2 },
+        },
+      ],
+    },
+  },
+];

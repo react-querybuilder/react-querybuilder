@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "package": "@react-querybuilder/core",
+    "version": "8.22.0",
+    "source": "utils/conformance/generate.tsx",
+    "renderMode": "renderToStaticMarkup"
+  },
+  "files": ["classnames.json", "accessible-descriptions.json", "actions.json"],
+  "counts": {
+    "scenarios": 7,
+    "renderedCases": 49,
+    "actionSequences": 58
+  }
+}

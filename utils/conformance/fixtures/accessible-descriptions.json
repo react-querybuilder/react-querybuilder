@@ -1,0 +1,634 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "package": "@react-querybuilder/core",
+    "version": "8.22.0",
+    "source": "utils/conformance/generate.tsx",
+    "renderMode": "renderToStaticMarkup"
+  },
+  "description": "The `title` attribute of every rule group, which is where the accessible description generator output surfaces.",
+  "cases": [
+    {
+      "scenario": "default",
+      "query": "empty",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "default",
+      "query": "singleRule",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "default",
+      "query": "flat",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "default",
+      "query": "nested",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[1]",
+          "description": "Rule group at path 1"
+        },
+        {
+          "path": "[1,1]",
+          "description": "Rule group at path 1-1"
+        },
+        {
+          "path": "[1,1,1]",
+          "description": "Rule group at path 1-1-1"
+        }
+      ]
+    },
+    {
+      "scenario": "default",
+      "query": "withDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "default",
+      "query": "withoutDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "default",
+      "query": "rootDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "default",
+      "query": "ic",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "default",
+      "query": "icNested",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "allControls",
+      "query": "empty",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "allControls",
+      "query": "singleRule",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "allControls",
+      "query": "flat",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "allControls",
+      "query": "nested",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[1]",
+          "description": "Rule group at path 1"
+        },
+        {
+          "path": "[1,1]",
+          "description": "Rule group at path 1-1"
+        },
+        {
+          "path": "[1,1,1]",
+          "description": "Rule group at path 1-1-1"
+        }
+      ]
+    },
+    {
+      "scenario": "allControls",
+      "query": "withDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "allControls",
+      "query": "withoutDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "allControls",
+      "query": "rootDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "allControls",
+      "query": "ic",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "allControls",
+      "query": "icNested",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "combinatorsBetweenRules",
+      "query": "empty",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "combinatorsBetweenRules",
+      "query": "singleRule",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "combinatorsBetweenRules",
+      "query": "flat",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "combinatorsBetweenRules",
+      "query": "nested",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[1]",
+          "description": "Rule group at path 1"
+        },
+        {
+          "path": "[1,1]",
+          "description": "Rule group at path 1-1"
+        },
+        {
+          "path": "[1,1,1]",
+          "description": "Rule group at path 1-1-1"
+        }
+      ]
+    },
+    {
+      "scenario": "combinatorsBetweenRules",
+      "query": "withDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "combinatorsBetweenRules",
+      "query": "withoutDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "combinatorsBetweenRules",
+      "query": "rootDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "validation",
+      "query": "empty",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "validation",
+      "query": "singleRule",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "validation",
+      "query": "flat",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "validation",
+      "query": "nested",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[1]",
+          "description": "Rule group at path 1"
+        },
+        {
+          "path": "[1,1]",
+          "description": "Rule group at path 1-1"
+        },
+        {
+          "path": "[1,1,1]",
+          "description": "Rule group at path 1-1-1"
+        }
+      ]
+    },
+    {
+      "scenario": "validation",
+      "query": "withDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "validation",
+      "query": "withoutDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "validation",
+      "query": "rootDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "disabled",
+      "query": "empty",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "disabled",
+      "query": "singleRule",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "disabled",
+      "query": "flat",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "disabled",
+      "query": "nested",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[1]",
+          "description": "Rule group at path 1"
+        },
+        {
+          "path": "[1,1]",
+          "description": "Rule group at path 1-1"
+        },
+        {
+          "path": "[1,1,1]",
+          "description": "Rule group at path 1-1-1"
+        }
+      ]
+    },
+    {
+      "scenario": "disabled",
+      "query": "withDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "disabled",
+      "query": "withoutDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        },
+        {
+          "path": "[2]",
+          "description": "Rule group at path 2"
+        }
+      ]
+    },
+    {
+      "scenario": "disabled",
+      "query": "rootDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    },
+    {
+      "scenario": "customized",
+      "query": "empty",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Root"
+        }
+      ]
+    },
+    {
+      "scenario": "customized",
+      "query": "singleRule",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Root"
+        }
+      ]
+    },
+    {
+      "scenario": "customized",
+      "query": "flat",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Root"
+        }
+      ]
+    },
+    {
+      "scenario": "customized",
+      "query": "nested",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Root"
+        },
+        {
+          "path": "[1]",
+          "description": "Group 1"
+        },
+        {
+          "path": "[1,1]",
+          "description": "Group 1.1"
+        },
+        {
+          "path": "[1,1,1]",
+          "description": "Group 1.1.1"
+        }
+      ]
+    },
+    {
+      "scenario": "customized",
+      "query": "withDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Root"
+        },
+        {
+          "path": "[2]",
+          "description": "Group 2"
+        }
+      ]
+    },
+    {
+      "scenario": "customized",
+      "query": "withoutDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Root"
+        },
+        {
+          "path": "[2]",
+          "description": "Group 2"
+        }
+      ]
+    },
+    {
+      "scenario": "customized",
+      "query": "rootDisabled",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Root"
+        }
+      ]
+    },
+    {
+      "scenario": "customized",
+      "query": "ic",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Root"
+        }
+      ]
+    },
+    {
+      "scenario": "customized",
+      "query": "icNested",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Root"
+        },
+        {
+          "path": "[2]",
+          "description": "Group 2"
+        }
+      ]
+    },
+    {
+      "scenario": "matchModes",
+      "query": "inline",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
+    }
+  ]
+}
