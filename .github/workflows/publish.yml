@@ -90,3 +90,16 @@ jobs:
         run: npx lerna publish from-package --yes --no-git-reset --dist-tag ${{ needs.resolve.outputs.dist-tag }}
       - name: Publish to pkg.pr.new
         run: bunx pkg-pr-new publish './packages/*' --template './examples/*' --packageManager=bun --bun
+      - name: Upload conformance fixtures to the release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          bun run conformance:check
+          bun run conformance:pack
+          gh release upload "$TAG" \
+            rqb-conformance-fixtures.tar.gz \
+            rqb-conformance-fixtures.tar.gz.sha256 \
+            --clobber

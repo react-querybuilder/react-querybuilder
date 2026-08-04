@@ -114,6 +114,7 @@
     "fmt:check": "oxfmt --check",
     "conformance:check": "bun ./utils/conformance/check.ts",
     "conformance:generate": "bun ./utils/conformance/generate.tsx",
+    "conformance:pack": "bun ./utils/conformance/pack.ts",
     "generate-examples": "bun ./examples/generateExamples.ts",
     "generate-parsers": "bun --bun run generate-sqlparser && bun --bun run generate-celparser && bun --bun generate-parsers-codemod",
     "generate-sqlparser": "bunx --bun ts-jison -n SQL -t typescript packages/core/src/utils/parseSQL/sql.jison --outfile packages/core/src/utils/parseSQL/sqlParser.ts",
