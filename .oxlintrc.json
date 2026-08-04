@@ -65,6 +65,23 @@
   },
   "overrides": [
     {
+      // No React imports in core, not even as a type.
+      "files": ["packages/core/src/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["react", "react/*", "react-dom", "react-dom/*", "react-*", "*react"],
+                "message": "@react-querybuilder/core must remain React-free. Move React-dependent code to packages/react-querybuilder."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": [
         "packages/*/dev/**",
         "examples/rules-engine/**",
