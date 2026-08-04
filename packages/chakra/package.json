@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/chakra",
   "description": "Custom Chakra UI components for react-querybuilder",
-  "version": "8.22.0",
+  "version": "8.22.1",
   "publishConfig": {
     "access": "public"
   },
@@ -62,7 +62,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-icons": "^5.6.0",
-    "react-querybuilder": "8.22.0",
+    "react-querybuilder": "8.22.1",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
@@ -73,7 +73,7 @@
     "next-themes": "catalog:peer",
     "react": "catalog:peer",
     "react-icons": "catalog:peer",
-    "react-querybuilder": "8.22.0"
+    "react-querybuilder": "8.22.1"
   },
   "peerDependenciesMeta": {
     "next-themes": {
