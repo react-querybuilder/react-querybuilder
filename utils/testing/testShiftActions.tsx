@@ -16,6 +16,8 @@ export const defaultShiftActionsProps: ShiftActionsProps = {
   testID: TestID.shiftActions,
   schema: basicSchema,
   disabled: false,
+  shiftUp: () => {},
+  shiftDown: () => {},
   shiftUpDisabled: false,
   shiftDownDisabled: false,
 };

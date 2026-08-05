@@ -357,11 +357,13 @@ export interface ShiftActionsProps extends CommonSubComponentProps {
   /**
    * Method to shift the rule/group up one place.
    */
-  shiftUp?: () => void;
+  // oxlint-disable-next-line no-explicit-any
+  shiftUp: (e?: ReactMouseEvent, context?: any) => void;
   /**
    * Method to shift the rule/group down one place.
    */
-  shiftDown?: () => void;
+  // oxlint-disable-next-line no-explicit-any
+  shiftDown: (e?: ReactMouseEvent, context?: any) => void;
   /**
    * Whether shifting the rule/group up is disallowed.
    */

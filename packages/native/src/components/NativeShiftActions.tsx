@@ -27,13 +27,13 @@ export const NativeShiftActions = ({
     <View testID={testID} style={style.shiftActions}>
       <Button
         disabled={disabled || shiftUpDisabled}
-        onPress={shiftUp}
+        onPress={_e => shiftUp()}
         accessibilityLabel={labels?.shiftUp as string}
         title={labels?.shiftUp as string}
       />
       <Button
         disabled={disabled || shiftDownDisabled}
-        onPress={shiftDown}
+        onPress={_e => shiftDown()}
         accessibilityLabel={labels?.shiftDown as string}
         title={labels?.shiftDown as string}
       />

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `ShiftActionsProps` includes event and context parameters for `shiftUp`/`shiftDown` methods.
 - `QueryManager` accepts `translations`, enabling it to produce correct placeholder values for `fields`, `operators`, and `values` lists.
 
 ## [v8.22.1] - 2026-08-04

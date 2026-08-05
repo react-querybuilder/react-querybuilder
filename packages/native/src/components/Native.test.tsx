@@ -201,6 +201,8 @@ describe('NativeShiftActions', () => {
     // from "@react-querybuilder/testing".
     schema: {} as Schema<FullField, string>,
     disabled: false,
+    shiftUp: () => {},
+    shiftDown: () => {},
     shiftUpDisabled: false,
     shiftDownDisabled: false,
   };
