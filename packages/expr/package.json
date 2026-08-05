@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/expr",
   "description": "Arithmetic and function expression support for react-querybuilder",
-  "version": "8.22.1",
+  "version": "8.22.2",
   "publishConfig": {
     "access": "public"
   },
@@ -83,7 +83,7 @@
     "mongoose": "catalog:test",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-querybuilder": "8.22.1",
+    "react-querybuilder": "8.22.2",
     "rollup-plugin-visualizer": "catalog:",
     "sass": "catalog:",
     "sequelize": "catalog:test",
@@ -93,11 +93,11 @@
     "vite": "catalog:"
   },
   "dependencies": {
-    "@react-querybuilder/core": "8.22.1"
+    "@react-querybuilder/core": "8.22.2"
   },
   "peerDependencies": {
     "react": "catalog:peer",
-    "react-querybuilder": "8.22.1"
+    "react-querybuilder": "8.22.2"
   },
   "peerDependenciesMeta": {
     "react": {
