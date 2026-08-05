@@ -8,6 +8,7 @@ import {
 } from '../defaults';
 import type {
   BaseOptionMap,
+  BaseTranslations,
   DiagnosticsResult,
   ExportFormat,
   ExportObjectFormats,
@@ -186,6 +187,14 @@ export interface QueryManagerOptions<
   autoSelectOperator?: boolean;
   /** When `false`, an empty placeholder option is prepended to each value list. */
   autoSelectValue?: boolean;
+  /**
+   * Translations, accepting the same shape as the `translations` prop. Only the placeholder
+   * properties of `fields`, `operators`, and `values` are used, and only when the corresponding
+   * `autoSelect*` option is `false`; the remaining keys describe UI elements that have no
+   * meaning outside the `QueryBuilder` component. Labels are typed as `unknown` so the React
+   * `Translations` type, whose labels are `ReactNode`, can be passed as-is.
+   */
+  translations?: Partial<BaseTranslations<unknown>>;
   /** The default `field` for rules created by {@link QueryManager.createRule}. */
   getDefaultField?: string | ((fieldsData: FullOptionList<F>) => string);
   /** The default `operator` for a given field. */
@@ -418,6 +427,7 @@ export class QueryManager<
       optionList: options.fields,
       baseOption: options.baseField,
       autoSelectOption: options.autoSelectField,
+      placeholder: options.translations?.fields,
     });
     // Both are frozen because `getFields` and `getFieldData` hand their contents out directly.
     // `prepareOptionList` builds the map's values as separate objects from the list's, so
@@ -430,6 +440,7 @@ export class QueryManager<
       baseOption: options.baseOperator,
       labelMap: defaultOperatorLabelMap,
       autoSelectOption: options.autoSelectOperator,
+      placeholder: options.translations?.operators,
     }).optionList;
 
     // Frozen because `getCombinators` hands this array out directly; see also `#fields`.
@@ -463,6 +474,7 @@ export class QueryManager<
       operators: this.#operators,
       baseOption: this.#options.baseOperator,
       autoSelectOption: this.#options.autoSelectOperator,
+      placeholder: this.#options.translations?.operators,
     });
   }
 
@@ -495,6 +507,7 @@ export class QueryManager<
       fieldData: this.#fieldData(field),
       getValues: this.#options.getValues,
       autoSelectOption: this.#options.autoSelectValue,
+      placeholder: this.#options.translations?.values,
     });
   }
 

@@ -1764,6 +1764,104 @@ describe('rule configuration', () => {
   });
 });
 
+describe('translations', () => {
+  const autoSelectOff = {
+    autoSelectField: false,
+    autoSelectOperator: false,
+    autoSelectValue: false,
+  } as const;
+  const valueFields = [{ name: 'gender', label: 'Gender', values: [{ name: 'M', label: 'Male' }] }];
+
+  it('uses the custom field placeholder', () => {
+    const m = new QueryManager(undefined, {
+      fields,
+      ...autoSelectOff,
+      translations: { fields: { placeholderName: '#', placeholderLabel: 'Select a field' } },
+    });
+    const [placeholder] = m.getFields() as FullField[];
+    expect(placeholder.value).toBe('#');
+    expect(placeholder.label).toBe('Select a field');
+  });
+
+  it('uses the custom field placeholder for optgroups', () => {
+    const m = new QueryManager(undefined, {
+      fields: [{ label: 'Names', options: fields }],
+      ...autoSelectOff,
+      translations: {
+        fields: { placeholderName: '#', placeholderLabel: 'Select', placeholderGroupLabel: '~~~' },
+      },
+    });
+    const [group] = m.getFields() as unknown as { label: string; options: FullField[] }[];
+    expect(group.label).toBe('~~~');
+    expect(group.options[0].value).toBe('#');
+    expect(group.options[0].label).toBe('Select');
+  });
+
+  it('uses the custom operator placeholder', () => {
+    const m = new QueryManager(undefined, {
+      fields,
+      ...autoSelectOff,
+      translations: { operators: { placeholderName: '%', placeholderLabel: 'Select an operator' } },
+    });
+    const [placeholder] = m.getOperators('firstName') as FullOption[];
+    expect(placeholder.value).toBe('%');
+    expect(placeholder.label).toBe('Select an operator');
+  });
+
+  it('uses the custom value placeholder', () => {
+    const m = new QueryManager(undefined, {
+      fields: valueFields,
+      ...autoSelectOff,
+      translations: { values: { placeholderName: '$', placeholderLabel: 'Select a value' } },
+    });
+    const [placeholder] = m.getValues('gender', '=') as FullOption[];
+    expect(placeholder.value).toBe('$');
+    expect(placeholder.label).toBe('Select a value');
+  });
+
+  it('writes custom placeholder names into new rules', () => {
+    const m = new QueryManager(undefined, {
+      fields,
+      ...autoSelectOff,
+      translations: { fields: { placeholderName: '#' }, operators: { placeholderName: '%' } },
+    });
+    expect(m.createRule()).toMatchObject({ field: '#', operator: '%' });
+  });
+
+  it('surfaces the custom placeholders through getRuleContext', () => {
+    const m = new QueryManager<RuleGroupType>(
+      { combinator: 'and', rules: [{ field: 'gender', operator: '=', value: '' }] },
+      {
+        fields: valueFields,
+        ...autoSelectOff,
+        translations: { operators: { placeholderName: '%' }, values: { placeholderName: '$' } },
+      }
+    );
+    const ctx = m.getRuleContext([0])!;
+    expect((ctx.operators as FullOption[])[0].value).toBe('%');
+    expect((ctx.values as FullOption[])[0].value).toBe('$');
+  });
+
+  it('falls back to the defaults for omitted translations', () => {
+    const m = new QueryManager(undefined, {
+      fields: valueFields,
+      ...autoSelectOff,
+      translations: { fields: { placeholderName: '#' } },
+    });
+    expect((m.getFields() as FullField[])[0].value).toBe('#');
+    expect((m.getOperators('gender') as FullOption[])[0].value).toBe(defaultPlaceholderName);
+    expect((m.getValues('gender', '=') as FullOption[])[0].value).toBe(defaultPlaceholderName);
+  });
+
+  it('ignores translations when the autoSelect options are enabled', () => {
+    const m = new QueryManager(undefined, {
+      fields,
+      translations: { fields: { placeholderName: '#' } },
+    });
+    expect((m.getFields() as FullField[])[0].value).toBe('firstName');
+  });
+});
+
 describe('group configuration', () => {
   const q = () =>
     new QueryManager<RuleGroupType>({ combinator: 'or', rules: [rule()] }, { fields });

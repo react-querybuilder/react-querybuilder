@@ -397,6 +397,17 @@ These methods resolve the same field/operator configuration the `QueryBuilder` c
 - `getValues(field, operator): FullOptionList<Option>` — The value option list.
 - `getValueEditorType(field, operator): ValueEditorType` — The value editor type.
 
+When `autoSelectField`, `autoSelectOperator`, or `autoSelectValue` is `false`, an empty placeholder option is prepended to the corresponding list. Pass the `translations` option to control those placeholders exactly as the `translations` prop does for the `QueryBuilder` component—only the placeholder properties of `fields`, `operators`, and `values` are used, since the remaining keys describe UI elements that have no meaning outside the component. This matters beyond presentation: `placeholderName` becomes the `field`, `operator`, or `value` written into rules created by the manager, so a manager paired with a component should receive the same translations.
+
+```ts
+const q = new QueryManager(undefined, {
+  fields,
+  autoSelectField: false,
+  translations: { fields: { placeholderName: '#', placeholderLabel: 'Select a field' } },
+});
+q.createRule(); // => { field: '#', ... }
+```
+
 `getRuleContext(pathOrID)` resolves all of the above for a specific rule at once, plus its validation result, returning `null` when the target can't be resolved or isn't a rule.
 
 ```ts
@@ -422,12 +433,6 @@ This is the same derivation the [`useRule`](./hooks#userule) hook performs—bot
 const ctx = q.getRuleContext([0]);
 // => { fieldData: { name: 'firstName', ... }, valueEditorType: 'text', valueSources: ['value'], ... }
 ```
-
-:::note
-
-`QueryManager` has no `getInputType` option, so `inputType` reflects only a field's own `inputType` property and is otherwise `null`.
-
-:::
 
 `getRuleGroupContext(pathOrID)` is the equivalent for groups, defaulting to the root group. It returns `null` when the target can't be resolved or isn't a group.
 
