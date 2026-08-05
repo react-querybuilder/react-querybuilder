@@ -125,7 +125,7 @@
     "update-mantine-css": "bun utils/update-mantine-css.ts",
     "outdated": "bun update --interactive --recursive",
     "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lock bun.lockb && bun install --save-text-lockfile",
-    "version": "bun version.ts && bun install && bun --bun run build && bun run generate-examples && git add examples packages website/package.json bun.lock",
+    "version": "bun version.ts && bun install && bun --bun run build && bun run generate-examples && bun run conformance:generate && git add examples packages website/package.json bun.lock utils/conformance/fixtures",
     "web": "bun run --filter website start",
     "web:skiptypedoc": "RQB_TYPEDOC_DONE=true bun run --filter website start",
     "website:clearrun": "bun run --filter website clear && bun run --filter website start",
