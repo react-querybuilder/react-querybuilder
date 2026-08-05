@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.22.2] - 2026-08-05
+
 ### Fixed
 
 - `ShiftActionsProps` includes event and context parameters for `shiftUp`/`shiftDown` methods.
@@ -2459,7 +2463,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.2...HEAD
+[v8.22.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.1...v8.22.2
 [v8.22.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.0...v8.22.1
 [v8.22.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.1...v8.22.0
 [v8.21.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.1...v8.21.2
