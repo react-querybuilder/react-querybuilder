@@ -32,7 +32,8 @@ export function useQueryManager<
  *
  * The manager is created once and never recreated, so `query` is an _initial_ value and
  * `options` are captured on the first render only. Later changes to either argument are ignored.
- * To reconfigure the manager, construct it yourself and pass the instance instead.
+ * To change the configuration afterward, call `manager.reconfigure(...)` on the returned
+ * manager; this hook re-renders when it does.
  *
  * @group Hooks
  */
@@ -66,6 +67,11 @@ export function useQueryManager<
   // `getQuery` doubles as the server snapshot: QueryManager has no React or DOM dependencies,
   // and the query is frozen and only replaced by reference on commit.
   const query = useSyncExternalStore(manager.subscribe, manager.getQuery, manager.getQuery);
+
+  // `reconfigure` leaves the query object untouched, so the subscription above cannot see it.
+  // The config version is a snapshot that does change, which re-renders consumers whose output
+  // depends on options (translations, fields, etc.) rather than on the query.
+  useSyncExternalStore(manager.subscribe, manager.getConfigVersion, manager.getConfigVersion);
 
   return [query, manager];
 }
