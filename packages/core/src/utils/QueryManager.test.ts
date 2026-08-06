@@ -2035,6 +2035,35 @@ describe('reconfigure', () => {
     expect(q.canRedo()).toBe(false);
   });
 
+  it('reconciles history after a failed batch turns history off', () => {
+    const q = new QueryManager(undefined, { fields, history: true });
+    q.add(rule());
+    expect(q.canUndo()).toBe(true);
+
+    expect(() =>
+      q.batch(() => {
+        q.reconfigure({ history: false });
+        throw new Error('rollback');
+      })
+    ).toThrow('rollback');
+
+    expect(q.canUndo()).toBe(false);
+    expect(q.canRedo()).toBe(false);
+  });
+
+  it('records history for a mutation after history is toggled within a batch', () => {
+    const q = new QueryManager(undefined, { fields, history: true });
+
+    q.batch(() => {
+      q.reconfigure({ history: false });
+      q.reconfigure({ history: true });
+      q.add(rule());
+    });
+
+    expect(q.canUndo()).toBe(true);
+    expect(q.getHistory().past).toHaveLength(1);
+  });
+
   it('starts recording when history is turned on', () => {
     const q = new QueryManager(undefined, { fields });
     q.add(rule());

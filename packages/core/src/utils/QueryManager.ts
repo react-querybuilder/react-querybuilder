@@ -960,19 +960,35 @@ export class QueryManager<
     // have just changed. `#idPathIndex` is derived from the query alone and stays valid.
     this.#validation = undefined;
 
+    this.#reconcileHistoryConfig();
+
+    ++this.#configVersion;
+    this.#notify();
+
+    return this;
+  }
+
+  /**
+   * Brings the history stacks in line with the current history configuration. Unlike
+   * {@link QueryManager.clearHistory}, this does _not_ set `#historyBypassed`: it reflects a
+   * configuration change rather than a deliberate history repositioning, so a later mutation in
+   * the same batch must still be recorded normally.
+   *
+   * Called by {@link QueryManager.reconfigure} and again after a failed
+   * {@link QueryManager.batch batch} restores its snapshot, since that snapshot predates the
+   * configuration change (configuration is not part of a batch's rollback).
+   */
+  #reconcileHistoryConfig(): void {
     if (this.#historyEnabled) {
       // Only ever shrinks; a raised `maxHistory` simply allows more entries from here on.
       if (this.#past.length > this.#maxHistory) {
         this.#past.splice(0, this.#past.length - this.#maxHistory);
       }
     } else {
-      this.clearHistory();
+      this.#past = [];
+      this.#future = [];
+      this.#lastSig = undefined;
     }
-
-    ++this.#configVersion;
-    this.#notify();
-
-    return this;
   }
 
   /**
@@ -1076,6 +1092,9 @@ export class QueryManager<
         this.#future = snapshot.future;
         this.#lastSig = snapshot.lastSig;
         this.#lastAt = snapshot.lastAt;
+        // The snapshot predates any `reconfigure` call made inside the batch, and configuration
+        // is not rolled back, so the restored stacks must be re-reconciled against it.
+        this.#reconcileHistoryConfig();
       }
       throw error;
     } finally {
