@@ -231,6 +231,29 @@ As with the query tools themselves, these methods are a no-op when the target pa
 
 `clone(options?: { regenerateIDs?: boolean })` returns an independent manager with the same configuration and the current query. Subscribers and history are not carried over. Because every mutation produces a new query object, the two managers share the initial query safely and diverge from the first change. Pass `{ regenerateIDs: true }` to give every rule and group in the clone a new `id`, which is useful when both queries will be used together.
 
+### Reconfiguration
+
+`reconfigure(options: Partial<QueryManagerOptions>, config?: { replace?: boolean })` updates the manager's configuration in place, keeping the current query, the undo/redo history, and every subscriber. Use it to propagate new `translations`, `fields`, `operators`, and so on without discarding state:
+
+```ts
+q.reconfigure({ translations: { fields: { placeholderLabel: 'Choisir un champ' } } });
+```
+
+The incoming options are shallow-merged over the current ones, so keys left out are preserved. Passing a key explicitly as `undefined` resets it to its default. Object-valued options like `translations` are replaced wholesale rather than deep-merged—spread the current value in yourself to patch a single key. Pass `{ replace: true }` to discard the existing options entirely and start from the incoming set.
+
+Related methods:
+
+- `getOptions(): QueryManagerOptions` — The options currently in effect, as a frozen shallow copy.
+- `getConfigVersion(): number` — A counter incremented by every `reconfigure` call. Bound to the instance, so it can be passed directly to React's `useSyncExternalStore` alongside `subscribe`. The [`useQueryManager`](./hooks#usequerymanager) hook already does this.
+
+:::note
+
+`reconfigure` never rewrites the query, even when the new options no longer describe it—a rule whose `field` is not in the new `fields` list is left as-is. Call [`validate()`](#validation-and-export) to detect that, or `setQuery(getQuery())` to re-normalize.
+
+Subscribers are notified once and `getConfigVersion()` is incremented, even inside a [batch](#batching); configuration is not part of a batch's rollback. History options are honored immediately: lowering `maxHistory` trims the undo stack, and turning history off clears both stacks.
+
+:::
+
 ### Subscriptions
 
 `subscribe(listener: () => void)` registers a listener called after every change to the query, and returns a function that unregisters it. Mutations that resolve to a no-op do not notify, and a [batch](#batching) notifies once no matter how many changes it contains.

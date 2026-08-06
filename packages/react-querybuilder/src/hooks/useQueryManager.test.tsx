@@ -1,4 +1,10 @@
-import { QueryManager, type RuleGroupType, type RuleType } from '@react-querybuilder/core';
+import {
+  defaultPlaceholderLabel,
+  QueryManager,
+  type FullField,
+  type RuleGroupType,
+  type RuleType,
+} from '@react-querybuilder/core';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
@@ -163,6 +169,50 @@ describe('useQueryManager', () => {
         qm.redo();
       });
       expect(result.current[0].rules).toHaveLength(1);
+    });
+
+    it('re-renders when the manager is reconfigured', () => {
+      const { qm, result, getRenderCount } = renderCounter();
+      const before = getRenderCount();
+
+      act(() => {
+        qm.reconfigure({ fields, autoSelectField: false });
+      });
+
+      // The query object is unchanged, but the new configuration must reach the consumer.
+      expect(getRenderCount()).toBe(before + 1);
+      expect(result.current[1].getFields()).toHaveLength(fields.length + 1);
+    });
+
+    it('surfaces reconfigured translations in the rendered output', async () => {
+      const qm = new QueryManager<RuleGroupType>(undefined, { fields, autoSelectField: false });
+      const CustomUI = () => {
+        const [, manager] = useQueryManager(qm);
+        return (
+          <span data-testid="placeholder">{(manager.getFields() as FullField[])[0].label}</span>
+        );
+      };
+
+      render(<CustomUI />);
+      expect(screen.getByTestId('placeholder')).toHaveTextContent(defaultPlaceholderLabel);
+
+      await act(async () => {
+        qm.reconfigure({ translations: { fields: { placeholderLabel: 'Choisir un champ' } } });
+      });
+
+      expect(screen.getByTestId('placeholder')).toHaveTextContent('Choisir un champ');
+    });
+
+    it('stops observing config changes after unmount', () => {
+      const qm = new QueryManager<RuleGroupType>(undefined, { fields });
+      const { unmount } = renderHook(() => useQueryManager(qm));
+
+      unmount();
+
+      expect(() => {
+        qm.reconfigure({ listsAsArrays: true });
+      }).not.toThrow();
+      expect(qm.getConfigVersion()).toBe(1);
     });
 
     it('unsubscribes on unmount', () => {

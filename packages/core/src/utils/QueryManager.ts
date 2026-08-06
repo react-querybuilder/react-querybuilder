@@ -376,21 +376,27 @@ export class QueryManager<
   C extends FullCombinator = FullCombinator,
 > {
   #query: RG;
-  readonly #options: QueryManagerOptions<F, O, C>;
-  readonly #fields: FullOptionList<F>;
-  readonly #fieldMap: Partial<FullOptionRecord<FullField>>;
-  readonly #operators: FullOptionList<O>;
-  readonly #combinators: FullOptionList<C>;
-  readonly #idGenerator: () => string;
-  readonly #validator: QueryValidator;
-  readonly #strict: boolean;
-  readonly #respectDisabled: boolean;
-  readonly #onInvalidTarget: ((info: AbortInfo) => void) | undefined;
+  // The fields below are derived from the options and are reassigned by `reconfigure`, so none
+  // of them can be `readonly`. Anything handed out directly is frozen instead. They are all
+  // assigned by `#applyOptions`, which the constructor calls first thing; TypeScript can't see
+  // through the method call, hence the definite assignment assertions.
+  #options!: QueryManagerOptions<F, O, C>;
+  #fields!: FullOptionList<F>;
+  #fieldMap!: Partial<FullOptionRecord<FullField>>;
+  #operators!: FullOptionList<O>;
+  #combinators!: FullOptionList<C>;
+  #idGenerator!: () => string;
+  #validator!: QueryValidator;
+  #strict!: boolean;
+  #respectDisabled!: boolean;
+  #onInvalidTarget: ((info: AbortInfo) => void) | undefined;
   readonly #listeners = new Set<() => void>();
-  readonly #historyEnabled: boolean;
-  readonly #maxHistory: number;
-  readonly #coalesceMs: number;
-  readonly #now: () => number;
+  #historyEnabled!: boolean;
+  #maxHistory!: number;
+  #coalesceMs!: number;
+  #now!: () => number;
+  /** Incremented by every {@link QueryManager.reconfigure} call. See `getConfigVersion`. */
+  #configVersion = 0;
   #past: RG[] = [];
   #future: RG[] = [];
   #lastSig: string | undefined;
@@ -409,6 +415,20 @@ export class QueryManager<
   #validation: boolean | ValidationMap | undefined;
 
   constructor(query?: RG, options: QueryManagerOptions<F, O, C> = {}) {
+    this.#applyOptions(options);
+
+    this.#query = freeze(
+      query ? prepareRuleGroup(query, { idGenerator: this.#idGenerator }) : this.createRuleGroup(),
+      true
+    );
+  }
+
+  /**
+   * Assigns `#options` and every field derived from it. Shared by the constructor and
+   * {@link QueryManager.reconfigure}, so the two can never drift apart. Does not touch the
+   * query, the history stacks, the caches, or the subscriber list.
+   */
+  #applyOptions(options: QueryManagerOptions<F, O, C>): void {
     this.#options = options;
     this.#idGenerator = options.idGenerator ?? generateID;
     this.#validator = options.validator ?? defaultValidator;
@@ -449,11 +469,6 @@ export class QueryManager<
         optionList: (options.combinators ?? defaultCombinators) as FlexibleOptionListProp<C>,
         baseOption: options.baseCombinator,
       }).optionList,
-      true
-    );
-
-    this.#query = freeze(
-      query ? prepareRuleGroup(query, { idGenerator: this.#idGenerator }) : this.createRuleGroup(),
       true
     );
   }
@@ -898,6 +913,97 @@ export class QueryManager<
 
   // #endregion
 
+  // #region Configuration
+
+  /**
+   * The options currently in effect, as a frozen shallow copy. Reflects everything applied by
+   * the constructor and any subsequent {@link QueryManager.reconfigure} calls, but not the
+   * defaults filled in for options that were never provided.
+   */
+  getOptions(): Readonly<QueryManagerOptions<F, O, C>> {
+    return freeze({ ...this.#options });
+  }
+
+  /**
+   * Updates the manager's configuration in place, keeping the current query, the undo/redo
+   * history, and every subscriber. Use this to propagate new `translations`, `fields`,
+   * `operators`, and so on without discarding state:
+   *
+   * ```ts
+   * q.reconfigure({ translations: { fields: { placeholderLabel: 'Choisir un champ' } } });
+   * ```
+   *
+   * The incoming options are shallow-merged over the current ones, so keys left out are
+   * preserved. Passing a key explicitly as `undefined` resets it to its default. Object-valued
+   * options like `translations` are replaced wholesale rather than deep-merged — spread the
+   * current value in yourself to patch one key. Pass `{ replace: true }` to discard the
+   * existing options entirely and start from the incoming set.
+   *
+   * The query is never rewritten, even when the new options no longer describe it: a rule whose
+   * `field` is not in the new `fields` list is left as-is. Call
+   * {@link QueryManager.validate validate} to detect that, or `setQuery(getQuery())` to
+   * re-normalize.
+   *
+   * History options are honored immediately: lowering `maxHistory` trims the undo stack, and
+   * turning history off clears both stacks. Subscribers are notified once, and
+   * {@link QueryManager.getConfigVersion} is incremented, even inside a
+   * {@link QueryManager.batch batch} — configuration is not part of a batch's rollback.
+   */
+  reconfigure(
+    options: Partial<QueryManagerOptions<F, O, C>>,
+    config?: { replace?: boolean }
+  ): this {
+    this.#applyOptions(freeze(config?.replace ? { ...options } : { ...this.#options, ...options }));
+
+    // `#ensureCache` is keyed on query identity, and the query has not changed, so it will not
+    // clear this on its own. Validation depends on `validator` and `fields`, both of which may
+    // have just changed. `#idPathIndex` is derived from the query alone and stays valid.
+    this.#validation = undefined;
+
+    this.#reconcileHistoryConfig();
+
+    ++this.#configVersion;
+    this.#notify();
+
+    return this;
+  }
+
+  /**
+   * Brings the history stacks in line with the current history configuration. Unlike
+   * {@link QueryManager.clearHistory}, this does _not_ set `#historyBypassed`: it reflects a
+   * configuration change rather than a deliberate history repositioning, so a later mutation in
+   * the same batch must still be recorded normally.
+   *
+   * Called by {@link QueryManager.reconfigure} and again after a failed
+   * {@link QueryManager.batch batch} restores its snapshot, since that snapshot predates the
+   * configuration change (configuration is not part of a batch's rollback).
+   */
+  #reconcileHistoryConfig(): void {
+    if (this.#historyEnabled) {
+      // Only ever shrinks; a raised `maxHistory` simply allows more entries from here on.
+      if (this.#past.length > this.#maxHistory) {
+        this.#past.splice(0, this.#past.length - this.#maxHistory);
+      }
+    } else {
+      this.#past = [];
+      this.#future = [];
+      this.#lastSig = undefined;
+    }
+  }
+
+  /**
+   * A counter incremented by every {@link QueryManager.reconfigure} call. Because reconfiguring
+   * leaves the query object untouched, subscribers that compare query identity alone cannot see
+   * it; this provides a snapshot that does change.
+   *
+   * Bound to the instance, so it can be passed directly to `useSyncExternalStore` alongside
+   * {@link QueryManager.subscribe}. The `useQueryManager` hook from `react-querybuilder`
+   * already does this.
+   */
+  getConfigVersion = (): number => this.#configVersion;
+
+  // #endregion
+
   // #region Cloning
 
   /**
@@ -986,6 +1092,9 @@ export class QueryManager<
         this.#future = snapshot.future;
         this.#lastSig = snapshot.lastSig;
         this.#lastAt = snapshot.lastAt;
+        // The snapshot predates any `reconfigure` call made inside the batch, and configuration
+        // is not rolled back, so the restored stacks must be re-reconciled against it.
+        this.#reconcileHistoryConfig();
       }
       throw error;
     } finally {

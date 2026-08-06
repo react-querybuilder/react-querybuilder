@@ -1862,6 +1862,239 @@ describe('translations', () => {
   });
 });
 
+describe('reconfigure', () => {
+  const autoSelectOff = {
+    autoSelectField: false,
+    autoSelectOperator: false,
+    autoSelectValue: false,
+  } as const;
+
+  it('propagates new translations to the option lists', () => {
+    const q = new QueryManager(undefined, {
+      fields,
+      ...autoSelectOff,
+      translations: { fields: { placeholderLabel: 'Select a field' } },
+    });
+    expect((q.getFields() as FullField[])[0].label).toBe('Select a field');
+
+    q.reconfigure({ translations: { fields: { placeholderLabel: 'Choisir un champ' } } });
+
+    expect((q.getFields() as FullField[])[0].label).toBe('Choisir un champ');
+    expect(q.getFieldData(defaultPlaceholderName).label).toBe('Choisir un champ');
+  });
+
+  it('propagates new translations to operators and values', () => {
+    const q = new QueryManager(undefined, {
+      fields: [{ name: 'gender', label: 'Gender', values: [{ name: 'M', label: 'Male' }] }],
+      ...autoSelectOff,
+    });
+
+    q.reconfigure({
+      translations: {
+        operators: { placeholderName: '%', placeholderLabel: 'Op' },
+        values: { placeholderName: '$', placeholderLabel: 'Val' },
+      },
+    });
+
+    expect((q.getOperators('gender') as FullOption[])[0]).toMatchObject({
+      value: '%',
+      label: 'Op',
+    });
+    expect((q.getValues('gender', '=') as FullOption[])[0]).toMatchObject({
+      value: '$',
+      label: 'Val',
+    });
+    expect(q.createRule()).toMatchObject({ operator: '%' });
+  });
+
+  it('shallow-merges over the existing options', () => {
+    const q = new QueryManager(undefined, { fields, ...autoSelectOff });
+    q.reconfigure({ translations: { fields: { placeholderName: '#' } } });
+
+    // `fields` and the autoSelect options were not passed to `reconfigure` but are preserved.
+    expect(q.getFields()).toHaveLength(fields.length + 1);
+    expect(q.createRule()).toMatchObject({ field: '#' });
+  });
+
+  it('resets an option to its default when passed explicitly as undefined', () => {
+    const q = new QueryManager(undefined, { fields, combinators: [{ name: 'xor', label: 'XOR' }] });
+    expect(q.getCombinators()).toHaveLength(1);
+
+    q.reconfigure({ combinators: undefined });
+
+    expect(q.getCombinators().length).toBeGreaterThan(1);
+  });
+
+  it('discards the previous options when `replace` is true', () => {
+    const q = new QueryManager(undefined, { fields, ...autoSelectOff });
+    q.reconfigure({ validator: () => true }, { replace: true });
+
+    expect(q.getOptions()).toEqual({ validator: expect.any(Function) });
+    // `fields` is gone, so the list holds nothing but the placeholder.
+    expect(q.getFields()).toHaveLength(1);
+  });
+
+  it('returns the manager for chaining', () => {
+    const q = new QueryManager(undefined, { fields });
+    expect(q.reconfigure({})).toBe(q);
+  });
+
+  it('exposes the merged options as a frozen copy', () => {
+    const q = new QueryManager(undefined, { fields });
+    q.reconfigure({ listsAsArrays: true });
+
+    const options = q.getOptions();
+    expect(options).toMatchObject({ fields, listsAsArrays: true });
+    expect(Object.isFrozen(options)).toBe(true);
+    // A copy, so mutating it does not affect the manager.
+    expect(q.getOptions()).not.toBe(options);
+  });
+
+  it('leaves the query untouched', () => {
+    const q = new QueryManager<RuleGroupType>({ combinator: 'and', rules: [rule()] }, { fields });
+    const before = q.getQuery();
+
+    q.reconfigure({ fields: [{ name: 'other', label: 'Other' }] });
+
+    expect(q.getQuery()).toBe(before);
+    expect(q.getQuery().rules[0]).toMatchObject({ field: 'firstName' });
+  });
+
+  it('notifies subscribers and bumps the config version', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    expect(q.getConfigVersion()).toBe(0);
+    q.subscribe(listener);
+
+    q.reconfigure({ listsAsArrays: true });
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(q.getConfigVersion()).toBe(1);
+
+    q.reconfigure({});
+    expect(q.getConfigVersion()).toBe(2);
+  });
+
+  it('notifies immediately inside a batch', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    q.subscribe(listener);
+
+    q.batch(() => {
+      q.reconfigure({ listsAsArrays: true });
+      expect(listener).toHaveBeenCalledTimes(1);
+      q.add(rule());
+    });
+
+    // Once for the reconfigure, once for the batch's query change.
+    expect(listener).toHaveBeenCalledTimes(2);
+  });
+
+  it('invalidates the cached validation result', () => {
+    const q = new QueryManager(undefined, { fields });
+    expect(q.validate()).not.toBe(true);
+
+    q.reconfigure({ validator: () => true });
+
+    expect(q.validate()).toBe(true);
+  });
+
+  it('preserves history and trims the undo stack to a lower maxHistory', () => {
+    const q = new QueryManager(undefined, { fields, history: true });
+    q.add(rule('firstName')).add(rule('lastName')).add(rule('age'));
+    expect(q.getHistory().past).toHaveLength(3);
+
+    q.reconfigure({ history: { maxHistory: 1 } });
+
+    const { past } = q.getHistory();
+    expect(past).toHaveLength(1);
+    // The most recent entry is the one kept.
+    expect(past[0].rules).toHaveLength(2);
+    expect(q.canUndo()).toBe(true);
+  });
+
+  it('leaves a shorter undo stack alone when maxHistory is raised', () => {
+    const q = new QueryManager(undefined, { fields, history: { maxHistory: 5 } });
+    q.add(rule());
+
+    q.reconfigure({ history: { maxHistory: 50 } });
+
+    expect(q.getHistory().past).toHaveLength(1);
+  });
+
+  it('clears history when history is turned off', () => {
+    const q = new QueryManager(undefined, { fields, history: true });
+    q.add(rule());
+    q.undo();
+    expect(q.getHistory()).toMatchObject({ past: [], future: [expect.anything()] });
+
+    q.reconfigure({ history: false });
+
+    expect(q.getHistory()).toEqual({ past: [], future: [] });
+    expect(q.canUndo()).toBe(false);
+    expect(q.canRedo()).toBe(false);
+  });
+
+  it('reconciles history after a failed batch turns history off', () => {
+    const q = new QueryManager(undefined, { fields, history: true });
+    q.add(rule());
+    expect(q.canUndo()).toBe(true);
+
+    expect(() =>
+      q.batch(() => {
+        q.reconfigure({ history: false });
+        throw new Error('rollback');
+      })
+    ).toThrow('rollback');
+
+    expect(q.canUndo()).toBe(false);
+    expect(q.canRedo()).toBe(false);
+  });
+
+  it('records history for a mutation after history is toggled within a batch', () => {
+    const q = new QueryManager(undefined, { fields, history: true });
+
+    q.batch(() => {
+      q.reconfigure({ history: false });
+      q.reconfigure({ history: true });
+      q.add(rule());
+    });
+
+    expect(q.canUndo()).toBe(true);
+    expect(q.getHistory().past).toHaveLength(1);
+  });
+
+  it('starts recording when history is turned on', () => {
+    const q = new QueryManager(undefined, { fields });
+    q.add(rule());
+    expect(q.canUndo()).toBe(false);
+
+    q.reconfigure({ history: true });
+    q.add(rule('lastName'));
+
+    expect(q.canUndo()).toBe(true);
+    expect(q.getHistory().past).toHaveLength(1);
+  });
+
+  it('applies new behavior options to subsequent mutations', () => {
+    const q = new QueryManager<RuleGroupType>(
+      { combinator: 'and', rules: [rule()] },
+      { fields, strict: false }
+    );
+
+    expect(() => q.remove([9])).not.toThrow();
+    q.reconfigure({ strict: true });
+    expect(() => q.remove([9])).toThrow(QueryManagerError);
+  });
+
+  it('carries the reconfigured options into clones', () => {
+    const q = new QueryManager(undefined, { fields, ...autoSelectOff });
+    q.reconfigure({ translations: { fields: { placeholderName: '#' } } });
+
+    expect(q.clone().createRule()).toMatchObject({ field: '#' });
+  });
+});
+
 describe('group configuration', () => {
   const q = () =>
     new QueryManager<RuleGroupType>({ combinator: 'or', rules: [rule()] }, { fields });
