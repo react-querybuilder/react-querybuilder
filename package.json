@@ -291,7 +291,8 @@
     "tsdown": "^0.22.14",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "vitest-axe": "^0.1.0"
   },
   "overrides": {
     "bson": "7.2.0",
