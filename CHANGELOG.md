@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.22.3] - 2026-08-06
+
 ### Fixed
 
 - [#1082] `QueryManager#reconfigure(options, { replace })` updates a manager's configuration in place—propagating new `translations`, `fields`, `operators`, etc.—while keeping the current query, the undo/redo history, and all subscribers. Incoming options are shallow-merged over the current ones unless `replace` is `true`. Companion methods `getOptions()` and `getConfigVersion()` were added as well, and `useQueryManager` now re-renders when a manager is reconfigured.
@@ -2466,7 +2468,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.3...HEAD
+[v8.22.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.2...v8.22.3
 [v8.22.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.1...v8.22.2
 [v8.22.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.0...v8.22.1
 [v8.22.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.1...v8.22.0
