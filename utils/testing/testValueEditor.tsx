@@ -366,9 +366,13 @@ export const testValueEditor = (
           value: '12,14',
         };
 
+        // The wrapper span and both bound inputs all carry `title` (the inputs need it for an
+        // accessible name), so select the outermost — it comes first in document order.
+        const betweenContainer = () => screen.getAllByTitle(title)[0];
+
         it('should render the "between" number input', () => {
           render(<ValueEditor {...betweenNumberProps} />);
-          const betweenInputs = findInputs(screen.getByTitle(title));
+          const betweenInputs = findInputs(betweenContainer());
           expect(betweenInputs).toHaveLength(2);
           // Mantine uses an input with type "text" so the input value is a string
           expect(betweenInputs[0]).toHaveValue(betweenInputs[0].type === 'text' ? '12' : 12);
@@ -378,7 +382,7 @@ export const testValueEditor = (
         it('should call the onChange handler', async () => {
           const handleOnChange = vi.fn();
           render(<ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} />);
-          const betweenInputs = findInputs(screen.getByTitle(title));
+          const betweenInputs = findInputs(betweenContainer());
           expect(betweenInputs).toHaveLength(2);
           await user.type(betweenInputs[0], '4');
           await user.type(betweenInputs[1], '8');
@@ -391,7 +395,7 @@ export const testValueEditor = (
           render(
             <ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} value={['12']} />
           );
-          const betweenInputs = findInputs(screen.getByTitle(title));
+          const betweenInputs = findInputs(betweenContainer());
           expect(betweenInputs).toHaveLength(2);
           await user.type(betweenInputs[0], '4');
           expect(handleOnChange).toHaveBeenCalledWith('124,');
@@ -402,7 +406,7 @@ export const testValueEditor = (
           render(
             <ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} listsAsArrays />
           );
-          const betweenInputs = findInputs(screen.getByTitle(title));
+          const betweenInputs = findInputs(betweenContainer());
           expect(betweenInputs).toHaveLength(2);
           await user.type(betweenInputs[0], '4');
           await user.type(betweenInputs[1], '8');
@@ -413,7 +417,7 @@ export const testValueEditor = (
         it('should be disabled by the disabled prop', async () => {
           const handleOnChange = vi.fn();
           render(<ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} disabled />);
-          const betweenInputs = findInputs(screen.getByTitle(title));
+          const betweenInputs = findInputs(betweenContainer());
           expect(betweenInputs).toHaveLength(2);
           for (const r of betweenInputs) {
             expect(r).toBeDisabled();

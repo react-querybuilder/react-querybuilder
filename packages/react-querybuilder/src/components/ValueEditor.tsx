@@ -99,6 +99,7 @@ export const ValueEditor = <F extends FullField>(
             type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
+            title={title}
             className={valueListItemClassName}
             disabled={disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
@@ -110,6 +111,7 @@ export const ValueEditor = <F extends FullField>(
           key={key}
           {...propsForValueSelector}
           schema={allProps.schema as Schema<FullField, string>}
+          title={title}
           className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
