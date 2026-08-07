@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "generator": {
     "package": "@react-querybuilder/core",
-    "version": "8.22.2",
+    "version": "8.22.3",
     "source": "utils/conformance/generate.tsx",
     "renderMode": "renderToStaticMarkup"
   },
