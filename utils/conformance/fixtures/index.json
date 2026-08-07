@@ -8,8 +8,8 @@
   },
   "files": ["classnames.json", "accessible-descriptions.json", "actions.json"],
   "counts": {
-    "scenarios": 7,
-    "renderedCases": 49,
+    "scenarios": 8,
+    "renderedCases": 50,
     "actionSequences": 58
   }
 }

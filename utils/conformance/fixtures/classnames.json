@@ -309,6 +309,83 @@
           }
         ]
       }
+    },
+    {
+      "name": "multiValue",
+      "description": "Multi-value editor layouts: `between`/`notBetween` bound pairs (text, number, select), `in` multiselect, and a radio group. Rules [6] and [7] are the only rules in the entire fixture set for which `getValueEditorReset` returns `reset: true` — their values deliberately mismatch their operators. Do not \"fix\" them. `getValueEditorSeparator` supplies a `custom-separator` span for the bound pairs; RQB emits no separator by default.",
+      "props": {
+        "fields": [
+          {
+            "name": "mvText",
+            "label": "MV Text"
+          },
+          {
+            "name": "mvNum",
+            "label": "MV Number",
+            "inputType": "number"
+          },
+          {
+            "name": "mvSelect",
+            "label": "MV Select",
+            "valueEditorType": "select",
+            "values": [
+              {
+                "name": "s1",
+                "label": "S1"
+              },
+              {
+                "name": "s2",
+                "label": "S2"
+              },
+              {
+                "name": "s3",
+                "label": "S3"
+              }
+            ]
+          },
+          {
+            "name": "mvMulti",
+            "label": "MV Multiselect",
+            "valueEditorType": "multiselect",
+            "values": [
+              {
+                "name": "s1",
+                "label": "S1"
+              },
+              {
+                "name": "s2",
+                "label": "S2"
+              },
+              {
+                "name": "s3",
+                "label": "S3"
+              }
+            ]
+          },
+          {
+            "name": "mvRadio",
+            "label": "MV Radio",
+            "valueEditorType": "radio",
+            "values": [
+              {
+                "name": "s1",
+                "label": "S1"
+              },
+              {
+                "name": "s2",
+                "label": "S2"
+              },
+              {
+                "name": "s3",
+                "label": "S3"
+              }
+            ]
+          }
+        ],
+        "parseNumbers": true,
+        "listsAsArrays": true,
+        "getValueEditorSeparator": null
+      }
     }
   ],
   "cases": [
@@ -10002,6 +10079,350 @@
           "tag": "button",
           "testID": "remove-rule",
           "path": "[0]",
+          "className": "rule-remove"
+        }
+      ]
+    },
+    {
+      "scenario": "multiValue",
+      "query": "inline",
+      "classNames": [
+        {
+          "tag": "div",
+          "className": "queryBuilder"
+        },
+        {
+          "tag": "div",
+          "testID": "rule-group",
+          "path": "[]",
+          "className": "ruleGroup"
+        },
+        {
+          "tag": "div",
+          "path": "[]",
+          "className": "ruleGroup-header"
+        },
+        {
+          "tag": "select",
+          "testID": "combinators",
+          "path": "[]",
+          "className": "ruleGroup-combinators"
+        },
+        {
+          "tag": "button",
+          "testID": "add-rule",
+          "path": "[]",
+          "className": "ruleGroup-addRule"
+        },
+        {
+          "tag": "button",
+          "testID": "add-group",
+          "path": "[]",
+          "className": "ruleGroup-addGroup"
+        },
+        {
+          "tag": "div",
+          "path": "[]",
+          "className": "ruleGroup-body"
+        },
+        {
+          "tag": "div",
+          "testID": "rule",
+          "path": "[0]",
+          "className": "rule"
+        },
+        {
+          "tag": "select",
+          "testID": "fields",
+          "path": "[0]",
+          "className": "rule-fields"
+        },
+        {
+          "tag": "select",
+          "testID": "operators",
+          "path": "[0]",
+          "className": "rule-operators"
+        },
+        {
+          "tag": "span",
+          "testID": "value-editor",
+          "path": "[0]",
+          "className": "rule-value"
+        },
+        {
+          "tag": "input",
+          "path": "[0]",
+          "className": "rule-value-list-item"
+        },
+        {
+          "tag": "span",
+          "path": "[0]",
+          "className": "custom-separator"
+        },
+        {
+          "tag": "input",
+          "path": "[0]",
+          "className": "rule-value-list-item"
+        },
+        {
+          "tag": "button",
+          "testID": "remove-rule",
+          "path": "[0]",
+          "className": "rule-remove"
+        },
+        {
+          "tag": "div",
+          "testID": "rule",
+          "path": "[1]",
+          "className": "rule"
+        },
+        {
+          "tag": "select",
+          "testID": "fields",
+          "path": "[1]",
+          "className": "rule-fields"
+        },
+        {
+          "tag": "select",
+          "testID": "operators",
+          "path": "[1]",
+          "className": "rule-operators"
+        },
+        {
+          "tag": "span",
+          "testID": "value-editor",
+          "path": "[1]",
+          "className": "rule-value"
+        },
+        {
+          "tag": "input",
+          "path": "[1]",
+          "className": "rule-value-list-item"
+        },
+        {
+          "tag": "span",
+          "path": "[1]",
+          "className": "custom-separator"
+        },
+        {
+          "tag": "input",
+          "path": "[1]",
+          "className": "rule-value-list-item"
+        },
+        {
+          "tag": "button",
+          "testID": "remove-rule",
+          "path": "[1]",
+          "className": "rule-remove"
+        },
+        {
+          "tag": "div",
+          "testID": "rule",
+          "path": "[2]",
+          "className": "rule"
+        },
+        {
+          "tag": "select",
+          "testID": "fields",
+          "path": "[2]",
+          "className": "rule-fields"
+        },
+        {
+          "tag": "select",
+          "testID": "operators",
+          "path": "[2]",
+          "className": "rule-operators"
+        },
+        {
+          "tag": "span",
+          "testID": "value-editor",
+          "path": "[2]",
+          "className": "rule-value"
+        },
+        {
+          "tag": "input",
+          "path": "[2]",
+          "className": "rule-value-list-item"
+        },
+        {
+          "tag": "span",
+          "path": "[2]",
+          "className": "custom-separator"
+        },
+        {
+          "tag": "input",
+          "path": "[2]",
+          "className": "rule-value-list-item"
+        },
+        {
+          "tag": "button",
+          "testID": "remove-rule",
+          "path": "[2]",
+          "className": "rule-remove"
+        },
+        {
+          "tag": "div",
+          "testID": "rule",
+          "path": "[3]",
+          "className": "rule"
+        },
+        {
+          "tag": "select",
+          "testID": "fields",
+          "path": "[3]",
+          "className": "rule-fields"
+        },
+        {
+          "tag": "select",
+          "testID": "operators",
+          "path": "[3]",
+          "className": "rule-operators"
+        },
+        {
+          "tag": "span",
+          "testID": "value-editor",
+          "path": "[3]",
+          "className": "rule-value"
+        },
+        {
+          "tag": "select",
+          "path": "[3]",
+          "className": "rule-value-list-item"
+        },
+        {
+          "tag": "span",
+          "path": "[3]",
+          "className": "custom-separator"
+        },
+        {
+          "tag": "select",
+          "path": "[3]",
+          "className": "rule-value-list-item"
+        },
+        {
+          "tag": "button",
+          "testID": "remove-rule",
+          "path": "[3]",
+          "className": "rule-remove"
+        },
+        {
+          "tag": "div",
+          "testID": "rule",
+          "path": "[4]",
+          "className": "rule"
+        },
+        {
+          "tag": "select",
+          "testID": "fields",
+          "path": "[4]",
+          "className": "rule-fields"
+        },
+        {
+          "tag": "select",
+          "testID": "operators",
+          "path": "[4]",
+          "className": "rule-operators"
+        },
+        {
+          "tag": "select",
+          "testID": "value-editor",
+          "path": "[4]",
+          "className": "rule-value"
+        },
+        {
+          "tag": "button",
+          "testID": "remove-rule",
+          "path": "[4]",
+          "className": "rule-remove"
+        },
+        {
+          "tag": "div",
+          "testID": "rule",
+          "path": "[5]",
+          "className": "rule"
+        },
+        {
+          "tag": "select",
+          "testID": "fields",
+          "path": "[5]",
+          "className": "rule-fields"
+        },
+        {
+          "tag": "select",
+          "testID": "operators",
+          "path": "[5]",
+          "className": "rule-operators"
+        },
+        {
+          "tag": "span",
+          "testID": "value-editor",
+          "path": "[5]",
+          "className": "rule-value"
+        },
+        {
+          "tag": "button",
+          "testID": "remove-rule",
+          "path": "[5]",
+          "className": "rule-remove"
+        },
+        {
+          "tag": "div",
+          "testID": "rule",
+          "path": "[6]",
+          "className": "rule"
+        },
+        {
+          "tag": "select",
+          "testID": "fields",
+          "path": "[6]",
+          "className": "rule-fields"
+        },
+        {
+          "tag": "select",
+          "testID": "operators",
+          "path": "[6]",
+          "className": "rule-operators"
+        },
+        {
+          "tag": "input",
+          "testID": "value-editor",
+          "path": "[6]",
+          "className": "rule-value"
+        },
+        {
+          "tag": "button",
+          "testID": "remove-rule",
+          "path": "[6]",
+          "className": "rule-remove"
+        },
+        {
+          "tag": "div",
+          "testID": "rule",
+          "path": "[7]",
+          "className": "rule"
+        },
+        {
+          "tag": "select",
+          "testID": "fields",
+          "path": "[7]",
+          "className": "rule-fields"
+        },
+        {
+          "tag": "select",
+          "testID": "operators",
+          "path": "[7]",
+          "className": "rule-operators"
+        },
+        {
+          "tag": "input",
+          "testID": "value-editor",
+          "path": "[7]",
+          "className": "rule-value"
+        },
+        {
+          "tag": "button",
+          "testID": "remove-rule",
+          "path": "[7]",
           "className": "rule-remove"
         }
       ]

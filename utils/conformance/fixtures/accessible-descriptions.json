@@ -629,6 +629,16 @@
           "description": "Query builder"
         }
       ]
+    },
+    {
+      "scenario": "multiValue",
+      "query": "inline",
+      "accessibleDescriptions": [
+        {
+          "path": "[]",
+          "description": "Query builder"
+        }
+      ]
     }
   ]
 }
