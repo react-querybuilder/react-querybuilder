@@ -50,7 +50,7 @@ import {
   runViaQueryManager,
   sequences,
 } from '../testing/queryFixtures';
-import { extract } from './extract';
+import { extractFromMarkup } from './extract';
 import { scenarios } from './scenarios';
 
 /**
@@ -74,13 +74,13 @@ const corePackageVersion = async (): Promise<string> =>
 interface RenderedCase {
   scenario: string;
   query: string;
-  classNames: Awaited<ReturnType<typeof extract>>['classNames'];
+  classNames: Awaited<ReturnType<typeof extractFromMarkup>>['classNames'];
 }
 
 interface DescriptionCase {
   scenario: string;
   query: string;
-  accessibleDescriptions: Awaited<ReturnType<typeof extract>>['accessibleDescriptions'];
+  accessibleDescriptions: Awaited<ReturnType<typeof extractFromMarkup>>['accessibleDescriptions'];
 }
 
 /**
@@ -99,7 +99,7 @@ const renderAll = async () => {
 
   const extracted = await Promise.all(
     pairs.map(({ scenario, query }) =>
-      extract(
+      extractFromMarkup(
         renderToStaticMarkup(
           React.createElement(QueryBuilder as React.ComponentType<Record<string, unknown>>, {
             ...scenario.props,

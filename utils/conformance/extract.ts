@@ -1,11 +1,15 @@
 /**
- * Turns the static markup produced by `<QueryBuilder>` into the two things ports are held to:
- * the `class` attribute of every element that has one, and the accessible description (`title`)
- * of every rule group.
+ * Turns a rendered `<QueryBuilder>` into the two things ports are held to: the `class` attribute
+ * of every element that has one, and the accessible description (`title`) of every rule group.
  *
- * Parsing is done with Bun's `HTMLRewriter` rather than a regex or a DOM shim. Note that the
- * `Response` overload is required: `transform(string)` runs `onEndTag` callbacks in a single
- * flush at the end, which destroys the nesting order the ancestor stack depends on.
+ * Two walkers, for two render paths:
+ * - `extractFromMarkup` parses a static markup string (the `renderToStaticMarkup` path) with
+ *   Bun's `HTMLRewriter`. Note that the `Response` overload is required: `transform(string)` runs
+ *   `onEndTag` callbacks in a single flush at the end, which destroys the nesting order the
+ *   ancestor stack depends on.
+ * - `extractFromContainer` walks a live DOM subtree (the jsdom / post-flush path), ported
+ *   upstream from the Svelte and Vue conformance harnesses, which already proved it produces
+ *   output matching `HTMLRewriter`'s across all 49 static cases.
  */
 
 /** One element's contribution to the rendered class surface, in document order. */
@@ -40,6 +44,10 @@ const RULE_GROUP_TESTID = 'rule-group';
  * Void elements have no end tag, and `HTMLRewriter` *throws* from `onEndTag` for them rather
  * than silently ignoring the call. They can never be an ancestor, so they are simply never
  * pushed onto the path stack.
+ *
+ * Dead for `extractFromContainer`: a live DOM subtree materializes ancestry directly, and
+ * there's no `onEndTag`-throws-on-void-elements hazard to work around. Left here (and still
+ * used by `extractFromMarkup`) rather than duplicated.
  */
 const voidElements = new Set([
   'area',
@@ -58,10 +66,8 @@ const voidElements = new Set([
   'wbr',
 ]);
 
-/**
- * Extracts the class surface and the accessible descriptions from one rendered query builder.
- */
-export const extract = async (html: string): Promise<ExtractResult> => {
+/** Parses a markup string. The `renderToStaticMarkup` path. */
+export const extractFromMarkup = async (html: string): Promise<ExtractResult> => {
   const classNames: ClassNameEntry[] = [];
   const accessibleDescriptions: AccessibleDescriptionEntry[] = [];
 
@@ -106,6 +112,37 @@ export const extract = async (html: string): Promise<ExtractResult> => {
     })
     .transform(new Response(html))
     .text();
+
+  return { classNames, accessibleDescriptions };
+};
+
+/** Walks a live DOM subtree. The jsdom / post-flush path. */
+export const extractFromContainer = (container: Element): ExtractResult => {
+  const classNames: ClassNameEntry[] = [];
+  const accessibleDescriptions: AccessibleDescriptionEntry[] = [];
+
+  for (const element of container.querySelectorAll('*')) {
+    const ownPath = element.getAttribute('data-path') ?? undefined;
+    const path = ownPath ?? element.closest('[data-path]')?.getAttribute('data-path') ?? undefined;
+
+    const tag = element.tagName.toLowerCase();
+    const testID = element.getAttribute('data-testid') ?? undefined;
+    const className = element.getAttribute('class');
+
+    if (className !== null) {
+      classNames.push({
+        tag,
+        ...(testID === undefined ? {} : { testID }),
+        ...(path === undefined ? {} : { path }),
+        className,
+      });
+    }
+
+    if (testID === RULE_GROUP_TESTID && ownPath !== undefined) {
+      const description = element.getAttribute('title');
+      if (description !== null) accessibleDescriptions.push({ path: ownPath, description });
+    }
+  }
 
   return { classNames, accessibleDescriptions };
 };
