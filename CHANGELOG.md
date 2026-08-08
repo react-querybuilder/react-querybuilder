@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.22.4] - 2026-08-07
+
 ### Fixed
 
 - `ValueEditor` now assigns the rule's `title` to each input/selector of a `between`/`notBetween` bound pair, not just their wrapper element. Previously those controls had no accessible name, failing the WCAG level A `label` and `select-name` rules.
@@ -2472,7 +2474,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.4...HEAD
+[v8.22.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.3...v8.22.4
 [v8.22.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.2...v8.22.3
 [v8.22.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.1...v8.22.2
 [v8.22.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.0...v8.22.1
