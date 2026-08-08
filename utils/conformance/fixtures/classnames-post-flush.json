@@ -4,394 +4,14 @@
     "package": "@react-querybuilder/core",
     "version": "8.22.3",
     "source": "utils/conformance/generate.tsx",
-    "renderMode": "renderToStaticMarkup"
+    "renderMode": "react-dom/client + act (jsdom)"
   },
-  "description": "The verbatim `class` attribute of every element with one, in document order, per scenario and query. Rendered via renderToStaticMarkup, so no effects have run.",
-  "scenarios": [
-    {
-      "name": "default",
-      "description": "Default props. The baseline class surface every port must reproduce first.",
-      "props": {
-        "fields": [
-          {
-            "name": "f1",
-            "label": "Field 1"
-          },
-          {
-            "name": "f2",
-            "label": "Field 2"
-          },
-          {
-            "name": "f3",
-            "label": "Field 3"
-          },
-          {
-            "name": "f4",
-            "label": "Field 4"
-          },
-          {
-            "name": "f5",
-            "label": "Field 5"
-          },
-          {
-            "name": "f6",
-            "label": "Field 6"
-          },
-          {
-            "name": "f7",
-            "label": "Field 7"
-          },
-          {
-            "name": "f8",
-            "label": "Field 8"
-          },
-          {
-            "name": "f9",
-            "label": "Field 9"
-          }
-        ]
-      }
-    },
-    {
-      "name": "allControls",
-      "description": "Every optional control turned on: not-toggle, clone, lock, shift, and mute buttons.",
-      "props": {
-        "fields": [
-          {
-            "name": "f1",
-            "label": "Field 1"
-          },
-          {
-            "name": "f2",
-            "label": "Field 2"
-          },
-          {
-            "name": "f3",
-            "label": "Field 3"
-          },
-          {
-            "name": "f4",
-            "label": "Field 4"
-          },
-          {
-            "name": "f5",
-            "label": "Field 5"
-          },
-          {
-            "name": "f6",
-            "label": "Field 6"
-          },
-          {
-            "name": "f7",
-            "label": "Field 7"
-          },
-          {
-            "name": "f8",
-            "label": "Field 8"
-          },
-          {
-            "name": "f9",
-            "label": "Field 9"
-          }
-        ],
-        "showNotToggle": true,
-        "showCloneButtons": true,
-        "showLockButtons": true,
-        "showShiftActions": true,
-        "showMuteButtons": true
-      }
-    },
-    {
-      "name": "combinatorsBetweenRules",
-      "description": "Standard (non-IC) queries rendered with combinators between rules, which switches the group body to the inline-combinator layout.",
-      "props": {
-        "fields": [
-          {
-            "name": "f1",
-            "label": "Field 1"
-          },
-          {
-            "name": "f2",
-            "label": "Field 2"
-          },
-          {
-            "name": "f3",
-            "label": "Field 3"
-          },
-          {
-            "name": "f4",
-            "label": "Field 4"
-          },
-          {
-            "name": "f5",
-            "label": "Field 5"
-          },
-          {
-            "name": "f6",
-            "label": "Field 6"
-          },
-          {
-            "name": "f7",
-            "label": "Field 7"
-          },
-          {
-            "name": "f8",
-            "label": "Field 8"
-          },
-          {
-            "name": "f9",
-            "label": "Field 9"
-          }
-        ],
-        "showCombinatorsBetweenRules": true
-      }
-    },
-    {
-      "name": "validation",
-      "description": "A validator that invalidates two nodes, producing the `queryBuilder-invalid` classes.",
-      "props": {
-        "fields": [
-          {
-            "name": "f1",
-            "label": "Field 1"
-          },
-          {
-            "name": "f2",
-            "label": "Field 2"
-          },
-          {
-            "name": "f3",
-            "label": "Field 3"
-          },
-          {
-            "name": "f4",
-            "label": "Field 4"
-          },
-          {
-            "name": "f5",
-            "label": "Field 5"
-          },
-          {
-            "name": "f6",
-            "label": "Field 6"
-          },
-          {
-            "name": "f7",
-            "label": "Field 7"
-          },
-          {
-            "name": "f8",
-            "label": "Field 8"
-          },
-          {
-            "name": "f9",
-            "label": "Field 9"
-          }
-        ],
-        "validator": null
-      }
-    },
-    {
-      "name": "disabled",
-      "description": "The whole builder disabled via the `disabled` prop, as distinct from the per-node `disabled` flags the `withDisabled` fixture carries.",
-      "props": {
-        "fields": [
-          {
-            "name": "f1",
-            "label": "Field 1"
-          },
-          {
-            "name": "f2",
-            "label": "Field 2"
-          },
-          {
-            "name": "f3",
-            "label": "Field 3"
-          },
-          {
-            "name": "f4",
-            "label": "Field 4"
-          },
-          {
-            "name": "f5",
-            "label": "Field 5"
-          },
-          {
-            "name": "f6",
-            "label": "Field 6"
-          },
-          {
-            "name": "f7",
-            "label": "Field 7"
-          },
-          {
-            "name": "f8",
-            "label": "Field 8"
-          },
-          {
-            "name": "f9",
-            "label": "Field 9"
-          }
-        ],
-        "disabled": true,
-        "showLockButtons": true
-      }
-    },
-    {
-      "name": "customized",
-      "description": "A non-default accessible description generator plus custom control classnames, so the a11y and classname fixtures assert something beyond the identity function.",
-      "props": {
-        "fields": [
-          {
-            "name": "f1",
-            "label": "Field 1"
-          },
-          {
-            "name": "f2",
-            "label": "Field 2"
-          },
-          {
-            "name": "f3",
-            "label": "Field 3"
-          },
-          {
-            "name": "f4",
-            "label": "Field 4"
-          },
-          {
-            "name": "f5",
-            "label": "Field 5"
-          },
-          {
-            "name": "f6",
-            "label": "Field 6"
-          },
-          {
-            "name": "f7",
-            "label": "Field 7"
-          },
-          {
-            "name": "f8",
-            "label": "Field 8"
-          },
-          {
-            "name": "f9",
-            "label": "Field 9"
-          }
-        ],
-        "accessibleDescriptionGenerator": null,
-        "controlClassnames": {
-          "queryBuilder": "custom-qb",
-          "ruleGroup": "custom-group",
-          "rule": "custom-rule"
-        }
-      }
-    },
-    {
-      "name": "matchModes",
-      "description": "Subquery rules with match modes. Not in the shared corpus because it requires a field with `subproperties`; included because the port plan lists match modes as v1 scope.",
-      "props": {
-        "fields": [
-          {
-            "name": "sub",
-            "label": "Sub",
-            "matchModes": true,
-            "subproperties": [
-              {
-                "name": "s1",
-                "label": "S1"
-              },
-              {
-                "name": "s2",
-                "label": "S2"
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "name": "multiValue",
-      "description": "Multi-value editor layouts: `between`/`notBetween` bound pairs (text, number, select), `in` multiselect, and a radio group. Rules [6] and [7] are the only rules in the entire fixture set for which `getValueEditorReset` returns `reset: true` — their values deliberately mismatch their operators. Do not \"fix\" them. `getValueEditorSeparator` supplies a `custom-separator` span for the bound pairs; RQB emits no separator by default.",
-      "props": {
-        "fields": [
-          {
-            "name": "mvText",
-            "label": "MV Text"
-          },
-          {
-            "name": "mvNum",
-            "label": "MV Number",
-            "inputType": "number"
-          },
-          {
-            "name": "mvSelect",
-            "label": "MV Select",
-            "valueEditorType": "select",
-            "values": [
-              {
-                "name": "s1",
-                "label": "S1"
-              },
-              {
-                "name": "s2",
-                "label": "S2"
-              },
-              {
-                "name": "s3",
-                "label": "S3"
-              }
-            ]
-          },
-          {
-            "name": "mvMulti",
-            "label": "MV Multiselect",
-            "valueEditorType": "multiselect",
-            "values": [
-              {
-                "name": "s1",
-                "label": "S1"
-              },
-              {
-                "name": "s2",
-                "label": "S2"
-              },
-              {
-                "name": "s3",
-                "label": "S3"
-              }
-            ]
-          },
-          {
-            "name": "mvRadio",
-            "label": "MV Radio",
-            "valueEditorType": "radio",
-            "values": [
-              {
-                "name": "s1",
-                "label": "S1"
-              },
-              {
-                "name": "s2",
-                "label": "S2"
-              },
-              {
-                "name": "s3",
-                "label": "S3"
-              }
-            ]
-          }
-        ],
-        "parseNumbers": true,
-        "listsAsArrays": true,
-        "getValueEditorSeparator": null
-      }
-    }
-  ],
+  "description": "The class surface after effects have flushed. Rendered UNCONTROLLED (`defaultQuery`, no `onQueryChange`) so that effect-driven query changes — notably the value-editor reset — actually land instead of being reverted by the controlled-prop sync effect. Ports must reproduce the uncontrolled wiring. `differsFromStatic` is a deep comparison against the corresponding `classnames.json` case: `false` cases must equal their static counterpart, `true` cases must match the recorded array. There is no post-flush accessible-descriptions layer: the description derives from `path` alone. FINDING: `differsFromStatic` is currently `false` for every case, and necessarily so. React runs child effects before parent effects, so ValueEditor's reset effect dispatches its collapsed value and the mount-query-change effect then re-dispatches the whole root group over it; the next render sees an unchanged `value` reference, so the reset effect never re-runs. A mount-and-flush render therefore cannot observe the value-editor reset — it is reachable only through a subsequent operator change. This layer records the \"post-flush surface is unchanged\" guarantee that ports had been asserting without upstream authorization; it does not currently fail independently of `classnames.json`.",
   "cases": [
     {
       "scenario": "default",
       "query": "empty",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -436,6 +56,7 @@
     {
       "scenario": "default",
       "query": "singleRule",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -510,6 +131,7 @@
     {
       "scenario": "default",
       "query": "flat",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -644,6 +266,7 @@
     {
       "scenario": "default",
       "query": "nested",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -988,6 +611,7 @@
     {
       "scenario": "default",
       "query": "withDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -1222,6 +846,7 @@
     {
       "scenario": "default",
       "query": "withoutDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -1456,6 +1081,7 @@
     {
       "scenario": "default",
       "query": "rootDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -1560,6 +1186,7 @@
     {
       "scenario": "default",
       "query": "ic",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -1712,6 +1339,7 @@
     {
       "scenario": "default",
       "query": "icNested",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -1940,6 +1568,7 @@
     {
       "scenario": "allControls",
       "query": "empty",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -2002,6 +1631,7 @@
     {
       "scenario": "allControls",
       "query": "singleRule",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -2118,6 +1748,7 @@
     {
       "scenario": "allControls",
       "query": "flat",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -2342,6 +1973,7 @@
     {
       "scenario": "allControls",
       "query": "nested",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -2938,6 +2570,7 @@
     {
       "scenario": "allControls",
       "query": "withDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -3340,6 +2973,7 @@
     {
       "scenario": "allControls",
       "query": "withoutDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -3742,6 +3376,7 @@
     {
       "scenario": "allControls",
       "query": "rootDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -3912,6 +3547,7 @@
     {
       "scenario": "allControls",
       "query": "ic",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -4154,6 +3790,7 @@
     {
       "scenario": "allControls",
       "query": "icNested",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -4526,6 +4163,7 @@
     {
       "scenario": "combinatorsBetweenRules",
       "query": "empty",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -4564,6 +4202,7 @@
     {
       "scenario": "combinatorsBetweenRules",
       "query": "singleRule",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -4632,6 +4271,7 @@
     {
       "scenario": "combinatorsBetweenRules",
       "query": "flat",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -4784,6 +4424,7 @@
     {
       "scenario": "combinatorsBetweenRules",
       "query": "nested",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -5164,6 +4805,7 @@
     {
       "scenario": "combinatorsBetweenRules",
       "query": "withDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -5434,6 +5076,7 @@
     {
       "scenario": "combinatorsBetweenRules",
       "query": "withoutDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -5704,6 +5347,7 @@
     {
       "scenario": "combinatorsBetweenRules",
       "query": "rootDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -5814,6 +5458,7 @@
     {
       "scenario": "validation",
       "query": "empty",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -5858,6 +5503,7 @@
     {
       "scenario": "validation",
       "query": "singleRule",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -5932,6 +5578,7 @@
     {
       "scenario": "validation",
       "query": "flat",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -6066,6 +5713,7 @@
     {
       "scenario": "validation",
       "query": "nested",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -6410,6 +6058,7 @@
     {
       "scenario": "validation",
       "query": "withDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -6644,6 +6293,7 @@
     {
       "scenario": "validation",
       "query": "withoutDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -6878,6 +6528,7 @@
     {
       "scenario": "validation",
       "query": "rootDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -6982,6 +6633,7 @@
     {
       "scenario": "disabled",
       "query": "empty",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -7032,6 +6684,7 @@
     {
       "scenario": "disabled",
       "query": "singleRule",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -7118,6 +6771,7 @@
     {
       "scenario": "disabled",
       "query": "flat",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -7276,6 +6930,7 @@
     {
       "scenario": "disabled",
       "query": "nested",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -7680,6 +7335,7 @@
     {
       "scenario": "disabled",
       "query": "withDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -7956,6 +7612,7 @@
     {
       "scenario": "disabled",
       "query": "withoutDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -8232,6 +7889,7 @@
     {
       "scenario": "disabled",
       "query": "rootDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -8354,6 +8012,7 @@
     {
       "scenario": "customized",
       "query": "empty",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -8398,6 +8057,7 @@
     {
       "scenario": "customized",
       "query": "singleRule",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -8472,6 +8132,7 @@
     {
       "scenario": "customized",
       "query": "flat",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -8606,6 +8267,7 @@
     {
       "scenario": "customized",
       "query": "nested",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -8950,6 +8612,7 @@
     {
       "scenario": "customized",
       "query": "withDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -9184,6 +8847,7 @@
     {
       "scenario": "customized",
       "query": "withoutDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -9418,6 +9082,7 @@
     {
       "scenario": "customized",
       "query": "rootDisabled",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -9522,6 +9187,7 @@
     {
       "scenario": "customized",
       "query": "ic",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -9674,6 +9340,7 @@
     {
       "scenario": "customized",
       "query": "icNested",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -9902,6 +9569,7 @@
     {
       "scenario": "matchModes",
       "query": "inline",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",
@@ -10086,6 +9754,7 @@
     {
       "scenario": "multiValue",
       "query": "inline",
+      "differsFromStatic": false,
       "classNames": [
         {
           "tag": "div",

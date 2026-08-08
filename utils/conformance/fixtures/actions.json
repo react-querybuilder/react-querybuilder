@@ -1,10 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "generator": {
     "package": "@react-querybuilder/core",
     "version": "8.22.3",
-    "source": "utils/conformance/generate.tsx",
-    "renderMode": "renderToStaticMarkup"
+    "source": "utils/conformance/generate.tsx"
   },
   "description": "Each curated mutation sequence replayed through QueryManager with a deterministic id generator, with the resulting query, per-op abort reasons, and refusal flags.",
   "cases": [

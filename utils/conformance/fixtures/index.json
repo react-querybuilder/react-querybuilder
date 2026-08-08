@@ -1,15 +1,20 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "generator": {
     "package": "@react-querybuilder/core",
     "version": "8.22.3",
-    "source": "utils/conformance/generate.tsx",
-    "renderMode": "renderToStaticMarkup"
+    "source": "utils/conformance/generate.tsx"
   },
-  "files": ["classnames.json", "accessible-descriptions.json", "actions.json"],
+  "files": [
+    "classnames.json",
+    "classnames-post-flush.json",
+    "accessible-descriptions.json",
+    "actions.json"
+  ],
   "counts": {
     "scenarios": 8,
     "renderedCases": 50,
+    "postFlushCases": 50,
     "actionSequences": 58
   }
 }
