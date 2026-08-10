@@ -25,7 +25,7 @@ npm i react-querybuilder
 
 Create a basic query builder by rendering `QueryBuilder` with no props. Import the official stylesheet (available in `.css` and `.scss` formats).
 
-<SandpackRQB rqbVersion={7} options={{ editorHeight: 160 }}>
+<SandpackRQB rqbVersion={8} options={{ editorHeight: 160 }}>
 
 ```tsx
 import { QueryBuilder } from 'react-querybuilder';
@@ -40,7 +40,7 @@ This query builder works but isn't very useful yet. To get real value from it, y
 
 In the query builder below, click the "+ Rule" button and then the field selector to see the field choices.
 
-<SandpackRQB rqbVersion={7} options={{ editorHeight: 240 }}>
+<SandpackRQB rqbVersion={8} options={{ editorHeight: 240 }}>
 
 ```tsx
 import { QueryBuilder } from 'react-querybuilder';
@@ -60,7 +60,7 @@ Much better! However, you'll likely want to monitor and control user interaction
 
 The `query` state variable gets passed to the `query` prop, and the `setQuery` setter function handles the `onQueryChange` callback. We'll also initialize the query with some example rules, ensuring each rule's `field` property matches a field `name` from our fields array.
 
-<SandpackRQB rqbVersion={7} options={{ editorHeight: 480 }}>
+<SandpackRQB rqbVersion={8} options={{ editorHeight: 480 }}>
 
 ```tsx
 import { useState } from 'react';
@@ -118,7 +118,7 @@ export default () => {
 
 Use the `formatQuery` function to convert query objects to formats like [SQL](https://en.wikipedia.org/wiki/SQL), [MongoDB](https://www.mongodb.com/), and [CEL](https://cel.dev) ([full documentation](./utils/export)). The example below shows real-time SQL generation—modify the query and watch the SQL update automatically.
 
-<SandpackRQB rqbVersion={7} options={{ editorHeight: 480 }}>
+<SandpackRQB rqbVersion={8} options={{ editorHeight: 480 }}>
 
 ```tsx
 import { useState } from 'react';

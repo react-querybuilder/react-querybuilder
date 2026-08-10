@@ -18,7 +18,7 @@ For more information about option list props like `operators`, see [Working with
 
 One approach uses the field's `operators` property to specify which operators appear when users select a particular field. However, this method requires defining complete operator lists for each field, potentially creating duplication across fields with similar data types.
 
-<SandpackRQB rqbVersion={7} options={{ editorHeight: 444 }}>
+<SandpackRQB rqbVersion={8} options={{ editorHeight: 444 }}>
 
 ```tsx
 import { defaultOperators, Field, QueryBuilder, RuleGroupType } from 'react-querybuilder';
@@ -83,7 +83,7 @@ While the field `operators` property works well for individual field customizati
 
 This example demonstrates custom field properties for operator management. Each field includes a custom `datatype` property that determines operator selection and labeling. The `defaultOperators` export provides base functionality where needed. Note that when present, a field's `operators` property overrides `getOperators` results—observe how "Favorite Movie" shows only the "is" operator despite having `datatype: "text"`.
 
-<SandpackRQB rqbVersion={7} options={{ editorHeight: 444 }}>
+<SandpackRQB rqbVersion={8} options={{ editorHeight: 444 }}>
 
 ```tsx
 import { defaultOperators, Field, QueryBuilder, RuleGroupType } from 'react-querybuilder';

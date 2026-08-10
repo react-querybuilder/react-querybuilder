@@ -14,7 +14,7 @@ The default `addRuleAction` component always creates rules using the default con
 
 This example demonstrates a custom component that renders two buttons in place of the standard `addRuleAction`. Each button corresponds to a specific field. The click handler uses `props.schema.getQuery()` to retrieve the current query and `props.schema.dispatchQuery()` to update the query with the appropriate field selection.
 
-<SandpackRQB rqbVersion={7} options={{ editorHeight: 480 }}>
+<SandpackRQB rqbVersion={8} options={{ editorHeight: 480 }}>
 
 ```tsx
 import { useState } from 'react';
@@ -88,7 +88,7 @@ The example displays both the generated SQL query and the raw query object below
 
 > _Related: [Adding and removing query properties](./adding-removing-query-properties)_
 
-<SandpackRQB rqbVersion={7} options={{ editorHeight: 480 }}>
+<SandpackRQB rqbVersion={8} options={{ editorHeight: 480 }}>
 
 ```tsx
 import { useState } from 'react';
