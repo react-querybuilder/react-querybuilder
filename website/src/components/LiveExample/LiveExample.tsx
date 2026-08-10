@@ -6,6 +6,8 @@ import styles from './styles.module.css';
 
 export interface LiveExampleProps extends Omit<CompileOptions, 'id'> {
   files: LiveFile[];
+  /** Authoring error from fence parsing; shown in place of a preview. */
+  parseError?: string;
   /** Docusaurus color mode; forwarded to the iframe without reloading it. */
   dark: boolean;
 }
@@ -25,7 +27,14 @@ const ERROR_TITLES: Record<LiveError['kind'], string> = {
 /** Sucrase is loaded once per page, on demand — never during SSR or on noninteractive pages. */
 let sucrasePromise: Promise<SucraseTransform> | undefined;
 const loadSucrase = () =>
-  (sucrasePromise ??= import('sucrase').then(m => m.transform as unknown as SucraseTransform));
+  // Cleared on failure so a later instance (or client-side navigation) can retry.
+  (sucrasePromise ??= import('sucrase').then(
+    m => m.transform as unknown as SucraseTransform,
+    error => {
+      sucrasePromise = undefined;
+      throw error;
+    }
+  ));
 
 const ErrorOverlay = ({ error }: { error: LiveError }) => (
   <div className={styles.overlay}>
@@ -62,6 +71,8 @@ const Preview = ({ srcDoc, id, dark }: PreviewProps) => {
 
   React.useEffect(() => {
     const onMessage = (event: MessageEvent) => {
+      // Only trust messages from this example's own iframe.
+      if (event.source !== iframeRef.current?.contentWindow) return;
       const data = event.data as
         | { source?: string; id?: string; type?: string; height?: number }
         | undefined;
@@ -118,6 +129,7 @@ export const LiveExample = ({
   files,
   dependencies,
   extraCSSImports,
+  parseError,
   dark,
 }: LiveExampleProps): React.JSX.Element => {
   const id = React.useId();
@@ -147,7 +159,7 @@ export const LiveExample = ({
   // than it strictly needs to. That is harmless: `srcDoc` is a string, and React only touches the
   // DOM when its *value* changes, so an equal document never reloads the iframe.
   const compiled = React.useMemo((): { srcDoc?: string; error?: LiveError } => {
-    if (!transform) return {};
+    if (!transform || parseError) return {};
     try {
       const fileMap = Object.fromEntries(files.map(f => [f.path, f]));
       return { srcDoc: buildSrcDoc(fileMap, transform, { dependencies, extraCSSImports, id }) };
@@ -159,7 +171,7 @@ export const LiveExample = ({
         },
       };
     }
-  }, [files, dependencies, extraCSSImports, transform, id]);
+  }, [files, dependencies, extraCSSImports, transform, parseError, id]);
 
   const visibleFiles = files.filter(f => !f.hidden);
   const [selected, setSelected] = React.useState<string | undefined>(undefined);
@@ -168,7 +180,27 @@ export const LiveExample = ({
     visibleFiles.find(f => f.active) ??
     visibleFiles[0];
 
-  const error = loadError ?? compiled.error;
+  const error: LiveError | undefined = parseError
+    ? { kind: 'compile', message: parseError }
+    : (loadError ?? compiled.error);
+
+  const tabId = (path: string) => `${id}-tab-${path}`;
+  const panelId = `${id}-panel`;
+
+  // Arrow-key roving focus, as the `tablist` role implies.
+  const onTabKeyDown = (event: React.KeyboardEvent) => {
+    const delta = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+    if (delta === 0) return;
+    event.preventDefault();
+    const index = visibleFiles.findIndex(f => f.path === selectedFile?.path);
+    const next = visibleFiles[(index + delta + visibleFiles.length) % visibleFiles.length];
+    setSelected(next.path);
+    (
+      event.currentTarget.parentElement?.querySelector(`#${CSS.escape(tabId(next.path))}`) as
+        | HTMLElement
+        | undefined
+    )?.focus();
+  };
 
   return (
     <div className={styles.liveExample}>
@@ -178,10 +210,16 @@ export const LiveExample = ({
             {visibleFiles.map(file => (
               <button
                 key={file.path}
+                id={tabId(file.path)}
                 type="button"
                 role="tab"
                 aria-selected={file.path === selectedFile?.path}
-                className={`${styles.tab} ${file.path === selectedFile?.path ? styles.tabActive : ''}`}
+                aria-controls={panelId}
+                tabIndex={file.path === selectedFile?.path ? 0 : -1}
+                className={`${styles.tab} ${
+                  file.path === selectedFile?.path ? styles.tabActive : ''
+                }`}
+                onKeyDown={onTabKeyDown}
                 onClick={() => setSelected(file.path)}>
                 {file.path.replace(/^\//, '')}
               </button>
@@ -189,7 +227,11 @@ export const LiveExample = ({
           </div>
         )}
         {selectedFile && (
-          <div className={styles.code}>
+          <div
+            className={styles.code}
+            id={panelId}
+            role={visibleFiles.length > 1 ? 'tabpanel' : undefined}
+            aria-labelledby={visibleFiles.length > 1 ? tabId(selectedFile.path) : undefined}>
             <CodeBlock language={selectedFile.lang}>{selectedFile.code}</CodeBlock>
           </div>
         )}

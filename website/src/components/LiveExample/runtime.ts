@@ -65,8 +65,11 @@ export type SucraseTransform = (
   opts: { transforms: string[]; jsxRuntime?: string; filePath?: string }
 ) => { code: string };
 
-const REACT_VERSION = '18';
+const DEFAULT_REACT_VERSION = '18';
 const ESM_SH = 'https://esm.sh';
+
+/** Accepted entry-module paths, in resolution order. */
+export const ENTRY_PATHS = ['/App.tsx', '/App.js', '/App.jsx', '/App.ts'];
 
 const JS_EXTENSIONS = ['', '.tsx', '.ts', '.jsx', '.js'];
 const isJS = (path: string) => /\.[jt]sx?$/.test(path);
@@ -106,11 +109,14 @@ const cssURL = (specifier: string, dependencies: Record<string, string>) => {
 };
 
 const buildImportMap = (dependencies: Record<string, string>) => {
+  // RQB supports React >=18; 18 is the default, but an example may pin its own version.
+  const react = dependencies.react ?? DEFAULT_REACT_VERSION;
+  const reactDOM = dependencies['react-dom'] ?? react;
   const imports: Record<string, string> = {
-    react: `${ESM_SH}/react@${REACT_VERSION}`,
-    'react/': `${ESM_SH}/react@${REACT_VERSION}/`,
-    'react-dom': `${ESM_SH}/react-dom@${REACT_VERSION}?external=react`,
-    'react-dom/': `${ESM_SH}/react-dom@${REACT_VERSION}&external=react/`,
+    react: `${ESM_SH}/react@${encodeURIComponent(react)}`,
+    'react/': `${ESM_SH}/react@${encodeURIComponent(react)}/`,
+    'react-dom': `${ESM_SH}/react-dom@${encodeURIComponent(reactDOM)}?external=react`,
+    'react-dom/': `${ESM_SH}/react-dom@${encodeURIComponent(reactDOM)}&external=react/`,
   };
   // Subpath (`pkg/`) entries are deliberately omitted for third-party packages: no example imports
   // a bare subpath other than `react/jsx-runtime` and `react-dom/client`.
@@ -238,6 +244,7 @@ addEventListener('focusout', () => {
 });
 
 addEventListener('message', e => {
+  if (e.source !== parent) return;
   if (e.data?.source === 'rqb-live-host' && e.data.type === 'theme') {
     document.documentElement.classList.toggle('dark', e.data.dark);
   }
@@ -296,7 +303,7 @@ export const buildSrcDoc = (
   transform: SucraseTransform,
   opts: CompileOptions
 ): string => {
-  const entry = ['/App.tsx', '/App.js', '/App.jsx', '/App.ts'].find(p => files[p]);
+  const entry = ENTRY_PATHS.find(p => files[p]);
   if (!entry) throw new CompileError('No entry module. Expected /App.tsx or /App.js.');
 
   const modules = compileModules(files, transform);

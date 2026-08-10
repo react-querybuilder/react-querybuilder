@@ -23,17 +23,16 @@ Both need access to the internal store, which is why `QueryBuilderStateProvider`
 
 ```tsx
 import type { ChangeEvent } from 'react';
+import type { Field, RuleGroupType } from 'react-querybuilder';
 import {
   add,
   defaultCombinators,
-  Field,
   getDispatchQueryById,
   getQuerySelectorById,
   move,
   QueryBuilder,
   QueryBuilderStateProvider,
   remove,
-  RuleGroupType,
   update,
   useQueryBuilderSelector,
 } from 'react-querybuilder';
@@ -133,16 +132,8 @@ When your component already owns the query, the same query tools apply—call th
 ```tsx
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
-import {
-  add,
-  defaultCombinators,
-  Field,
-  move,
-  QueryBuilder,
-  remove,
-  RuleGroupType,
-  update,
-} from 'react-querybuilder';
+import type { Field, RuleGroupType } from 'react-querybuilder';
+import { add, defaultCombinators, move, QueryBuilder, remove, update } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
 
 const fields: Field[] = [
