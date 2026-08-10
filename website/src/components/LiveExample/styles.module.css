@@ -1,0 +1,113 @@
+.liveExample {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  overflow: hidden;
+}
+
+.codeColumn {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.previewColumn {
+  position: relative;
+  min-width: 0;
+}
+
+/* Side by side once there is room for two readable columns; stacked below that. 996px is the
+   Docusaurus mobile/desktop breakpoint. */
+@media (min-width: 997px) {
+  .liveExample {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .codeColumn,
+  .previewColumn {
+    flex: 1 1 0;
+  }
+
+  .codeColumn {
+    border-bottom: none;
+    border-right: 1px solid var(--ifm-color-emphasis-300);
+  }
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem 0;
+  background-color: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.tab {
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8rem;
+  padding: 0.35rem 0.6rem;
+  color: var(--ifm-color-emphasis-700);
+  border-bottom: 2px solid transparent;
+}
+
+.tab:hover {
+  color: var(--ifm-color-emphasis-900);
+}
+
+.tabActive {
+  color: var(--ifm-color-primary);
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+.code {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* One scroll container handling both axes: Docusaurus already makes the `pre` horizontally
+   scrollable, so capping its height there avoids nesting a second scroller around it. */
+.code pre {
+  max-height: var(--rqb-live-code-max-height, 320px);
+  overflow: auto;
+}
+
+.code > div {
+  margin-bottom: 0;
+  border-radius: 0;
+}
+
+.preview {
+  display: block;
+  width: 100%;
+  border: none;
+  background-color: #ffffff;
+}
+
+.status {
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.overlay {
+  padding: 0.75rem 1rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  color: var(--ifm-color-danger-darkest);
+  background-color: var(--ifm-color-danger-contrast-background);
+  border-top: 1px solid var(--ifm-color-danger);
+}
+
+.overlayTitle {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
