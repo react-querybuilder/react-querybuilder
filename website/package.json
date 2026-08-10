@@ -19,7 +19,6 @@
     "@ant-design/icons": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
     "@chakra-ui/react": "catalog:",
-    "@codesandbox/sandpack-react": "^2.20.0",
     "@date-fns/tz": "^1.5.0",
     "@docusaurus/core": "^3.10.2",
     "@docusaurus/plugin-client-redirects": "^3.10.2",
@@ -73,6 +72,7 @@
     "react-select": "^5.10.2",
     "react-shadow": "^20.6.0",
     "sass": "catalog:",
+    "sucrase": "^3.35.0",
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
