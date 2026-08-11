@@ -6,8 +6,9 @@ import {
   isRuleOrGroupValid,
 } from '@react-querybuilder/core';
 import type { ConditionProperties, TopLevelCondition } from 'json-rules-engine';
+import type { RETopLevelCondition } from '../../types';
 
-export const defaultRuleGroupProcessorJsonRulesEngine: RuleGroupProcessor<TopLevelCondition> = (
+export const defaultRuleGroupProcessorJsonRulesEngine: RuleGroupProcessor<RETopLevelCondition> = (
   ruleGroup,
   options
 ) => {

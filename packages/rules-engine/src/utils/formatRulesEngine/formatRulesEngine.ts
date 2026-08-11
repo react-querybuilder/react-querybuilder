@@ -1,8 +1,8 @@
-import type { RuleProperties } from 'json-rules-engine';
-import type { Rule as NodeRule } from 'node-rules';
-import type { Rule as RulePilotRule } from 'rulepilot';
 import type {
   FormatRulesEngineOptions,
+  RENodeRulesRule,
+  RERulePilotRule,
+  RERuleProperties,
   RulesEngineAny,
   RulesEngineEvaluator,
   RulesEngineExportFormat,
@@ -31,7 +31,7 @@ function formatRulesEngine<TResult = unknown>(
 function formatRulesEngine(
   rulesEngine: RulesEngineAny,
   options: 'json-rules-engine' | (FormatRulesEngineOptions & { format: 'json-rules-engine' })
-): RuleProperties[];
+): RERuleProperties[];
 /**
  * Compiles a rules engine object into an in-process evaluator: a function that, given a facts
  * object, returns the consequents of every condition that fires—in order, honoring the
@@ -62,7 +62,7 @@ function formatRulesEngine(
 function formatRulesEngine(
   rulesEngine: RulesEngineAny,
   options: 'rulepilot' | (FormatRulesEngineOptions & { format: 'rulepilot' })
-): RulePilotRule;
+): RERulePilotRule;
 /**
  * Compiles a rules engine object into an array of live
  * [node-rules](https://github.com/mithunsatheesh/node-rules) `Rule` objects, ready to register on a
@@ -77,7 +77,7 @@ function formatRulesEngine(
 function formatRulesEngine(
   rulesEngine: RulesEngineAny,
   options: 'node-rules' | (FormatRulesEngineOptions & { format: 'node-rules' })
-): NodeRule[];
+): RENodeRulesRule[];
 function formatRulesEngine(
   rulesEngine: RulesEngineAny,
   options: RulesEngineExportFormat | FormatRulesEngineOptions = {}

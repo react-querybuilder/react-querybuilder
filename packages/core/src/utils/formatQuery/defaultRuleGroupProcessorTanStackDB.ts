@@ -3,11 +3,7 @@ import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
-import type {
-  TanStackDbWhereCallback,
-  TanStackDbWhereCallbackReturnType,
-  TsDbOperators,
-} from './tanStackDbTypes.ts';
+import type { TanStackDbWhereCallback, TsDbExpression, TsDbOperators } from './tanStackDbTypes.ts';
 
 /**
  * Default rule group processor used by {@link formatQuery} for the "tanstack_db" format.
@@ -35,7 +31,7 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
 
     const ops = context.tanStackDbOperators as TsDbOperators;
 
-    if (!ops) return undefined as unknown as TanStackDbWhereCallbackReturnType;
+    if (!ops) return undefined;
 
     const { and, eq, not, or } = ops;
 
@@ -47,7 +43,7 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
     /* v8 ignore next -- @preserve */
     if (refKeys.length === 0) return fallback;
 
-    const processRuleGroup = (rg: RuleGroupType): TanStackDbWhereCallbackReturnType | undefined => {
+    const processRuleGroup = (rg: RuleGroupType): TsDbExpression | undefined => {
       if (
         !isRuleOrGroupValid(
           rg,
@@ -59,7 +55,7 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
         return undefined;
       }
 
-      const processedRules: TanStackDbWhereCallbackReturnType[] = rg.rules
+      const processedRules: TsDbExpression[] = rg.rules
         .map(rule => {
           if (isRuleGroup(rule)) {
             return processRuleGroup(rule);

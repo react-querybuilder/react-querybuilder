@@ -1,4 +1,4 @@
-import type { Op as _OpTypes, WhereOptions } from 'sequelize';
+import type { Op as _OpTypes } from 'sequelize';
 import type { RuleGroupProcessor, RuleGroupType } from '../../types';
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';
@@ -9,14 +9,25 @@ import { getOption } from '../optGroupUtils';
 type OpTypes = typeof _OpTypes;
 
 /**
+ * Structural stand-in for Sequelize's `WhereOptions`. Declared locally so the public type surface
+ * of this package never references `sequelize`, which is an optional peer dependency.
+ * (Referencing it would force consumers to install it to typecheck without `skipLibCheck`.)
+ * Assignable to `WhereOptions` at the call site, e.g. `Model.findAll({ where })`.
+ *
+ * @group Export
+ */
+export interface SequelizeWhereOptionsLike {
+  [key: string | symbol]: unknown;
+}
+
+/**
  * Rule group processor used by {@link formatQuery} for "sequelize" format.
  *
  * @group Export
  */
-export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions | undefined> = (
-  ruleGroup,
-  options
-) => {
+export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<
+  SequelizeWhereOptionsLike | undefined
+> = (ruleGroup, options) => {
   // v8 ignore next
   const {
     fields,
@@ -36,7 +47,10 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
 
   if (!Op) return undefined;
 
-  const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): WhereOptions | undefined => {
+  const processRuleGroup = (
+    rg: RuleGroupType,
+    _outermost?: boolean
+  ): SequelizeWhereOptionsLike | undefined => {
     if (
       !isRuleOrGroupValid(
         rg,

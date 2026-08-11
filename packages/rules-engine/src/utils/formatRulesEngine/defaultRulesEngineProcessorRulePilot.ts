@@ -1,6 +1,11 @@
 import { formatQuery } from '@react-querybuilder/core';
-import type { Condition, Rule as RulePilotRule } from 'rulepilot';
-import type { EvaluationMode, REConditionAny, RulesEngineProcessor } from '../../types';
+import type { Condition } from 'rulepilot';
+import type {
+  EvaluationMode,
+  REConditionAny,
+  RERulePilotRule,
+  RulesEngineProcessor,
+} from '../../types';
 import { defaultRuleGroupProcessorRulePilot } from './defaultRuleGroupProcessorRulePilot';
 import { defaultRuleProcessorRulePilot } from './defaultRuleProcessorRulePilot';
 import { walkRulesEngine } from './walkRulesEngine';
@@ -27,7 +32,7 @@ import { walkRulesEngine } from './walkRulesEngine';
  *
  * @group Export
  */
-export const defaultRulesEngineProcessorRulePilot: RulesEngineProcessor<RulePilotRule> = (
+export const defaultRulesEngineProcessorRulePilot: RulesEngineProcessor<RERulePilotRule> = (
   rulesEngine,
   opts
 ) => {
