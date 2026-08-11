@@ -39,10 +39,10 @@ bun run build
 
 - `bun test ...` when React and DOM not involved (much faster than Vitest)
 - `bunx vitest run --coverage` - Run Vitest tests with 100% coverage check
-- `bun typecheck` - TypeScript check
-- `bun lint` - Type-aware linting
+- `bun lint` - Type-aware linting and typechecking
 - `bun fmt` - Format (run after changes)
 - `bun checkall` - Full CI check (run before submitting a PR)
+- `bun typecheck` - TypeScript check (usually unnecessary — `lint` covers typechecking)
 
 **Documentation:**
 

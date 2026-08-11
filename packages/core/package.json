@@ -179,7 +179,6 @@
     "@prisma/client": "catalog:test",
     "@tanstack/db": "catalog:test",
     "@traqula/parser-sparql-1-2": "catalog:",
-    "@types/json-logic-js": "catalog:",
     "@types/node": "catalog:",
     "chevrotain": "catalog:",
     "clsx": "catalog:",
@@ -204,6 +203,7 @@
   "dependencies": {
     "@ts-jison/lexer": "0.4.1-alpha.1",
     "@ts-jison/parser": "0.4.1-alpha.1",
+    "@types/json-logic-js": "catalog:",
     "immer": "catalog:",
     "numeric-quantity": "^3.2.2"
   },

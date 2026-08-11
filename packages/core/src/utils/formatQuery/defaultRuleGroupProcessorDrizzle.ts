@@ -6,6 +6,34 @@ import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
 
 /**
+ * Minimal structural shape of Drizzle's `Operators` object. Declared locally so the public type
+ * surface of this package never references `drizzle-orm`, which is an optional peer dependency.
+ * (Referencing it would force consumers to install it to typecheck without `skipLibCheck`.)
+ *
+ * @group Export
+ */
+export interface DrizzleOperatorsLike {
+  // oxlint-disable-next-line typescript/no-explicit-any
+  and: (...conditions: any[]) => any;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  or: (...conditions: any[]) => any;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  not: (...conditions: any[]) => any;
+}
+
+/**
+ * Return type of {@link defaultRuleGroupProcessorDrizzle}—the function assignable to the `where`
+ * property in the Drizzle relational queries API. The Drizzle `SQL` result type is inferred from
+ * the caller's own operators object, so it stays exact without importing `drizzle-orm` here.
+ *
+ * @group Export
+ */
+export type DrizzleWhereCallback = <Ops extends DrizzleOperatorsLike>(
+  columns: object,
+  drizzleOperators: Ops
+) => ReturnType<Ops['and']>;
+
+/**
  * Default rule group processor used by {@link formatQuery} for the "drizzle" format. The returned
  * function can be assigned to the `where` property in the Drizzle relational queries API.
  *
@@ -17,11 +45,12 @@ import { getOption } from '../optGroupUtils';
  *
  * @group Export
  */
-export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
-  (columns: Record<string, Column> | Table, drizzleOperators: Operators) => SQL | undefined
-> =
-  (ruleGroup, options, _meta) =>
-  (columns: Table | Record<string, Column>, drizzleOperators: Operators) => {
+export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<DrizzleWhereCallback> = (
+  ruleGroup,
+  options,
+  _meta
+) =>
+  ((columns: Table | Record<string, Column>, drizzleOperators: Operators) => {
     const {
       fields,
       getParseNumberBoolean,
@@ -85,4 +114,4 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
     };
 
     return processRuleGroup(convertFromIC(ruleGroup), true);
-  };
+  }) as DrizzleWhereCallback;

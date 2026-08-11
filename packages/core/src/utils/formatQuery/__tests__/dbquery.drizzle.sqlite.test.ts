@@ -28,6 +28,9 @@ const drizzleSQLiteDB = drizzle({ schema: { superusers }, client: bunSQLiteDB })
 const superUsersSQLite = superUsers('sqlite');
 
 const testSQLite = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
+  // The `where` usages below are load-bearing for the `DrizzleWhereCallback` type: passing it to
+  // `findMany({ where })` and calling it with real Drizzle operators proves the local stand-in
+  // types stay assignable to `drizzle-orm`'s own. Don't "simplify" them away.
   describe.each(['standard', 'independent combinators'])('%s', testType => {
     const queryToTest = testType === 'independent combinators' ? convertToIC(query) : query;
     const where = formatQuery(queryToTest, { ...fqOptions, format: 'drizzle' });

@@ -1,9 +1,10 @@
 import { formatQuery } from '@react-querybuilder/core';
-import type { API as NodeRulesAPI, Fact, Rule as NodeRule } from 'node-rules';
+import type { API as NodeRulesAPI, Fact } from 'node-rules';
 import type {
   EvaluationMode,
   NativePredicate,
   REConditionAny,
+  RENodeRulesRule,
   RulesEngineProcessor,
 } from '../../types';
 import { defaultRuleGroupProcessorNative } from './defaultRuleGroupProcessorNative';
@@ -28,7 +29,7 @@ import { walkRulesEngine } from './walkRulesEngine';
  *
  * @group Export
  */
-export const defaultRulesEngineProcessorNodeRules: RulesEngineProcessor<NodeRule[]> = (
+export const defaultRulesEngineProcessorNodeRules: RulesEngineProcessor<RENodeRulesRule[]> = (
   rulesEngine,
   opts
 ) => {

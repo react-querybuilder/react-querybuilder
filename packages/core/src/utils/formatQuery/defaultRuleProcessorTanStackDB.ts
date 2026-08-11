@@ -2,7 +2,7 @@ import type { RuleProcessor } from '../../types';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import type { TanStackDbWhereCallbackReturnType } from './tanStackDbTypes.ts';
+import type { TsDbExpression } from './tanStackDbTypes.ts';
 import { isValidValue, shouldRenderAsNumber } from './utils';
 
 /**
@@ -13,7 +13,7 @@ import { isValidValue, shouldRenderAsNumber } from './utils';
 export const defaultRuleProcessorTanStackDB: RuleProcessor = (
   rule,
   _options
-): TanStackDbWhereCallbackReturnType | undefined => {
+): TsDbExpression | undefined => {
   const opts = _options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
   const { parseNumbers, preserveValueOrder, context = {} } = opts;
   const ops = context.tanStackDbOperators;

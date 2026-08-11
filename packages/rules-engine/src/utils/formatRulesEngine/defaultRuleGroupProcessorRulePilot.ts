@@ -6,6 +6,7 @@ import {
   isRuleOrGroupValid,
 } from '@react-querybuilder/core';
 import type { Condition, Constraint } from 'rulepilot';
+import type { RERulePilotCondition } from '../../types';
 
 /**
  * Default rule group processor for the `"rulepilot"` export format. Compiles a rule group into a
@@ -17,7 +18,7 @@ import type { Condition, Constraint } from 'rulepilot';
  *
  * @group Export
  */
-export const defaultRuleGroupProcessorRulePilot: RuleGroupProcessor<Condition> = (
+export const defaultRuleGroupProcessorRulePilot: RuleGroupProcessor<RERulePilotCondition> = (
   ruleGroup,
   options
 ) => {

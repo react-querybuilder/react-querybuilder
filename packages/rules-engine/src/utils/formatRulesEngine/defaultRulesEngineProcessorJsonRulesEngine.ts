@@ -1,11 +1,12 @@
 import { formatQuery } from '@react-querybuilder/core';
+import type { Engine, TopLevelCondition } from 'json-rules-engine';
 import type {
-  Engine,
-  OperatorEvaluator,
-  RuleProperties,
-  TopLevelCondition,
-} from 'json-rules-engine';
-import type { EvaluationMode, REConditionAny, RulesEngineProcessor } from '../../types';
+  EvaluationMode,
+  REConditionAny,
+  REOperatorEvaluator,
+  RERuleProperties,
+  RulesEngineProcessor,
+} from '../../types';
 import { defaultRuleGroupProcessorJsonRulesEngine } from './defaultRuleGroupProcessorJsonRulesEngine';
 import { defaultRuleProcessorJsonRulesEngine } from './defaultRuleProcessorJsonRulesEngine';
 import { inRange } from './nativeOperators';
@@ -22,7 +23,7 @@ import { walkRulesEngine } from './walkRulesEngine';
  */
 export const jsonRulesEngineAdditionalOperators: Record<
   string,
-  OperatorEvaluator<unknown, unknown>
+  REOperatorEvaluator<unknown, unknown>
 > = {
   beginsWith: (factVal, compareVal) => `${factVal}`.startsWith(`${compareVal}`),
   doesNotBeginWith: (factVal, compareVal) => !`${factVal}`.startsWith(`${compareVal}`),
@@ -57,10 +58,9 @@ const combine = (guards: TopLevelCondition[]): TopLevelCondition =>
  *
  * @group Export
  */
-export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<RuleProperties[]> = (
-  rulesEngine,
-  opts
-) => {
+export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<
+  RERuleProperties[]
+> = (rulesEngine, opts) => {
   // If a `json-rules-engine` Engine (or anything exposing `addOperator`) is supplied as the
   // `context.engine` option, register the additional operators on it so exported rules that use
   // them can be evaluated.

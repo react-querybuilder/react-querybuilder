@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import type { ConnectDragPreview, ConnectDragSource, useDrag as useDragOriginal } from 'react-dnd';
-import type * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import type {
   DndDropTargetType,
   DragCollection,
@@ -32,8 +30,18 @@ import {
 import { isHotkeyPressed } from '../isHotkeyPressed';
 import { isTouchDevice } from '../isTouchDevice';
 import type { DndProp } from '../types';
+import type { RdndBackendFactory } from '../vendored';
 
-type ReactDndBackendFactory = typeof ReactDndHtml5Backend.HTML5Backend;
+// Inline `import(...)` types instead of top-level `import type`s: the latter leave a side-effect
+// `import "react-dnd"` in the emitted declarations even when every binding is elided, which breaks
+// consumers who don't install this optional peer dependency.
+/* oxlint-disable typescript/consistent-type-imports -- see comment above */
+/** Internal: the real `react-dnd` types, for body-level type checking only. */
+type ReactDnDModule = typeof import('react-dnd');
+type ConnectDragSource = import('react-dnd').ConnectDragSource;
+type ConnectDragPreview = import('react-dnd').ConnectDragPreview;
+type useDragOriginal = ReactDnDModule['useDrag'];
+/* oxlint-enable typescript/consistent-type-imports */
 
 let emptyImage: HTMLImageElement;
 
@@ -52,7 +60,7 @@ const ruleGroupAndRuleAccept: [DndDropTargetType, DndDropTargetType] = ['rule', 
 const useRuleDragCommon = (
   params: DndAdapterRuleDnDParams | DndAdapterRuleGroupDnDParams,
   type: DndDropTargetType,
-  useDrag: typeof useDragOriginal
+  useDrag: useDragOriginal
 ): [DragCollection, ConnectDragSource, ConnectDragPreview] =>
   // `useDrag` is injected by the adapter; stable per adapter instance (pluggable-backend pattern).
   // oxlint-disable-next-line react-compiler
@@ -107,10 +115,18 @@ const useRuleDragCommon = (
  * @group DnD
  */
 export const createReactDnDAdapter = (dndExports: DndProp): DndAdapter => {
-  const { useDrag, useDrop, DndProvider: RDndProvider, DndContext } = dndExports;
+  const {
+    useDrag,
+    useDrop,
+    DndProvider: RDndProvider,
+    DndContext,
+  } = dndExports as unknown as Pick<
+    ReactDnDModule,
+    'useDrag' | 'useDrop' | 'DndProvider' | 'DndContext'
+  >;
 
   // Select backend: prefer touch on touch devices
-  let backend: ReactDndBackendFactory | undefined = dndExports.ReactDndBackend;
+  let backend: RdndBackendFactory | undefined = dndExports.ReactDndBackend;
   if (!backend) {
     // v8 ignore next -- jsdom unconditionally defines `window.ontouchstart`
     backend = isTouchDevice()

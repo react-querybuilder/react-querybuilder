@@ -1,12 +1,3 @@
-import type {
-  DndContext as DndContextImport,
-  KeyboardSensor as KeyboardSensorImport,
-  PointerSensor as PointerSensorImport,
-  useDraggable as useDraggableImport,
-  useDroppable as useDroppableImport,
-  useSensor as useSensorImport,
-  useSensors as useSensorsImport,
-} from '@dnd-kit/core';
 import * as React from 'react';
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import type {
@@ -40,21 +31,14 @@ import type { DragPreviewContextValue } from '../DragPreviewContext';
 import { isHotkeyPressed } from '../isHotkeyPressed';
 import { computeShadowQuery } from '../shadowQuery';
 import type { DragPreviewState, OnDragMoveCallback } from '../types';
+import type { DndKitExports } from '../vendored';
 
-/**
- * The `@dnd-kit/core` exports needed by the adapter.
- *
- * @group DnD
- */
-export type DndKitExports = {
-  DndContext: typeof DndContextImport;
-  useDraggable: typeof useDraggableImport;
-  useDroppable: typeof useDroppableImport;
-  PointerSensor: typeof PointerSensorImport;
-  KeyboardSensor: typeof KeyboardSensorImport;
-  useSensor: typeof useSensorImport;
-  useSensors: typeof useSensorsImport;
-};
+// Inline `import(...)` type instead of a top-level `import type`: the latter leaves a side-effect
+// `import "@dnd-kit/core"` in the emitted declarations even when every binding is elided, which
+// breaks consumers who don't install this optional peer dependency.
+/** Internal: the real `@dnd-kit/core` exports, for body-level type checking only. */
+// oxlint-disable-next-line typescript/consistent-type-imports -- see comment above
+type DndKitRealExports = Pick<typeof import('@dnd-kit/core'), keyof DndKitExports>;
 
 // #region Internal context
 
@@ -117,7 +101,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     KeyboardSensor,
     useSensor,
     useSensors,
-  } = dndKitExports;
+  } = dndKitExports as unknown as DndKitRealExports;
 
   // #region DndProvider
 
