@@ -55,15 +55,33 @@ const defaultTypeEntries = (pkg: PackageJson): string[] => {
   return [...found];
 };
 
-/** First string leaf in an exports/imports subtree */
-const firstStringLeaf = (node: unknown): string | undefined => {
-  if (typeof node === 'string') return node;
-  if (!node || typeof node !== 'object') return undefined;
-  for (const value of Object.values(node)) {
-    const found = firstStringLeaf(value);
-    if (found) return found;
+/** Every string leaf in an exports/imports subtree (all conditions, not just the first) */
+const stringLeaves = (node: unknown, found: string[] = []): string[] => {
+  if (typeof node === 'string') {
+    found.push(node);
+  } else if (node && typeof node === 'object') {
+    for (const value of Object.values(node)) stringLeaves(value, found);
   }
-  return undefined;
+  return found;
+};
+
+/**
+ * Targets of a `#` subpath import, including pattern (`#internal/*`) matches. All conditions are
+ * returned, since a leak under any of them affects the consumers resolving to it.
+ */
+const subpathImportTargets = (imports: PackageJson['imports'], spec: string): string[] => {
+  const targets: string[] = [];
+  for (const [key, value] of Object.entries(imports ?? {})) {
+    if (key === spec) {
+      targets.push(...stringLeaves(value));
+    } else if (key.includes('*')) {
+      const [prefix, suffix] = key.split('*');
+      if (!spec.startsWith(prefix) || !spec.endsWith(suffix)) continue;
+      const wildcard = spec.slice(prefix.length, spec.length - suffix.length);
+      targets.push(...stringLeaves(value).map(target => target.replaceAll('*', wildcard)));
+    }
+  }
+  return targets;
 };
 
 /** Resolve a declaration path that may be missing its extension or use a JS one */
@@ -128,9 +146,19 @@ for (const pkgJsonPath of pkgJsonPaths) {
           if (spec.startsWith('.')) {
             queue.push(normalize(join(dirname(resolved), spec)));
           } else if (spec.startsWith('#')) {
-            const target = firstStringLeaf(pkg.imports?.[spec]);
-            if (target) queue.push(normalize(join(pkgDir, target)));
-            else console.log(`[unresolved] ${pkg.name} -> ${spec}`);
+            const targets = subpathImportTargets(pkg.imports, spec);
+            if (targets.length === 0) console.log(`[unresolved] ${pkg.name} -> ${spec}`);
+            for (const target of targets) {
+              // A subpath import can map to a bare package specifier as well as a local file
+              const targetPkg = pkgNameOf(target);
+              if (targetPkg) {
+                if (!optionalPeers.has(targetPkg)) continue;
+                if (!leaks.has(targetPkg)) leaks.set(targetPkg, new Set());
+                leaks.get(targetPkg)!.add(resolved);
+              } else {
+                queue.push(normalize(join(pkgDir, target)));
+              }
+            }
           }
           continue;
         }
