@@ -10,3 +10,4 @@ export * from './RuleGroupDnD';
 export * from './shadowQuery';
 export * from './types';
 export * from './useShadowQuery';
+export * from './vendored';

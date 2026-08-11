@@ -1,9 +1,3 @@
-import type { combine as combineImport } from '@atlaskit/pragmatic-drag-and-drop/combine';
-import type {
-  draggable as draggableImport,
-  dropTargetForElements as dropTargetForElementsImport,
-  monitorForElements as monitorForElementsImport,
-} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import * as React from 'react';
 import {
   createContext,
@@ -46,18 +40,19 @@ import { isHotkeyPressed } from '../isHotkeyPressed';
 import { getQuadrant } from '../quadrantDetection';
 import { computeShadowQuery } from '../shadowQuery';
 import type { DragPreviewState, OnDragMoveCallback, OnRuleDropCallback } from '../types';
+import type { PragmaticDndExports } from '../vendored';
 
-/**
- * The `@atlaskit/pragmatic-drag-and-drop` exports needed by the adapter.
- *
- * @group DnD
- */
-export type PragmaticDndExports = {
-  draggable: typeof draggableImport;
-  dropTargetForElements: typeof dropTargetForElementsImport;
-  monitorForElements: typeof monitorForElementsImport;
-  combine: typeof combineImport;
-};
+// Inline `import(...)` types instead of top-level `import type`s: the latter leave side-effect
+// imports of `@atlaskit/pragmatic-drag-and-drop/*` in the emitted declarations even when every
+// binding is elided, which breaks consumers who don't install this optional peer dependency.
+/* oxlint-disable typescript/consistent-type-imports -- see comment above */
+/** Internal: the real pragmatic-drag-and-drop exports, for body-level type checking only. */
+type PragmaticRealExports = Pick<
+  typeof import('@atlaskit/pragmatic-drag-and-drop/element/adapter'),
+  'draggable' | 'dropTargetForElements' | 'monitorForElements'
+> &
+  Pick<typeof import('@atlaskit/pragmatic-drag-and-drop/combine'), 'combine'>;
+/* oxlint-enable typescript/consistent-type-imports */
 
 // #region Internal context
 
@@ -109,7 +104,8 @@ const getDropId = (
  * @group DnD
  */
 export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): DndAdapter => {
-  const { draggable, dropTargetForElements, monitorForElements, combine } = pdndExports;
+  const { draggable, dropTargetForElements, monitorForElements, combine } =
+    pdndExports as unknown as PragmaticRealExports;
 
   // #region DndProvider
 

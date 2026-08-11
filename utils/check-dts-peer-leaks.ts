@@ -22,15 +22,16 @@ const importRE = /^\s*(?:import|export)\b[^;]*?\bfrom\s*["'](?<spec>[^"']+)["']/
 /** Inline `import("...")` type references */
 const inlineImportRE = /\bimport\(\s*["'](?<spec>[^"']+)["']\s*\)/g;
 
-/** Package name for a specifier, or `undefined` for relative/builtin ones */
+/** Package name for a specifier, or `undefined` for relative/builtin/subpath-import ones */
 const pkgNameOf = (spec: string): string | undefined => {
-  if (spec.startsWith('.') || spec.startsWith('node:')) return undefined;
+  if (spec.startsWith('.') || spec.startsWith('#') || spec.startsWith('node:')) return undefined;
   return spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0];
 };
 
 interface PackageJson {
   name: string;
   types?: string;
+  imports?: Record<string, unknown>;
   dependencies?: Record<string, string>;
   exports?: Record<string, unknown>;
   peerDependenciesMeta?: Record<string, { optional?: boolean }>;
@@ -52,6 +53,36 @@ const defaultTypeEntries = (pkg: PackageJson): string[] => {
   walk(pkg.exports?.['.'], false);
   if (found.size === 0 && pkg.types) found.add(pkg.types);
   return [...found];
+};
+
+/** First string leaf in an exports/imports subtree */
+const firstStringLeaf = (node: unknown): string | undefined => {
+  if (typeof node === 'string') return node;
+  if (!node || typeof node !== 'object') return undefined;
+  for (const value of Object.values(node)) {
+    const found = firstStringLeaf(value);
+    if (found) return found;
+  }
+  return undefined;
+};
+
+/** Resolve a declaration path that may be missing its extension or use a JS one */
+const resolveDts = async (base: string): Promise<string | undefined> => {
+  // Declaration files reference sibling chunks by their JS specifier (`./chunk.mjs`)
+  const jsExt = /\.(?<ext>[mc]?js)$/.exec(base);
+  const stem = jsExt ? base.slice(0, -jsExt[0].length) : base;
+  const dtsExts = jsExt
+    ? [`.d.${jsExt.groups!.ext.replace('js', 'ts')}`]
+    : ['.d.ts', '.d.mts', '.d.cts'];
+  const candidates = [
+    ...(jsExt ? [] : [base]),
+    ...dtsExts.map(ext => `${stem}${ext}`),
+    ...['index.d.ts', 'index.d.mts', 'index.d.cts'].map(f => join(stem, f)),
+  ];
+  for (const candidate of candidates) {
+    if (await Bun.file(candidate).exists()) return candidate;
+  }
+  return undefined;
 };
 
 let failed = false;
@@ -81,22 +112,31 @@ for (const pkgJsonPath of pkgJsonPaths) {
     const dtsPath = queue.pop()!;
     if (seen.has(dtsPath)) continue;
     seen.add(dtsPath);
-    const file = Bun.file(dtsPath);
-    if (!(await file.exists())) continue;
-    const text = await file.text();
+    const resolved = await resolveDts(dtsPath);
+    if (!resolved) {
+      console.log(`[unresolved] ${pkg.name} -> ${dtsPath}`);
+      continue;
+    }
+    const text = await Bun.file(resolved).text();
     for (const re of [importRE, inlineImportRE]) {
       re.lastIndex = 0;
       for (const m of text.matchAll(re)) {
         const spec = m.groups!.spec;
         const name = pkgNameOf(spec);
         if (!name) {
-          // Follow relative declaration chunks
-          if (spec.startsWith('.')) queue.push(normalize(join(dirname(dtsPath), spec)));
+          // Follow relative declaration chunks and subpath imports
+          if (spec.startsWith('.')) {
+            queue.push(normalize(join(dirname(resolved), spec)));
+          } else if (spec.startsWith('#')) {
+            const target = firstStringLeaf(pkg.imports?.[spec]);
+            if (target) queue.push(normalize(join(pkgDir, target)));
+            else console.log(`[unresolved] ${pkg.name} -> ${spec}`);
+          }
           continue;
         }
         if (!optionalPeers.has(name)) continue;
         if (!leaks.has(name)) leaks.set(name, new Set());
-        leaks.get(name)!.add(dtsPath);
+        leaks.get(name)!.add(resolved);
       }
     }
   }

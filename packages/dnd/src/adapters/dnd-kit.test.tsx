@@ -10,8 +10,8 @@ import type {
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import { isDndAdapter } from '../adapter';
 import { QueryBuilderDnD } from '../QueryBuilderDnD';
+import type { DndKitExports } from '../vendored';
 import { createDndKitAdapter } from './dnd-kit';
-import type { DndKitExports } from './dnd-kit';
 
 // #region Mock helpers
 
@@ -1702,7 +1702,7 @@ describe('createDndKitAdapter', () => {
 
     const setupUpdateWhileDragging = () => {
       const mock = createMockDndKitWithCapture();
-      const adapter = createDndKitAdapter(mock as unknown as DndKitExports);
+      const adapter = createDndKitAdapter(mock);
       const dispatchQueryFn = vi.fn();
       const schema = mockSchema({ getQuery: () => query, dispatchQuery: dispatchQueryFn });
 
@@ -1860,7 +1860,7 @@ describe('createDndKitAdapter', () => {
 
     it('does not interfere with standard drop when updateWhileDragging is false', () => {
       const mock = createMockDndKitWithCapture();
-      const adapter = createDndKitAdapter(mock as unknown as DndKitExports);
+      const adapter = createDndKitAdapter(mock);
       const moveRuleFn = vi.fn();
       const schema = mockSchema({ getQuery: () => query });
       const actions = { ...mockActions(), moveRule: moveRuleFn };

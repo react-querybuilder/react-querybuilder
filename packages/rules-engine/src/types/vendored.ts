@@ -3,7 +3,8 @@
 // signatures of the export processors reference these instead of the real types so that the
 // published declarations don't require `json-rules-engine`, `node-rules`, or `rulepilot` to be
 // installed. Each processor's implementation still uses the real types internally, so `tsc`
-// verifies assignability on every build and upstream drift surfaces as a compile error.
+// verifies assignability during `bun typecheck` (see `vendored.test-d.ts`) and upstream drift
+// surfaces as a compile error.
 
 /**
  * Structural stand-in for `json-rules-engine`'s `OperatorEvaluator`.
@@ -22,8 +23,8 @@ export interface REOperatorEvaluator<A, B> {
 export interface REConditionProperties {
   fact: string;
   operator: string;
-  // oxlint-disable-next-line typescript/no-redundant-type-constituents -- mirrors upstream
-  value: { fact: string } | any;
+  /** Upstream declares `{ fact: string } | any`, which reduces to `any`. */
+  value: any;
   path?: string;
   priority?: number;
   params?: Record<string, any>;

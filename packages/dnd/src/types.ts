@@ -1,6 +1,3 @@
-import type * as ReactDnD from 'react-dnd';
-import type * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
-import type * as ReactDndTouchBackend from 'react-dnd-touch-backend';
 import type {
   Controls,
   DndDropTargetType,
@@ -14,22 +11,21 @@ import type {
 } from 'react-querybuilder';
 import type { SetOptional } from 'type-fest';
 import type { DndAdapter } from './adapter';
+import type { RdndBackendFactory, ReactDnDExports } from './vendored';
 
-type ReactDndBackendFactory = typeof ReactDndHtml5Backend.HTML5Backend;
-
-interface OptionalKnownDndBackends
-  extends
-    Partial<Pick<typeof ReactDndHtml5Backend, 'HTML5Backend'>>,
-    Partial<Pick<typeof ReactDndTouchBackend, 'TouchBackend'>> {}
+interface OptionalKnownDndBackends {
+  HTML5Backend?: RdndBackendFactory;
+  TouchBackend?: RdndBackendFactory;
+}
 
 /**
- * Combination of all exports from `react-dnd` and the backends from
+ * The `react-dnd` exports needed by the adapter, plus the backends from
  * `react-dnd-html5-backend` and `react-dnd-touch-backend`.
  *
  * @group Hooks
  */
-export type UseReactDnD = typeof ReactDnD & {
-  ReactDndBackend: ReactDndBackendFactory;
+export type UseReactDnD = ReactDnDExports & {
+  ReactDndBackend: RdndBackendFactory;
 } & OptionalKnownDndBackends;
 
 /**
