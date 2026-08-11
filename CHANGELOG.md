@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.22.5] - 2026-08-11
+
 ### Fixed
 
-- [#940] Optional peer dependencies no longer appear in published type declarations. Consumers who typecheck with `skipLibCheck: false` previously got `TS2307 Cannot find module 'drizzle-orm'` (and similar for `sequelize`, `@tanstack/db`, `json-rules-engine`, `node-rules`, and `rulepilot`) without installing packages they never used. The affected annotations now use local structural stand-ins or infer the library's types from caller-supplied arguments, so the exact types are still produced when the peer _is_ installed.
+- [#1084] Optional peer dependencies no longer appear in published type declarations. Consumers who typecheck with `skipLibCheck: false` previously got `TS2307 Cannot find module 'drizzle-orm'` (and similar for `sequelize`, `@tanstack/db`, `json-rules-engine`, `node-rules`, and `rulepilot`) without installing packages they never used. The affected annotations now use local structural stand-ins or infer the library's types from caller-supplied arguments, so the exact types are still produced when the peer _is_ installed.
   - `@react-querybuilder/core`: `defaultRuleGroupProcessorDrizzle` is typed with the new `DrizzleWhereCallback`, which is generic over the operators object you pass it—so its result is still Drizzle's own `SQL | undefined`, derived from your installation. New exports `DrizzleOperatorsLike` and `SequelizeWhereOptionsLike`; `defaultRuleGroupProcessorSequelize` now returns the latter, which remains assignable to Sequelize's `WhereOptions`. The `"tanstack_db"` where-callback's return type is now `unknown`, matching TanStack DB's own `WhereCallback`, which returns `any`.
   - `@react-querybuilder/core` now depends on `@types/json-logic-js` (a types-only package with no runtime code), so the `JsonLogic*` types and `RQBJsonLogic` resolve without installing `json-logic-js` itself, which remains an optional peer dependency.
   - `@react-querybuilder/rules-engine`: the `"json-rules-engine"`, `"node-rules"`, and `"rulepilot"` export targets are typed with new structural equivalents—`RETopLevelCondition`, `RERuleProperties`, `REOperatorEvaluator`, `RENodeRulesRule`, `RERulePilotRule`, `RERulePilotCondition`, and friends—each assignable to its counterpart in the corresponding library.
@@ -2424,7 +2426,6 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#932]: https://github.com/react-querybuilder/react-querybuilder/pull/932
 [#935]: https://github.com/react-querybuilder/react-querybuilder/pull/935
 [#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
-[#940]: https://github.com/react-querybuilder/react-querybuilder/issues/940
 [#942]: https://github.com/react-querybuilder/react-querybuilder/pull/942
 [#946]: https://github.com/react-querybuilder/react-querybuilder/pull/946
 [#947]: https://github.com/react-querybuilder/react-querybuilder/pull/947
@@ -2478,12 +2479,14 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1078]: https://github.com/react-querybuilder/react-querybuilder/pull/1078
 [#1079]: https://github.com/react-querybuilder/react-querybuilder/pull/1079
 [#1082]: https://github.com/react-querybuilder/react-querybuilder/pull/1082
+[#1084]: https://github.com/react-querybuilder/react-querybuilder/pull/1084
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.4...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.5...HEAD
+[v8.22.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.4...v8.22.5
 [v8.22.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.3...v8.22.4
 [v8.22.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.2...v8.22.3
 [v8.22.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.1...v8.22.2
