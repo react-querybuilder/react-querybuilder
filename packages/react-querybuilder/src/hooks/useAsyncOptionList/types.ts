@@ -10,11 +10,8 @@ import type { WithSlice } from '@reduxjs/toolkit';
 import type { ValueEditorProps, VersatileSelectorProps } from '../../types';
 import type { asyncOptionListsSlice } from './asyncOptionListsSlice';
 
-declare module '../../redux/rootReducer' {
+declare module 'react-querybuilder' {
   export interface LazyLoadedSlices extends WithSlice<typeof asyncOptionListsSlice> {}
-}
-
-declare module '../../redux/types' {
   export interface RqbState {
     asyncOptionLists: AsyncOptionListsSliceState;
   }
