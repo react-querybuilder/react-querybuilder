@@ -37,6 +37,8 @@ const forbiddenIdentifierRE = /\b(?:QueryManager|QueryManagerError|formatQuery)\
 
 const regionRE = /^\/\/#region (?<mod>.+)$/gm;
 const importRE = /^\s*(?:import|export)\b[^;]*?\bfrom\s*["'](?<spec>[^"']+)["']/gm;
+const sideEffectImportRE = /^\s*import\s*["'](?<spec>[^"']+)["']/gm;
+const dynamicImportRE = /\bimport\(\s*["'](?<spec>[^"']+)["']\s*\)/g;
 const requireRE = /\brequire\(\s*["'](?<spec>[^"']+)["']\s*\)/g;
 
 /** Good enough to defeat doc comments; false positives here would only be extra strictness. */
@@ -55,7 +57,12 @@ const moduleGraph = async (entry: string): Promise<Map<string, string>> => {
     const code = await Bun.file(file).text();
     seen.set(file, code);
 
-    for (const match of [...code.matchAll(importRE), ...code.matchAll(requireRE)]) {
+    for (const match of [
+      ...code.matchAll(importRE),
+      ...code.matchAll(sideEffectImportRE),
+      ...code.matchAll(dynamicImportRE),
+      ...code.matchAll(requireRE),
+    ]) {
       const spec = match.groups!.spec;
       if (spec.startsWith('.')) queue.push(normalize(join(dirname(file), spec)));
     }

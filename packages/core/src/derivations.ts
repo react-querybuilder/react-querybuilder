@@ -7,7 +7,7 @@
  * query-formatting and query-parsing surfaces are likewise excluded; import them from
  * `@react-querybuilder/core` or their own subpaths (`.../formatQuery`, `.../parseSQL`, etc.).
  *
- * The exclusion is enforced by `scripts/check-derivations-purity.ts`, which runs after the build.
+ * The exclusion is enforced by `utils/check-derivations-purity.ts`, which runs after the build.
  *
  * Everything exported here is also exported from the package root, so this entry point is a
  * bundle-size optimization, never a source of distinct behavior.
