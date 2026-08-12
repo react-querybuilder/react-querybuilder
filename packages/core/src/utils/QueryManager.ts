@@ -47,6 +47,7 @@ import type {
   ValueSourceFullOptions,
   ValueSources,
 } from '../types';
+import { shouldCoalesce } from './coalesce';
 import { convertFromIC, convertToIC } from './convertQuery';
 import { defaultValidator } from './defaultValidator';
 import type { RuleContext, RuleGroupContext } from './deriveRuleContext';
@@ -86,7 +87,7 @@ import type {
 import { add, group, insert, move, remove, update } from './queryTools';
 import { regenerateIDs } from './regenerateIDs';
 import { createRule, createRuleGroup } from './ruleFactory';
-import { signatureOf, structuralSignature, unchangedSignature } from './signature';
+import { signatureOf, unchangedSignature } from './signature';
 import type { TransformQueryOptions } from './transformQuery';
 import { transformQuery } from './transformQuery';
 
@@ -158,6 +159,31 @@ export interface StrictOptions {
 }
 
 /**
+ * The `getDefaultField` option: either a field name or a function that picks one.
+ *
+ * Named separately from {@link QueryManagerOptions} so callers building the option value
+ * conditionally can annotate the intermediate. TypeScript cannot reconcile the two arms of a
+ * ternary against an inline union, which otherwise forces a cast.
+ *
+ * @group Query Tools
+ */
+export type DefaultFieldProp<F extends FullField = FullField> =
+  | string
+  | ((fieldsData: FullOptionList<F>) => string);
+
+/**
+ * The `getDefaultOperator` option: either an operator name or a function that picks one.
+ *
+ * Named separately from {@link QueryManagerOptions} for the same reason as
+ * {@link DefaultFieldProp}.
+ *
+ * @group Query Tools
+ */
+export type DefaultOperatorProp<F extends FullField = FullField> =
+  | string
+  | ((field: string, misc: { fieldData: F }) => string);
+
+/**
  * Options for {@link QueryManager}. Mirrors the subset of
  * {@link react-querybuilder!QueryBuilder QueryBuilder} props that affect query
  * _structure_ rather than rendering, so the same configuration objects can drive both.
@@ -196,9 +222,9 @@ export interface QueryManagerOptions<
    */
   translations?: Partial<BaseTranslations<unknown>>;
   /** The default `field` for rules created by {@link QueryManager.createRule}. */
-  getDefaultField?: string | ((fieldsData: FullOptionList<F>) => string);
+  getDefaultField?: DefaultFieldProp<F>;
   /** The default `operator` for a given field. */
-  getDefaultOperator?: string | ((field: string, misc: { fieldData: F }) => string);
+  getDefaultOperator?: DefaultOperatorProp<F>;
   /** Overrides the computed default `value` for a new rule. */
   getDefaultValue?: (rule: RuleType, misc: { fieldData: F }) => unknown;
   /** The operators available for a given field. */
@@ -646,8 +672,7 @@ export class QueryManager<
     if (sig === unchangedSignature) return;
 
     const now = this.#now();
-    const canCoalesce =
-      sig !== structuralSignature && sig === this.#lastSig && now - this.#lastAt < this.#coalesceMs;
+    const canCoalesce = shouldCoalesce(this.#lastSig, sig, this.#lastAt, now, this.#coalesceMs);
 
     if (!canCoalesce) {
       this.#past.push(prev);
@@ -1466,6 +1491,33 @@ export class QueryManager<
   /** The value editor type for a field/operator pair. */
   getValueEditorType(field: string, operator: string): ValueEditorType {
     return this.#valueEditorTypeFor(field, operator);
+  }
+
+  /**
+   * The default `operator` for a field, identical to the operator
+   * {@link QueryManager.createRule} would assign to a new rule on that field.
+   */
+  getRuleDefaultOperator(field: string): string {
+    return this.#defaultOperator(field);
+  }
+
+  /**
+   * The default `value` for a rule, identical to the value {@link QueryManager.createRule} and
+   * {@link QueryManager.update} would assign after a field or operator change.
+   */
+  getRuleDefaultValue(rule: RuleType): unknown {
+    return this.#defaultValue(rule);
+  }
+
+  /**
+   * The flattened field record backing {@link QueryManager.getFieldData}, keyed by field name
+   * with option groups flattened away.
+   *
+   * Treat the result as read-only. It may or may not be frozen depending on configuration, so
+   * do not rely on frozen-ness to prevent mutation.
+   */
+  getFieldMap(): Partial<FullOptionRecord<FullField>> {
+    return this.#fieldMap;
   }
 
   /**

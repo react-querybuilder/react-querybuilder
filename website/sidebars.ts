@@ -61,6 +61,7 @@ export default {
         'utils/import',
         'utils/query-management',
         'utils/hooks',
+        'utils/framework-adapters',
         'utils/validation',
         'utils/misc',
       ],

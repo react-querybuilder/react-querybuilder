@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `@react-querybuilder/core`: `QueryManager#getRuleDefaultOperator(field)`, `QueryManager#getRuleDefaultValue(rule)`, and `QueryManager#getFieldMap()` expose derivations that were previously private.
+- `@react-querybuilder/core`: `shouldCoalesce(prevSig, nextSig, prevAt, now, coalesceMs?)` is the history-coalescing predicate `QueryManager` applies internally. `QueryManager` now calls it rather than duplicating the rule.
+- `@react-querybuilder/core`: `controlKeys`, `controlPropKeys`, and `controlKind` describe the query builder's controls as runtime data. `controlPropKeys` lists every prop each control receives. `controlKind` reports which bulk override (`actionElement`/`valueSelector`) applies to each control, replacing name-suffix sniffing such as `key.endsWith('Action')`. Compile-time gates in `react-querybuilder` fail the build if either drifts from the React prop types or from `defaultControlElements`.
+- `@react-querybuilder/core`: `DefaultFieldProp` and `DefaultOperatorProp` name the union types of `QueryManagerOptions`' `getDefaultField`/`getDefaultOperator`, so callers building those values conditionally can annotate the intermediate instead of casting. The option fields are retyped to the aliases, which is structurally identical.
+- Documentation: a new "Framework adapter API" page lists the headless derivations that non-React ports depend on. These are semver-covered public API, and a new test locks the full export surface of `@react-querybuilder/core` against both accidental removal and accidental addition.
+
 ## [v8.22.5] - 2026-08-11
 
 ### Fixed

@@ -447,6 +447,11 @@ export type Controls<F extends FullField, O extends string> = Required<
 /**
  * Subcomponents.
  *
+ * The member names are locked to `@react-querybuilder/core`'s `ControlKey` union (and each
+ * member's props to core's `controlPropKeys`) by the compile-time gates in
+ * `types/controlPropKeys.test.ts`. Adding or renaming a control here without updating core is
+ * a build failure.
+ *
  * @group Props
  */
 export type ControlElementsProp<F extends FullField, O extends string> = Partial<{

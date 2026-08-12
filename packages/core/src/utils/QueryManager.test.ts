@@ -1674,6 +1674,70 @@ describe('rule configuration', () => {
     expect(m.getValueEditorType('firstName', '=')).toBe('text');
   });
 
+  describe('default resolvers', () => {
+    it('reports the same default operator createRule assigns', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [] },
+        { fields, getDefaultOperator: 'beginsWith' }
+      );
+      expect(m.getRuleDefaultOperator('firstName')).toBe('beginsWith');
+      expect(m.getRuleDefaultOperator('firstName')).toBe(m.createRule().operator);
+    });
+
+    it('accepts a function for the default operator', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [] },
+        { fields, getDefaultOperator: (f: string) => (f === 'firstName' ? 'contains' : '=') }
+      );
+      expect(m.getRuleDefaultOperator('firstName')).toBe('contains');
+      expect(m.getRuleDefaultOperator('lastName')).toBe('=');
+    });
+
+    it('reports the same default value createRule assigns', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [] },
+        { fields, getDefaultValue: () => 'dv' }
+      );
+      const created = m.createRule();
+      expect(m.getRuleDefaultValue(created)).toBe('dv');
+      expect(created.value).toBe('dv');
+    });
+
+    it('reports the same default value an update assigns after a field change', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [rule('firstName')] },
+        { fields, getDefaultValue: (r: RuleType) => `dv-${r.field}` }
+      );
+      const expected = m.getRuleDefaultValue({
+        ...(m.getQuery().rules[0] as RuleType),
+        field: 'age',
+      });
+      m.update('field', 'age', [0]);
+      expect((m.getQuery().rules[0] as RuleType).value).toBe(expected);
+    });
+  });
+
+  describe('getFieldMap', () => {
+    it('is keyed by field name and agrees with getFieldData', () => {
+      const m = q();
+      expect(Object.keys(m.getFieldMap()).toSorted()).toEqual(fields.map(f => f.name).toSorted());
+      expect(m.getFieldMap().firstName).toEqual(m.getFieldData('firstName'));
+    });
+
+    it('flattens option groups', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [] },
+        { fields: [{ label: 'Names', options: [{ name: 'firstName', label: 'First' }] }] }
+      );
+      expect(Object.keys(m.getFieldMap())).toEqual(['firstName']);
+    });
+
+    it('returns the same reference on every call', () => {
+      const m = q();
+      expect(m.getFieldMap()).toBe(m.getFieldMap());
+    });
+  });
+
   describe('getRuleContext', () => {
     it('resolves context by path', () => {
       const ctx = q().getRuleContext([0]);

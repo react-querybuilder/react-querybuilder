@@ -367,12 +367,14 @@ export const uniqOptList = <T extends BaseOption>(
   return uniqByIdentifier((originalArray as BaseOption[]).map(o => toFullOption(o)));
 };
 
+/** Result of {@link prepareOptionList}. */
 export interface PreparedOptionList<O extends FullOption> {
   defaultOption: FullOption;
   optionList: FullOptionList<O>;
   optionsMap: Partial<FullOptionRecord<FullOption>>;
 }
 
+/** Parameters for {@link prepareOptionList}. */
 export interface PrepareOptionListParams<O extends FullOption> {
   placeholder?: Placeholder;
   optionList?: FlexibleOptionListProp<O> | BaseOptionMap<O>;
@@ -381,6 +383,17 @@ export interface PrepareOptionListParams<O extends FullOption> {
   autoSelectOption?: boolean;
 }
 
+/**
+ * Normalizes any accepted option list shape—array, option groups, or a record—into a
+ * `FullOptionList`, applying `baseOption` properties, label overrides, and (when
+ * `autoSelectOption` is `false`) a leading placeholder option. Also returns the flattened
+ * lookup map and the option that should be selected by default.
+ *
+ * This is the same normalization `<QueryBuilder />` applies to `fields`, `operators`,
+ * `combinators`, and value lists, so a non-React implementation resolves options identically.
+ *
+ * @group Option Lists
+ */
 export const prepareOptionList = <O extends FullOption>(
   props: PrepareOptionListParams<O>
 ): PreparedOptionList<O> => {

@@ -1,0 +1,90 @@
+---
+title: Framework adapter API
+hide_table_of_contents: true
+description: Headless derivations for non-React ports of React Query Builder
+---
+
+%importmd ../\_ts_admonition.md
+
+`@react-querybuilder/core` contains every derivation the `<QueryBuilder />` component performs, with no React dependency. A framework port—Solid, Svelte, Vue, or anything else—can render an equivalent UI by calling these functions directly instead of reimplementing the precedence rules for fields, operators, values, class names, and history.
+
+:::info
+
+The exports listed on this page are **public API covered by semantic versioning**. They will not be removed or have their signatures changed outside a major release.
+
+The full export surface of `@react-querybuilder/core` is locked by a test (`packages/core/src/__tests__/publicApi.test.ts`) that fails on both accidental removal _and_ accidental addition, so every change to the surface requires a deliberate changelog entry.
+
+:::
+
+## Option list preparation
+
+| Function                 | Purpose                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `prepareRuleGroup`       | Normalizes a query object, assigning `id`s where missing.                          |
+| `prepareOptionList`      | Normalizes any option list prop into a `FullOptionList`, applying placeholders.    |
+| `toFlatOptionArray`      | Flattens option groups into a single array.                                        |
+| `resolveOperatorList`    | The operator list for a field, applying the same precedence as `<QueryBuilder />`. |
+| `resolveDefaultOperator` | The default operator for a field.                                                  |
+| `resolveValueList`       | The value list for a field/operator pair.                                          |
+| `resolveValueEditorType` | The value editor type for a field/operator pair.                                   |
+| `getValueSourcesUtil`    | The value sources available for a field/operator pair.                             |
+| `getMatchModesUtil`      | The match modes available for a field.                                             |
+| `getRuleDefaultValue`    | The default `value` for a rule.                                                    |
+| `getFieldData`           | Looks a field up in a flattened field map, with a minimal fallback.                |
+
+## Rule and group derivations
+
+| Function                        | Purpose                                                                      |
+| ------------------------------- | ---------------------------------------------------------------------------- |
+| `deriveRuleContext`             | Everything a rule's UI needs: field data, operators, value editor type, etc. |
+| `deriveRuleGroupContext`        | The equivalent derivation for a group.                                       |
+| `deriveQueryBuilderClassNames`  | The resolved class names for every element.                                  |
+| `generateAccessibleDescription` | The accessible description for a group.                                      |
+| `resolveCandidateQuery`         | Resolves a controlled/uncontrolled query prop against the current state.     |
+
+## Query manipulation
+
+`createRule`, `createRuleGroup`, `createQueryActions`, and the query tools `add`, `remove`, `update`, `move`, `insert`, and `group`. See [Query management](./query-management) for full signatures.
+
+Path helpers: `findPath`, `findID`, `getPathOfID`, `pathIsDisabled`, `pathIsDisabledByPaths`, `exceedsMaxLevels`.
+
+## History
+
+| Export                                       | Purpose                                                             |
+| -------------------------------------------- | ------------------------------------------------------------------- |
+| `signatureOf`                                | Describes what changed between two queries.                         |
+| `structuralSignature` / `unchangedSignature` | Sentinel signatures: shape changed / nothing observable changed.    |
+| `shouldCoalesce`                             | Whether a change should be absorbed into the current history entry. |
+| `defaultCoalesceMs` / `defaultMaxHistory`    | Defaults for the coalescing window and stack depth.                 |
+
+`shouldCoalesce` is the same predicate `QueryManager` applies internally, so a port that owns its own `past`/`future` stacks records history identically without duplicating the rule:
+
+```ts
+import { shouldCoalesce, signatureOf, unchangedSignature } from '@react-querybuilder/core';
+
+const record = (prev: RuleGroupTypeAny, next: RuleGroupTypeAny) => {
+  const sig = signatureOf(prev, next);
+  // A change with no observable difference is never recorded at all.
+  if (sig === unchangedSignature) return;
+  if (!shouldCoalesce(lastSig, sig, lastAt, Date.now())) {
+    past.push(prev);
+    future = [];
+  }
+  lastSig = sig;
+  lastAt = Date.now();
+};
+```
+
+## Controls
+
+| Export            | Purpose                                                                                  |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| `controlKeys`     | The name of every query builder control.                                                 |
+| `controlPropKeys` | The complete set of prop names each control receives.                                    |
+| `controlKind`     | Which bulk override (`actionElement` / `valueSelector`) applies to each control, if any. |
+
+`controlPropKeys` lets a port's default controls declare every prop they receive explicitly, instead of relying on framework-specific attribute fall-through. `controlKind` replaces name-suffix sniffing such as `key.endsWith('Action')`, which silently misclassifies controls whose names happen to end the same way.
+
+## Validation and export
+
+`defaultValidator` and `formatQuery` are also framework-agnostic. See [Validation](./validation) and [Export](./export).

@@ -1,5 +1,6 @@
 export * from './arrayUtils';
 export * from './clsx';
+export * from './coalesce';
 export * from './convertQuery';
 export * from './deriveClassNames';
 export * from './defaultValidator';
