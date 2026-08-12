@@ -634,6 +634,15 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
  * Configuration options passed in the `schema` prop from
  * {@link QueryBuilder} to each subcomponent.
  *
+ * Note that this interface is **invariant** in `F`: a `Schema<MyField, 'eq'>` is not assignable
+ * to a `Schema<FullField, string>`, so passing one where the other is expected requires a cast.
+ * The cause is `controls`, whose members are `ComponentType<…>` *properties* and therefore
+ * contravariant in `F`, while `fields`/`fieldMap` are covariant in it. (The `get*` members are
+ * method shorthand, so their parameters compare bivariantly and contribute nothing.) TypeScript
+ * variance annotations cannot help here—`in out` asserts invariance rather than widening
+ * assignability—and removing the contravariance would mean narrowing the `schema` prop that
+ * custom controls receive, a breaking change. The behavior is pinned by `props.test-d.ts`.
+ *
  * @group Props
  */
 export interface Schema<F extends FullField, O extends string> {
