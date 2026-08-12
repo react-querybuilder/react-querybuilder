@@ -457,9 +457,7 @@ export const prepareOptionList = <O extends FullOption>(
   let optionsMap: Partial<FullOptionRecord<O>> = {};
   if (!Array.isArray(optionsProp)) {
     const op = toFullOptionMap(optionsProp, baseOption) as FullOptionMap<O, OptionIdentifier>;
-    optionsMap = autoSelectOption
-      ? (op as Partial<FullOptionRecord<O>>)
-      : ({ ...op, [placeholderName]: defaultOption } as Partial<FullOptionRecord<O>>);
+    optionsMap = autoSelectOption ? op : { ...op, [placeholderName]: defaultOption };
   } else {
     if (isFlexibleOptionGroupArray(optionList)) {
       for (const og of optionList as OptionGroup<ToFullOption<O>>[]) {
