@@ -2524,3 +2524,90 @@ describe('freeze option', () => {
     expect(Object.isFrozen(q.getQuery())).toBe(false);
   });
 });
+
+describe('proxy safety', () => {
+  // Mirrors the shape of Vue's `reactive()`: a deep proxy that lazily wraps object-valued
+  // property reads, and skips anything carrying a truthy `__v_skip` (what `markRaw` sets).
+  const reactive = <T extends object>(target: T): T => {
+    if ((target as Record<string, unknown>).__v_skip) return target;
+    return new Proxy(target, {
+      get(t, k, r) {
+        const value = Reflect.get(t, k, r);
+        return value !== null && typeof value === 'object' ? reactive(value) : value;
+      },
+    });
+  };
+
+  // Deterministic ids so two managers driven identically produce deep-equal output.
+  const counter = () => {
+    let n = 0;
+    return () => `id-${n++}`;
+  };
+
+  const drive = (q: QueryManager) => {
+    q.add(rule('firstName', 'Steve'));
+    q.add(rule('lastName', 'Vai'));
+    q.update('value', 'Ray', [0]);
+    q.move([1], [0]);
+    q.batch(() => {
+      q.add(rule('age', '26'));
+      q.remove([0]);
+    });
+    q.undo();
+    q.redo();
+    q.reconfigure({ fields: [...fields, { name: 'gender', label: 'Gender' }] });
+    q.setQuery(q.getQuery());
+    return {
+      query: q.getQuery(),
+      configVersion: q.getConfigVersion(),
+      history: q.getHistory(),
+      walk: [...q.walk()].map(({ path }) => path),
+      fields: q.getFields().map(f => f.label),
+      validation: q.validate(),
+      sql: q.format('sql'),
+    };
+  };
+
+  it('works through a bare Proxy', () => {
+    const expected = drive(
+      new QueryManager<RuleGroupType>(undefined, { fields, history: true, idGenerator: counter() })
+    );
+    const proxied = new Proxy(
+      new QueryManager<RuleGroupType>(undefined, { fields, history: true, idGenerator: counter() }),
+      {}
+    );
+    expect(drive(proxied)).toEqual(expected);
+  });
+
+  it('works through a deep reactive-style Proxy', () => {
+    const expected = drive(
+      new QueryManager<RuleGroupType>(undefined, { fields, history: true, idGenerator: counter() })
+    );
+    const proxied = reactive(
+      new QueryManager<RuleGroupType>(undefined, { fields, history: true, idGenerator: counter() })
+    );
+    expect(drive(proxied)).toEqual(expected);
+  });
+
+  it('marks its state bag so reactive() skips it', () => {
+    const q = new QueryManager<RuleGroupType>(undefined, { fields });
+    const [state] = Object.getOwnPropertySymbols(q).map(
+      s => (q as unknown as Record<symbol, object>)[s]
+    );
+    expect((state as Record<string, unknown>).__v_skip).toBe(true);
+    expect(Object.keys(state)).not.toContain('__v_skip');
+  });
+
+  it('keeps its state off every enumerable surface', () => {
+    const q = new QueryManager<RuleGroupType>(undefined, { fields });
+    q.add(rule());
+
+    // Instance-bound methods only; the state bag is symbol-keyed and non-enumerable.
+    expect(Object.keys(q)).toEqual(['getQuery', 'getConfigVersion', 'subscribe']);
+    expect(JSON.stringify(q)).toBe(JSON.stringify(q.getQuery()));
+    expect(JSON.parse(JSON.stringify(q))).toEqual(q.getQuery());
+    expect(Object.keys({ ...q })).toEqual(Object.keys(q));
+    expect(q.diagnostics()).toBeDefined();
+    expect(q.clone().getQuery()).toBe(q.getQuery());
+  });
+});

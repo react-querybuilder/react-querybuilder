@@ -386,6 +386,105 @@ export interface WalkOptions {
 type AsRuleGroup<T> = T extends RuleGroupTypeAny ? T : RuleGroupTypeAny;
 
 /**
+ * Key of the single own property holding every {@link QueryManager} instance's state.
+ *
+ * `#private` fields are unreachable from a `Proxy`: inside a method invoked through one, `this`
+ * _is_ the proxy, and the private brand lives on the target, so every access throws
+ * `TypeError: Cannot read private member`. Frameworks wrap objects in proxies routinely — Vue's
+ * `reactive()`, and by extension Vue Test Utils' handling of mount props, do it implicitly — so
+ * consumers hit that failure by accident rather than by choice.
+ *
+ * A `WeakMap` keyed by instance does not fix it either, for the same reason: `weakMap.get(this)`
+ * misses the entry stored under the target. An ordinary own property is the only mechanism that
+ * reads correctly through a proxy, because the `get` trap forwards to the target.
+ *
+ * The symbol is module-private and never exported. Reaching into the state bag (via
+ * `Object.getOwnPropertySymbols`, say) is not a supported access path and its contents may change
+ * in any release.
+ */
+const kState: unique symbol = Symbol('QueryManager.state');
+
+/**
+ * Every mutable member of a {@link QueryManager}. The option-derived members are assigned by
+ * `applyOptions`, which the constructor calls before anything else; the rest are initialized by
+ * {@link createManagerState}.
+ */
+interface ManagerState<
+  RG extends RuleGroupTypeAny,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
+> {
+  query: RG;
+  // The members below are derived from the options and are reassigned by `reconfigure`, so none
+  // of them can be `readonly`. Anything handed out directly is frozen instead.
+  options: QueryManagerOptions<F, O, C>;
+  fields: FullOptionList<F>;
+  fieldMap: Partial<FullOptionRecord<F>>;
+  operators: FullOptionList<O>;
+  combinators: FullOptionList<C>;
+  idGenerator: () => string;
+  validator: QueryValidator;
+  strict: boolean;
+  respectDisabled: boolean;
+  onInvalidTarget: ((info: AbortInfo) => void) | undefined;
+  freezeEnabled: boolean;
+  readonly listeners: Set<() => void>;
+  historyEnabled: boolean;
+  maxHistory: number;
+  coalesceMs: number;
+  now: () => number;
+  /** Incremented by every {@link QueryManager.reconfigure} call. See `getConfigVersion`. */
+  configVersion: number;
+  past: RG[];
+  future: RG[];
+  lastSig: string | undefined;
+  lastAt: number;
+  batchDepth: number;
+  batchSnapshot: QueryManagerSnapshot<RG> | undefined;
+  /** Whether a history-stack method ran inside the batch currently in progress. */
+  historyBypassed: boolean;
+  /**
+   * The query the caches below were derived from. Caches are keyed on query _identity_ rather
+   * than invalidated from `commit` because `undo`, `redo`, and `batch`'s rollback all assign
+   * `query` directly.
+   */
+  cacheFor: RG | undefined;
+  idPathIndex: Map<string, Path> | undefined;
+  validation: boolean | ValidationMap | undefined;
+}
+
+/**
+ * Builds the state bag. The option-derived members are left unset for `applyOptions` to fill in,
+ * hence the assertion.
+ */
+const createManagerState = <
+  RG extends RuleGroupTypeAny,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
+>(): ManagerState<RG, F, O, C> => {
+  const state = {
+    listeners: new Set<() => void>(),
+    configVersion: 0,
+    past: [],
+    future: [],
+    lastAt: 0,
+    batchDepth: 0,
+    historyBypassed: false,
+  } as unknown as ManagerState<RG, F, O, C>;
+
+  // Vue's `reactive()` skips any object carrying a truthy `__v_skip` — this is exactly what
+  // `markRaw` sets. Without it the bag would be lazily deep-proxied on first access, so every
+  // internal read (the cached-reader path, `index`, `walkFrom`) would go through a proxy, and
+  // `idPathIndex` would become a reactive `Map` for no benefit. Set here rather than by importing
+  // `markRaw`, which would make core depend on a framework.
+  Object.defineProperty(state, '__v_skip', { value: true, enumerable: false });
+
+  return state;
+};
+
+/**
  * Stateful wrapper around the {@link add}/{@link remove}/{@link update}/{@link move}/
  * {@link insert}/{@link group} query tools, plus rule/group factories, {@link defaultValidator
  * validation}, and {@link formatQuery formatting}.
@@ -415,83 +514,67 @@ export class QueryManager<
   O extends FullOperator = FullOperator,
   C extends FullCombinator = FullCombinator,
 > {
-  #query: RG;
-  // The fields below are derived from the options and are reassigned by `reconfigure`, so none
-  // of them can be `readonly`. Anything handed out directly is frozen instead. They are all
-  // assigned by `#applyOptions`, which the constructor calls first thing; TypeScript can't see
-  // through the method call, hence the definite assignment assertions.
-  #options!: QueryManagerOptions<F, O, C>;
-  #fields!: FullOptionList<F>;
-  #fieldMap!: Partial<FullOptionRecord<F>>;
-  #operators!: FullOptionList<O>;
-  #combinators!: FullOptionList<C>;
-  #idGenerator!: () => string;
-  #validator!: QueryValidator;
-  #strict!: boolean;
-  #respectDisabled!: boolean;
-  #onInvalidTarget: ((info: AbortInfo) => void) | undefined;
-  #freezeEnabled!: boolean;
-  readonly #listeners = new Set<() => void>();
-  #historyEnabled!: boolean;
-  #maxHistory!: number;
-  #coalesceMs!: number;
-  #now!: () => number;
-  /** Incremented by every {@link QueryManager.reconfigure} call. See `getConfigVersion`. */
-  #configVersion = 0;
-  #past: RG[] = [];
-  #future: RG[] = [];
-  #lastSig: string | undefined;
-  #lastAt = 0;
-  #batchDepth = 0;
-  #batchSnapshot: QueryManagerSnapshot<RG> | undefined;
-  /** Whether a history-stack method ran inside the batch currently in progress. */
-  #historyBypassed = false;
   /**
-   * The query the cached fields below were derived from. Caches are keyed on query _identity_
-   * rather than invalidated from {@link QueryManager.#commit} because `undo`, `redo`, and
-   * `batch`'s rollback all assign `#query` directly.
+   * All instance state, rather than `#private` fields. See `kState` for why.
+   *
+   * The property itself is symbol-keyed and installed by the constructor; this accessor exists
+   * because `isolatedDeclarations` cannot emit a computed property name keyed by a symbol the
+   * module does not export, and exporting it would put it in the public API surface. A
+   * prototype accessor is proxy-safe for the same reason the own property is: `this` is the
+   * proxy, and the `get` trap forwards to the target.
    */
-  #cacheFor: RG | undefined;
-  #idPathIndex: Map<string, Path> | undefined;
-  #validation: boolean | ValidationMap | undefined;
+  private get state(): ManagerState<RG, F, O, C> {
+    return (this as unknown as Record<typeof kState, ManagerState<RG, F, O, C>>)[kState];
+  }
 
   constructor(query?: RG, options: QueryManagerOptions<F, O, C> = {}) {
-    this.#applyOptions(options);
+    // Every subsequent member access goes through this property, so it has to be installed
+    // before anything else runs. `applyOptions` fills in the option-derived members.
+    Object.defineProperty(this, kState, {
+      value: createManagerState<RG, F, O, C>(),
+      enumerable: false,
+      writable: false,
+      configurable: false,
+    });
 
-    this.#query = this.#freeze(
-      query ? prepareRuleGroup(query, { idGenerator: this.#idGenerator }) : this.createRuleGroup()
+    this.applyOptions(options);
+
+    this.state.query = this.freeze(
+      query
+        ? prepareRuleGroup(query, { idGenerator: this.state.idGenerator })
+        : this.createRuleGroup()
     );
   }
 
   /**
    * Deep-freezes `x` unless the `freeze` option is `false`. Every value the manager hands out
    * directly goes through here; the shallow copies returned by {@link QueryManager.getOptions}
-   * and passed to `#applyOptions` are frozen unconditionally instead.
+   * and passed to `applyOptions` are frozen unconditionally instead.
    */
-  #freeze<T>(x: T): T {
-    return this.#freezeEnabled ? freeze(x, true) : x;
+  private freeze<T>(x: T): T {
+    return this.state.freezeEnabled ? freeze(x, true) : x;
   }
 
   /**
-   * Assigns `#options` and every field derived from it. Shared by the constructor and
+   * Assigns `options` and every field derived from it. Shared by the constructor and
    * {@link QueryManager.reconfigure}, so the two can never drift apart. Does not touch the
    * query, the history stacks, the caches, or the subscriber list.
    */
-  #applyOptions(options: QueryManagerOptions<F, O, C>): void {
-    this.#options = options;
-    this.#freezeEnabled = options.freeze ?? true;
-    this.#idGenerator = options.idGenerator ?? generateID;
-    this.#validator = options.validator ?? defaultValidator;
-    this.#strict = options.strict ?? false;
-    this.#respectDisabled = options.respectDisabled ?? true;
-    this.#onInvalidTarget = options.onInvalidTarget;
+  private applyOptions(options: QueryManagerOptions<F, O, C>): void {
+    this.state.options = options;
+    this.state.freezeEnabled = options.freeze ?? true;
+    this.state.idGenerator = options.idGenerator ?? generateID;
+    this.state.validator = options.validator ?? defaultValidator;
+    this.state.strict = options.strict ?? false;
+    this.state.respectDisabled = options.respectDisabled ?? true;
+    this.state.onInvalidTarget = options.onInvalidTarget;
 
     const history = options.history ?? false;
     const historyOptions: QueryHistoryOptions = typeof history === 'object' ? history : {};
-    this.#historyEnabled = history !== false;
-    this.#maxHistory = historyOptions.maxHistory ?? defaultMaxHistory;
-    this.#coalesceMs = historyOptions.coalesceMs ?? defaultCoalesceMs;
-    this.#now = options.now ?? Date.now;
+    this.state.historyEnabled = history !== false;
+    this.state.maxHistory = historyOptions.maxHistory ?? defaultMaxHistory;
+    this.state.coalesceMs = historyOptions.coalesceMs ?? defaultCoalesceMs;
+    this.state.now = options.now ?? Date.now;
 
     const { optionList: fields, optionsMap: fieldMap } = prepareOptionList<F>({
       optionList: options.fields,
@@ -502,10 +585,10 @@ export class QueryManager<
     // Both are frozen (unless `freeze` is `false`) because `getFields` and `getFieldData` hand
     // their contents out directly. `prepareOptionList` builds the map's values as separate
     // objects from the list's, so freezing one does not freeze the other.
-    this.#fields = this.#freeze(fields);
-    this.#fieldMap = this.#freeze(fieldMap);
+    this.state.fields = this.freeze(fields);
+    this.state.fieldMap = this.freeze(fieldMap);
 
-    this.#operators = prepareOptionList<O>({
+    this.state.operators = prepareOptionList<O>({
       optionList: (options.operators ?? defaultOperators) as FlexibleOptionListProp<O>,
       baseOption: options.baseOperator,
       labelMap: defaultOperatorLabelMap,
@@ -513,8 +596,8 @@ export class QueryManager<
       placeholder: options.translations?.operators,
     }).optionList;
 
-    // Frozen because `getCombinators` hands this array out directly; see also `#fields`.
-    this.#combinators = this.#freeze(
+    // Frozen because `getCombinators` hands this array out directly; see also `fields`.
+    this.state.combinators = this.freeze(
       prepareOptionList<C>({
         optionList: (options.combinators ?? defaultCombinators) as FlexibleOptionListProp<C>,
         baseOption: options.baseCombinator,
@@ -525,112 +608,116 @@ export class QueryManager<
   // #region Internal resolution
 
   /** Resolves the field configuration for a field name. */
-  #fieldData(field: string): F {
-    return ((this.#fieldMap as Record<string, F | undefined>)[field] ?? {}) as F;
+  private fieldData(field: string): F {
+    return ((this.state.fieldMap as Record<string, F | undefined>)[field] ?? {}) as F;
   }
 
   /** Resolves the operator list for a field, mirroring `QueryBuilder`'s precedence. */
-  #operatorsFor(field: string): FullOptionList<O> {
+  private operatorsFor(field: string): FullOptionList<O> {
     return resolveOperatorList<F, O>({
       field,
-      fieldData: this.#fieldData(field),
-      getOperators: this.#options.getOperators,
-      operators: this.#operators,
-      baseOption: this.#options.baseOperator,
-      autoSelectOption: this.#options.autoSelectOperator,
-      placeholder: this.#options.translations?.operators,
+      fieldData: this.fieldData(field),
+      getOperators: this.state.options.getOperators,
+      operators: this.state.operators,
+      baseOption: this.state.options.baseOperator,
+      autoSelectOption: this.state.options.autoSelectOperator,
+      placeholder: this.state.options.translations?.operators,
     });
   }
 
   /** Resolves the default operator for a field, mirroring `QueryBuilder`'s precedence. */
-  #defaultOperator(field: string): string {
+  private defaultOperator(field: string): string {
     return resolveDefaultOperator<F>({
       field,
-      fieldData: this.#fieldData(field),
-      getDefaultOperator: this.#options.getDefaultOperator,
-      getOperators: (f: string) => this.#operatorsFor(f),
+      fieldData: this.fieldData(field),
+      getDefaultOperator: this.state.options.getDefaultOperator,
+      getOperators: (f: string) => this.operatorsFor(f),
     });
   }
 
-  #valueSourcesFor(field: string, operator: string) {
+  private valueSourcesFor(field: string, operator: string) {
     return getValueSourcesUtil<F, string>(
-      this.#fieldData(field),
+      this.fieldData(field),
       operator,
-      this.#options.getValueSources
+      this.state.options.getValueSources
     );
   }
 
-  #matchModesFor(field: string): MatchModeOptions {
-    return getMatchModesUtil<F>(this.#fieldData(field), this.#options.getMatchModes);
+  private matchModesFor(field: string): MatchModeOptions {
+    return getMatchModesUtil<F>(this.fieldData(field), this.state.options.getMatchModes);
   }
 
-  #valuesFor(field: string, operator: string): FullOptionList<Option> {
+  private valuesFor(field: string, operator: string): FullOptionList<Option> {
     return resolveValueList<F>({
       field,
       operator,
-      fieldData: this.#fieldData(field),
-      getValues: this.#options.getValues,
-      autoSelectOption: this.#options.autoSelectValue,
-      placeholder: this.#options.translations?.values,
+      fieldData: this.fieldData(field),
+      getValues: this.state.options.getValues,
+      autoSelectOption: this.state.options.autoSelectValue,
+      placeholder: this.state.options.translations?.values,
     });
   }
 
-  #valueEditorTypeFor(field: string, operator: string): ValueEditorType {
+  private valueEditorTypeFor(field: string, operator: string): ValueEditorType {
     return resolveValueEditorType<F>({
       field,
       operator,
-      fieldData: this.#fieldData(field),
-      getValueEditorType: this.#options.getValueEditorType,
+      fieldData: this.fieldData(field),
+      getValueEditorType: this.state.options.getValueEditorType,
     });
   }
 
   /** Computes the default `value` for a rule, mirroring `QueryBuilder`'s precedence. */
-  #defaultValue(rule: RuleType): unknown {
-    const { getDefaultValue, getParameters, listsAsArrays } = this.#options;
+  private defaultValue(rule: RuleType): unknown {
+    const { getDefaultValue, getParameters, listsAsArrays } = this.state.options;
     return getRuleDefaultValue<F>(rule, {
-      fieldData: this.#fieldData(rule.field),
-      fields: this.#fields,
+      fieldData: this.fieldData(rule.field),
+      fields: this.state.fields,
       listsAsArrays,
-      getValueEditorType: (f, o) => this.#valueEditorTypeFor(f, o),
-      getValues: (f, o) => this.#valuesFor(f, o),
+      getValueEditorType: (f, o) => this.valueEditorTypeFor(f, o),
+      getValues: (f, o) => this.valuesFor(f, o),
       getDefaultValue: getDefaultValue && ((r, misc) => getDefaultValue(r, misc)),
-      getParameters: getParameters && ((f, o, misc) => this.#parametersFor(f, o, misc)),
+      getParameters: getParameters && ((f, o, misc) => this.parametersFor(f, o, misc)),
     });
   }
 
   /**
    * Resolves the parameter list for a field/operator pair, normalized the same way as every
-   * other option list. Shared by {@link QueryManager.#defaultValue} and
-   * {@link QueryManager.getRuleContext} so both see the same shape.
+   * other option list. Shared by `defaultValue` and {@link QueryManager.getRuleContext} so both
+   * see the same shape.
    */
-  #parametersFor(field: string, operator: string, misc: { fieldData: F }): FullOptionList<Option> {
+  private parametersFor(
+    field: string,
+    operator: string,
+    misc: { fieldData: F }
+  ): FullOptionList<Option> {
     return prepareOptionList<FullOption>({
-      optionList: this.#options.getParameters?.(field, operator, misc) ?? [],
-      autoSelectOption: this.#options.autoSelectValue,
+      optionList: this.state.options.getParameters?.(field, operator, misc) ?? [],
+      autoSelectOption: this.state.options.autoSelectValue,
     }).optionList;
   }
 
   /** Defaults shared by every mutating method, overridable per call. */
-  #guardOptions(): GuardOptions & { freeze: boolean } {
-    const { maxLevels } = this.#options;
+  private guardOptions(): GuardOptions & { freeze: boolean } {
+    const { maxLevels } = this.state.options;
 
     return {
       // Spread by every tool call the manager makes, so the `freeze` option lives here rather
-      // than in `#toolOptions`, which `remove` does not use.
-      freeze: this.#freezeEnabled,
+      // than in `toolOptions`, which `remove` does not use.
+      freeze: this.state.freezeEnabled,
       // `QueryBuilder` treats a non-positive `maxLevels` as unlimited; match that.
       maxLevels: (maxLevels ?? 0) > 0 ? Number(maxLevels) : Infinity,
-      respectDisabled: this.#respectDisabled,
-      disabledPaths: this.#options.disabledPaths,
-      queryDisabled: this.#options.queryDisabled,
+      respectDisabled: this.state.respectDisabled,
+      disabledPaths: this.state.options.disabledPaths,
+      queryDisabled: this.state.options.queryDisabled,
     };
   }
 
-  #toolOptions() {
+  private toolOptions() {
     return {
-      combinators: this.#combinators,
-      idGenerator: this.#idGenerator,
-      ...this.#guardOptions(),
+      combinators: this.state.combinators,
+      idGenerator: this.state.idGenerator,
+      ...this.guardOptions(),
     };
   }
 
@@ -638,9 +725,9 @@ export class QueryManager<
    * Builds the `onAbort` handler passed to the query tools, applying the per-call overrides on
    * top of the manager's own options.
    */
-  #onAbort({ strict, onInvalidTarget }: StrictOptions): (info: AbortInfo) => void {
-    const strictMain = strict ?? this.#strict;
-    const handler = onInvalidTarget ?? this.#onInvalidTarget;
+  private onAbort({ strict, onInvalidTarget }: StrictOptions): (info: AbortInfo) => void {
+    const strictMain = strict ?? this.state.strict;
+    const handler = onInvalidTarget ?? this.state.onInvalidTarget;
 
     return info => {
       // The handler always runs, for every reason, before `strict` is considered.
@@ -653,15 +740,15 @@ export class QueryManager<
   }
 
   /** Defaults for {@link update}, so resets mirror `QueryBuilder`'s behavior. */
-  #updateOptions(): UpdateOptions {
+  private updateOptions(): UpdateOptions {
     return {
-      getRuleDefaultOperator: f => this.#defaultOperator(f),
-      getRuleDefaultValue: r => this.#defaultValue(r),
-      getValueSources: (f, o) => this.#valueSourcesFor(f, o),
-      getMatchModes: f => this.#matchModesFor(f),
-      resetOnFieldChange: this.#options.resetOnFieldChange,
-      resetOnOperatorChange: this.#options.resetOnOperatorChange,
-      ...this.#guardOptions(),
+      getRuleDefaultOperator: f => this.defaultOperator(f),
+      getRuleDefaultValue: r => this.defaultValue(r),
+      getValueSources: (f, o) => this.valueSourcesFor(f, o),
+      getMatchModes: f => this.matchModesFor(f),
+      resetOnFieldChange: this.state.options.resetOnFieldChange,
+      resetOnOperatorChange: this.state.options.resetOnOperatorChange,
+      ...this.guardOptions(),
     };
   }
 
@@ -670,26 +757,26 @@ export class QueryManager<
    * mutation funnels through here. A tool that could not resolve its target returns the same
    * query object, which is treated as a no-op.
    */
-  #commit(next: RG): void {
-    const prev = this.#query;
+  private commit(next: RG): void {
+    const prev = this.state.query;
     if (prev === next) return;
 
-    this.#query = next;
+    this.state.query = next;
 
     // Within a batch, history and notification are deferred until the outermost call ends,
     // so a batch produces one undo step and one notification.
-    if (this.#batchDepth > 0) return;
+    if (this.state.batchDepth > 0) return;
 
-    this.#record(prev, next);
-    this.#notify();
+    this.record(prev, next);
+    this.notify();
   }
 
   /**
    * Records a change, either as a new history entry or by absorbing it into the current one.
    * Mirrors the recording semantics of the `react-querybuilder/history` entry point.
    */
-  #record(prev: RG, next: RG): void {
-    if (!this.#historyEnabled) return;
+  private record(prev: RG, next: RG): void {
+    if (!this.state.historyEnabled) return;
 
     const sig = signatureOf(prev, next);
 
@@ -697,43 +784,49 @@ export class QueryManager<
     // nothing when undone.
     if (sig === unchangedSignature) return;
 
-    const now = this.#now();
-    const canCoalesce = shouldCoalesce(this.#lastSig, sig, this.#lastAt, now, this.#coalesceMs);
+    const now = this.state.now();
+    const canCoalesce = shouldCoalesce(
+      this.state.lastSig,
+      sig,
+      this.state.lastAt,
+      now,
+      this.state.coalesceMs
+    );
 
     if (!canCoalesce) {
-      this.#past.push(prev);
-      if (this.#past.length > this.#maxHistory) this.#past.shift();
-      this.#future = [];
+      this.state.past.push(prev);
+      if (this.state.past.length > this.state.maxHistory) this.state.past.shift();
+      this.state.future = [];
     }
 
-    this.#lastSig = sig;
-    this.#lastAt = now;
+    this.state.lastSig = sig;
+    this.state.lastAt = now;
   }
 
-  #notify(): void {
-    for (const listener of this.#listeners) listener();
+  private notify(): void {
+    for (const listener of this.state.listeners) listener();
   }
 
   /**
    * Records that a history-stack method ran inside the current batch. Those methods manage
-   * `#past`/`#future` themselves, so the batch must not also record an entry on completion —
-   * doing so would push a duplicate onto `#past` and clear the redo stack that `undo` just
+   * `past`/`future` themselves, so the batch must not also record an entry on completion —
+   * doing so would push a duplicate onto `past` and clear the redo stack that `undo` just
    * populated.
    */
-  #markHistoryBypassed(): void {
-    if (this.#batchDepth > 0) this.#historyBypassed = true;
+  private markHistoryBypassed(): void {
+    if (this.state.batchDepth > 0) this.state.historyBypassed = true;
   }
 
   /**
    * Discards every cached derivation when the query has been replaced since they were computed.
    * Called at the top of each cached reader.
    */
-  #ensureCache(): void {
-    if (this.#cacheFor === this.#query) return;
+  private ensureCache(): void {
+    if (this.state.cacheFor === this.state.query) return;
 
-    this.#cacheFor = this.#query;
-    this.#idPathIndex = undefined;
-    this.#validation = undefined;
+    this.state.cacheFor = this.state.query;
+    this.state.idPathIndex = undefined;
+    this.state.validation = undefined;
   }
 
   /**
@@ -742,7 +835,7 @@ export class QueryManager<
    *
    * @yields The subtree rooted at `node`, depth-first in pre-order, starting with `node` itself.
    */
-  *#walkFrom(node: RG | RuleType, path: Path, parent: RG | null): Generator<QueryNode<RG>> {
+  private *walkFrom(node: RG | RuleType, path: Path, parent: RG | null): Generator<QueryNode<RG>> {
     yield { node, path, parent };
 
     if (!isRuleGroup(node)) return;
@@ -751,29 +844,29 @@ export class QueryManager<
     for (const [index, child] of startGroup.rules.entries()) {
       // Independent-combinator groups interleave combinator strings among the rules.
       if (typeof child === 'string') continue;
-      yield* this.#walkFrom(child as RG | RuleType, [...path, index], startGroup);
+      yield* this.walkFrom(child as RG | RuleType, [...path, index], startGroup);
     }
   }
 
   /** Builds (once per query) the `id` to {@link Path} index backing `findID`/`getPathOfID`. */
-  #index(): Map<string, Path> {
-    this.#ensureCache();
+  private index(): Map<string, Path> {
+    this.ensureCache();
 
-    if (!this.#idPathIndex) {
+    if (!this.state.idPathIndex) {
       const index = new Map<string, Path>();
-      for (const { node, path } of this.#walkFrom(this.#query, [], null)) {
+      for (const { node, path } of this.walkFrom(this.state.query, [], null)) {
         // The first occurrence wins, matching `findID`'s depth-first search order.
         if (node.id !== undefined && !index.has(node.id)) index.set(node.id, path);
       }
-      this.#idPathIndex = index;
+      this.state.idPathIndex = index;
     }
 
-    return this.#idPathIndex;
+    return this.state.idPathIndex;
   }
 
   /** Resolves a path or `id` to a path, or `null` when the `id` isn't present. */
-  #toPath(pathOrID: Path | string): Path | null {
-    return typeof pathOrID === 'string' ? (this.#index().get(pathOrID) ?? null) : pathOrID;
+  private toPath(pathOrID: Path | string): Path | null {
+    return typeof pathOrID === 'string' ? (this.index().get(pathOrID) ?? null) : pathOrID;
   }
 
   // #endregion
@@ -788,11 +881,11 @@ export class QueryManager<
    * Like {@link QueryManager.subscribe}, this method is bound to the instance, so it can be
    * passed as a bare reference (e.g. as the `getSnapshot` argument to `useSyncExternalStore`).
    */
-  getQuery = (): RG => this.#query;
+  getQuery = (): RG => this.state.query;
 
   /** Replaces the current query, ensuring every rule and group has an `id`. */
   setQuery(query: RG): this {
-    this.#commit(this.#freeze(prepareRuleGroup(query, { idGenerator: this.#idGenerator })));
+    this.commit(this.freeze(prepareRuleGroup(query, { idGenerator: this.state.idGenerator })));
     return this;
   }
 
@@ -806,13 +899,13 @@ export class QueryManager<
    */
   createRule(): RuleType {
     return createRule<F>({
-      fields: this.#fields,
-      getDefaultField: this.#options.getDefaultField,
-      getRuleDefaultOperator: f => this.#defaultOperator(f),
-      getValueSources: (f, o) => this.#valueSourcesFor(f, o),
-      getMatchModes: f => this.#matchModesFor(f),
-      getRuleDefaultValue: r => this.#defaultValue(r),
-      idGenerator: this.#idGenerator,
+      fields: this.state.fields,
+      getDefaultField: this.state.options.getDefaultField,
+      getRuleDefaultOperator: f => this.defaultOperator(f),
+      getValueSources: (f, o) => this.valueSourcesFor(f, o),
+      getMatchModes: f => this.matchModesFor(f),
+      getRuleDefaultValue: r => this.defaultValue(r),
+      idGenerator: this.state.idGenerator,
     });
   }
 
@@ -823,10 +916,10 @@ export class QueryManager<
   createRuleGroup(independentCombinators?: boolean): RG {
     return createRuleGroup<C>(
       {
-        combinators: this.#combinators,
-        addRuleToNewGroups: this.#options.addRuleToNewGroups,
+        combinators: this.state.combinators,
+        addRuleToNewGroups: this.state.options.addRuleToNewGroups,
         createRule: () => this.createRule(),
-        idGenerator: this.#idGenerator,
+        idGenerator: this.state.idGenerator,
       },
       independentCombinators
     ) as RG;
@@ -846,11 +939,11 @@ export class QueryManager<
     options: AddOptions & StrictOptions = {}
   ): this {
     const { strict, onInvalidTarget, ...toolOptions } = options;
-    this.#commit(
-      add(this.#query, ruleOrGroup, parentPathOrID, {
-        ...this.#toolOptions(),
+    this.commit(
+      add(this.state.query, ruleOrGroup, parentPathOrID, {
+        ...this.toolOptions(),
         ...toolOptions,
-        onAbort: this.#onAbort({ strict, onInvalidTarget }),
+        onAbort: this.onAbort({ strict, onInvalidTarget }),
       })
     );
     return this;
@@ -859,11 +952,11 @@ export class QueryManager<
   /** Removes the rule or group at the given path or `id`. The root group cannot be removed. */
   remove(pathOrID: Path | string, options: RemoveOptions & StrictOptions = {}): this {
     const { strict, onInvalidTarget, ...toolOptions } = options;
-    this.#commit(
-      remove(this.#query, pathOrID, {
-        ...this.#guardOptions(),
+    this.commit(
+      remove(this.state.query, pathOrID, {
+        ...this.guardOptions(),
         ...toolOptions,
-        onAbort: this.#onAbort({ strict, onInvalidTarget }),
+        onAbort: this.onAbort({ strict, onInvalidTarget }),
       })
     );
     return this;
@@ -896,13 +989,13 @@ export class QueryManager<
     const { strict, onInvalidTarget, ...toolOptions }: UpdateOptions & StrictOptions =
       args[optionsIndex] ?? {};
     args[optionsIndex] = {
-      ...this.#updateOptions(),
+      ...this.updateOptions(),
       ...toolOptions,
-      onAbort: this.#onAbort({ strict, onInvalidTarget }),
+      onAbort: this.onAbort({ strict, onInvalidTarget }),
     };
 
     // oxlint-disable-next-line typescript/no-explicit-any
-    this.#commit((update as any)(this.#query, ...args.slice(0, optionsIndex + 1)));
+    this.commit((update as any)(this.state.query, ...args.slice(0, optionsIndex + 1)));
     return this;
   }
 
@@ -913,11 +1006,11 @@ export class QueryManager<
     options: MoveOptions & StrictOptions = {}
   ): this {
     const { strict, onInvalidTarget, ...toolOptions } = options;
-    this.#commit(
-      move(this.#query, oldPathOrID, newPath, {
-        ...this.#toolOptions(),
+    this.commit(
+      move(this.state.query, oldPathOrID, newPath, {
+        ...this.toolOptions(),
         ...toolOptions,
-        onAbort: this.#onAbort({ strict, onInvalidTarget }),
+        onAbort: this.onAbort({ strict, onInvalidTarget }),
       })
     );
     return this;
@@ -933,11 +1026,11 @@ export class QueryManager<
     options: InsertOptions & StrictOptions = {}
   ): this {
     const { strict, onInvalidTarget, ...toolOptions } = options;
-    this.#commit(
-      insert(this.#query, ruleOrGroup, path, {
-        ...this.#toolOptions(),
+    this.commit(
+      insert(this.state.query, ruleOrGroup, path, {
+        ...this.toolOptions(),
         ...toolOptions,
-        onAbort: this.#onAbort({ strict, onInvalidTarget }),
+        onAbort: this.onAbort({ strict, onInvalidTarget }),
       })
     );
     return this;
@@ -953,11 +1046,11 @@ export class QueryManager<
     options: GroupOptions & StrictOptions = {}
   ): this {
     const { strict, onInvalidTarget, ...toolOptions } = options;
-    this.#commit(
-      group(this.#query, sourcePathOrID, targetPathOrID, {
-        ...this.#toolOptions(),
+    this.commit(
+      group(this.state.query, sourcePathOrID, targetPathOrID, {
+        ...this.toolOptions(),
         ...toolOptions,
-        onAbort: this.#onAbort({ strict, onInvalidTarget }),
+        onAbort: this.onAbort({ strict, onInvalidTarget }),
       })
     );
     return this;
@@ -973,7 +1066,7 @@ export class QueryManager<
    * defaults filled in for options that were never provided.
    */
   getOptions(): Readonly<QueryManagerOptions<F, O, C>> {
-    return freeze({ ...this.#options });
+    return freeze({ ...this.state.options });
   }
 
   /**
@@ -1005,24 +1098,26 @@ export class QueryManager<
     options: Partial<QueryManagerOptions<F, O, C>>,
     config?: { replace?: boolean }
   ): this {
-    this.#applyOptions(freeze(config?.replace ? { ...options } : { ...this.#options, ...options }));
+    this.applyOptions(
+      freeze(config?.replace ? { ...options } : { ...this.state.options, ...options })
+    );
 
-    // `#ensureCache` is keyed on query identity, and the query has not changed, so it will not
+    // `ensureCache` is keyed on query identity, and the query has not changed, so it will not
     // clear this on its own. Validation depends on `validator` and `fields`, both of which may
-    // have just changed. `#idPathIndex` is derived from the query alone and stays valid.
-    this.#validation = undefined;
+    // have just changed. `idPathIndex` is derived from the query alone and stays valid.
+    this.state.validation = undefined;
 
-    this.#reconcileHistoryConfig();
+    this.reconcileHistoryConfig();
 
-    ++this.#configVersion;
-    this.#notify();
+    ++this.state.configVersion;
+    this.notify();
 
     return this;
   }
 
   /**
    * Brings the history stacks in line with the current history configuration. Unlike
-   * {@link QueryManager.clearHistory}, this does _not_ set `#historyBypassed`: it reflects a
+   * {@link QueryManager.clearHistory}, this does _not_ set `historyBypassed`: it reflects a
    * configuration change rather than a deliberate history repositioning, so a later mutation in
    * the same batch must still be recorded normally.
    *
@@ -1030,16 +1125,16 @@ export class QueryManager<
    * {@link QueryManager.batch batch} restores its snapshot, since that snapshot predates the
    * configuration change (configuration is not part of a batch's rollback).
    */
-  #reconcileHistoryConfig(): void {
-    if (this.#historyEnabled) {
+  private reconcileHistoryConfig(): void {
+    if (this.state.historyEnabled) {
       // Only ever shrinks; a raised `maxHistory` simply allows more entries from here on.
-      if (this.#past.length > this.#maxHistory) {
-        this.#past.splice(0, this.#past.length - this.#maxHistory);
+      if (this.state.past.length > this.state.maxHistory) {
+        this.state.past.splice(0, this.state.past.length - this.state.maxHistory);
       }
     } else {
-      this.#past = [];
-      this.#future = [];
-      this.#lastSig = undefined;
+      this.state.past = [];
+      this.state.future = [];
+      this.state.lastSig = undefined;
     }
   }
 
@@ -1052,7 +1147,7 @@ export class QueryManager<
    * {@link QueryManager.subscribe}. The `useQueryManager` hook from `react-querybuilder`
    * already does this.
    */
-  getConfigVersion = (): number => this.#configVersion;
+  getConfigVersion = (): number => this.state.configVersion;
 
   // #endregion
 
@@ -1070,9 +1165,9 @@ export class QueryManager<
    */
   clone(options?: { regenerateIDs?: boolean }): QueryManager<RG, F, O, C> {
     const query = options?.regenerateIDs
-      ? regenerateIDs(this.#query, { idGenerator: this.#idGenerator })
-      : this.#query;
-    return new QueryManager<RG, F, O, C>(query, this.#options);
+      ? regenerateIDs(this.state.query, { idGenerator: this.state.idGenerator })
+      : this.state.query;
+    return new QueryManager<RG, F, O, C>(query, this.state.options);
   }
 
   // #endregion
@@ -1095,9 +1190,9 @@ export class QueryManager<
    * In React, prefer the `useQueryManager` hook from `react-querybuilder`, which wraps this.
    */
   subscribe = (listener: () => void): (() => void) => {
-    this.#listeners.add(listener);
+    this.state.listeners.add(listener);
     return () => {
-      this.#listeners.delete(listener);
+      this.state.listeners.delete(listener);
     };
   };
 
@@ -1120,49 +1215,49 @@ export class QueryManager<
    * its own, leaving the stacks exactly as those methods left them.
    */
   batch(fn: () => void): this {
-    this.#batchDepth++;
-    if (this.#batchDepth === 1) {
-      this.#batchSnapshot = {
-        query: this.#query,
-        past: [...this.#past],
-        future: [...this.#future],
-        lastSig: this.#lastSig,
-        lastAt: this.#lastAt,
+    this.state.batchDepth++;
+    if (this.state.batchDepth === 1) {
+      this.state.batchSnapshot = {
+        query: this.state.query,
+        past: [...this.state.past],
+        future: [...this.state.future],
+        lastSig: this.state.lastSig,
+        lastAt: this.state.lastAt,
       };
     }
 
     try {
       fn();
     } catch (error) {
-      // Only the outermost batch rolls back; `#batchDepth` has not been decremented yet.
-      if (this.#batchDepth === 1) {
-        const snapshot = this.#batchSnapshot!;
+      // Only the outermost batch rolls back; `batchDepth` has not been decremented yet.
+      if (this.state.batchDepth === 1) {
+        const snapshot = this.state.batchSnapshot!;
         // History is restored alongside the query because `undo`/`redo` may have run inside
         // the batch, which mutates the stacks directly.
-        this.#query = snapshot.query;
-        this.#past = snapshot.past;
-        this.#future = snapshot.future;
-        this.#lastSig = snapshot.lastSig;
-        this.#lastAt = snapshot.lastAt;
+        this.state.query = snapshot.query;
+        this.state.past = snapshot.past;
+        this.state.future = snapshot.future;
+        this.state.lastSig = snapshot.lastSig;
+        this.state.lastAt = snapshot.lastAt;
         // The snapshot predates any `reconfigure` call made inside the batch, and configuration
         // is not rolled back, so the restored stacks must be re-reconciled against it.
-        this.#reconcileHistoryConfig();
+        this.reconcileHistoryConfig();
       }
       throw error;
     } finally {
-      this.#batchDepth--;
+      this.state.batchDepth--;
 
-      if (this.#batchDepth === 0) {
-        const { query: base } = this.#batchSnapshot!;
-        this.#batchSnapshot = undefined;
+      if (this.state.batchDepth === 0) {
+        const { query: base } = this.state.batchSnapshot!;
+        this.state.batchSnapshot = undefined;
 
-        if (base !== this.#query) {
+        if (base !== this.state.query) {
           // `undo`/`redo`/`clearHistory` already positioned the stacks deliberately; recording
           // here would duplicate the batch's own base entry and discard the redo stack.
-          if (!this.#historyBypassed) this.#record(base, this.#query);
-          this.#notify();
+          if (!this.state.historyBypassed) this.record(base, this.state.query);
+          this.notify();
         }
-        this.#historyBypassed = false;
+        this.state.historyBypassed = false;
       }
     }
 
@@ -1175,48 +1270,48 @@ export class QueryManager<
 
   /** Whether there is a previous query to restore. Always `false` unless `history` is enabled. */
   canUndo(): boolean {
-    return this.#past.length > 0;
+    return this.state.past.length > 0;
   }
 
   /** Whether there is an undone query to restore. Always `false` unless `history` is enabled. */
   canRedo(): boolean {
-    return this.#future.length > 0;
+    return this.state.future.length > 0;
   }
 
   /** Restores the previous query. No-op when {@link QueryManager.canUndo} is `false`. */
   undo(): this {
-    if (this.#past.length === 0) return this;
+    if (this.state.past.length === 0) return this;
 
-    this.#future.unshift(this.#query);
-    this.#query = this.#past.pop()!;
+    this.state.future.unshift(this.state.query);
+    this.state.query = this.state.past.pop()!;
     // Prevent the next change from coalescing into the restored entry.
-    this.#lastSig = undefined;
-    this.#markHistoryBypassed();
+    this.state.lastSig = undefined;
+    this.markHistoryBypassed();
     // Within a batch, the outermost call notifies once for everything.
-    if (this.#batchDepth === 0) this.#notify();
+    if (this.state.batchDepth === 0) this.notify();
 
     return this;
   }
 
   /** Restores the most recently undone query. No-op when {@link QueryManager.canRedo} is `false`. */
   redo(): this {
-    if (this.#future.length === 0) return this;
+    if (this.state.future.length === 0) return this;
 
-    this.#past.push(this.#query);
-    this.#query = this.#future.shift()!;
-    this.#lastSig = undefined;
-    this.#markHistoryBypassed();
-    if (this.#batchDepth === 0) this.#notify();
+    this.state.past.push(this.state.query);
+    this.state.query = this.state.future.shift()!;
+    this.state.lastSig = undefined;
+    this.markHistoryBypassed();
+    if (this.state.batchDepth === 0) this.notify();
 
     return this;
   }
 
   /** Discards all undo/redo history without changing the current query. */
   clearHistory(): this {
-    this.#markHistoryBypassed();
-    this.#past = [];
-    this.#future = [];
-    this.#lastSig = undefined;
+    this.markHistoryBypassed();
+    this.state.past = [];
+    this.state.future = [];
+    this.state.lastSig = undefined;
     return this;
   }
 
@@ -1225,7 +1320,7 @@ export class QueryManager<
    * mutating them does not affect the manager.
    */
   getHistory(): { past: RG[]; future: RG[] } {
-    return { past: [...this.#past], future: [...this.#future] };
+    return { past: [...this.state.past], future: [...this.state.future] };
   }
 
   // #endregion
@@ -1239,9 +1334,9 @@ export class QueryManager<
    * one that depends on anything other than the query) may run fewer times than expected.
    */
   validate(): boolean | ValidationMap {
-    this.#ensureCache();
-    this.#validation ??= this.#validator(this.#query);
-    return this.#validation;
+    this.ensureCache();
+    this.state.validation ??= this.state.validator(this.state.query);
+    return this.state.validation;
   }
 
   // #endregion
@@ -1304,7 +1399,7 @@ export class QueryManager<
   /** Generates a query string in the requested format. */
   format(options: FormatQueryOptions): string;
   format(options?: FormatQueryOptions | ExportFormat): unknown {
-    return formatQuery(this.#query, options as FormatQueryOptions);
+    return formatQuery(this.state.query, options as FormatQueryOptions);
   }
 
   // #endregion
@@ -1330,21 +1425,22 @@ export class QueryManager<
   *walk(options: WalkOptions = {}): Generator<QueryNode<RG>> {
     const { from, rulesOnly, groupsOnly } = options;
 
-    let start: RG | RuleType = this.#query;
+    let start: RG | RuleType = this.state.query;
     let startPath: Path = [];
     let startParent: RG | null = null;
 
     if (from !== undefined) {
-      const path = this.#toPath(from);
-      const node = path && findPath(path, this.#query);
+      const path = this.toPath(from);
+      const node = path && findPath(path, this.state.query);
       // An unresolvable path or `id` yields nothing rather than falling back to the root.
       if (!path || !node) return;
       start = node as RG | RuleType;
       startPath = path;
-      startParent = path.length === 0 ? null : (findPath(getParentPath(path), this.#query) as RG);
+      startParent =
+        path.length === 0 ? null : (findPath(getParentPath(path), this.state.query) as RG);
     }
 
-    for (const entry of this.#walkFrom(start, startPath, startParent)) {
+    for (const entry of this.walkFrom(start, startPath, startParent)) {
       if (rulesOnly && isRuleGroup(entry.node)) continue;
       if (groupsOnly && !isRuleGroup(entry.node)) continue;
       yield entry;
@@ -1400,7 +1496,7 @@ export class QueryManager<
    * index, unresolvable paths are always normalized to `null` here.
    */
   findPath(path: Path): FindPathReturnType {
-    return findPath(path, this.#query) ?? null;
+    return findPath(path, this.state.query) ?? null;
   }
 
   /**
@@ -1408,9 +1504,9 @@ export class QueryManager<
    * index built once per query, so repeated lookups are constant time.
    */
   findID(id: string): FindPathReturnType {
-    const path = this.#index().get(id);
+    const path = this.index().get(id);
     // A path from the index always resolves, so no normalization is needed here.
-    return path === undefined ? null : findPath(path, this.#query);
+    return path === undefined ? null : findPath(path, this.state.query);
   }
 
   /**
@@ -1418,7 +1514,7 @@ export class QueryManager<
    * none. Backed by an index built once per query, so repeated lookups are constant time.
    */
   getPathOfID(id: string): Path | null {
-    return this.#index().get(id) ?? null;
+    return this.index().get(id) ?? null;
   }
 
   /**
@@ -1426,13 +1522,13 @@ export class QueryManager<
    * ancestor group.
    */
   pathIsDisabled(path: Path): boolean {
-    return pathIsDisabled(path, this.#query);
+    return pathIsDisabled(path, this.state.query);
   }
 
   /** Returns the rule or group at the given path or `id`, or `null` if it can't be resolved. */
   getNode(pathOrID: Path | string): FindPathReturnType {
-    const path = this.#toPath(pathOrID);
-    return path === null ? null : (findPath(path, this.#query) ?? null);
+    const path = this.toPath(pathOrID);
+    return path === null ? null : (findPath(path, this.state.query) ?? null);
   }
 
   /**
@@ -1458,12 +1554,12 @@ export class QueryManager<
    * for the root group, which has no parent, and when the target can't be resolved.
    */
   getParent(pathOrID: Path | string): RG | null {
-    const path = this.#toPath(pathOrID);
+    const path = this.toPath(pathOrID);
     if (path === null || path.length === 0) return null;
     // Confirm the target itself exists, so a bogus path doesn't return a real parent.
-    if (!findPath(path, this.#query)) return null;
+    if (!findPath(path, this.state.query)) return null;
     // An existing non-root node always has a parent group.
-    return findPath(getParentPath(path), this.#query) as RG;
+    return findPath(getParentPath(path), this.state.query) as RG;
   }
 
   // #endregion
@@ -1475,7 +1571,7 @@ export class QueryManager<
    * populate a field selector.
    */
   getFields(): FullOptionList<F> {
-    return this.#fields;
+    return this.state.fields;
   }
 
   /**
@@ -1483,7 +1579,7 @@ export class QueryManager<
    * populate a combinator selector.
    */
   getCombinators(): FullOptionList<C> {
-    return this.#combinators;
+    return this.state.combinators;
   }
 
   /**
@@ -1492,32 +1588,32 @@ export class QueryManager<
    * {@link QueryManager.getRuleContext} reports as `fieldData`, so both access paths agree.
    */
   getFieldData(field: string): F {
-    return getFieldData(field, this.#fieldMap) as F;
+    return getFieldData(field, this.state.fieldMap) as F;
   }
 
   /** The operator list for a field, mirroring `QueryBuilder`'s precedence. */
   getOperators(field: string): FullOptionList<O> {
-    return this.#operatorsFor(field);
+    return this.operatorsFor(field);
   }
 
   /** The value sources available for a field/operator pair. */
   getValueSources(field: string, operator: string): ValueSourceFullOptions {
-    return this.#valueSourcesFor(field, operator);
+    return this.valueSourcesFor(field, operator);
   }
 
   /** The match modes available for a field. */
   getMatchModes(field: string): MatchModeOptions {
-    return this.#matchModesFor(field);
+    return this.matchModesFor(field);
   }
 
   /** The value option list for a field/operator pair. */
   getValues(field: string, operator: string): FullOptionList<Option> {
-    return this.#valuesFor(field, operator);
+    return this.valuesFor(field, operator);
   }
 
   /** The value editor type for a field/operator pair. */
   getValueEditorType(field: string, operator: string): ValueEditorType {
-    return this.#valueEditorTypeFor(field, operator);
+    return this.valueEditorTypeFor(field, operator);
   }
 
   /**
@@ -1525,7 +1621,7 @@ export class QueryManager<
    * {@link QueryManager.createRule} would assign to a new rule on that field.
    */
   getRuleDefaultOperator(field: string): string {
-    return this.#defaultOperator(field);
+    return this.defaultOperator(field);
   }
 
   /**
@@ -1533,7 +1629,7 @@ export class QueryManager<
    * {@link QueryManager.update} would assign after a field or operator change.
    */
   getRuleDefaultValue(rule: RuleType): unknown {
-    return this.#defaultValue(rule);
+    return this.defaultValue(rule);
   }
 
   /**
@@ -1544,7 +1640,7 @@ export class QueryManager<
    * do not rely on frozen-ness to prevent mutation.
    */
   getFieldMap(): Partial<FullOptionRecord<F>> {
-    return this.#fieldMap;
+    return this.state.fieldMap;
   }
 
   /**
@@ -1564,19 +1660,19 @@ export class QueryManager<
     return deriveRuleContext<F>(
       rule,
       {
-        fields: this.#fields as OptionList<F>,
-        fieldMap: this.#fieldMap,
+        fields: this.state.fields as OptionList<F>,
+        fieldMap: this.state.fieldMap,
         getInputType: (f: string, o: string, misc: { fieldData: F }) =>
-          this.#options.getInputType?.(f, o, misc) ?? null,
-        getMatchModes: (f: string) => this.#matchModesFor(f),
-        getOperators: (f: string) => this.#operatorsFor(f),
+          this.state.options.getInputType?.(f, o, misc) ?? null,
+        getMatchModes: (f: string) => this.matchModesFor(f),
+        getOperators: (f: string) => this.operatorsFor(f),
         getParameters: (f: string, o: string, misc: { fieldData: F }) =>
-          this.#parametersFor(f, o, misc),
-        getValueEditorType: (f: string, o: string) => this.#valueEditorTypeFor(f, o),
-        getValues: (f: string, o: string) => this.#valuesFor(f, o),
+          this.parametersFor(f, o, misc),
+        getValueEditorType: (f: string, o: string) => this.valueEditorTypeFor(f, o),
+        getValues: (f: string, o: string) => this.valuesFor(f, o),
         getValueSources: (f: string, o: string) => this.getValueSources(f, o),
         getSubQueryBuilderProps: (f: string, misc: { fieldData: F }) =>
-          this.#options.getSubQueryBuilderProps?.(f, misc) ?? {},
+          this.state.options.getSubQueryBuilderProps?.(f, misc) ?? {},
       },
       {
         validationMap: typeof validation === 'boolean' ? {} : validation,
@@ -1597,7 +1693,7 @@ export class QueryManager<
 
     const validation = this.validate();
 
-    return deriveRuleGroupContext<C>(ruleGroup, this.#combinators, {
+    return deriveRuleGroupContext<C>(ruleGroup, this.state.combinators, {
       validationMap: typeof validation === 'boolean' ? {} : validation,
       id: ruleGroup.id,
     });
@@ -1609,7 +1705,7 @@ export class QueryManager<
 
   /** Whether the current query uses independent combinators. */
   isIC(): boolean {
-    return isRuleGroupTypeIC(this.#query);
+    return isRuleGroupTypeIC(this.state.query);
   }
 
   /**
@@ -1617,12 +1713,12 @@ export class QueryManager<
    * this manager's history coalescing.
    */
   signatureOf(other: RuleGroupTypeAny): string {
-    return signatureOf(this.#query, other);
+    return signatureOf(this.state.query, other);
   }
 
   /** Generates a {@link DiagnosticsResult}. Shorthand for `format('diagnostics')`. */
   diagnostics(): DiagnosticsResult {
-    return formatQuery(this.#query, 'diagnostics');
+    return formatQuery(this.state.query, 'diagnostics');
   }
 
   /**
@@ -1630,7 +1726,7 @@ export class QueryManager<
    * `JSON.stringify(queryManager.getQuery())`.
    */
   toJSON(): RG {
-    return this.#query;
+    return this.state.query;
   }
 
   // #endregion
@@ -1644,8 +1740,8 @@ export class QueryManager<
    */
   toIC(): QueryManager<AsRuleGroup<ToRuleGroupTypeIC<RG>>, F, O, C> {
     return new QueryManager(
-      convertToIC(this.#query) as AsRuleGroup<ToRuleGroupTypeIC<RG>>,
-      this.#options
+      convertToIC(this.state.query) as AsRuleGroup<ToRuleGroupTypeIC<RG>>,
+      this.state.options
     );
   }
 
@@ -1656,8 +1752,8 @@ export class QueryManager<
    */
   fromIC(): QueryManager<AsRuleGroup<ToRuleGroupType<RG>>, F, O, C> {
     return new QueryManager(
-      convertFromIC(this.#query) as AsRuleGroup<ToRuleGroupType<RG>>,
-      this.#options
+      convertFromIC(this.state.query) as AsRuleGroup<ToRuleGroupType<RG>>,
+      this.state.options
     );
   }
 
@@ -1671,7 +1767,7 @@ export class QueryManager<
   // oxlint-disable-next-line typescript/no-explicit-any, typescript/no-unnecessary-type-parameters
   transform<T = any>(options?: TransformQueryOptions<RG>): T {
     // oxlint-disable-next-line typescript/no-explicit-any
-    return (transformQuery as any)(this.#query, options);
+    return (transformQuery as any)(this.state.query, options);
   }
 
   // #endregion
