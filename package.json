@@ -59,7 +59,7 @@
     "test:bootstrap": "bunx vitest run packages/bootstrap --coverage --coverage.include 'packages/bootstrap/src/**/*.{ts,tsx}'",
     "test:bulma": "bunx vitest run packages/bulma --coverage --coverage.include 'packages/bulma/src/**/*.{ts,tsx}'",
     "test:chakra": "bunx vitest run packages/chakra --coverage --coverage.include 'packages/chakra/src/**/*.{ts,tsx}' --coverage.exclude 'snippets/**'",
-    "test:core": "bunx vitest run packages/core --coverage --coverage.include 'packages/core/src/**/*.{ts,tsx}' --coverage.exclude '*TestUtils.ts' --coverage.exclude 'prisma/generated/**' --coverage.exclude 'parse{CEL,SQL}/{cel,sql}Parser.ts' --coverage.exclude 'parse{Cypher,Gremlin,SPARQL}/parse{Cypher,Gremlin,SPARQL}.ts'",
+    "test:core": "bunx vitest run packages/core --coverage --coverage.include 'packages/core/src/**/*.{ts,tsx}' --coverage.exclude '*TestUtils.ts' --coverage.exclude '*.test-d.ts' --coverage.exclude 'prisma/generated/**' --coverage.exclude 'parse{CEL,SQL}/{cel,sql}Parser.ts' --coverage.exclude 'parse{Cypher,Gremlin,SPARQL}/parse{Cypher,Gremlin,SPARQL}.ts'",
     "test:datetime": "bunx vitest run packages/datetime --coverage --coverage.include 'packages/datetime/src/**/*.{ts,tsx}' --coverage.exclude '*TestUtils.ts' --coverage.exclude 'prisma/generated/**' --coverage.exclude 'index.{date-fns,dayjs,jsdate,luxon}.ts'",
     "test:dnd": "bunx vitest run packages/dnd --coverage --coverage.include 'packages/dnd/src/**/*.{ts,tsx}'",
     "test:expr": "bunx vitest run packages/expr --coverage --coverage.include 'packages/expr/src/**/*.{ts,tsx}'",
