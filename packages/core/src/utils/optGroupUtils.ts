@@ -371,7 +371,7 @@ export const uniqOptList = <T extends BaseOption>(
 export interface PreparedOptionList<O extends FullOption> {
   defaultOption: FullOption;
   optionList: FullOptionList<O>;
-  optionsMap: Partial<FullOptionRecord<FullOption>>;
+  optionsMap: Partial<FullOptionRecord<O>>;
 }
 
 /** Parameters for {@link prepareOptionList}. */
@@ -385,9 +385,12 @@ export interface PrepareOptionListParams<O extends FullOption> {
 
 /**
  * Normalizes any accepted option list shape—array, option groups, or a record—into a
- * `FullOptionList`, applying `baseOption` properties, label overrides, and (when
- * `autoSelectOption` is `false`) a leading placeholder option. Also returns the flattened
- * lookup map and the option that should be selected by default.
+ * `FullOptionList`, applying `baseOption` properties and (when `autoSelectOption` is `false`)
+ * a leading placeholder option. Also returns the flattened lookup map and the option that
+ * should be selected by default.
+ *
+ * Note: `labelMap` overrides only apply to array/option group input (where string options are
+ * expanded); record input derives labels from the record values themselves.
  *
  * This is the same normalization `<QueryBuilder />` applies to `fields`, `operators`,
  * `combinators`, and value lists, so a non-React implementation resolves options identically.
@@ -451,13 +454,12 @@ export const prepareOptionList = <O extends FullOption>(
       : (uniqByIdentifier([defaultOption, ...(opts as O[])]) as FullOptionList<O>);
   }
 
-  let optionsMap: Partial<FullOptionRecord<FullOption>> = {};
+  let optionsMap: Partial<FullOptionRecord<O>> = {};
   if (!Array.isArray(optionsProp)) {
-    const op = toFullOptionMap(optionsProp, baseOption) as FullOptionMap<
-      FullOption,
-      OptionIdentifier
-    >;
-    optionsMap = autoSelectOption ? op : { ...op, [placeholderName]: defaultOption };
+    const op = toFullOptionMap(optionsProp, baseOption) as FullOptionMap<O, OptionIdentifier>;
+    optionsMap = autoSelectOption
+      ? (op as Partial<FullOptionRecord<O>>)
+      : ({ ...op, [placeholderName]: defaultOption } as Partial<FullOptionRecord<O>>);
   } else {
     if (isFlexibleOptionGroupArray(optionList)) {
       for (const og of optionList as OptionGroup<ToFullOption<O>>[]) {

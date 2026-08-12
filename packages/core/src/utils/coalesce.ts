@@ -27,4 +27,8 @@ export const shouldCoalesce = (
   prevAt: number,
   now: number,
   coalesceMs: number = defaultCoalesceMs
-): boolean => nextSig !== structuralSignature && nextSig === prevSig && now - prevAt < coalesceMs;
+): boolean =>
+  nextSig !== structuralSignature &&
+  nextSig === prevSig &&
+  now >= prevAt &&
+  now - prevAt < coalesceMs;

@@ -19,6 +19,10 @@ describe('shouldCoalesce', () => {
     expect(shouldCoalesce(undefined, 'value', 0, 1, 500)).toBe(false);
   });
 
+  it('does not coalesce when prevAt is in the future', () => {
+    expect(shouldCoalesce('value', 'value', 100, 10, 500)).toBe(false);
+  });
+
   it('does not coalesce after the window expires', () => {
     expect(shouldCoalesce('value', 'value', 0, 500, 500)).toBe(false);
     expect(shouldCoalesce('value', 'value', 0, 501, 500)).toBe(false);

@@ -408,7 +408,7 @@ export class QueryManager<
   // through the method call, hence the definite assignment assertions.
   #options!: QueryManagerOptions<F, O, C>;
   #fields!: FullOptionList<F>;
-  #fieldMap!: Partial<FullOptionRecord<FullField>>;
+  #fieldMap!: Partial<FullOptionRecord<F>>;
   #operators!: FullOptionList<O>;
   #combinators!: FullOptionList<C>;
   #idGenerator!: () => string;
@@ -503,7 +503,7 @@ export class QueryManager<
 
   /** Resolves the field configuration for a field name. */
   #fieldData(field: string): F {
-    return (this.#fieldMap[field] ?? {}) as F;
+    return ((this.#fieldMap as Record<string, F | undefined>)[field] ?? {}) as F;
   }
 
   /** Resolves the operator list for a field, mirroring `QueryBuilder`'s precedence. */
@@ -1516,7 +1516,7 @@ export class QueryManager<
    * Treat the result as read-only. It may or may not be frozen depending on configuration, so
    * do not rely on frozen-ness to prevent mutation.
    */
-  getFieldMap(): Partial<FullOptionRecord<FullField>> {
+  getFieldMap(): Partial<FullOptionRecord<F>> {
     return this.#fieldMap;
   }
 

@@ -12,7 +12,7 @@ description: Headless derivations for non-React ports of React Query Builder
 
 The exports listed on this page are **public API covered by semantic versioning**. They will not be removed or have their signatures changed outside a major release.
 
-The full export surface of `@react-querybuilder/core` is locked by a test (`packages/core/src/__tests__/publicApi.test.ts`) that fails on both accidental removal _and_ accidental addition, so every change to the surface requires a deliberate changelog entry.
+The full _runtime_ export surface of `@react-querybuilder/core` (type-only exports are not covered) is locked by a test (`packages/core/src/__tests__/publicApi.test.ts`) that fails on both accidental removal _and_ accidental addition, so every change to the surface requires a deliberate changelog entry.
 
 :::
 
@@ -61,6 +61,12 @@ Path helpers: `findPath`, `findID`, `getPathOfID`, `pathIsDisabled`, `pathIsDisa
 
 ```ts
 import { shouldCoalesce, signatureOf, unchangedSignature } from '@react-querybuilder/core';
+import type { RuleGroupTypeAny } from '@react-querybuilder/core';
+
+let past: RuleGroupTypeAny[] = [];
+let future: RuleGroupTypeAny[] = [];
+let lastSig = '';
+let lastAt = 0;
 
 const record = (prev: RuleGroupTypeAny, next: RuleGroupTypeAny) => {
   const sig = signatureOf(prev, next);
