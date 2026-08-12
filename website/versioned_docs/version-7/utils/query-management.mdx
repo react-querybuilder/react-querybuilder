@@ -270,7 +270,7 @@ The incoming options are shallow-merged over the current ones, so keys left out 
 Related methods:
 
 - `getOptions(): QueryManagerOptions` — The options currently in effect, as a frozen shallow copy. This one is frozen even under `freeze: false`; see [Freezing](#freezing-manager).
-- `getConfigVersion(): number` — A counter incremented by every `reconfigure` call. Bound to the instance, so it can be passed directly to React's `useSyncExternalStore` alongside `subscribe`. The [`useQueryManager`](./hooks#usequerymanager) hook already does this.
+- `getConfigVersion(): number` — A counter incremented only when a `reconfigure` call changes the effective configuration; calls that resolve to the options already in effect leave it unchanged. Bound to the instance, so it can be passed directly to React's `useSyncExternalStore` alongside `subscribe`. The [`useQueryManager`](./hooks#usequerymanager) hook already does this.
 
 :::note
 
