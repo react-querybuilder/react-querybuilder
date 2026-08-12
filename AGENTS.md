@@ -77,7 +77,7 @@ packages/react-querybuilder/src/
 - **Components**: PascalCase (`QueryBuilder.tsx`)
 - **Hooks**: camelCase with `use` (`useHookName.ts`)
 - **Utilities**: camelCase (`generateID.ts`)
-- **Types**: camelCase (`basic.ts`)
+- **Types**: PascalCase identifiers (`RuleGroupType`), camelCase filenames (`basic.ts`)
 - **Debug versions**: `*.debug.ts`
 - **Tests**: `*.test.ts[x]`
 
