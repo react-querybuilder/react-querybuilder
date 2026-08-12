@@ -25,6 +25,21 @@ export interface ClassNameEntry {
   path?: string;
   /** The verbatim `class` attribute. Whitespace is preserved; this is a byte-level claim. */
   className: string;
+  /**
+   * The concatenation of this element's *own* direct text-node children, verbatim — no trimming,
+   * no whitespace collapsing, no descendant text. `''` when the element has no direct text nodes
+   * (present rather than omitted, so the key set is stable across entries).
+   *
+   * Verbatim is the point: the drift this channel catches is a stray space inside a label or a
+   * whitespace text node emitted by a template compiler, both of which are invisible under any
+   * normalization (jest-dom's `toHaveTextContent` included). Descendant text is deliberately
+   * excluded: `textContent` would repeat a single label at every ancestor level, inflating the
+   * fixtures and burying which element actually changed.
+   *
+   * Character references are decoded, i.e. this is DOM text-node semantics. `HTMLRewriter` hands
+   * back raw source text, so `extractFromMarkup` decodes to match `extractFromContainer`.
+   */
+  text: string;
 }
 
 /** The accessible description (`title`) of one rule group. */
@@ -66,6 +81,33 @@ const voidElements = new Set([
   'wbr',
 ]);
 
+/**
+ * Decodes character references, so that `extractFromMarkup`'s text matches
+ * `extractFromContainer`'s. `HTMLRewriter` reports text chunks as they appear in the source, but
+ * React escapes `&`, `<`, `>`, `"`, and `'` on the way in — without this the two walkers would
+ * disagree on any label containing one of them. Numeric references are handled because that is
+ * what React emits for `"` and `'`. Not a general-purpose entity decoder, and it does not need to
+ * be: every text node here originates from a React render.
+ */
+const namedRefs: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: '\u00A0',
+};
+const decodeText = (text: string): string =>
+  text.replaceAll(
+    /&(?:#(\d+)|#[Xx]([\dA-Fa-f]+)|([A-Za-z]+));/g,
+    (match, dec: string, hex: string, name: string) =>
+      dec
+        ? String.fromCodePoint(Number.parseInt(dec, 10))
+        : hex
+          ? String.fromCodePoint(Number.parseInt(hex, 16))
+          : (namedRefs[name.toLowerCase()] ?? match)
+  );
+
 /** Parses a markup string. The `renderToStaticMarkup` path. */
 export const extractFromMarkup = async (html: string): Promise<ExtractResult> => {
   const classNames: ClassNameEntry[] = [];
@@ -74,6 +116,10 @@ export const extractFromMarkup = async (html: string): Promise<ExtractResult> =>
   // Nearest-enclosing-`data-path` stack. Pushed for every element so that `onEndTag` can pop
   // unconditionally; elements without their own `data-path` inherit their parent's.
   const pathStack: (string | undefined)[] = [];
+  // Parallel to `pathStack`: the entry text chunks belong to, or `undefined` for an element with
+  // no `class` attribute (which produces no entry). The top of this stack is the *direct* parent
+  // of any text chunk, which is what makes `text` own-text rather than `textContent`.
+  const entryStack: (ClassNameEntry | undefined)[] = [];
 
   await new HTMLRewriter()
     .on('*', {
@@ -83,22 +129,27 @@ export const extractFromMarkup = async (html: string): Promise<ExtractResult> =>
         const path = ownPath ?? inheritedPath;
 
         const tag = element.tagName.toLowerCase();
-        if (!voidElements.has(tag)) {
-          pathStack.push(path);
-          element.onEndTag(() => {
-            pathStack.pop();
-          });
-        }
-
         const testID = element.getAttribute('data-testid') ?? undefined;
         const className = element.getAttribute('class');
 
+        let entry: ClassNameEntry | undefined;
         if (className !== null) {
-          classNames.push({
+          entry = {
             tag,
             ...(testID === undefined ? {} : { testID }),
             ...(path === undefined ? {} : { path }),
             className,
+            text: '',
+          };
+          classNames.push(entry);
+        }
+
+        if (!voidElements.has(tag)) {
+          pathStack.push(path);
+          entryStack.push(entry);
+          element.onEndTag(() => {
+            pathStack.pop();
+            entryStack.pop();
           });
         }
 
@@ -108,6 +159,10 @@ export const extractFromMarkup = async (html: string): Promise<ExtractResult> =>
             accessibleDescriptions.push({ path: ownPath, description });
           }
         }
+      },
+      text(chunk) {
+        const entry = entryStack.at(-1);
+        if (entry) entry.text += decodeText(chunk.text);
       },
     })
     .transform(new Response(html))
@@ -135,6 +190,12 @@ export const extractFromContainer = (container: Element): ExtractResult => {
         ...(testID === undefined ? {} : { testID }),
         ...(path === undefined ? {} : { path }),
         className,
+        // Direct text-node children only, in document order. `Node.TEXT_NODE` is spelled `3` so
+        // this works against whatever DOM implementation a port hands in.
+        text: [...element.childNodes]
+          .filter(node => node.nodeType === 3)
+          .map(node => node.nodeValue ?? '')
+          .join(''),
       });
     }
 
