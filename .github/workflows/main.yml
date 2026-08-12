@@ -81,6 +81,7 @@ jobs:
           key: spel-jars-spring6.1.14-jackson2.17.2
       - run: bun install --frozen-lockfile
       - run: bun run build:core
+      - run: bun run check-derivations-purity
       - run: bun run test
       - run: bun run conformance:check
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v6

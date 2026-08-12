@@ -31,12 +31,13 @@ import type {
   UpdateableProperties,
   ValueSourceFullOptions,
 } from '../../packages/core/src/types';
+import { strictAbortReasons } from '../../packages/core/src/utils/abortReasons';
 import { formatQuery } from '../../packages/core/src/utils/formatQuery';
 import { isRuleGroup } from '../../packages/core/src/utils/isRuleGroup';
 import { findPath, getPathOfID } from '../../packages/core/src/utils/pathUtils';
 import { prepareRuleGroup } from '../../packages/core/src/utils/prepareQueryObjects';
 import { createQueryActions } from '../../packages/core/src/utils/queryActions';
-import { QueryManager, strictAbortReasons } from '../../packages/core/src/utils/QueryManager';
+import { QueryManager } from '../../packages/core/src/utils/QueryManager';
 import type {
   AbortInfo,
   AbortReason,
