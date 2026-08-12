@@ -29,6 +29,7 @@ packages/expr/ui/package.json
 
 packages/*/async/package.json
 packages/*/debug/package.json
+packages/*/derivations/package.json
 packages/*/formatQuery/package.json
 packages/*/history/package.json
 packages/*/parseCEL/package.json

@@ -47,6 +47,7 @@ import type {
   ValueSourceFullOptions,
   ValueSources,
 } from '../types';
+import { strictAbortReasonSet } from './abortReasons';
 import { shouldCoalesce } from './coalesce';
 import { convertFromIC, convertToIC } from './convertQuery';
 import { defaultValidator } from './defaultValidator';
@@ -91,27 +92,6 @@ import { createRule, createRuleGroup } from './ruleFactory';
 import { signatureOf, unchangedSignature } from './signature';
 import type { TransformQueryOptions } from './transformQuery';
 import { transformQuery } from './transformQuery';
-
-/**
- * Abort reasons that {@link QueryManager}'s `strict` mode treats as errors. The remaining
- * reasons—`"same-location"` and `"no-change"`—describe valid operations that had nothing to do,
- * so they are reported to `onInvalidTarget` but never throw.
- *
- * @group Query Tools
- */
-export const strictAbortReasons: readonly AbortReason[] = [
-  'target-not-found',
-  'parent-not-found',
-  'parent-not-a-group',
-  'destination-not-found',
-  'root-not-allowed',
-  'not-a-combinator-slot',
-  'target-disabled',
-  'parent-disabled',
-  'max-levels-exceeded',
-];
-
-const strictAbortReasonSet = new Set<AbortReason>(strictAbortReasons);
 
 /**
  * Thrown by {@link QueryManager} methods in `strict` mode when an operation cannot be carried

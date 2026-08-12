@@ -20,6 +20,16 @@
       }
     },
     "./dist/*": "./dist/*",
+    "./derivations": {
+      "import": {
+        "types": "./dist/derivations.d.mts",
+        "import": "./dist/derivations.mjs"
+      },
+      "require": {
+        "types": "./dist/derivations.d.ts",
+        "default": "./dist/derivations.js"
+      }
+    },
     "./formatQuery": {
       "import": {
         "types": "./dist/formatQuery.d.mts",
@@ -135,6 +145,7 @@
   "types": "./dist/react-querybuilder_core.legacy-esm.d.ts",
   "files": [
     "dist",
+    "derivations",
     "formatQuery",
     "parseCEL",
     "parseCypher",

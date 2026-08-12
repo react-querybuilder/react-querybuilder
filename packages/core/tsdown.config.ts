@@ -8,6 +8,7 @@ export default defineConfig(async options => {
   const buildConfig = await tsdownCommonConfig(import.meta.dirname)(options);
 
   const utilEntryPoints = {
+    derivations: 'src/derivations.ts',
     formatQuery: 'src/utils/formatQuery/index.ts',
     parseCEL: 'src/utils/parseCEL/index.ts',
     parseCypher: 'src/utils/parseCypher/index.ts',

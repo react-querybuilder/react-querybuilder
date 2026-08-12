@@ -16,6 +16,27 @@ The full _runtime_ export surface of `@react-querybuilder/core` (type-only expor
 
 :::
 
+## The `/derivations` subpath
+
+Everything on this page is available from the package root, and also from
+`@react-querybuilder/core/derivations`:
+
+```ts
+import { deriveRuleContext, shouldCoalesce } from '@react-querybuilder/core/derivations';
+```
+
+The subpath contains the same bindings as the root, minus `QueryManager` and the query formatter.
+Importing from it guarantees that neither ends up in the bundle. That matters for adapters that own
+their own state and never construct a `QueryManager`: importing the same names from the root leaves
+their elimination up to the bundler, which is a property worth having as a contract rather than as
+an optimization that may or may not happen.
+
+`bun check-derivations-purity` gates the guarantee against the built output, so an import added to
+a derivation module cannot quietly undo it.
+
+The parsers (`parseSQL`, `parseCEL`, and the rest) have subpaths of their own and are not exported
+from the root, so they are excluded from `/derivations` as well.
+
 ## Option list preparation
 
 | Function                 | Purpose                                                                            |
@@ -114,4 +135,4 @@ if (!optionsEqual(manager.getOptions(), nextOptions)) manager.reconfigure(nextOp
 
 ## Validation and export
 
-`defaultValidator` and `formatQuery` are also framework-agnostic. See [Validation](./validation) and [Export](./export).
+`defaultValidator` and `formatQuery` are also framework-agnostic. See [Validation](./validation) and [Export](./export). `defaultValidator` is in the `/derivations` subpath; `formatQuery` is not, since it is by far the largest thing in the package and most adapters never call it. Import it from the package root or from `@react-querybuilder/core/formatQuery`.
