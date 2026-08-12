@@ -2434,3 +2434,93 @@ describe('guards', () => {
     });
   });
 });
+
+describe('freeze option', () => {
+  it('freezes everything it hands out by default', () => {
+    const q = new QueryManager<RuleGroupType>({ combinator: 'and', rules: [rule()] }, { fields });
+    expect(Object.isFrozen(q.getQuery())).toBe(true);
+    expect(Object.isFrozen(q.getQuery().rules[0])).toBe(true);
+    expect(Object.isFrozen(q.getFields())).toBe(true);
+    expect(Object.isFrozen(q.getFieldMap())).toBe(true);
+    expect(Object.isFrozen(q.getFieldData('firstName'))).toBe(true);
+    expect(Object.isFrozen(q.getCombinators())).toBe(true);
+    expect(Object.isFrozen(q.getOptions())).toBe(true);
+  });
+
+  it('leaves everything unfrozen when freeze is false', () => {
+    const q = new QueryManager<RuleGroupType>(
+      { combinator: 'and', rules: [rule()] },
+      { fields, freeze: false }
+    );
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    expect(Object.isFrozen(q.getQuery().rules[0])).toBe(false);
+    expect(Object.isFrozen(q.getFields())).toBe(false);
+    expect(Object.isFrozen(q.getFieldMap())).toBe(false);
+    expect(Object.isFrozen(q.getFieldData('firstName'))).toBe(false);
+    expect(Object.isFrozen(q.getCombinators())).toBe(false);
+  });
+
+  it('still freezes the options snapshot when freeze is false', () => {
+    const q = new QueryManager(undefined, { fields, freeze: false });
+    expect(Object.isFrozen(q.getOptions())).toBe(true);
+  });
+
+  it('does not freeze the results of mutations when freeze is false', () => {
+    const q = new QueryManager<RuleGroupType>(undefined, { fields, freeze: false });
+    q.add(rule());
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    q.update('value', 'Stevie', [0]);
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    q.add(rule('lastName', 'Vai')).move([1], [0]);
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    q.group([1], [0]);
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    q.insert(rule(), [0]);
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    q.remove([0]);
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    q.setQuery({ combinator: 'and', rules: [rule()] });
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+  });
+
+  it('allows in-place mutation of a query it handed out when freeze is false', () => {
+    const q = new QueryManager<RuleGroupType>(undefined, { fields, freeze: false });
+    q.add(rule());
+    const query = q.getQuery();
+    expect(() => {
+      query.rules.push(rule('lastName', 'Vai'));
+    }).not.toThrow();
+    expect(query.rules).toHaveLength(2);
+  });
+
+  it('throws on in-place mutation by default', () => {
+    const q = new QueryManager<RuleGroupType>(undefined, { fields });
+    q.add(rule());
+    expect(() => {
+      q.getQuery().rules.push(rule('lastName', 'Vai'));
+    }).toThrow();
+  });
+
+  it('leaves history, batch, and undo/redo results unfrozen when freeze is false', () => {
+    const q = new QueryManager<RuleGroupType>(undefined, { fields, freeze: false, history: true });
+    q.batch(() => {
+      q.add(rule()).add(rule('lastName', 'Vai'));
+    });
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    q.undo();
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    q.redo();
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+    expect(q.getQuery().rules).toHaveLength(2);
+  });
+
+  it('honors the option through reconfigure', () => {
+    const q = new QueryManager<RuleGroupType>(undefined, { fields });
+    q.add(rule());
+    expect(Object.isFrozen(q.getQuery())).toBe(true);
+    q.reconfigure({ freeze: false });
+    expect(Object.isFrozen(q.getFields())).toBe(false);
+    q.add(rule('lastName', 'Vai'));
+    expect(Object.isFrozen(q.getQuery())).toBe(false);
+  });
+});

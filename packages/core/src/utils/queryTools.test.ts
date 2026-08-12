@@ -1975,3 +1975,68 @@ describe('guard options', () => {
     });
   });
 });
+
+describe('freeze option', () => {
+  const q = (): DefaultRuleGroupType => ({
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { combinator: 'or', rules: [{ field: 'f2', operator: '=', value: 'v2' }] },
+    ],
+  });
+  const rule: DefaultRuleType = { field: 'f3', operator: '=', value: 'v3' };
+
+  it('freezes the result by default', () => {
+    for (const result of [
+      add(q(), rule, []),
+      update(q(), 'value', 'v9', [0]),
+      remove(q(), [0]),
+      move(q(), [0], [1]),
+      insert(q(), rule, [1]),
+      group(q(), [0], [1]),
+    ]) {
+      expect(Object.isFrozen(result)).toBe(true);
+      expect(Object.isFrozen(result.rules[0])).toBe(true);
+    }
+  });
+
+  it('does not freeze the result when freeze is false', () => {
+    for (const result of [
+      add(q(), rule, [], { freeze: false }),
+      update(q(), 'value', 'v9', [0], { freeze: false }),
+      update(q(), ['value'], ['v9'], [0], { freeze: false }),
+      update(q(), { value: 'v9' }, [0], { freeze: false }),
+      remove(q(), [0], { freeze: false }),
+      move(q(), [0], [1], { freeze: false }),
+      insert(q(), rule, [1], { freeze: false }),
+      group(q(), [0], [1], { freeze: false }),
+    ]) {
+      expect(Object.isFrozen(result)).toBe(false);
+      expect(Object.isFrozen(result.rules[0])).toBe(false);
+    }
+  });
+
+  it('retains structural sharing when freeze is false', () => {
+    const query = q();
+    const result = update(query, 'value', 'v9', [0], { freeze: false });
+    expect(result).not.toBe(query);
+    expect(result.rules[1]).toBe(query.rules[1]);
+  });
+
+  it('round-trips into the in-place tools when freeze is false', () => {
+    const result = add(q(), rule, [], { freeze: false });
+    expect(() => addInPlace(result, rule, [])).not.toThrow();
+    expect(result.rules).toHaveLength(4);
+  });
+
+  it('throws when an in-place tool receives a frozen query', () => {
+    expect(() => addInPlace(add(q(), rule, []), rule, [])).toThrow();
+  });
+
+  it('is inert for the in-place tools', () => {
+    const withOption = addInPlace(q(), rule, [], { freeze: false });
+    const withoutOption = addInPlace(q(), rule, []);
+    expect(Object.isFrozen(withOption)).toBe(false);
+    expect(stripIDs(withOption)).toEqual(stripIDs(withoutOption));
+  });
+});
