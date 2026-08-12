@@ -49,7 +49,46 @@ describe('extractFromMarkup vs extractFromContainer', () => {
       // mirrors how ports pass Testing Library's `container`.
       const { document } = new JSDOM(html).window;
 
-      expect(extractFromContainer(document.body)).toEqual(await extractFromMarkup(html));
+      const fromContainer = extractFromContainer(document.body);
+      const fromMarkup = await extractFromMarkup(html);
+
+      expect(fromContainer).toEqual(fromMarkup);
+
+      // `toEqual` ignores key insertion order, but the fixtures are JSON and ports assert deep
+      // equality against them — so the order is part of the contract, not an implementation
+      // detail. Compared as JSON, which is order-sensitive.
+      expect(JSON.stringify(fromContainer)).toBe(JSON.stringify(fromMarkup));
     });
   }
+});
+
+describe('text channel', () => {
+  test('records own direct text nodes verbatim, not descendant text', async () => {
+    const html =
+      '<div class="outer"> a <span class="inner">b</span> c </div><p class="empty"><b class="k">x</b></p>';
+    const { document } = new JSDOM(html).window;
+
+    const expected = [
+      { tag: 'div', className: 'outer', text: ' a  c ' },
+      { tag: 'span', className: 'inner', text: 'b' },
+      { tag: 'p', className: 'empty', text: '' },
+      { tag: 'b', className: 'k', text: 'x' },
+    ];
+
+    expect((await extractFromMarkup(html)).classNames).toEqual(expected);
+    expect(extractFromContainer(document.body).classNames).toEqual(expected);
+  });
+
+  test('decodes character references to match DOM text-node semantics', async () => {
+    const html =
+      '<div class="c">a &amp; b &lt;c&gt; &quot;d&quot; &#x27;e&#x27; &#38; &unknown;</div>';
+    const { document } = new JSDOM(html).window;
+
+    expect((await extractFromMarkup(html)).classNames[0].text).toBe(
+      `a & b <c> "d" 'e' & &unknown;`
+    );
+    expect(extractFromContainer(document.body).classNames[0].text).toBe(
+      (await extractFromMarkup(html)).classNames[0].text
+    );
+  });
 });

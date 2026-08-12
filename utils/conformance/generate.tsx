@@ -20,8 +20,8 @@
  * Five files under `fixtures/`, split by concern so that a change to (say) classname derivation
  * produces a diff localized to one file:
  *
- * - `classnames.json` — the `class` attribute of every element, per scenario × query, *before*
- *   any effect has run.
+ * - `classnames.json` — the `class` attribute of every element, plus that element's own text
+ *   nodes, per scenario × query, *before* any effect has run.
  * - `classnames-post-flush.json` — the same surface *after* effects have flushed.
  * - `accessible-descriptions.json` — the `title` of every rule group, per scenario × query.
  * - `actions.json` — the query after each curated mutation sequence, plus abort/refusal results.
@@ -77,7 +77,9 @@
  * authorizing it; the `differsFromStatic === false` direction now authorizes it byte for byte.
  * The consequence to be aware of: this layer cannot currently fail independently of
  * `classnames.json`. Making it independently falsifiable means either fixing the effect ordering
- * upstream or extending the extracted surface — both out of scope, both `schemaVersion`-affecting.
+ * upstream or extending the extracted surface further — the `text` channel added in
+ * `schemaVersion` 3 extended it but did not close this: the value-editor reset changes an input's
+ * `value` property, which is not a text node, so `differsFromStatic` is still `false` everywhere.
  *
  * There is deliberately **no** post-flush accessible-descriptions layer. The description is a rule
  * group's `title`, produced by the accessible description generator from `path` alone — it never
@@ -113,8 +115,10 @@ import { scenarios } from './scenarios';
 /**
  * Bump on any breaking change to the *shape* of these files, so ports can reject a set they do
  * not understand rather than silently mis-reading it.
+ *
+ * - 3: every `classNames` entry gained a `text` field (own direct text nodes, verbatim).
  */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 const rootDir = path.resolve(import.meta.dirname, '../..');
 const defaultOutDir = path.join(import.meta.dirname, 'fixtures');
@@ -295,6 +299,17 @@ const writeJson = async (file: string, data: unknown) => {
   await Bun.write(file, code);
 };
 
+/**
+ * The `text` field's contract, stated inside the shipped fixtures themselves rather than only in
+ * this repo — a port reading the tarball has no other copy of it.
+ */
+const textRule =
+  "Each entry's `text` is the concatenation of that element's OWN direct text-node children, " +
+  'verbatim: no trimming, no whitespace collapsing, no descendant text, character references ' +
+  'decoded. Elements with no direct text nodes carry `""` rather than omitting the key. ' +
+  'Reproduce it with a DOM walk over `childNodes` filtered to text nodes; `textContent` is NOT ' +
+  'equivalent. Key order within an entry is `tag`, `testID`?, `path`?, `className`, `text`.';
+
 export const generate = async (outDir: string = defaultOutDir): Promise<string[]> => {
   await mkdir(outDir, { recursive: true });
 
@@ -327,7 +342,7 @@ export const generate = async (outDir: string = defaultOutDir): Promise<string[]
       ...renderedMeta('renderToStaticMarkup'),
       description:
         'The verbatim `class` attribute of every element with one, in document order, per ' +
-        'scenario and query. Rendered via renderToStaticMarkup, so no effects have run.',
+        `scenario and query. Rendered via renderToStaticMarkup, so no effects have run. ${textRule}`,
       scenarios: scenarios.map(({ name, description, props }) => ({
         name,
         description,
@@ -352,7 +367,7 @@ export const generate = async (outDir: string = defaultOutDir): Promise<string[]
         'never re-runs. A mount-and-flush render therefore cannot observe the value-editor reset ' +
         '— it is reachable only through a subsequent operator change. This layer records the ' +
         '"post-flush surface is unchanged" guarantee that ports had been asserting without ' +
-        'upstream authorization; it does not currently fail independently of `classnames.json`.',
+        `upstream authorization; it does not currently fail independently of \`classnames.json\`. ${textRule}`,
       cases: postFlushCases,
     },
     'accessible-descriptions.json': {

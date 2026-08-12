@@ -110,6 +110,9 @@ export const ValueEditor = <F extends FullField>(
         <SelectorComponent
           key={key}
           {...propsForValueSelector}
+          // `Schema` is invariant in its field type, and `valueSelector` is declared with the
+          // default (widest) type arguments, so this widening needs a cast. See the doc comment
+          // on `Schema` and the assertions in `types/props.test-d.ts`.
           schema={allProps.schema as Schema<FullField, string>}
           title={title}
           className={valueListItemClassName}
@@ -137,6 +140,7 @@ export const ValueEditor = <F extends FullField>(
       return (
         <SelectorComponent
           {...propsForValueSelector}
+          // Cast for the same reason as above.
           schema={allProps.schema as Schema<FullField, string>}
           testID={testID}
           className={className}
