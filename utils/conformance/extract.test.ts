@@ -80,10 +80,13 @@ describe('text channel', () => {
   });
 
   test('decodes character references to match DOM text-node semantics', async () => {
-    const html = '<div class="c">a &amp; b &lt;c&gt; &quot;d&quot; &#x27;e&#x27; &#38;</div>';
+    const html =
+      '<div class="c">a &amp; b &lt;c&gt; &quot;d&quot; &#x27;e&#x27; &#38; &unknown;</div>';
     const { document } = new JSDOM(html).window;
 
-    expect((await extractFromMarkup(html)).classNames[0].text).toBe(`a & b <c> "d" 'e' &`);
+    expect((await extractFromMarkup(html)).classNames[0].text).toBe(
+      `a & b <c> "d" 'e' & &unknown;`
+    );
     expect(extractFromContainer(document.body).classNames[0].text).toBe(
       (await extractFromMarkup(html)).classNames[0].text
     );
