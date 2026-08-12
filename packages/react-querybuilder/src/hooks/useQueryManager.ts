@@ -33,7 +33,9 @@ export function useQueryManager<
  * The manager is created once and never recreated, so `query` is an _initial_ value and
  * `options` are captured on the first render only. Later changes to either argument are ignored.
  * To change the configuration afterward, call `manager.reconfigure(...)` on the returned
- * manager; this hook re-renders when it does.
+ * manager; this hook re-renders when it does. A `reconfigure` call that resolves to the
+ * configuration already in effect is a no-op, so it is safe to call from an effect that runs on
+ * every render.
  *
  * @group Hooks
  */

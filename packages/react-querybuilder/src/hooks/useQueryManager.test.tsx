@@ -203,6 +203,20 @@ describe('useQueryManager', () => {
       expect(screen.getByTestId('placeholder')).toHaveTextContent('Choisir un champ');
     });
 
+    it('does not re-render for a reconfigure that changes nothing', () => {
+      const { qm, getRenderCount } = renderCounter();
+      const before = getRenderCount();
+
+      act(() => {
+        // Structurally identical to the options already in effect, rebuilt as a caller in an
+        // effect would. `reconfigure` gates itself, so nothing reaches the hook.
+        qm.reconfigure({ fields: [...fields] });
+      });
+
+      expect(getRenderCount()).toBe(before);
+      expect(qm.getConfigVersion()).toBe(0);
+    });
+
     it('stops observing config changes after unmount', () => {
       const qm = new QueryManager<RuleGroupType>(undefined, { fields });
       const { unmount } = renderHook(() => useQueryManager(qm));

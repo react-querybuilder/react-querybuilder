@@ -24,6 +24,7 @@ export * from './misc';
 export * from './objectUtils';
 export * from './optionResolvers';
 export * from './optGroupUtils';
+export * from './optionsEqual';
 export * from './parseNumber';
 export * from './pathUtils';
 export * from './preferProp';

@@ -142,7 +142,7 @@ const CustomUI = () => {
 
 Since the manager is stable, its methods are safe to call from event handlers and to use in dependency arrays. A [batch](./query-management#batching) triggers a single re-render regardless of how many changes it contains, and mutations that resolve to a no-op trigger none.
 
-To change the configuration after the first render, call [`reconfigure`](./query-management#reconfiguration) on the manager. The hook subscribes to the manager's config version in addition to its query, so a reconfiguration re-renders the component even though the query object is unchanged.
+To change the configuration after the first render, call [`reconfigure`](./query-management#reconfiguration) on the manager. The hook subscribes to the manager's config version in addition to its query, so a reconfiguration re-renders the component even though the query object is unchanged. A `reconfigure` call that changes nothing is a no-op, so an effect like the one below is safe to run on every render of a component whose `translations` object is rebuilt each time.
 
 ```tsx
 useEffect(() => {

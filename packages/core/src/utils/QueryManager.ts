@@ -70,6 +70,7 @@ import {
   resolveValueEditorType,
   resolveValueList,
 } from './optionResolvers';
+import { optionsEqual } from './optionsEqual';
 import type { FindPathReturnType } from './pathUtils';
 import { findPath, getParentPath, pathIsDisabled } from './pathUtils';
 import { prepareRuleGroup } from './prepareQueryObjects';
@@ -349,11 +350,31 @@ interface QueryManagerSnapshot<RG extends RuleGroupTypeAny> {
 }
 
 /**
- * A single rule or group encountered by {@link QueryManager.walk}, along with where it was found.
+ * What changed in the notification a {@link QueryManager.subscribe} listener is receiving.
+ *
+ * The two flags are independent, and at least one is always `true`. A single notification can
+ * report both: a {@link QueryManager.batch batch} containing a
+ * {@link QueryManager.reconfigure reconfigure} and a mutation emits one
+ * `{ query: true, config: true }`.
+ *
+ * Listeners that ignore their argument keep working exactly as before — this exists so that a
+ * framework adapter can skip the work a change does not affect (re-deriving option lists on a
+ * query-only change, say) without diffing the manager's output to find out.
  *
  * @group Query Tools
  */
-export interface QueryNode<RG extends RuleGroupTypeAny = RuleGroupType> {
+export interface SubscriptionChange {
+  /** The query was replaced. */
+  query: boolean;
+  /** Options were applied, so option lists and any derived configuration may have changed. */
+  config: boolean;
+}
+
+/**
+ * A single rule or group encountered by {@link QueryManager.walk}, along with where it was found.
+ *
+ * @group Query Tools
+ */ export interface QueryNode<RG extends RuleGroupTypeAny = RuleGroupType> {
   /** The rule or group itself. */
   node: RG | RuleType;
   /** The {@link Path} of `node` within the query. The root group's path is `[]`. */
@@ -404,6 +425,12 @@ type AsRuleGroup<T> = T extends RuleGroupTypeAny ? T : RuleGroupTypeAny;
  */
 const kState: unique symbol = Symbol('QueryManager.state');
 
+// The three possible notification payloads. Shared and frozen: subscribers receive them
+// directly, and there is no per-notification data beyond the two flags.
+const queryChange: SubscriptionChange = freeze({ query: true, config: false });
+const configChange: SubscriptionChange = freeze({ query: false, config: true });
+const queryAndConfigChange: SubscriptionChange = freeze({ query: true, config: true });
+
 /**
  * Every mutable member of a {@link QueryManager}. The option-derived members are assigned by
  * `applyOptions`, which the constructor calls before anything else; the rest are initialized by
@@ -429,7 +456,7 @@ interface ManagerState<
   respectDisabled: boolean;
   onInvalidTarget: ((info: AbortInfo) => void) | undefined;
   freezeEnabled: boolean;
-  readonly listeners: Set<() => void>;
+  readonly listeners: Set<(change: SubscriptionChange) => void>;
   historyEnabled: boolean;
   maxHistory: number;
   coalesceMs: number;
@@ -444,6 +471,11 @@ interface ManagerState<
   batchSnapshot: QueryManagerSnapshot<RG> | undefined;
   /** Whether a history-stack method ran inside the batch currently in progress. */
   historyBypassed: boolean;
+  /**
+   * Whether a `reconfigure` ran inside the batch currently in progress. Its notification is
+   * deferred to the batch's end and merged into that one, so a batch never emits two.
+   */
+  pendingConfigNotify: boolean;
   /**
    * The query the caches below were derived from. Caches are keyed on query _identity_ rather
    * than invalidated from `commit` because `undo`, `redo`, and `batch`'s rollback all assign
@@ -465,13 +497,14 @@ const createManagerState = <
   C extends FullCombinator,
 >(): ManagerState<RG, F, O, C> => {
   const state = {
-    listeners: new Set<() => void>(),
+    listeners: new Set<(change: SubscriptionChange) => void>(),
     configVersion: 0,
     past: [],
     future: [],
     lastAt: 0,
     batchDepth: 0,
     historyBypassed: false,
+    pendingConfigNotify: false,
   } as unknown as ManagerState<RG, F, O, C>;
 
   // Vue's `reactive()` skips any object carrying a truthy `__v_skip` — this is exactly what
@@ -768,7 +801,7 @@ export class QueryManager<
     if (this.state.batchDepth > 0) return;
 
     this.record(prev, next);
-    this.notify();
+    this.notify(queryChange);
   }
 
   /**
@@ -803,8 +836,8 @@ export class QueryManager<
     this.state.lastAt = now;
   }
 
-  private notify(): void {
-    for (const listener of this.state.listeners) listener();
+  private notify(change: SubscriptionChange): void {
+    for (const listener of this.state.listeners) listener(change);
   }
 
   /**
@@ -1090,17 +1123,33 @@ export class QueryManager<
    * re-normalize.
    *
    * History options are honored immediately: lowering `maxHistory` trims the undo stack, and
-   * turning history off clears both stacks. Subscribers are notified once, and
-   * {@link QueryManager.getConfigVersion} is incremented, even inside a
-   * {@link QueryManager.batch batch} — configuration is not part of a batch's rollback.
+   * turning history off clears both stacks.
+   *
+   * A call that resolves to the configuration already in effect is a **no-op**: nothing is
+   * re-derived, {@link QueryManager.getConfigVersion} does not change, and subscribers are not
+   * notified. Equality is structural for data and by identity for functions
+   * ({@link optionsEqual}), so a caller that rebuilds its options object on every render — which
+   * every framework adapter does — does not force a reconfigure as long as the data is the same.
+   * Rebuilding a callback per render _does_ count as a change; memoize it to avoid that.
+   *
+   * Otherwise subscribers are notified once and `getConfigVersion` is incremented. Inside a
+   * {@link QueryManager.batch batch} the options are still applied immediately — configuration
+   * is not part of a batch's rollback — but the notification is deferred and merged into the
+   * batch's single notification.
    */
   reconfigure(
     options: Partial<QueryManagerOptions<F, O, C>>,
     config?: { replace?: boolean }
   ): this {
-    this.applyOptions(
-      freeze(config?.replace ? { ...options } : { ...this.state.options, ...options })
-    );
+    const merged = config?.replace ? { ...options } : { ...this.state.options, ...options };
+
+    // Gate on the merged result rather than the argument, so `reconfigure({})` behaves like
+    // `reconfigure(currentOptions)`. `reconcileHistoryConfig` is skipped along with everything
+    // else, which is only correct because `history` is part of the comparison — `optionsEqual`
+    // descends into nested plain objects rather than comparing them by identity.
+    if (optionsEqual(this.state.options, merged)) return this;
+
+    this.applyOptions(freeze(merged));
 
     // `ensureCache` is keyed on query identity, and the query has not changed, so it will not
     // clear this on its own. Validation depends on `validator` and `fields`, both of which may
@@ -1110,7 +1159,15 @@ export class QueryManager<
     this.reconcileHistoryConfig();
 
     ++this.state.configVersion;
-    this.notify();
+
+    // Inside a batch the notification is deferred and merged into the batch's own, so a batch
+    // containing a `reconfigure` still emits exactly one. The configuration itself is applied
+    // immediately either way — it is not part of a batch's rollback.
+    if (this.state.batchDepth > 0) {
+      this.state.pendingConfigNotify = true;
+    } else {
+      this.notify(configChange);
+    }
 
     return this;
   }
@@ -1188,8 +1245,12 @@ export class QueryManager<
    * ```
    *
    * In React, prefer the `useQueryManager` hook from `react-querybuilder`, which wraps this.
+   *
+   * The listener receives a {@link SubscriptionChange} describing what changed. It is optional:
+   * a zero-argument listener — including `useSyncExternalStore`'s `onStoreChange` — is still a
+   * valid listener and behaves as it always has.
    */
-  subscribe = (listener: () => void): (() => void) => {
+  subscribe = (listener: (change: SubscriptionChange) => void): (() => void) => {
     this.state.listeners.add(listener);
     return () => {
       this.state.listeners.delete(listener);
@@ -1251,11 +1312,23 @@ export class QueryManager<
         const { query: base } = this.state.batchSnapshot!;
         this.state.batchSnapshot = undefined;
 
-        if (base !== this.state.query) {
+        const queryChanged = base !== this.state.query;
+        // A `reconfigure` inside the batch deferred its notification to here. It fires even on
+        // the rollback path, because options are not rolled back — the configuration change
+        // survived, so subscribers must hear about it.
+        const configChanged = this.state.pendingConfigNotify;
+        this.state.pendingConfigNotify = false;
+
+        if (queryChanged) {
           // `undo`/`redo`/`clearHistory` already positioned the stacks deliberately; recording
           // here would duplicate the batch's own base entry and discard the redo stack.
           if (!this.state.historyBypassed) this.record(base, this.state.query);
-          this.notify();
+        }
+        // One notification for the whole batch, describing everything that happened in it.
+        if (queryChanged || configChanged) {
+          this.notify(
+            queryChanged ? (configChanged ? queryAndConfigChange : queryChange) : configChange
+          );
         }
         this.state.historyBypassed = false;
       }
@@ -1288,7 +1361,7 @@ export class QueryManager<
     this.state.lastSig = undefined;
     this.markHistoryBypassed();
     // Within a batch, the outermost call notifies once for everything.
-    if (this.state.batchDepth === 0) this.notify();
+    if (this.state.batchDepth === 0) this.notify(queryChange);
 
     return this;
   }
@@ -1301,7 +1374,7 @@ export class QueryManager<
     this.state.query = this.state.future.shift()!;
     this.state.lastSig = undefined;
     this.markHistoryBypassed();
-    if (this.state.batchDepth === 0) this.notify();
+    if (this.state.batchDepth === 0) this.notify(queryChange);
 
     return this;
   }

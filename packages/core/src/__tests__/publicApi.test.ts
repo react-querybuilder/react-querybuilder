@@ -196,6 +196,7 @@ const publicApi: string[] = [
   'numerifyValues',
   'objectEntries',
   'objectKeys',
+  'optionsEqual',
   'parseNumber',
   'pathIsDisabled',
   'pathIsDisabledByPaths',
@@ -250,6 +251,7 @@ const publicApi: string[] = [
   'update',
   'updateInPlace',
   'uuidV4regex',
+  'valuesEqual',
   'withParamPrefix',
   'wrapLikeFragment',
 ];

@@ -679,6 +679,73 @@ describe('subscribe', () => {
 
     expect(listener).toHaveBeenCalledTimes(1);
   });
+
+  describe('change payload', () => {
+    it('reports query-only changes for mutations', () => {
+      const listener = vi.fn();
+      const q = new QueryManager(undefined, { fields });
+      q.subscribe(listener);
+
+      q.add({ ...rule(), id: 'r1' });
+      expect(listener).toHaveBeenLastCalledWith({ query: true, config: false });
+
+      q.update('value', 'Vai', 'r1');
+      expect(listener).toHaveBeenLastCalledWith({ query: true, config: false });
+
+      q.setQuery({ combinator: 'or', rules: [] });
+      expect(listener).toHaveBeenLastCalledWith({ query: true, config: false });
+    });
+
+    it('reports config-only changes for reconfigure', () => {
+      const listener = vi.fn();
+      const q = new QueryManager(undefined, { fields });
+      q.subscribe(listener);
+
+      q.reconfigure({ listsAsArrays: true });
+
+      expect(listener).toHaveBeenLastCalledWith({ query: false, config: true });
+    });
+
+    it('reports query-only changes for batch, undo, and redo', () => {
+      const listener = vi.fn();
+      const q = new QueryManager(undefined, { fields, history: true });
+      q.subscribe(listener);
+
+      q.batch(() => {
+        q.add(rule());
+        q.add(rule('lastName'));
+      });
+      expect(listener).toHaveBeenLastCalledWith({ query: true, config: false });
+
+      q.undo();
+      expect(listener).toHaveBeenLastCalledWith({ query: true, config: false });
+
+      q.redo();
+      expect(listener).toHaveBeenLastCalledWith({ query: true, config: false });
+    });
+
+    it('hands out a frozen payload', () => {
+      const listener = vi.fn();
+      const q = new QueryManager(undefined, { fields });
+      q.subscribe(listener);
+
+      q.add(rule());
+
+      expect(Object.isFrozen(listener.mock.calls[0][0])).toBe(true);
+    });
+
+    it('accepts zero-argument listeners', () => {
+      const q = new QueryManager(undefined, { fields });
+      let calls = 0;
+      q.subscribe(() => {
+        calls++;
+      });
+
+      q.add(rule());
+
+      expect(calls).toBe(1);
+    });
+  });
 });
 
 describe('history', () => {
@@ -2033,25 +2100,169 @@ describe('reconfigure', () => {
     q.reconfigure({ listsAsArrays: true });
 
     expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenLastCalledWith({ query: false, config: true });
     expect(q.getConfigVersion()).toBe(1);
 
+    // A merge that changes nothing is a no-op.
     q.reconfigure({});
-    expect(q.getConfigVersion()).toBe(2);
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(q.getConfigVersion()).toBe(1);
   });
 
-  it('notifies immediately inside a batch', () => {
+  it('defers its notification inside a batch', () => {
     const listener = vi.fn();
     const q = new QueryManager(undefined, { fields });
     q.subscribe(listener);
 
     q.batch(() => {
       q.reconfigure({ listsAsArrays: true });
-      expect(listener).toHaveBeenCalledTimes(1);
+      // The options are applied immediately...
+      expect(q.getOptions().listsAsArrays).toBe(true);
+      expect(q.getConfigVersion()).toBe(1);
+      // ...but the notification waits for the batch, so the batch emits exactly one.
+      expect(listener).not.toHaveBeenCalled();
       q.add(rule());
     });
 
-    // Once for the reconfigure, once for the batch's query change.
-    expect(listener).toHaveBeenCalledTimes(2);
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenLastCalledWith({ query: true, config: true });
+  });
+
+  it('notifies once for a batch containing only a reconfigure', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    q.subscribe(listener);
+
+    q.batch(() => {
+      q.reconfigure({ listsAsArrays: true });
+    });
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenLastCalledWith({ query: false, config: true });
+  });
+
+  it('notifies about a reconfigure even when the batch rolls back', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    const before = q.getQuery();
+    q.subscribe(listener);
+
+    expect(() =>
+      q.batch(() => {
+        q.add(rule());
+        q.reconfigure({ listsAsArrays: true });
+        throw new Error('nope');
+      })
+    ).toThrow('nope');
+
+    // The query was rolled back; the configuration was not, so subscribers hear about it.
+    expect(q.getQuery()).toBe(before);
+    expect(q.getOptions().listsAsArrays).toBe(true);
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenLastCalledWith({ query: false, config: true });
+  });
+
+  describe('self-gating', () => {
+    // This is the gate that Solid's and Svelte's ports each implemented locally as
+    // `valuesEqual`: a caller that rebuilds its options object on every render must not force a
+    // reconfigure, or the effect that calls it becomes self-perpetuating.
+    it('does not reconfigure when a rebuilt options object is structurally identical', () => {
+      const getDefaultValue = () => 'x';
+      const buildOptions = () => ({
+        fields: [
+          { name: 'firstName', label: 'First Name' },
+          { name: 'lastName', label: 'Last Name' },
+        ],
+        translations: { fields: { placeholderLabel: 'Select a field' } },
+        history: { maxHistory: 10, coalesceMs: 250 },
+        getDefaultValue,
+      });
+      const listener = vi.fn();
+      const q = new QueryManager(undefined, buildOptions());
+      q.subscribe(listener);
+
+      q.reconfigure(buildOptions());
+
+      expect(listener).not.toHaveBeenCalled();
+      expect(q.getConfigVersion()).toBe(0);
+    });
+
+    it('reconfigures when a nested option value changes', () => {
+      const listener = vi.fn();
+      const q = new QueryManager(undefined, { fields, history: { maxHistory: 10 } });
+      q.subscribe(listener);
+
+      q.reconfigure({ history: { maxHistory: 10 } });
+      expect(listener).not.toHaveBeenCalled();
+
+      q.reconfigure({ history: { maxHistory: 3 } });
+      expect(listener).toHaveBeenCalledTimes(1);
+      expect(q.getConfigVersion()).toBe(1);
+    });
+
+    it('honors history options that survive the gate', () => {
+      const q = new QueryManager(undefined, { fields, history: { maxHistory: 10 } });
+      q.add(rule());
+      q.add(rule('lastName'));
+      expect(q.getHistory().past).toHaveLength(2);
+
+      // A no-op reconfigure skips `reconcileHistoryConfig`, which is only correct because
+      // `history` is part of the comparison. A real one still trims.
+      q.reconfigure({ history: { maxHistory: 10 } });
+      expect(q.getHistory().past).toHaveLength(2);
+
+      q.reconfigure({ history: { maxHistory: 1 } });
+      expect(q.getHistory().past).toHaveLength(1);
+    });
+
+    it('reconfigures when a function-valued option is rebuilt', () => {
+      const listener = vi.fn();
+      const q = new QueryManager(undefined, { fields, getDefaultValue: () => 'x' });
+      q.subscribe(listener);
+
+      q.reconfigure({ getDefaultValue: () => 'x' });
+
+      expect(listener).toHaveBeenCalledTimes(1);
+    });
+
+    it('gates on the merged options rather than the argument', () => {
+      const listener = vi.fn();
+      const q = new QueryManager(undefined, { fields, listsAsArrays: true });
+      q.subscribe(listener);
+
+      // Both describe the configuration already in effect.
+      q.reconfigure({});
+      q.reconfigure({ listsAsArrays: true });
+
+      expect(listener).not.toHaveBeenCalled();
+    });
+
+    it('gates on the replacement result under `replace: true`', () => {
+      const listener = vi.fn();
+      const options = { fields, listsAsArrays: true };
+      const q = new QueryManager(undefined, options);
+      q.subscribe(listener);
+
+      // Equal to the current options, so a no-op even though it discards them first.
+      q.reconfigure({ ...options }, { replace: true });
+      expect(listener).not.toHaveBeenCalled();
+
+      // A merge would have preserved `fields`; a replacement does not, so this is a change.
+      q.reconfigure({ listsAsArrays: true }, { replace: true });
+      expect(listener).toHaveBeenCalledTimes(1);
+    });
+
+    it('is a no-op for a reconfigure inside a batch that changes nothing', () => {
+      const listener = vi.fn();
+      const q = new QueryManager(undefined, { fields });
+      q.subscribe(listener);
+
+      q.batch(() => {
+        q.reconfigure({});
+      });
+
+      expect(listener).not.toHaveBeenCalled();
+    });
   });
 
   it('invalidates the cached validation result', () => {

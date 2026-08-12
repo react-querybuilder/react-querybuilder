@@ -83,6 +83,25 @@ const record = (prev: RuleGroupTypeAny, next: RuleGroupTypeAny) => {
 };
 ```
 
+## Configuration
+
+| Export               | Purpose                                                                    |
+| -------------------- | -------------------------------------------------------------------------- |
+| `optionsEqual`       | Whether two `QueryManagerOptions` objects describe the same configuration. |
+| `valuesEqual`        | The underlying comparison, for individual option values.                   |
+| `SubscriptionChange` | The payload passed to `QueryManager` subscribers (type-only).              |
+
+Both comparisons treat arrays and plain objects as values—descending into nested objects such as `history` and `translations`—and everything else, functions included, by identity. That split is what lets an options object rebuilt on every render compare equal as long as its data did not change, which every adapter needs: an identity-only comparison makes the effect that calls `reconfigure` self-perpetuating.
+
+[`QueryManager#reconfigure`](./query-management#reconfiguration) applies this gate itself, so an adapter can call it unconditionally. `optionsEqual` is exported for adapters that want to skip building the merged options object in the first place.
+
+```ts
+import { optionsEqual } from '@react-querybuilder/core';
+
+// Only builds the merged object when something actually changed.
+if (!optionsEqual(manager.getOptions(), nextOptions)) manager.reconfigure(nextOptions);
+```
+
 ## Controls
 
 | Export            | Purpose                                                                                  |
