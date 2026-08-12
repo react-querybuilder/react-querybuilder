@@ -222,6 +222,7 @@ const publicApi: string[] = [
   'resolveValueEditorType',
   'resolveValueList',
   'rootPath',
+  'setAutoFreeze',
   'shouldCoalesce',
   'shouldRenderAsNumber',
   'signatureOf',

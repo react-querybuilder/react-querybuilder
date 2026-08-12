@@ -313,6 +313,19 @@ export interface QueryManagerOptions<
    * `"same-location"` and `"no-change"`. Can be overridden per call.
    */
   onInvalidTarget?: (info: AbortInfo) => void;
+  /**
+   * Deep-freeze everything the manager hands out—the query, the field list, the field map, and
+   * the combinator list—so accidental mutation throws in strict mode. Defaults to `true`.
+   *
+   * Pass `false` when the manager's output is handed to a framework that wraps objects in
+   * proxies (Vue `reactive`, Solid stores) or otherwise needs to mutate them. This also disables
+   * immer's auto-freeze for mutations made through the manager.
+   *
+   * The shallow copy returned by {@link QueryManager.getOptions} is frozen either way: it is a
+   * one-level copy that no framework proxy is placed inside, so freezing it costs nothing and
+   * still prevents callers from mutating the options snapshot they were handed.
+   */
+  freeze?: boolean;
   /** Validates the query. Defaults to {@link defaultValidator}. */
   validator?: QueryValidator;
   /** Generates `id` properties for new rules and groups. Defaults to {@link generateID}. */
@@ -380,7 +393,8 @@ type AsRuleGroup<T> = T extends RuleGroupTypeAny ? T : RuleGroupTypeAny;
  * The query is held internally, so each method takes the same arguments as its `queryTools`
  * counterpart minus the leading `query` parameter, and returns the manager itself for chaining.
  * Mutations use the non-`InPlace` tools, so a query previously handed out by
- * {@link QueryManager.getQuery} is never modified.
+ * {@link QueryManager.getQuery} is never modified. Under `freeze: false` that remains true, but
+ * as a convention rather than a runtime-enforced guarantee.
  *
  * ```ts
  * const q = new QueryManager(undefined, { fields });
@@ -416,6 +430,7 @@ export class QueryManager<
   #strict!: boolean;
   #respectDisabled!: boolean;
   #onInvalidTarget: ((info: AbortInfo) => void) | undefined;
+  #freezeEnabled!: boolean;
   readonly #listeners = new Set<() => void>();
   #historyEnabled!: boolean;
   #maxHistory!: number;
@@ -443,10 +458,18 @@ export class QueryManager<
   constructor(query?: RG, options: QueryManagerOptions<F, O, C> = {}) {
     this.#applyOptions(options);
 
-    this.#query = freeze(
-      query ? prepareRuleGroup(query, { idGenerator: this.#idGenerator }) : this.createRuleGroup(),
-      true
+    this.#query = this.#freeze(
+      query ? prepareRuleGroup(query, { idGenerator: this.#idGenerator }) : this.createRuleGroup()
     );
+  }
+
+  /**
+   * Deep-freezes `x` unless the `freeze` option is `false`. Every value the manager hands out
+   * directly goes through here; the shallow copies returned by {@link QueryManager.getOptions}
+   * and passed to `#applyOptions` are frozen unconditionally instead.
+   */
+  #freeze<T>(x: T): T {
+    return this.#freezeEnabled ? freeze(x, true) : x;
   }
 
   /**
@@ -456,6 +479,7 @@ export class QueryManager<
    */
   #applyOptions(options: QueryManagerOptions<F, O, C>): void {
     this.#options = options;
+    this.#freezeEnabled = options.freeze ?? true;
     this.#idGenerator = options.idGenerator ?? generateID;
     this.#validator = options.validator ?? defaultValidator;
     this.#strict = options.strict ?? false;
@@ -475,11 +499,11 @@ export class QueryManager<
       autoSelectOption: options.autoSelectField,
       placeholder: options.translations?.fields,
     });
-    // Both are frozen because `getFields` and `getFieldData` hand their contents out directly.
-    // `prepareOptionList` builds the map's values as separate objects from the list's, so
-    // freezing one does not freeze the other.
-    this.#fields = freeze(fields, true);
-    this.#fieldMap = freeze(fieldMap, true);
+    // Both are frozen (unless `freeze` is `false`) because `getFields` and `getFieldData` hand
+    // their contents out directly. `prepareOptionList` builds the map's values as separate
+    // objects from the list's, so freezing one does not freeze the other.
+    this.#fields = this.#freeze(fields);
+    this.#fieldMap = this.#freeze(fieldMap);
 
     this.#operators = prepareOptionList<O>({
       optionList: (options.operators ?? defaultOperators) as FlexibleOptionListProp<O>,
@@ -490,12 +514,11 @@ export class QueryManager<
     }).optionList;
 
     // Frozen because `getCombinators` hands this array out directly; see also `#fields`.
-    this.#combinators = freeze(
+    this.#combinators = this.#freeze(
       prepareOptionList<C>({
         optionList: (options.combinators ?? defaultCombinators) as FlexibleOptionListProp<C>,
         baseOption: options.baseCombinator,
-      }).optionList,
-      true
+      }).optionList
     );
   }
 
@@ -588,10 +611,13 @@ export class QueryManager<
   }
 
   /** Defaults shared by every mutating method, overridable per call. */
-  #guardOptions(): GuardOptions {
+  #guardOptions(): GuardOptions & { freeze: boolean } {
     const { maxLevels } = this.#options;
 
     return {
+      // Spread by every tool call the manager makes, so the `freeze` option lives here rather
+      // than in `#toolOptions`, which `remove` does not use.
+      freeze: this.#freezeEnabled,
       // `QueryBuilder` treats a non-positive `maxLevels` as unlimited; match that.
       maxLevels: (maxLevels ?? 0) > 0 ? Number(maxLevels) : Infinity,
       respectDisabled: this.#respectDisabled,
@@ -755,8 +781,9 @@ export class QueryManager<
   // #region State access
 
   /**
-   * The current query. The returned object is frozen and structurally shared, so it is safe to
-   * retain and compare by reference to detect changes.
+   * The current query. The returned object is structurally shared, so it is safe to retain and
+   * compare by reference to detect changes. It is also frozen unless the `freeze` option is
+   * `false`.
    *
    * Like {@link QueryManager.subscribe}, this method is bound to the instance, so it can be
    * passed as a bare reference (e.g. as the `getSnapshot` argument to `useSyncExternalStore`).
@@ -765,7 +792,7 @@ export class QueryManager<
 
   /** Replaces the current query, ensuring every rule and group has an `id`. */
   setQuery(query: RG): this {
-    this.#commit(freeze(prepareRuleGroup(query, { idGenerator: this.#idGenerator }), true));
+    this.#commit(this.#freeze(prepareRuleGroup(query, { idGenerator: this.#idGenerator })));
     return this;
   }
 

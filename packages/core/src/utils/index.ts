@@ -10,6 +10,7 @@ export * from './filterFieldsByComparator';
 export * from './formatQuery';
 export * from './generateAccessibleDescription';
 export * from './generateID';
+export { setAutoFreeze } from './immerInstances';
 export * from './getMatchModesUtil';
 export * from './getParseNumberMethod';
 export * from './getRuleDefaultValue';

@@ -160,6 +160,19 @@ update(query, 'disabled', false, [0], { respectDisabled: true });
 
 `getGuardAbortReason(query, pathOrID, guards, { asParent })` and `exceedsMaxLevels(parentPath, guards)` are exported so a UI layer that runs its own logic before mutating—invoking a confirmation callback, for example—can apply the same rules without duplicating them.
 
+### Freezing (tools)
+
+The query tools produce their result with [immer](https://immerjs.github.io/immer/), which deep-freezes it. That makes accidental mutation throw in strict mode, but some frameworks—Vue with `reactive`, Solid with stores—cannot wrap a frozen object. Pass `freeze: false` to opt out:
+
+```ts
+const nextQuery = add(query, rule, [], { freeze: false });
+Object.isFrozen(nextQuery); // false
+```
+
+Structural sharing is unaffected, so reference comparison still works. The `*InPlace` variants never freeze anything, so the option is inert for them.
+
+`setAutoFreeze(false)` (re-exported from immer) disables freezing process-wide, including for `produce` calls you make yourself. Prefer the per-call option unless you need that.
+
 ## Query manager
 
 `QueryManager` is a stateful wrapper around the [query tools](#query-tools) above. It holds the query internally, so each method takes the same arguments as its query tool counterpart minus the leading `query` parameter, and returns the manager itself for chaining. It has no React dependency, so it can be used on the server, in a CLI, or anywhere else a query needs to be built or modified programmatically.
@@ -193,9 +206,22 @@ Without a `query`, an empty group is created using the configured `combinators` 
 
 The constructor also accepts the [guard options](#guards) `respectDisabled` (defaulting to **`true`** here, matching the `QueryBuilder` component), `queryDisabled`, and `maxLevels`, plus `resetOnFieldChange` (default `true`) and `resetOnOperatorChange` (default `false`), which mirror the props of the same names.
 
+### Freezing (manager)
+
+Everything the manager hands out directly—the query, the field list, the field map, and the combinator list—is deep-frozen. Pass `freeze: false` to disable that, along with immer's auto-freeze for mutations made through the manager:
+
+```ts
+const q = new QueryManager(query, { fields, freeze: false });
+Object.isFrozen(q.getQuery()); // false
+```
+
+This is what makes a manager's output usable with a framework that wraps objects in proxies. The one exception is `getOptions()`, which is a one-level copy that no proxy is placed inside; it stays frozen either way, so callers can't mutate the options snapshot they were handed.
+
+Note that under `freeze: false`, "a query previously handed out by `getQuery` is never modified" remains true—mutations still go through the non-`InPlace` tools—but it is a convention rather than a runtime-enforced guarantee.
+
 ### State access
 
-- `getQuery(): RuleGroupTypeAny` — The current query. The returned object is frozen and structurally shared, so it's safe to retain and compare by reference to detect changes.
+- `getQuery(): RuleGroupTypeAny` — The current query. The returned object is structurally shared, so it's safe to retain and compare by reference to detect changes. It's also frozen unless the [`freeze` option](#freezing-manager) is `false`.
 - `setQuery(query: RuleGroupTypeAny)` — Replaces the current query, assigning `id`s as needed.
 
 ### Factories
@@ -243,7 +269,7 @@ The incoming options are shallow-merged over the current ones, so keys left out 
 
 Related methods:
 
-- `getOptions(): QueryManagerOptions` — The options currently in effect, as a frozen shallow copy.
+- `getOptions(): QueryManagerOptions` — The options currently in effect, as a frozen shallow copy. This one is frozen even under `freeze: false`; see [Freezing](#freezing-manager).
 - `getConfigVersion(): number` — A counter incremented by every `reconfigure` call. Bound to the instance, so it can be passed directly to React's `useSyncExternalStore` alongside `subscribe`. The [`useQueryManager`](./hooks#usequerymanager) hook already does this.
 
 :::note
@@ -412,7 +438,7 @@ These methods resolve the same field/operator configuration the `QueryBuilder` c
 - `getCombinators(): FullOptionList<FullCombinator>` — The normalized combinator list, for populating a combinator selector.
 - `getFieldData(field): FullField` — The configured field. For an unconfigured field, returns the same minimal fallback (`{ name, value, label }`, all set to the field name) that `getRuleContext` reports as `fieldData`.
 
-`getFields` and `getCombinators` return frozen arrays, so they are safe to hand to rendering code without defensive copying.
+`getFields` and `getCombinators` return frozen arrays (unless the [`freeze` option](#freezing-manager) is `false`), so they are safe to hand to rendering code without defensive copying. Either way, treat them as read-only.
 
 - `getOperators(field): FullOptionList<FullOperator>` — The operator list for a field.
 - `getValueSources(field, operator): ValueSourceFullOptions` — The available value sources.

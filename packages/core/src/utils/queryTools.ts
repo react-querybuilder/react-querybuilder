@@ -1,4 +1,4 @@
-import { current, isDraft, produce } from 'immer';
+import { current, isDraft } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
   MatchModeOptions,
@@ -13,6 +13,7 @@ import type {
 } from '../types';
 import { generateID } from './generateID';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
+import { producerFor } from './immerInstances';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 import { getFirstOption, getOption } from './optGroupUtils';
 import {
@@ -129,6 +130,22 @@ export interface AbortOptions extends GuardOptions {
 }
 
 /**
+ * Options shared by every query tool.
+ *
+ * @group Query Tools
+ */
+export interface QueryToolOptions extends AbortOptions {
+  /**
+   * Set `false` to skip immer's auto-freeze on the returned query, e.g. when the query will be
+   * handed to a framework that wraps it in a proxy (Vue `reactive`, Solid stores) or otherwise
+   * needs to mutate it. Ignored by the `*InPlace` variants, which never freeze.
+   *
+   * @default true
+   */
+  freeze?: boolean;
+}
+
+/**
  * Whether a mutation targeting `pathOrID` is blocked by the given guards, and why.
  * Returns `null` when the mutation may proceed.
  *
@@ -170,7 +187,7 @@ export const exceedsMaxLevels = (
  *
  * @group Query Tools
  */
-export interface AddOptions extends AbortOptions {
+export interface AddOptions extends QueryToolOptions {
   /**
    * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
    * combinators), then the first combinator in this list will be inserted
@@ -211,7 +228,9 @@ export interface AddMethod {
  * @group Query Tools
  */
 export const add: AddMethod = (query, ruleOrGroup, parentPathOrID, options = {}): typeof query =>
-  produce(query, q => addInPlace(q, ruleOrGroup as RuleType, parentPathOrID, options));
+  producerFor(options.freeze)(query, q =>
+    addInPlace(q, ruleOrGroup as RuleType, parentPathOrID, options)
+  );
 
 /**
  * Adds a rule or group to a query in place.
@@ -283,7 +302,7 @@ export const addInPlace: AddMethod = (
  *
  * @group Query Tools
  */
-export interface UpdateOptions extends AbortOptions {
+export interface UpdateOptions extends QueryToolOptions {
   /**
    * When updating the `field` of a rule, the rule's `operator`, `value`, and `valueSource`
    * will be reset to their respective defaults. Defaults to `true`.
@@ -408,6 +427,13 @@ const normalizeUpdateArgs = (
 };
 
 /**
+ * The options argument of an {@link update} call, whose position depends on the argument form.
+ * Cheaper than {@link normalizeUpdateArgs} when only the options are needed.
+ */
+const updateOptionsOf = (a: unknown, b: unknown, c: unknown, d: unknown): UpdateOptions =>
+  ((typeof a === 'string' || Array.isArray(a) ? d : c) as UpdateOptions) ?? {};
+
+/**
  * Applies one or more property updates to a query in place. Shared by
  * {@link update} and {@link updateInPlace}.
  */
@@ -444,7 +470,7 @@ export const update = (<RG extends RuleGroupTypeAny>(
   c?: unknown,
   d?: unknown
 ): RG =>
-  produce(query, q => {
+  producerFor(updateOptionsOf(a, b, c, d).freeze)(query, q => {
     applyUpdatesInPlace(q, a, b, c, d);
   })) as UpdateMethod;
 
@@ -625,7 +651,7 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
  *
  * @group Query Tools
  */
-export interface RemoveOptions extends AbortOptions {}
+export interface RemoveOptions extends QueryToolOptions {}
 
 export interface RemoveMethod {
   <RG extends RuleGroupTypeAny>(
@@ -646,7 +672,7 @@ export interface RemoveMethod {
  * @group Query Tools
  */
 export const remove: RemoveMethod = (query, pathOrID, options = {}): typeof query =>
-  produce(query, q => removeInPlace(q, pathOrID, options));
+  producerFor(options.freeze)(query, q => removeInPlace(q, pathOrID, options));
 
 /**
  * Removes a rule or group from a query in place.
@@ -760,7 +786,7 @@ const getNextPath = (
  *
  * @group Query Tools
  */
-export interface MoveOptions extends AbortOptions {
+export interface MoveOptions extends QueryToolOptions {
   /**
    * When `true`, the source rule/group will not be removed from its original path.
    */
@@ -799,7 +825,7 @@ export interface MoveMethod {
  * @group Query Tools
  */
 export const move: MoveMethod = (query, oldPathOrID, newPath, options = {}): typeof query =>
-  produce(query, q => moveInPlace(q, oldPathOrID, newPath, options));
+  producerFor(options.freeze)(query, q => moveInPlace(q, oldPathOrID, newPath, options));
 
 /**
  * Moves a rule or group from one path to another in place.
@@ -968,7 +994,7 @@ export const moveInPlace: MoveMethod = (
  *
  * @group Query Tools
  */
-export interface InsertOptions extends AbortOptions {
+export interface InsertOptions extends QueryToolOptions {
   /**
    * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
    * combinators), then the first combinator in this list will be inserted
@@ -1023,7 +1049,7 @@ export interface InsertMethod {
  * @group Query Tools
  */
 export const insert: InsertMethod = (query, ruleOrGroup, path, options = {}): typeof query =>
-  produce(query, q => insertInPlace(q, ruleOrGroup as RuleType, path, options));
+  producerFor(options.freeze)(query, q => insertInPlace(q, ruleOrGroup as RuleType, path, options));
 
 /**
  * Inserts a rule or group into a query in place.
@@ -1118,7 +1144,7 @@ export const insertInPlace: InsertMethod = (
  *
  * @group Query Tools
  */
-export interface GroupOptions extends AbortOptions {
+export interface GroupOptions extends QueryToolOptions {
   /**
    * When `true`, the source rule/group will not be removed from its original path.
    */
@@ -1162,7 +1188,8 @@ export const group: GroupMethod = (
   sourcePathOrID,
   targetPathOrID,
   options = {}
-): typeof query => produce(query, q => groupInPlace(q, sourcePathOrID, targetPathOrID, options));
+): typeof query =>
+  producerFor(options.freeze)(query, q => groupInPlace(q, sourcePathOrID, targetPathOrID, options));
 
 /**
  * Creates a new group at a target path with its `rules` array containing the current
