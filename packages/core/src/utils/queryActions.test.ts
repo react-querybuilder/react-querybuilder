@@ -485,4 +485,36 @@ describe('createQueryActions', () => {
       expect(onLog).toHaveBeenCalledWith(expect.objectContaining({ type: LogType.pathDisabled }));
     });
   });
+
+  describe('freeze', () => {
+    const frozen = createQueryActions();
+    const unfrozen = createQueryActions({ freeze: false });
+
+    it('freezes the result by default', () => {
+      expect(Object.isFrozen(frozen.addRule(query(), rule('f3'), []))).toBe(true);
+      expect(Object.isFrozen(frozen.addGroup(query(), { combinator: 'and', rules: [] }, []))).toBe(
+        true
+      );
+      expect(Object.isFrozen(frozen.propChange(query(), 'value', 'x', [0]))).toBe(true);
+      expect(Object.isFrozen(frozen.removeRuleOrGroup(query(), [0]))).toBe(true);
+      expect(Object.isFrozen(frozen.moveRule(query(), [0], [2]))).toBe(true);
+      expect(Object.isFrozen(frozen.groupRule(query(), [0], [1]))).toBe(true);
+    });
+
+    it('does not freeze when `freeze` is false', () => {
+      expect(Object.isFrozen(unfrozen.addRule(query(), rule('f3'), []))).toBe(false);
+      expect(
+        Object.isFrozen(unfrozen.addGroup(query(), { combinator: 'and', rules: [] }, []))
+      ).toBe(false);
+      expect(Object.isFrozen(unfrozen.propChange(query(), 'value', 'x', [0]))).toBe(false);
+      expect(Object.isFrozen(unfrozen.removeRuleOrGroup(query(), [0]))).toBe(false);
+      expect(Object.isFrozen(unfrozen.moveRule(query(), [0], [2]))).toBe(false);
+      expect(Object.isFrozen(unfrozen.groupRule(query(), [0], [1]))).toBe(false);
+    });
+
+    it('does not freeze nested nodes either', () => {
+      const next = unfrozen.propChange(query(), 'value', 'x', [0]);
+      expect(Object.isFrozen(next.rules[0])).toBe(false);
+    });
+  });
 });

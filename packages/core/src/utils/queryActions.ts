@@ -73,6 +73,17 @@ export interface QueryActionsConfig extends QueryActionCallbacks {
   getValueSources?: (field: string, operator: string) => ValueSourceFullOptions;
   getRuleDefaultValue?: (rule: RuleType) => any;
   getMatchModes?: (field: string) => MatchModeOptions;
+  /**
+   * Set `false` to skip immer's auto-freeze on the queries these handlers return, matching the
+   * option of the same name on the query tools and {@link QueryManager}.
+   *
+   * Deep-freezing throws on the reactive proxies used by signals-based frameworks (Svelte
+   * `$state`, Vue `reactive`), so an adapter whose storage may hand a proxied query to these
+   * handlers has to turn it off.
+   *
+   * @default true
+   */
+  freeze?: boolean;
   /** Receives a structured event for every action, applied or aborted. */
   onLog?: (payload: Record<string, any>) => void;
 }
@@ -130,6 +141,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
     getValueSources,
     getRuleDefaultValue,
     getMatchModes,
+    freeze,
     onAddRule,
     onAddGroup,
     onRemove,
@@ -166,6 +178,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
         combinators,
         combinatorPreceding: (newRule as unknown as RuleGroupTypeIC).combinatorPreceding,
         idGenerator,
+        freeze,
       });
       log({ type: LogType.add, query, newQuery, newRule, parentPath });
       return newQuery;
@@ -191,6 +204,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
         combinators,
         combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,
         idGenerator,
+        freeze,
       });
       log({ type: LogType.add, query, newQuery, newGroup, parentPath });
       return newQuery;
@@ -212,6 +226,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
         getValueSources,
         getRuleDefaultValue,
         getMatchModes,
+        freeze,
       });
       log({ type: LogType.update, query, newQuery, prop, value, path });
       return newQuery;
@@ -232,7 +247,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
         return undefined;
       }
 
-      const newQuery = remove(query, path);
+      const newQuery = remove(query, path, { freeze });
       log({ type: LogType.remove, query, newQuery, path, ruleOrGroup });
       return newQuery;
     },
@@ -249,7 +264,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
       if (!ruleOrGroup) return undefined;
 
       // Computed before the callback so it can inspect the prospective result.
-      const nextQuery = move(query, oldPath, newPath, { clone, combinators, idGenerator });
+      const nextQuery = move(query, oldPath, newPath, { clone, combinators, idGenerator, freeze });
       const isGroup = isRuleGroup(ruleOrGroup);
       const callback = isGroup ? onMoveGroup : onMoveRule;
       const callbackResult = callback
@@ -286,7 +301,12 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
       if (!ruleOrGroup) return undefined;
 
       // Computed before the callback so it can inspect the prospective result.
-      const nextQuery = group(query, sourcePath, targetPath, { clone, combinators, idGenerator });
+      const nextQuery = group(query, sourcePath, targetPath, {
+        clone,
+        combinators,
+        idGenerator,
+        freeze,
+      });
       const isGroup = isRuleGroup(ruleOrGroup);
       const callback = isGroup ? onGroupGroup : onGroupRule;
       const callbackResult = callback
