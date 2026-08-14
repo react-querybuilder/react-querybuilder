@@ -8,9 +8,6 @@
  * Only the `"."` export condition (and the relative declaration chunks it pulls in transitively) is
  * checked -- subpath entry points like `@react-querybuilder/dnd/dnd-kit` are expected to reference
  * their peer, since importing that subpath implies the peer is installed.
- *
- * Not gated in CI yet -- run manually via `bun check-dts-peer-leaks`. `knownLeaks` is now empty, so
- * this is ready to be added to `checkall` whenever we want to enforce it.
  */
 /* oxlint-disable no-await-in-loop -- sequential by nature: per-package scan, then chunk graph traversal */
 import { dirname, join, normalize } from 'node:path';

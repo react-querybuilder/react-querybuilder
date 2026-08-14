@@ -11,7 +11,7 @@
  * exist. Choosing a distribution channel is a Phase 1 decision, made when there is a real
  * consumer to shape it.
  *
- * What *is* live today is the drift check (`bun conformance:check`, wired into `bun checkall`),
+ * What *is* live today is the drift check (`bun conformance:check`, wired into `bun check:all`),
  * which is also the Phase 0.3 regression guard: this module imports the core substrate exports by
  * name, so dropping one from `index.ts` breaks generation here rather than in a port months on.
  *

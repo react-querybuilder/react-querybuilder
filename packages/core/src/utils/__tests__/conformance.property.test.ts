@@ -44,7 +44,7 @@ import { transformQuery } from '../transformQuery';
 
 /**
  * Fixed for reproducibility — see the coverage note above. Change it deliberately (and re-run
- * `bun checkall`) rather than incidentally.
+ * `bun check:all`) rather than incidentally.
  */
 const params = { seed: 20_260_803, numRuns: 100 } as const;
 

@@ -55,7 +55,7 @@ The website demo uses the static build of each package and therefore does not su
 Before submitting a pull request, please do the following:
 
 - Discuss the change you wish to make by creating a [new issue][new-issue], creating a [discussion topic][new-discussion], or chatting with us on [Discord][discord].
-- Run `bun checkall` to make sure CI will run successfully.
+- Run `bun check:all` to make sure CI will run successfully.
 - If adding a new feature, add corresponding tests (we maintain 100% coverage).
 - If changing behavior or adding a feature, update the documentation. You may need to update both the [current (aka "next") docs](./website/docs/) and the latest [versioned docs](./website/versioned_docs/).
 - If your editor doesn't automatically format code with [oxfmt][oxfmt] when saving changes, run `bun fmt`.

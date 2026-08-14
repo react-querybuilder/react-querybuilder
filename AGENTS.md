@@ -41,7 +41,7 @@ bun run build
 - `bunx vitest run --coverage` - Run Vitest tests with 100% coverage check
 - `bun lint` - Type-aware linting and typechecking
 - `bun fmt` - Format (run after changes)
-- `bun checkall` - Full CI check (run before submitting a PR)
+- `bun check:all` - Full CI check (run before submitting a PR)
 - `bun typecheck` - TypeScript check (usually unnecessary — `lint` covers typechecking)
 
 **Documentation:**
@@ -230,7 +230,7 @@ Only fall back to `node:*` APIs when no Bun equivalent exists.
 ## Release process
 
 1. `bun version`
-2. `bun checkall`
+2. `bun check:all`
 3. Update documentation
 4. Push release commit
 5. Lerna handles package publishing
@@ -255,7 +255,7 @@ Only fall back to `node:*` APIs when no Bun equivalent exists.
 
 **Commands:**
 
-- `bun checkall` - Full CI
+- `bun check:all` - Full CI
 - `bun start` - Dev server
 - `bun run test` - Tests
 - `bun fmt` - Format
