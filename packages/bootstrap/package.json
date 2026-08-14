@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/bootstrap",
   "description": "Custom Bootstrap components for react-querybuilder",
-  "version": "8.22.5",
+  "version": "8.23.0",
   "publishConfig": {
     "access": "public"
   },
@@ -60,7 +60,7 @@
     "bootstrap-icons": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-querybuilder": "8.22.5",
+    "react-querybuilder": "8.23.0",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
@@ -69,6 +69,6 @@
     "bootstrap": "catalog:peer",
     "bootstrap-icons": "catalog:peer",
     "react": "catalog:peer",
-    "react-querybuilder": "8.22.5"
+    "react-querybuilder": "8.23.0"
   }
 }
