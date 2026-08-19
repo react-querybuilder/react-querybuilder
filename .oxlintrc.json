@@ -48,7 +48,6 @@
     "react/jsx-key": ["warn", { "checkKeyMustBeforeSpread": true }],
     "react/react-in-jsx-scope": "error",
     "react/rules-of-hooks": "error",
-    "react/react-compiler": "error",
     "unicorn/catch-error-name": "off",
     "unicorn/consistent-function-scoping": "error",
     "unicorn/filename-case": "off",
@@ -103,7 +102,11 @@
         "jsx-no-new-array-as-prop": "off",
         "jsx-no-new-function-as-prop": "off",
         "jsx-no-new-object-as-prop": "off",
-        "react/react-compiler": "off",
+        // "react/*": "off",
+        "react/globals": "off",
+        "react/hooks": "off",
+        "react/immutability": "off",
+        "react/refs": "off",
         "unicorn/consistent-function-scoping": "off",
         "unicorn/prefer-module": "off"
       }

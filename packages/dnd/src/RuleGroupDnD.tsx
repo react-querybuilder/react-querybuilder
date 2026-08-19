@@ -43,7 +43,7 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
   }, [props, dragPreviewState]);
 
   // Hook provided by the context adapter; stable for a given adapter (pluggable-backend pattern).
-  // oxlint-disable-next-line react-compiler
+  // oxlint-disable-next-line hooks
   const dndRefs = adapter!.useRuleGroupDnD({
     disabled: !!effectiveProps.parentDisabled || !!effectiveProps.disabled,
     path: effectiveProps.path,

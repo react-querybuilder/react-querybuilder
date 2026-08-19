@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The pragmatic-drag-and-drop adapter no longer re-registers drag/drop targets when a rule or group's path changes, which could reset hover state mid-drag.
+
 ## [v8.23.1] - 2026-08-19
 
 ### Fixed

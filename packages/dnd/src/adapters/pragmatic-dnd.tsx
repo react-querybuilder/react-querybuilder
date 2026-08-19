@@ -519,7 +519,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
           onDrop: () => setIsOver(false),
         })
       );
-    }, [params.path, params.schema.qbId, params.disabled]);
+    }, []);
 
     const canDropHere =
       isOver &&
@@ -603,7 +603,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),
       });
-    }, [isDragDisabled, params.path, params.schema.qbId]);
+    }, [isDragDisabled]);
 
     // Register drop target on the drop element (header)
     useEffect(() => {
@@ -641,7 +641,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         onDragLeave: () => setIsOver(false),
         onDrop: () => setIsOver(false),
       });
-    }, [params.path, params.schema.qbId, params.disabled]);
+    }, []);
 
     const canDropHere =
       isOver &&
@@ -754,7 +754,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         onDragLeave: () => setIsOver(false),
         onDrop: () => setIsOver(false),
       });
-    }, [params.path, params.schema.qbId, isUpdateWhileDragging]);
+    }, [isUpdateWhileDragging]);
 
     const canDropHere =
       !isUpdateWhileDragging &&
