@@ -3,7 +3,7 @@
 // Runs under `bun test`; the directive only matters if executed via Vitest directly.
 
 import { formatQuery } from '@react-querybuilder/core';
-import { createSchema, dropSchema, getSharedPGlite, reserveSchema } from '@rqb-dbpool';
+import { createSchema, dropSchema, getSharedSQL, reserveSchema } from '@rqb-dbpool';
 import {
   CREATE_PRODUCTS_TABLE,
   fields,
@@ -30,31 +30,31 @@ afterAll(async () => {
 for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
   describe(testCaseName, () => {
     test('sql', async () => {
-      const db = await getSharedPGlite();
-      const sql = formatQuery(query, {
+      const sql = await getSharedSQL();
+      const sqlStr = formatQuery(query, {
         preset: 'postgresql',
         fields,
         ruleProcessor: expressionRuleProcessorSQL,
       });
-      const { rows } = await db.query<{ id: number }>(
-        `${sqlBase(productsTable)} ${sql} ${sqlOrderBy}`
-      );
+      const rows = (await sql.unsafe(`${sqlBase(productsTable)} ${sqlStr} ${sqlOrderBy}`)) as {
+        id: number;
+      }[];
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
 
     // PostgreSQL only supports positional ($N) params, not named.
     test('parameterized', async () => {
-      const db = await getSharedPGlite();
-      const { sql, params } = formatQuery(query, {
+      const sql = await getSharedSQL();
+      const { sql: sqlStr, params } = formatQuery(query, {
         format: 'parameterized',
         preset: 'postgresql',
         fields,
         ruleProcessor: expressionRuleProcessorParameterized,
       });
-      const { rows } = await db.query<{ id: number }>(
-        `${sqlBase(productsTable)} ${sql} ${sqlOrderBy}`,
+      const rows = (await sql.unsafe(
+        `${sqlBase(productsTable)} ${sqlStr} ${sqlOrderBy}`,
         params
-      );
+      )) as { id: number }[];
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
   });

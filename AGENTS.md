@@ -167,6 +167,32 @@ Only fall back to `node:*` APIs when no Bun equivalent exists.
 - Describe blocks: component/function name
 - Test cases: Descriptive behavior
 
+### Database integration tests (`dbquery.*`)
+
+PostgreSQL dbquery tests use a shared in-process PGlite instance exposed via a loopback socket.
+Use `getSharedSQL()` from `@rqb-dbpool` (not `getSharedPGlite`) to obtain a `Bun.SQL` handle:
+
+```typescript
+import { getSharedSQL, createSchema, dropSchema, reserveSchema } from '@rqb-dbpool';
+
+const schema = reserveSchema('my_test');
+beforeAll(async () => {
+  const db = await createSchema(schema);
+  await db.exec(setupSQL(schema));
+});
+afterAll(async () => { await dropSchema(schema); });
+
+test('example', async () => {
+  const sql = await getSharedSQL();
+  const rows = await sql.unsafe('SELECT * FROM ...');
+  expect(rows).toEqual(...);
+});
+```
+
+The native `getSharedPGlite` is marked `@internal` — only the Drizzle adapter uses it directly.
+
+`Bun.SQL` is also used for SQLite dbquery tests (`new SQL({ adapter: 'sqlite', filename: ':memory:' })`).
+
 ## Generated Files
 
 **Never edit:**

@@ -1,10 +1,7 @@
 /* @vitest-environment node */
 
-// To run this file with Jest instead of Bun:
-// > NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules" npx jest
-
 import { formatQuery } from '@react-querybuilder/core';
-import { createSchema, dropSchema, getSharedPGlite, reserveSchema } from '@rqb-dbpool';
+import { createSchema, dropSchema, getSharedSQL, reserveSchema } from '@rqb-dbpool';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -42,13 +39,13 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
     for (const [testCaseName, [query, expectation]] of Object.entries(testCases)) {
       test(testCaseName, async () => {
-        const db = await getSharedPGlite();
-        const sql = formatQuery(query, {
+        const sql = await getSharedSQL();
+        const sqlStr = formatQuery(query, {
           preset: 'postgresql',
           fields,
           ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
         });
-        const { rows: result } = await db.query<Result>(`${sqlBase(musiciansTable)} ${sql}`);
+        const result = (await sql.unsafe(`${sqlBase(musiciansTable)} ${sqlStr}`)) as Result[];
         // oxlint-disable no-conditional-expect
         if (expectation === 'all') {
           expect(result).toHaveLength(musicians.length);

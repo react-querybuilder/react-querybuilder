@@ -51,8 +51,8 @@
     "build:tremor": "bun --bun run --filter @react-querybuilder/tremor build",
     "check:all": "bun install --frozen-lockfile && bun run build && bun run fmt:check && bun run lint && bun run typecheck && bun run test && bun run conformance:check && bun run check-derivations-purity && bun run check-dts-peer-leaks && bun run are-the-types-wrong && bun run website:build:full",
     "lint": "oxlint",
-    "test": "bun test:bun && bun test:coverage",
-    "test:bun": "bun generate-prisma-client; bun test --randomize ./packages/core ./packages/rules-engine/src/**/*.test.ts ./packages/datetime/src/**/*.test.ts ./packages/expr/src/**/*.test.ts ./utils/conformance/*.test.ts # <- Avoids *.test.tsx",
+    "test": "bun --bun run test:bun && bun test:coverage",
+    "test:bun": "bun generate-prisma-client; bun test --randomize ./packages/core ./packages/{datetime,expr,rules-engine}/src/**/*.test.ts ./utils/conformance/*.test.ts",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:antd": "bunx vitest run packages/antd --coverage --coverage.include 'packages/antd/src/**/*.{ts,tsx}'",
@@ -236,6 +236,7 @@
     "test": {
       "@prisma/client": "^7.9.1",
       "@electric-sql/pglite": "0.5.4",
+      "@electric-sql/pglite-socket": "0.2.7",
       "@grafeo-db/js": "^0.5.42",
       "@tanstack/db": "^0.7.2",
       "@testing-library/dom": "^10.4.1",
