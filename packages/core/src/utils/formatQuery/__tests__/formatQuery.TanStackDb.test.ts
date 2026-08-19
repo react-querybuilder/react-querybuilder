@@ -477,7 +477,7 @@ describe('validation', () => {
           ...(vtd.options as { format: 'tanstack_db' }),
           context: baseContext,
         }) as unknown as ((refs: unknown) => unknown) | undefined;
-        // oxlint-disable jest/no-conditional-expect
+        // oxlint-disable vitest/no-conditional-expect
         if (typeof where === 'function') {
           const result = where(mockRefs);
           // When validator returns false at top level, formatQuery returns undefined
@@ -488,7 +488,7 @@ describe('validation', () => {
           // Top-level validation failure: formatQuery returns undefined
           expect(where).toBeUndefined();
         }
-        // oxlint-enable jest/no-conditional-expect
+        // oxlint-enable vitest/no-conditional-expect
       });
     }
   });

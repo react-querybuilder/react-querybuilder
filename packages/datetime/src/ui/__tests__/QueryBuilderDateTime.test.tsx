@@ -54,7 +54,7 @@ it('handles valid and invalid date input', async () => {
 
 // Skipping this until we can get the jsdate API to parse/format the datetime-local value with
 // the correct time zone handling. The test passes with the dayjs API.
-// oxlint-disable-next-line jest/no-disabled-tests
+// oxlint-disable-next-line vitest/no-disabled-tests
 it.skip('handles valid datetime-local input', () => {
   render(
     <QueryBuilderDateTime>

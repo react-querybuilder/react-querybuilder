@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "ignorePatterns": ["**/{cel,sql}Parser.{js,ts}", "examples/preact"],
-  "plugins": ["jest", "jsdoc", "oxc", "promise", "react-perf", "react", "typescript", "unicorn"],
+  "plugins": ["vitest", "jsdoc", "oxc", "promise", "react-perf", "react", "typescript", "unicorn"],
   "options": {
     "typeAware": true,
     "typeCheck": true,
@@ -39,10 +39,6 @@
     "typescript/require-array-sort-compare": "off",
     "typescript/restrict-template-expressions": "off",
     "typescript/unbound-method": "off",
-    "jest/no-disabled-tests": "warn",
-    "jest/expect-expect": ["error", { "assertFunctionNames": ["expect", "expect*"] }],
-    "jest/require-to-throw-message": "off",
-    "jest/valid-title": "off",
     "no-underscore-dangle": "off",
     "react/display-name": "off",
     "react/jsx-key": ["warn", { "checkKeyMustBeforeSpread": true }],
@@ -95,7 +91,7 @@
       }
     },
     {
-      "files": ["utils/testing/**", "*.test.ts", "*.test.tsx"],
+      "files": ["vitestSetup.ts", "utils/testing/**", "*.test.ts", "*.test.tsx"],
       "rules": {
         "no-await-in-loop": "off",
         "jsx-no-constructed-context-values": "off",
@@ -108,7 +104,13 @@
         "react/immutability": "off",
         "react/refs": "off",
         "unicorn/consistent-function-scoping": "off",
-        "unicorn/prefer-module": "off"
+        "unicorn/prefer-module": "off",
+        "vitest/no-conditional-tests": "off",
+        "vitest/require-mock-type-parameters": "off",
+        "vitest/no-disabled-tests": "warn",
+        "vitest/expect-expect": ["error", { "assertFunctionNames": ["expect", "expect*"] }],
+        "vitest/require-to-throw-message": "off",
+        "vitest/valid-title": "off"
       }
     },
     {
