@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- [#1092] `parseSpEL` no longer drops parentheses around an `or` group on the left side of an `and` (e.g. `(a or b) and (c or d)`).
+
 ## [v8.23.0] - 2026-08-14
 
 ### Changed
@@ -2503,6 +2507,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1079]: https://github.com/react-querybuilder/react-querybuilder/pull/1079
 [#1082]: https://github.com/react-querybuilder/react-querybuilder/pull/1082
 [#1084]: https://github.com/react-querybuilder/react-querybuilder/pull/1084
+[#1092]: https://github.com/react-querybuilder/react-querybuilder/issues/1092
 
 <!-- #endregion -->
 
