@@ -233,9 +233,9 @@
     },
     "test": {
       "@prisma/client": "^7.9.1",
+      "@react-querybuilder/grafeo": "^0.5.43",
       "@electric-sql/pglite": "0.5.4",
       "@electric-sql/pglite-socket": "0.2.7",
-      "@grafeo-db/js": "^0.5.42",
       "@tanstack/db": "^0.8.0",
       "@testing-library/dom": "^10.4.1",
       "@testing-library/jest-dom": "^7.0.1",

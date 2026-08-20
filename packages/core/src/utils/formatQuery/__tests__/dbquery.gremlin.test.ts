@@ -1,4 +1,4 @@
-import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
+import type { GrafeoDB as GrafeoDBType } from '@react-querybuilder/grafeo';
 import type { RuleGroupType } from '../../../types';
 import type { SuperUser } from '../dbqueryTestUtils';
 import {
@@ -11,7 +11,7 @@ import { formatQuery } from '../formatQuery';
 import { gremlinGraphProcessor } from './graphTestUtils';
 
 // Native addon — use require for reliable .node file loading
-const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
+const { GrafeoDB } = require('@react-querybuilder/grafeo') as { GrafeoDB: typeof GrafeoDBType };
 
 // ─── Test Data ────────────────────────────────────────────────────────────────
 
@@ -55,9 +55,6 @@ const expectGremlin = async (
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 // Operators NOT tested and why:
-//  - 'doesNotContain' / 'doesNotBeginWith' / 'doesNotEndWith': formatQuery emits
-//    notContaining(), notStartingWith(), notEndingWith() predicates which Grafeo's
-//    Gremlin engine does not recognize.
 //  - 'and/or' compound groups and 'NOT group': formatQuery emits compound steps
 //    like .or(__.has(...), __.has(...)) and .not(__.has(...)). Grafeo's Gremlin
 //    engine does not support the __ anonymous traversal syntax.
@@ -126,6 +123,45 @@ describe('Gremlin (Grafeo)', () => {
         ],
       },
       superUsers.filter(u => u.firstName.includes('ete') && u.lastName.includes('ark'))
+    );
+  });
+
+  test('doesNotBeginWith', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: 'doesNotBeginWith', value: 'P' },
+          { field: 'lastName', operator: 'doesNotBeginWith', value: 'P' },
+        ],
+      },
+      superUsers.filter(u => !u.firstName.startsWith('P') && !u.lastName.startsWith('P'))
+    );
+  });
+
+  test('doesNotEndWith', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: 'doesNotEndWith', value: 'e' },
+          { field: 'lastName', operator: 'doesNotEndWith', value: 's' },
+        ],
+      },
+      superUsers.filter(u => !u.firstName.endsWith('e') && !u.lastName.endsWith('s'))
+    );
+  });
+
+  test('doesNotContain', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: 'doesNotContain', value: 'ete' },
+          { field: 'lastName', operator: 'doesNotContain', value: 'ark' },
+        ],
+      },
+      superUsers.filter(u => !u.firstName.includes('ete') && !u.lastName.includes('ark'))
     );
   });
 

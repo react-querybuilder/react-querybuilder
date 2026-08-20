@@ -166,8 +166,8 @@
       "devDependencies": {
         "@electric-sql/pglite": "catalog:test",
         "@electric-sql/pglite-socket": "catalog:test",
-        "@grafeo-db/js": "catalog:test",
         "@prisma/client": "catalog:test",
+        "@react-querybuilder/grafeo": "catalog:test",
         "@tanstack/db": "catalog:test",
         "@traqula/parser-sparql-1-2": "catalog:",
         "@types/node": "catalog:",
@@ -221,8 +221,8 @@
       "devDependencies": {
         "@electric-sql/pglite": "catalog:test",
         "@electric-sql/pglite-socket": "catalog:test",
-        "@grafeo-db/js": "catalog:test",
         "@prisma/client": "catalog:test",
+        "@react-querybuilder/grafeo": "catalog:test",
         "@tanstack/db": "catalog:test",
         "@testing-library/dom": "catalog:test",
         "@testing-library/react": "catalog:test",
@@ -779,8 +779,8 @@
     "test": {
       "@electric-sql/pglite": "0.5.4",
       "@electric-sql/pglite-socket": "0.2.7",
-      "@grafeo-db/js": "^0.5.42",
       "@prisma/client": "^7.9.1",
+      "@react-querybuilder/grafeo": "^0.5.43",
       "@tanstack/db": "^0.8.0",
       "@testing-library/dom": "^10.4.1",
       "@testing-library/jest-dom": "^7.0.1",
@@ -1516,20 +1516,6 @@
 
     "@gerrit0/mini-shiki": ["@gerrit0/mini-shiki@3.23.0", "", { "dependencies": { "@shikijs/engine-oniguruma": "^3.23.0", "@shikijs/langs": "^3.23.0", "@shikijs/themes": "^3.23.0", "@shikijs/types": "^3.23.0", "@shikijs/vscode-textmate": "^10.0.2" } }, "sha512-bEMORlG0cqdjVyCEuU0cDQbORWX+kYCeo0kV1lbxF5bt4r7SID2l9bqsxJEM0zndaxpOUT7riCyIVEuqq/Ynxg=="],
 
-    "@grafeo-db/js": ["@grafeo-db/js@0.5.42", "", { "optionalDependencies": { "@grafeo-db/js-darwin-arm64": "0.5.42", "@grafeo-db/js-darwin-x64": "0.5.42", "@grafeo-db/js-linux-arm64-gnu": "0.5.42", "@grafeo-db/js-linux-arm64-musl": "0.5.42", "@grafeo-db/js-linux-x64-gnu": "0.5.42", "@grafeo-db/js-win32-x64-msvc": "0.5.42" } }, "sha512-EAi8wVxOu04dAlgRDv9o2FNyvNtGQJOrE0uskfQoHTkmNzYdVpr23isKjNKEg1yX7xaFWdLdBjQrucU8LqTMnQ=="],
-
-    "@grafeo-db/js-darwin-arm64": ["@grafeo-db/js-darwin-arm64@0.5.42", "", { "os": "darwin", "cpu": "arm64" }, "sha512-zGktciH7DtC1gnR1CIxqtLH2M+4wxrn45+um7W6dyNlYfi4844vKGQbK1Waq2zKIqvGL1x550pgqoXx1pijDEg=="],
-
-    "@grafeo-db/js-darwin-x64": ["@grafeo-db/js-darwin-x64@0.5.42", "", { "os": "darwin", "cpu": "x64" }, "sha512-EZKeUhgYHJgsbu7Fsqq+wS+ByQTxTbcGoHJLpskTQgnf58SHElhUbToPalL/NHr51be8q5x+KB6jpvLEu6qf5g=="],
-
-    "@grafeo-db/js-linux-arm64-gnu": ["@grafeo-db/js-linux-arm64-gnu@0.5.42", "", { "os": "linux", "cpu": "arm64" }, "sha512-6MT3czXIsa3AaUD2bvbIHru1lUBYmf15lh62mZ7LzGAn0qus9pTC9NYd6FJJ13xEmxZo+I18VwiYiRD+mSFxbw=="],
-
-    "@grafeo-db/js-linux-arm64-musl": ["@grafeo-db/js-linux-arm64-musl@0.5.42", "", { "os": "linux", "cpu": "arm64" }, "sha512-Pid43AXLqot7aBpwtFzZ1TLuHzxagReWeFHVhzNaWNwb0cnySe1YdNiY3GytuARg8IWbjg9YcIf9rnwRg3/aag=="],
-
-    "@grafeo-db/js-linux-x64-gnu": ["@grafeo-db/js-linux-x64-gnu@0.5.42", "", { "os": "linux", "cpu": "x64" }, "sha512-5LthBRNKb3YaSn7mP1Ep6/YPYY3PbOeQ5BguFvtrMQtsovtGyIqHqp9Fv68JGLk45AXJG6vol0B6IwpRHb3TQQ=="],
-
-    "@grafeo-db/js-win32-x64-msvc": ["@grafeo-db/js-win32-x64-msvc@0.5.42", "", { "os": "win32", "cpu": "x64" }, "sha512-IRNcnqYhiRuMvqEjeVbndky7Rors/pf8zwGGuI4hco6PGkDKENfm8w7aDPe1b46cxV82TpMCC4FdpkiW1ixA7A=="],
-
     "@griffel/core": ["@griffel/core@1.21.3", "", { "dependencies": { "@emotion/hash": "^0.9.0", "@griffel/style-types": "^1.4.2", "csstype": "^3.2.3", "rtl-css-js": "^1.16.1", "stylis": "^4.4.0", "tslib": "^2.1.0" } }, "sha512-FMnlwhtmCRWvXEg2j/6W90wzvW+PFqdrsWFslfmxwS6l9X73gO0dnndKphht9ZOsJODvmLdqlnU1Lh8igg2mKw=="],
 
     "@griffel/react": ["@griffel/react@1.7.7", "", { "dependencies": { "@griffel/core": "^1.21.3", "tslib": "^2.1.0" }, "peerDependencies": { "react": ">=16.14.0 <20.0.0" } }, "sha512-XNBfZTgyOJOn1Buk70q4DgtwsQt71yH6R34lleImLVhvcIANP1yim86qLBnQSP03eQFXV5wgSmUVPxRUpdvYhg=="],
@@ -2101,6 +2087,16 @@
     "@react-querybuilder/expr": ["@react-querybuilder/expr@workspace:packages/expr"],
 
     "@react-querybuilder/fluent": ["@react-querybuilder/fluent@workspace:packages/fluent"],
+
+    "@react-querybuilder/grafeo": ["@react-querybuilder/grafeo@0.5.43", "", { "optionalDependencies": { "@react-querybuilder/grafeo-darwin-arm64": "0.5.43", "@react-querybuilder/grafeo-darwin-x64": "0.5.43", "@react-querybuilder/grafeo-linux-x64-gnu": "0.5.43", "@react-querybuilder/grafeo-win32-x64-msvc": "0.5.43" } }, "sha512-AXZprAJEiZq0ct6KkqcHrLnZw/jHB7mQwQPEORj7JLuWKWBgBAMF51ngsLK7dqtgOzTJ41COgfMP23dQP3gV8g=="],
+
+    "@react-querybuilder/grafeo-darwin-arm64": ["@react-querybuilder/grafeo-darwin-arm64@0.5.43", "", { "os": "darwin", "cpu": "arm64" }, "sha512-hkhcNn+z3BBVKi8Gagxq4AcMnhtO0U71fqCZkH7Q+Jp1sl7rCeCCEP9EFRVpIkkRYSqXrHjpNs8b/1B0iQWcPg=="],
+
+    "@react-querybuilder/grafeo-darwin-x64": ["@react-querybuilder/grafeo-darwin-x64@0.5.43", "", { "os": "darwin", "cpu": "x64" }, "sha512-RMfGeWX4l5GTGSCzmbmkBlwfOUenS0AlxqO9XpQNmY5upL6fikgSe/Ik5IFj6N0aLPgg98Edzd2PSxdkr1KpNQ=="],
+
+    "@react-querybuilder/grafeo-linux-x64-gnu": ["@react-querybuilder/grafeo-linux-x64-gnu@0.5.43", "", { "os": "linux", "cpu": "x64" }, "sha512-zQSdZUAAc167YGLXHHNXwAjL09IfbRc4SKYzjLsgdxNR4lubfqt0Yp0gkB+67M+hLdhKMGg/ut6VDizX8OwjiQ=="],
+
+    "@react-querybuilder/grafeo-win32-x64-msvc": ["@react-querybuilder/grafeo-win32-x64-msvc@0.5.43", "", { "os": "win32", "cpu": "x64" }, "sha512-G8E9y9K5NMkujSJYv+TbSReCp2EBAc0KxO9MMuVz8CPdD1xNbsFutD0G819bp7z2lhK95f1JSgWcgGAWNJDArQ=="],
 
     "@react-querybuilder/mantine": ["@react-querybuilder/mantine@workspace:packages/mantine"],
 

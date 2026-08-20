@@ -1,4 +1,4 @@
-import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
+import type { GrafeoDB as GrafeoDBType } from '@react-querybuilder/grafeo';
 import type { RuleGroupType } from '../../../types';
 import { transformQuery } from '../../transformQuery';
 import type { SuperUser, TestSQLParams } from '../dbqueryTestUtils';
@@ -13,7 +13,7 @@ import { formatQuery } from '../formatQuery';
 import { cypherGraphProcessor } from './graphTestUtils';
 
 // Native addon — use require for reliable .node file loading
-const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
+const { GrafeoDB } = require('@react-querybuilder/grafeo') as { GrafeoDB: typeof GrafeoDBType };
 
 // ─── Test Data ────────────────────────────────────────────────────────────────
 

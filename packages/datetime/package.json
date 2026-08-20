@@ -109,8 +109,8 @@
   "devDependencies": {
     "@electric-sql/pglite": "catalog:test",
     "@electric-sql/pglite-socket": "catalog:test",
-    "@grafeo-db/js": "catalog:test",
     "@prisma/client": "catalog:test",
+    "@react-querybuilder/grafeo": "catalog:test",
     "@tanstack/db": "catalog:test",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",

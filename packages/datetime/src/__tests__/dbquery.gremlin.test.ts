@@ -1,10 +1,10 @@
-import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import { formatQuery } from '@react-querybuilder/core';
+import type { GrafeoDB as GrafeoDBType } from '@react-querybuilder/grafeo';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
 import { getDatetimeRuleProcessorGremlin } from '../getDatetimeRuleProcessorGremlin';
 
 // Native addon — use require for reliable .node file loading
-const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
+const { GrafeoDB } = require('@react-querybuilder/grafeo') as { GrafeoDB: typeof GrafeoDBType };
 
 // The Gremlin processor emits ISO 8601 strings (date-only and datetime), which compare
 // lexicographically. Store node properties as strings so `has(field, gt('...'))` works.
