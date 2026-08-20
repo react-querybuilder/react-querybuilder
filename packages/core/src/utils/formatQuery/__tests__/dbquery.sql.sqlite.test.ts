@@ -47,7 +47,7 @@ const testSQL = ({ query, expectedResult, fqOptions, skipParameterized }: TestSQ
         preset: 'sqlite',
       });
       const selectParamNamed = await sql.unsafe(
-        `${sqlBase()} ${parameterizedNamed.sql}`,
+        `${sqlBase()} ${parameterizedNamed.sql} ${getSqlOrderBy()}`,
         parameterizedNamed.params as unknown as unknown[]
       );
       expect(selectParamNamed).toEqual(expectedResult);
