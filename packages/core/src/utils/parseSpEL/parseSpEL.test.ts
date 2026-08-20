@@ -312,6 +312,71 @@ it('mixed and/or', () => {
   });
 });
 
+// https://github.com/react-querybuilder/react-querybuilder/issues/1092
+it('preserves parenthesized groups', () => {
+  const or = (v1: string, v2: string): DefaultRuleGroupType => ({
+    combinator: 'or',
+    rules: [
+      { field: 'f1', operator: '=', value: v1 },
+      { field: 'f1', operator: '=', value: v2 },
+    ],
+  });
+  // `or` group on the left of `and` (SpEL AST has no group node, so this can only be parens)
+  expectParseSpEL(`(f1 == 'a' or f1 == 'b') and f2 == 'c'`, {
+    combinator: 'and',
+    rules: [or('a', 'b'), { field: 'f2', operator: '=', value: 'c' }],
+  });
+  // ...and on the right
+  expectParseSpEL(`f2 == 'c' and (f1 == 'a' or f1 == 'b')`, {
+    combinator: 'and',
+    rules: [{ field: 'f2', operator: '=', value: 'c' }, or('a', 'b')],
+  });
+  // Groups on both sides
+  expectParseSpEL(`(f1 == 'a' or f1 == 'b') and (f1 == 'c' or f1 == 'd')`, {
+    combinator: 'and',
+    rules: [or('a', 'b'), or('c', 'd')],
+  });
+  // Three groups
+  expectParseSpEL(
+    `(f1 == 'a' or f1 == 'b') and (f1 == 'c' or f1 == 'd') and (f1 == 'e' or f1 == 'f')`,
+    { combinator: 'and', rules: [or('a', 'b'), or('c', 'd'), or('e', 'f')] }
+  );
+  // Parens around `and` under `or` are redundant, so the result matches the unparenthesized form
+  expectParseSpEL(`(f1 == 'a' and f1 == 'b') or f2 == 'c'`, {
+    combinator: 'or',
+    rules: [
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'a' },
+          { field: 'f1', operator: '=', value: 'b' },
+        ],
+      },
+      { field: 'f2', operator: '=', value: 'c' },
+    ],
+  });
+  // Independent combinators
+  expectParseSpELic(`(f1 == 'a' or f1 == 'b') and (f1 == 'c' or f1 == 'd')`, {
+    rules: [
+      {
+        rules: [
+          { field: 'f1', operator: '=', value: 'a' },
+          'or',
+          { field: 'f1', operator: '=', value: 'b' },
+        ],
+      },
+      'and',
+      {
+        rules: [
+          { field: 'f1', operator: '=', value: 'c' },
+          'or',
+          { field: 'f1', operator: '=', value: 'd' },
+        ],
+      },
+    ],
+  });
+});
+
 describe('fields and getValueSources', () => {
   const fields = (
     [

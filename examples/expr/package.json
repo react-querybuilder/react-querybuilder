@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "@react-querybuilder/expr": "8.23.0",
+    "@react-querybuilder/expr": "8.23.1",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.23.0"
+    "react-querybuilder": "8.23.1"
   },
   "description": "React Query Builder Expressions Example",
   "devDependencies": {

@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "generator": {
     "package": "@react-querybuilder/core",
-    "version": "8.23.0",
+    "version": "8.23.1",
     "source": "utils/conformance/generate.tsx"
   },
   "description": "Each curated mutation sequence replayed through QueryManager with a deterministic id generator, with the resulting query, per-op abort reasons, and refusal flags.",

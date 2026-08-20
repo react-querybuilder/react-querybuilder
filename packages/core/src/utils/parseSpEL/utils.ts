@@ -247,7 +247,10 @@ export const generateFlatAndOrList = (
 ): (DefaultCombinatorName | SpELProcessedExpression)[] => {
   const combinator = expr.type.slice(3) as DefaultCombinatorName;
   const [left, right] = expr.children;
-  if (left.type === 'op-and' || left.type === 'op-or') {
+  // SpEL AST has no parenthesis node, so `or` under `and` can only come from an explicit group
+  // (`and` binds tighter). Flattening it would lose the grouping.
+  const leftWasParenthesized = expr.type === 'op-and' && left.type === 'op-or';
+  if (!leftWasParenthesized && (left.type === 'op-and' || left.type === 'op-or')) {
     return [...generateFlatAndOrList(left), combinator, right];
   }
   return [left, combinator, right];

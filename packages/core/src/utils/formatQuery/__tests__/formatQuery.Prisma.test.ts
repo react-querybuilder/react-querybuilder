@@ -115,6 +115,7 @@ it('handles operator case variations', () => {
   );
 });
 
+// oxlint-disable-next-line vitest/warn-todo
 it.todo(
   'handles custom fallbackExpression correctly'
   // , () => {

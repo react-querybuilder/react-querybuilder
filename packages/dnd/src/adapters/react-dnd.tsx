@@ -63,7 +63,7 @@ const useRuleDragCommon = (
   useDrag: useDragOriginal
 ): [DragCollection, ConnectDragSource, ConnectDragPreview] =>
   // `useDrag` is injected by the adapter; stable per adapter instance (pluggable-backend pattern).
-  // oxlint-disable-next-line react-compiler
+  // oxlint-disable-next-line hooks
   useDrag<DraggedItem, DropResult, DragCollection>(
     () => ({
       type,
@@ -147,7 +147,7 @@ export const createReactDnDAdapter = (dndExports: DndProp): DndAdapter => {
     const [{ isDragging, dragMonitorId }, drag, preview] = useRuleDragCommon(
       params,
       'rule',
-      // oxlint-disable-next-line react-compiler
+      // oxlint-disable-next-line hooks
       useDrag
     );
 
@@ -221,7 +221,7 @@ export const createReactDnDAdapter = (dndExports: DndProp): DndAdapter => {
     const [{ isDragging, dragMonitorId }, drag, preview] = useRuleDragCommon(
       params,
       'ruleGroup',
-      // oxlint-disable-next-line react-compiler
+      // oxlint-disable-next-line hooks
       useDrag
     );
 

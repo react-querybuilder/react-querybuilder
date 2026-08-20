@@ -29,7 +29,7 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
   const disabled = !!props.parentDisabled || !!props.disabled;
 
   // Hook provided by the context adapter; stable for a given adapter (pluggable-backend pattern).
-  // oxlint-disable-next-line react-compiler
+  // oxlint-disable-next-line hooks
   const dndRefs = adapter!.useRuleDnD({
     path: props.path,
     disabled,

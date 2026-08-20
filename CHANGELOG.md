@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The pragmatic-drag-and-drop adapter no longer re-registers drag/drop targets when a rule or group's path changes, which could reset hover state mid-drag.
+
+## [v8.23.1] - 2026-08-19
+
+### Fixed
+
+- [#1092] `parseSpEL` no longer drops parentheses around an `or` group on the left side of an `and` (e.g. `(a or b) and (c or d)`).
+
 ## [v8.23.0] - 2026-08-14
 
 ### Changed
@@ -2503,12 +2513,14 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1079]: https://github.com/react-querybuilder/react-querybuilder/pull/1079
 [#1082]: https://github.com/react-querybuilder/react-querybuilder/pull/1082
 [#1084]: https://github.com/react-querybuilder/react-querybuilder/pull/1084
+[#1092]: https://github.com/react-querybuilder/react-querybuilder/issues/1092
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.1...HEAD
+[v8.23.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.0...v8.23.1
 [v8.23.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.4...v8.23.0
 [v8.22.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.4...v8.22.5
 [v8.22.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.3...v8.22.4
