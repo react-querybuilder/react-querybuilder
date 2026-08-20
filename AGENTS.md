@@ -52,7 +52,6 @@ bun run build
 ### Build
 
 - `bun run build` - All packages (concurrent via Bun CLI filter)
-- `bun run build:concurrent` - All packages (concurrent via `concurrently`)
 - `bun run build:sequential` - Sequential (better for debugging)
 - Individual packages: `bun build:rqb`, `bun build:antd`, etc.
 
