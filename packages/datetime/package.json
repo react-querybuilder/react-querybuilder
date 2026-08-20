@@ -108,6 +108,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "catalog:test",
+    "@electric-sql/pglite-socket": "catalog:test",
     "@grafeo-db/js": "catalog:test",
     "@prisma/client": "catalog:test",
     "@tanstack/db": "catalog:test",

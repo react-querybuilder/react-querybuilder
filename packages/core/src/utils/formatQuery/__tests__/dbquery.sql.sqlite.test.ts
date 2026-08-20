@@ -1,46 +1,56 @@
-import { Database } from 'bun:sqlite';
+import { SQL } from 'bun';
 import type { DefaultRuleGroupType } from '../../../types';
 import type { SuperUser, TestSQLParams } from '../dbqueryTestUtils';
 import { dbSetup, dbTests, getSqlOrderBy, sqlBase, superUsers } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
 
-const db = new Database();
+const sql = new SQL({ adapter: 'sqlite', filename: ':memory:' });
 
 const superUsersSQLite = superUsers('sqlite');
 
-beforeAll(() => {
-  db.run(dbSetup('sqlite'));
+beforeAll(async () => {
+  for (const stmt of dbSetup('sqlite')
+    .split(';')
+    .filter(s => s.trim())) {
+    await sql.unsafe(stmt);
+  }
 });
 
-afterAll(() => {
-  db.close();
+afterAll(async () => {
+  await sql.close();
 });
 
 /**
  * Tests all three SQL variations.
  */
 const testSQL = ({ query, expectedResult, fqOptions, skipParameterized }: TestSQLParams) => {
-  test('sql', () => {
-    const sql = formatQuery(query, { format: 'sql', ...fqOptions });
-    const select = db.prepare(`${sqlBase()} ${sql} ${getSqlOrderBy()}`);
-    expect(select.all()).toEqual(expectedResult);
+  test('sql', async () => {
+    const sqlStr = formatQuery(query, { format: 'sql', ...fqOptions });
+    const select = await sql.unsafe(`${sqlBase()} ${sqlStr} ${getSqlOrderBy()}`);
+    expect(select).toEqual(expectedResult);
   });
 
   if (!skipParameterized) {
-    test('parameterized', () => {
+    test('parameterized', async () => {
       const parameterized = formatQuery(query, { ...fqOptions, format: 'parameterized' });
-      const selectParam = db.prepare(`${sqlBase()} ${parameterized.sql} ${getSqlOrderBy()}`);
-      expect(selectParam.all(...parameterized.params)).toEqual(expectedResult);
+      const selectParam = await sql.unsafe(
+        `${sqlBase()} ${parameterized.sql} ${getSqlOrderBy()}`,
+        parameterized.params
+      );
+      expect(selectParam).toEqual(expectedResult);
     });
 
-    test('parameterized_named', () => {
+    test('parameterized_named', async () => {
       const parameterizedNamed = formatQuery(query, {
         ...fqOptions,
         format: 'parameterized_named',
         preset: 'sqlite',
       });
-      const selectParamNamed = db.prepare(`${sqlBase()} ${parameterizedNamed.sql}`);
-      expect(selectParamNamed.all(parameterizedNamed.params)).toEqual(expectedResult);
+      const selectParamNamed = await sql.unsafe(
+        `${sqlBase()} ${parameterizedNamed.sql} ${getSqlOrderBy()}`,
+        parameterizedNamed.params as unknown as unknown[]
+      );
+      expect(selectParamNamed).toEqual(expectedResult);
     });
   }
 };
@@ -79,10 +89,13 @@ describe('SQLite', () => {
       bindings: Record<string, string | number>,
       expectedResult: SuperUser<0 | 1>[]
     ) => {
-      test(name, () => {
-        const sql = formatQuery(query, 'sql');
-        const select = db.prepare(`${sqlBase()} ${sql} ${getSqlOrderBy()}`);
-        expect(select.all(bindings)).toEqual(expectedResult);
+      test(name, async () => {
+        const sqlStr = formatQuery(query, 'sql');
+        const select = await sql.unsafe(
+          `${sqlBase()} ${sqlStr} ${getSqlOrderBy()}`,
+          bindings as unknown as unknown[]
+        );
+        expect(select).toEqual(expectedResult);
       });
     };
 

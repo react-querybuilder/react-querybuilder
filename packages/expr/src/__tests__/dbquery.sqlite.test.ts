@@ -1,12 +1,10 @@
-import type { SQLQueryBindings } from 'bun:sqlite';
-import { Database } from 'bun:sqlite';
+import { SQL } from 'bun';
 import { formatQuery } from '@react-querybuilder/core';
 import {
   CREATE_PRODUCTS_TABLE,
   exprRule,
   field,
   fields,
-  FIND_PRODUCTS_TABLE,
   fn,
   group,
   INSERT_PRODUCTS,
@@ -22,17 +20,15 @@ const param = (p: string): ExpressionNode => ({ kind: 'parameter', parameter: p 
 
 // SQLite lacks LEAST/GREATEST; the `sqlite` preset resolves `min`/`max` to scalar MIN/MAX.
 
-const db = new Database();
+const sql = new SQL({ adapter: 'sqlite', filename: ':memory:' });
 
-beforeAll(() => {
-  if (db.query(FIND_PRODUCTS_TABLE('sqlite')).all().length === 0) {
-    db.run(CREATE_PRODUCTS_TABLE('sqlite'));
-    db.run(INSERT_PRODUCTS());
-  }
+beforeAll(async () => {
+  await sql.unsafe(CREATE_PRODUCTS_TABLE('sqlite'));
+  await sql.unsafe(INSERT_PRODUCTS());
 });
 
-afterAll(() => {
-  db.close();
+afterAll(async () => {
+  await sql.close();
 });
 
 // Parameter nodes resolve to externally-supplied bind variables, so they can't ride the
@@ -46,70 +42,73 @@ describe('parameter', () => {
     )
   );
 
-  test('sql', () => {
-    const sql = formatQuery(query, {
+  test('sql', async () => {
+    const sqlStr = formatQuery(query, {
       format: 'sql',
       preset: 'sqlite',
       fields,
       ruleProcessor: expressionRuleProcessorSQL,
     });
-    const rows = db.prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`).all({ ':rate': 2 }) as {
+    // @ts-expect-error Bun.SQL accepts object with :-prefixed keys for named params
+    const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, { ':rate': 2 })) as {
       id: number;
     }[];
     expect(rows.map(r => r.id)).toEqual([3, 4]);
   });
 
-  test('parameterized_named', () => {
-    const { sql, params } = formatQuery(query, {
+  test('parameterized_named', async () => {
+    const { sql: sqlStr, params } = formatQuery(query, {
       format: 'parameterized_named',
       preset: 'sqlite',
       fields,
       ruleProcessor: expressionRuleProcessorParameterized,
     });
     // `params` registers `:rate: null` (prefix kept); supply the actual binding externally.
-    const rows = db
-      .prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`)
-      .all({ ...(params as Record<string, unknown>), ':rate': 2 }) as { id: number }[];
+    const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, {
+      ...(params as Record<string, unknown>),
+      ':rate': 2,
+    } as unknown as unknown[])) as { id: number }[];
     expect(rows.map(r => r.id)).toEqual([3, 4]);
   });
 });
 
 for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
   describe(testCaseName, () => {
-    test('sql', () => {
-      const sql = formatQuery(query, {
+    test('sql', async () => {
+      const sqlStr = formatQuery(query, {
         format: 'sql',
         preset: 'sqlite',
         fields,
         ruleProcessor: expressionRuleProcessorSQL,
       });
-      const rows = db.prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`).all() as { id: number }[];
+      const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`)) as { id: number }[];
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
 
-    test('parameterized', () => {
-      const { sql, params } = formatQuery(query, {
+    test('parameterized', async () => {
+      const { sql: sqlStr, params } = formatQuery(query, {
         format: 'parameterized',
         preset: 'sqlite',
         fields,
         ruleProcessor: expressionRuleProcessorParameterized,
       });
-      const rows = db
-        .prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`)
-        .all(...(params as SQLQueryBindings[])) as { id: number }[];
+      const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, params)) as {
+        id: number;
+      }[];
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
 
-    test('parameterized_named', () => {
-      const { sql, params } = formatQuery(query, {
+    test('parameterized_named', async () => {
+      const { sql: sqlStr, params } = formatQuery(query, {
         format: 'parameterized_named',
         preset: 'sqlite',
         fields,
         ruleProcessor: expressionRuleProcessorParameterized,
       });
-      const rows = db
-        .prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`)
-        .all(params as SQLQueryBindings) as { id: number }[];
+      // @ts-expect-error Bun.SQL accepts object with :-prefixed keys for named params
+      const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, params)) as {
+        id: number;
+      }[];
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
   });

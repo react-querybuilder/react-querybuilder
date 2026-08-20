@@ -3,6 +3,7 @@ linker = "hoisted"
 
 [test]
 preload = [ "./utils/testing/bunTestSetup.ts" ]
+pathIgnorePatterns = [ "**/*.tsx" ]
 
 [serve.static]
 plugins = [ "./utils/devapp/bun-plugin-sass.ts", "bun-plugin-tailwind" ]
