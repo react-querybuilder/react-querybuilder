@@ -409,9 +409,9 @@ const expectGremlinCustom = async (query: RuleGroupType, expectedResult: SuperUs
 };
 
 describe('Gremlin graph patterns (Grafeo)', () => {
-  // Note: Grafeo's Gremlin engine may not support regex(), notRegex(),
-  // containing() for list membership, or .ignoreCase(). These tests
-  // document the expected Gremlin output and verify execution where supported.
+  // Note: Grafeo's Gremlin engine supports regex()/notRegex() and the negated
+  // string predicates, but not list-element membership or .ignoreCase(). These
+  // tests document the expected Gremlin output and verify execution where supported.
 
   describe('regex', () => {
     test('matchesRegex — names ending in "man"', async () => {
@@ -424,9 +424,7 @@ describe('Gremlin graph patterns (Grafeo)', () => {
       );
     });
 
-    // Grafeo doesn't support negated predicates with arguments (notRegex)
-    // oxlint-disable-next-line no-disabled-tests
-    test.skip('doesNotMatchRegex — names not starting with "S"', async () => {
+    test('doesNotMatchRegex — names not starting with "S"', async () => {
       await expectGremlinCustom(
         {
           combinator: 'and',
@@ -438,7 +436,8 @@ describe('Gremlin graph patterns (Grafeo)', () => {
   });
 
   describe('list containment', () => {
-    // Grafeo's containing() operates on string contents, not list membership
+    // Grafeo predicates operate on scalar values; list-element membership is
+    // unsupported (containing() matches string contents, so this matches no rows)
     // oxlint-disable-next-line no-disabled-tests
     test.skip('listContains — nicknames containing "Cap"', async () => {
       await expectGremlinCustom(
@@ -450,7 +449,8 @@ describe('Gremlin graph patterns (Grafeo)', () => {
       );
     });
 
-    // Grafeo doesn't support notContaining() predicate
+    // Same list-element gap as above: notContaining() works on strings, but
+    // against a list property it matches no rows
     // oxlint-disable-next-line no-disabled-tests
     test.skip('listDoesNotContain — nicknames not containing "Spidey"', async () => {
       await expectGremlinCustom(
