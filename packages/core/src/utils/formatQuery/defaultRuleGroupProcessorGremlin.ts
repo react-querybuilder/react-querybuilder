@@ -8,7 +8,9 @@ import { getOption } from '../optGroupUtils';
  *
  * At the top level, filter rules produce chained `.has()` steps (implicit AND).
  * Nested groups use `.and()` / `.or()` / `.not()` compound traversals with
- * `__` anonymous traversal prefixes.
+ * `__` anonymous traversal prefixes. Since `not()` accepts exactly one
+ * traversal, negated groups with multiple predicates wrap them in a single
+ * `__.and()`/`__.or()` sub-traversal.
  *
  * @group Export
  */
@@ -84,13 +86,19 @@ export const defaultRuleGroupProcessorGremlin: RuleGroupProcessor<string> = (
     if (predicates.length === 0) return '';
 
     const combinator = (rg as RuleGroupType).combinator ?? 'and';
-    const prefix = rg.not ? 'not' : combinator;
 
     if (predicates.length === 1 && !rg.not) return predicates[0];
 
     // Wrap each step with `__` anonymous traversal prefix when it starts with `.`
     const args = predicates.map(p => (p.startsWith('.') ? `__${p}` : p)).join(', ');
-    return `.${prefix}(${args})`;
+
+    // `not()` accepts exactly one traversal, so multiple predicates must be
+    // combined into a single `__.and()`/`__.or()` sub-traversal first.
+    if (rg.not) {
+      return predicates.length === 1 ? `.not(${args})` : `.not(__.${combinator}(${args}))`;
+    }
+
+    return `.${combinator}(${args})`;
   };
 
   // Top level: chain steps directly (implicit AND for outermost group)
