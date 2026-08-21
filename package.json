@@ -233,7 +233,7 @@
     },
     "test": {
       "@prisma/client": "^7.9.1",
-      "@react-querybuilder/grafeo": "^0.5.43",
+      "@react-querybuilder/grafeo": "^0.5.44",
       "@electric-sql/pglite": "0.5.4",
       "@electric-sql/pglite-socket": "0.2.7",
       "@tanstack/db": "^0.8.0",

@@ -55,9 +55,6 @@ const expectGremlin = async (
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 // Operators NOT tested and why:
-//  - 'and/or' compound groups and 'NOT group': formatQuery emits compound steps
-//    like .or(__.has(...), __.has(...)) and .not(__.has(...)). Grafeo's Gremlin
-//    engine does not support the __ anonymous traversal syntax.
 //  - Shared dbTests entries are not reused because the shared tests combine numeric
 //    and string-typed values and Gremlin is strongly typed.
 describe('Gremlin (Grafeo)', () => {
@@ -252,6 +249,151 @@ describe('Gremlin (Grafeo)', () => {
   });
 });
 
+// ─── Compound Groups (__ anonymous traversals) ────────────────────────────────
+
+describe('Gremlin compound groups (Grafeo)', () => {
+  test('or group', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          {
+            combinator: 'or',
+            rules: [
+              { field: 'firstName', operator: '=', value: 'Peter' },
+              { field: 'lastName', operator: '=', value: 'Rogers' },
+            ],
+          },
+        ],
+      },
+      superUsers.filter(u => u.firstName === 'Peter' || u.lastName === 'Rogers')
+    );
+  });
+
+  test('and group', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          {
+            combinator: 'and',
+            rules: [
+              { field: 'firstName', operator: 'beginsWith', value: 'P' },
+              { field: 'lastName', operator: 'endsWith', value: 'r' },
+            ],
+          },
+        ],
+      },
+      superUsers.filter(u => u.firstName.startsWith('P') && u.lastName.endsWith('r'))
+    );
+  });
+
+  test('nested group', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          {
+            combinator: 'or',
+            rules: [
+              {
+                combinator: 'and',
+                rules: [
+                  { field: 'firstName', operator: '=', value: 'Steve' },
+                  { field: 'lastName', operator: '=', value: 'Rogers' },
+                ],
+              },
+              { field: 'lastName', operator: '=', value: 'Wayne' },
+            ],
+          },
+        ],
+      },
+      superUsers.filter(
+        u => (u.firstName === 'Steve' && u.lastName === 'Rogers') || u.lastName === 'Wayne'
+      )
+    );
+  });
+
+  test('NOT group (single rule)', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          {
+            not: true,
+            combinator: 'and',
+            rules: [{ field: 'lastName', operator: '=', value: 'Parker' }],
+          },
+        ],
+      },
+      superUsers.filter(u => u.lastName !== 'Parker')
+    );
+  });
+
+  test('NOT group (multiple rules)', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          {
+            not: true,
+            combinator: 'or',
+            rules: [
+              { field: 'lastName', operator: '=', value: 'Parker' },
+              { field: 'lastName', operator: '=', value: 'Kent' },
+            ],
+          },
+        ],
+      },
+      superUsers.filter(u => u.lastName !== 'Parker' && u.lastName !== 'Kent')
+    );
+  });
+
+  test('NOT group (nested)', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          {
+            not: true,
+            combinator: 'or',
+            rules: [
+              {
+                combinator: 'and',
+                rules: [
+                  { field: 'firstName', operator: '=', value: 'Peter' },
+                  { field: 'lastName', operator: '=', value: 'Parker' },
+                ],
+              },
+              { field: 'lastName', operator: '=', value: 'Kent' },
+            ],
+          },
+        ],
+      },
+      superUsers.filter(
+        u => !((u.firstName === 'Peter' && u.lastName === 'Parker') || u.lastName === 'Kent')
+      )
+    );
+  });
+
+  // TinkerPop `not()` retains traversers missing the property entirely
+  test('NOT group over a nullable field retains null-valued vertices', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [
+          {
+            not: true,
+            combinator: 'and',
+            rules: [{ field: 'powerUpAge', operator: '>', value: 15 }],
+          },
+        ],
+      },
+      superUsers.filter(u => u.powerUpAge === null || u.powerUpAge! <= 15)
+    );
+  });
+});
+
 // ─── Graph-Specific Pattern Tests (custom ruleProcessor) ──────────────────────
 
 const expectGremlinCustom = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
@@ -267,9 +409,9 @@ const expectGremlinCustom = async (query: RuleGroupType, expectedResult: SuperUs
 };
 
 describe('Gremlin graph patterns (Grafeo)', () => {
-  // Note: Grafeo's Gremlin engine may not support regex(), notRegex(),
-  // containing() for list membership, or .ignoreCase(). These tests
-  // document the expected Gremlin output and verify execution where supported.
+  // Note: Grafeo's Gremlin engine supports regex()/notRegex() and the negated
+  // string predicates, but not list-element membership or .ignoreCase(). These
+  // tests document the expected Gremlin output and verify execution where supported.
 
   describe('regex', () => {
     test('matchesRegex — names ending in "man"', async () => {
@@ -282,9 +424,7 @@ describe('Gremlin graph patterns (Grafeo)', () => {
       );
     });
 
-    // Grafeo doesn't support negated predicates with arguments (notRegex)
-    // oxlint-disable-next-line no-disabled-tests
-    test.skip('doesNotMatchRegex — names not starting with "S"', async () => {
+    test('doesNotMatchRegex — names not starting with "S"', async () => {
       await expectGremlinCustom(
         {
           combinator: 'and',
@@ -296,7 +436,8 @@ describe('Gremlin graph patterns (Grafeo)', () => {
   });
 
   describe('list containment', () => {
-    // Grafeo's containing() operates on string contents, not list membership
+    // Grafeo predicates operate on scalar values; list-element membership is
+    // unsupported (containing() matches string contents, so this matches no rows)
     // oxlint-disable-next-line no-disabled-tests
     test.skip('listContains — nicknames containing "Cap"', async () => {
       await expectGremlinCustom(
@@ -308,7 +449,8 @@ describe('Gremlin graph patterns (Grafeo)', () => {
       );
     });
 
-    // Grafeo doesn't support notContaining() predicate
+    // Same list-element gap as above: notContaining() works on strings, but
+    // against a list property it matches no rows
     // oxlint-disable-next-line no-disabled-tests
     test.skip('listDoesNotContain — nicknames not containing "Spidey"', async () => {
       await expectGremlinCustom(
