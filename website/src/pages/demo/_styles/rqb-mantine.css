@@ -38,7 +38,7 @@
   }
 }
 
-/* BEGIN_MANTINE_STYLES v9.5.0
+/* BEGIN_MANTINE_STYLES v9.5.2
 The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
@@ -6779,6 +6779,7 @@ fieldset:disabled .m_8ee546b8,
 }
 
 .m_47dd3981 {
+  position: relative;
   display: inline-flex;
   align-items: baseline;
   overflow: hidden;
@@ -6788,12 +6789,27 @@ fieldset:disabled .m_8ee546b8,
   font-variant-numeric: tabular-nums;
 }
 
+.m_ccf525bd {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  white-space: pre;
+  color: transparent;
+  forced-color-adjust: none;
+}
+
 .m_b301d46e {
+  position: relative;
+  z-index: 2;
   display: inline-block;
   width: 1ch;
   height: 1em;
   overflow: hidden;
   line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
   transition:
     width var(--rn-duration) var(--rn-timing-function),
     opacity var(--rn-duration) var(--rn-timing-function);
@@ -6818,9 +6834,14 @@ fieldset:disabled .m_8ee546b8,
 }
 
 .m_47d64bf5 {
+  position: relative;
+  z-index: 2;
   display: inline-block;
   overflow: hidden;
   white-space: pre;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
   transition: opacity var(--rn-duration) var(--rn-timing-function);
 }
 
@@ -6866,6 +6887,10 @@ fieldset:disabled .m_8ee546b8,
 
 .m_1b3c8819:where([data-fixed]) {
   position: fixed;
+}
+
+.m_1b3c8819:where([data-interactive]) {
+  pointer-events: auto;
 }
 
 .m_f898399f {

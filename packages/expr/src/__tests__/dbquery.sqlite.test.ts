@@ -49,7 +49,6 @@ describe('parameter', () => {
       fields,
       ruleProcessor: expressionRuleProcessorSQL,
     });
-    // @ts-expect-error Bun.SQL accepts object with :-prefixed keys for named params
     const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, { ':rate': 2 })) as {
       id: number;
     }[];
@@ -67,7 +66,7 @@ describe('parameter', () => {
     const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, {
       ...(params as Record<string, unknown>),
       ':rate': 2,
-    } as unknown as unknown[])) as { id: number }[];
+    })) as { id: number }[];
     expect(rows.map(r => r.id)).toEqual([3, 4]);
   });
 });
@@ -105,7 +104,6 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         fields,
         ruleProcessor: expressionRuleProcessorParameterized,
       });
-      // @ts-expect-error Bun.SQL accepts object with :-prefixed keys for named params
       const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, params)) as {
         id: number;
       }[];

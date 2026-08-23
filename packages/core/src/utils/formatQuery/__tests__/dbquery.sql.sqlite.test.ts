@@ -48,7 +48,7 @@ const testSQL = ({ query, expectedResult, fqOptions, skipParameterized }: TestSQ
       });
       const selectParamNamed = await sql.unsafe(
         `${sqlBase()} ${parameterizedNamed.sql} ${getSqlOrderBy()}`,
-        parameterizedNamed.params as unknown as unknown[]
+        parameterizedNamed.params
       );
       expect(selectParamNamed).toEqual(expectedResult);
     });
@@ -91,10 +91,7 @@ describe('SQLite', () => {
     ) => {
       test(name, async () => {
         const sqlStr = formatQuery(query, 'sql');
-        const select = await sql.unsafe(
-          `${sqlBase()} ${sqlStr} ${getSqlOrderBy()}`,
-          bindings as unknown as unknown[]
-        );
+        const select = await sql.unsafe(`${sqlBase()} ${sqlStr} ${getSqlOrderBy()}`, bindings);
         expect(select).toEqual(expectedResult);
       });
     };
