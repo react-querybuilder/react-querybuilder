@@ -40,7 +40,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           fields,
           ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
         });
-        const result = (await sql.unsafe(`${sqlBase()} ${sqlStr}`)) as Result[];
+        const result = await sql.unsafe<Result[]>(`${sqlBase()} ${sqlStr}`);
         // oxlint-disable no-conditional-expect
         if (testCase[1] === 'all') {
           expect(result).toHaveLength(musicians.length);

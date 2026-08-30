@@ -49,9 +49,9 @@ describe('parameter', () => {
       fields,
       ruleProcessor: expressionRuleProcessorSQL,
     });
-    const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, { ':rate': 2 })) as {
-      id: number;
-    }[];
+    const rows = await sql.unsafe<{ id: number }[]>(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, {
+      ':rate': 2,
+    });
     expect(rows.map(r => r.id)).toEqual([3, 4]);
   });
 
@@ -63,10 +63,10 @@ describe('parameter', () => {
       ruleProcessor: expressionRuleProcessorParameterized,
     });
     // `params` registers `:rate: null` (prefix kept); supply the actual binding externally.
-    const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, {
+    const rows = await sql.unsafe<{ id: number }[]>(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, {
       ...(params as Record<string, unknown>),
       ':rate': 2,
-    })) as { id: number }[];
+    });
     expect(rows.map(r => r.id)).toEqual([3, 4]);
   });
 });
@@ -80,7 +80,7 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         fields,
         ruleProcessor: expressionRuleProcessorSQL,
       });
-      const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`)) as { id: number }[];
+      const rows = await sql.unsafe<{ id: number }[]>(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`);
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
 
@@ -91,9 +91,10 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         fields,
         ruleProcessor: expressionRuleProcessorParameterized,
       });
-      const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, params)) as {
-        id: number;
-      }[];
+      const rows = await sql.unsafe<{ id: number }[]>(
+        `${sqlBase()} ${sqlStr} ${sqlOrderBy}`,
+        params
+      );
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
 
@@ -104,9 +105,10 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         fields,
         ruleProcessor: expressionRuleProcessorParameterized,
       });
-      const rows = (await sql.unsafe(`${sqlBase()} ${sqlStr} ${sqlOrderBy}`, params)) as {
-        id: number;
-      }[];
+      const rows = await sql.unsafe<{ id: number }[]>(
+        `${sqlBase()} ${sqlStr} ${sqlOrderBy}`,
+        params
+      );
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
   });

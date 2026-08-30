@@ -45,7 +45,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           fields,
           ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
         });
-        const result = (await sql.unsafe(`${sqlBase(musiciansTable)} ${sqlStr}`)) as Result[];
+        const result = await sql.unsafe<Result[]>(`${sqlBase(musiciansTable)} ${sqlStr}`);
         // oxlint-disable no-conditional-expect
         if (expectation === 'all') {
           expect(result).toHaveLength(musicians.length);

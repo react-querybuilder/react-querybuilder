@@ -36,9 +36,9 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         fields,
         ruleProcessor: expressionRuleProcessorSQL,
       });
-      const rows = (await sql.unsafe(`${sqlBase(productsTable)} ${sqlStr} ${sqlOrderBy}`)) as {
-        id: number;
-      }[];
+      const rows = await sql.unsafe<{ id: number }[]>(
+        `${sqlBase(productsTable)} ${sqlStr} ${sqlOrderBy}`
+      );
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
 
@@ -51,10 +51,10 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         fields,
         ruleProcessor: expressionRuleProcessorParameterized,
       });
-      const rows = (await sql.unsafe(
+      const rows = await sql.unsafe<{ id: number }[]>(
         `${sqlBase(productsTable)} ${sqlStr} ${sqlOrderBy}`,
         params
-      )) as { id: number }[];
+      );
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
   });
