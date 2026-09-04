@@ -17,7 +17,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "types": ["vitest/globals", "@testing-library/jest-dom", "node", "web", "bun"],
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest", "node", "web", "bun"],
     "paths": {
       "react-querybuilder": ["./packages/react-querybuilder/src"],
       "react-querybuilder/history": ["./packages/react-querybuilder/src/history"],

@@ -55,6 +55,7 @@ export default defineConfig({
       exclude: [
         'utils/testing/**',
         'packages/*/dist/**',
+        'packages/*/vitestSetup.ts',
         '**/*TestUtils.ts',
         // Package-specific exclusions
         'packages/chakra/src/snippets/**',

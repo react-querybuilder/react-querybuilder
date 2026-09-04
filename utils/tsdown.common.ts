@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
 export const commonBuildOptions: UserConfig = {
   sourcemap: true,
   platform: 'neutral',
-  dts: { oxc: true },
+  dts: { oxc: {} },
   deps: {
     neverBundle: ['jsonata', 'numeric-quantity', 'sequelize', 'spel2js', '@tanstack/db'],
     onlyBundle: ['clsx', 'type-fest'],
