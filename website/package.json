@@ -59,7 +59,7 @@
     "dayjs": "catalog:",
     "json-rules-engine": "catalog:",
     "next-themes": "catalog:",
-    "pako": "^3.0.1",
+    "pako": "^3.0.2",
     "primeicons": "catalog:",
     "primereact": "catalog:",
     "prism-react-renderer": "^2.4.1",
@@ -73,7 +73,7 @@
     "react-shadow": "^20.6.0",
     "sass": "catalog:",
     "sucrase": "^3.35.0",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@docusaurus/faster": "^3.10.2",
@@ -88,7 +88,7 @@
     "@types/postcss-prefix-selector": "^2.2.1",
     "@types/react-modal": "^3.16.3",
     "@typescript/typescript6": "^6.0.2",
-    "autoprefixer": "^10.5.5",
+    "autoprefixer": "^10.6.1",
     "crypto-browserify": "^3.12.1",
     "docusaurus-plugin-sass": "^0.2.7",
     "docusaurus-plugin-typedoc": "^1.4.3",

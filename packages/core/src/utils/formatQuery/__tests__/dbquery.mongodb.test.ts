@@ -1,8 +1,9 @@
-import { describe, expect, test, beforeAll } from 'bun:test';
+import { beforeAll, describe, expect, test } from 'bun:test';
 import { getSharedMongo } from '@rqb-dbmongo';
-import mongoose from 'mongoose';
+import type { Model, QueryFilter } from 'mongoose';
+import { Schema } from 'mongoose';
 import type { DefaultRuleGroupType, ExportFormat } from '../../../types';
-import type { SuperUser, TestSQLParams } from '../dbqueryTestUtils';
+import type { AugmentedSuperUser, SuperUser, TestSQLParams } from '../dbqueryTestUtils';
 import {
   augmentedSuperUsers,
   dbTests,
@@ -15,10 +16,14 @@ import { formatQuery } from '../formatQuery';
 
 const cleanProjection = { _id: 0, __v: 0, createdAt: 0, updatedAt: 0 } as const;
 
-const superUsersMongoDB = superUsers('mongodb');
-const augmentedSuperUsersMongoDB = augmentedSuperUsers('mongodb');
+const addId = <T extends SuperUser | AugmentedSuperUser>(u: T) =>
+  Object.assign(u, { id: u.madeUpName });
+
+const superUsersMongoDB = superUsers('mongodb').map(addId);
+const augmentedSuperUsersMongoDB = augmentedSuperUsers('mongodb').map(addId);
 
 interface SuperUserMongoDB extends Omit<SuperUser, 'enhanced' | 'powerUpAge'> {
+  id: string;
   enhanced?: boolean | null | undefined;
   powerUpAge?: number | null | undefined;
 }
@@ -31,10 +36,11 @@ interface AugmentedSuperUserMongoDB extends SuperUserMongoDB {
   }[];
 }
 
-let SuperHero: mongoose.Model<SuperUserMongoDB>;
-let AugmentedSuperHero: mongoose.Model<AugmentedSuperUserMongoDB>;
+let SuperHero: Model<SuperUserMongoDB>;
+let AugmentedSuperHero: Model<AugmentedSuperUserMongoDB>;
 
 const superHeroSchema = {
+  id: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   enhanced: { type: Boolean },
@@ -45,19 +51,19 @@ const superHeroSchema = {
 
 beforeAll(async () => {
   const conn = await getSharedMongo();
-  SuperHero = conn.model('superhero', new mongoose.Schema(superHeroSchema));
+  SuperHero = conn.model('superhero', new Schema(superHeroSchema));
   await SuperHero.insertMany(superUsersMongoDB);
 
-  // const nestedSchema = new mongoose.Schema({
+  // const nestedSchema = new Schema({
   const nestedSchema = {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     generationalSuffix: { type: String },
   } as const;
-  const nestedSchemaMongoose = new mongoose.Schema(nestedSchema, { _id: false });
+  const nestedSchemaMongoose = new Schema(nestedSchema, { _id: false });
   AugmentedSuperHero = conn.model(
     'augmentedsuperhero',
-    new mongoose.Schema({
+    new Schema({
       ...superHeroSchema,
       nicknames: { type: [String], required: true },
       earlyPencilers: { type: [nestedSchemaMongoose], required: true },
@@ -84,10 +90,7 @@ describe('MongoDB', () => {
           for (const [format, processorFn] of [
             ['mongodb', (v: string, afak) => JSON.parse(afak ? `{"$expr":${v}}` : v)],
             ['mongodb_query', (v, afak) => (afak ? { $expr: v } : v)],
-          ] as [
-            ExportFormat,
-            (v: unknown, afak?: boolean) => mongoose.QueryFilter<SuperUserMongoDB>,
-          ][]) {
+          ] as [ExportFormat, (v: unknown, afak?: boolean) => QueryFilter<SuperUserMongoDB>][]) {
             describe(format, () => {
               test(
                 name,

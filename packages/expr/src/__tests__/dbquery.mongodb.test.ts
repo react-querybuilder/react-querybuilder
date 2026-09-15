@@ -2,8 +2,9 @@
 
 import { formatQuery } from '@react-querybuilder/core';
 import { getSharedMongo } from '@rqb-dbmongo';
-import mongoose from 'mongoose';
-import { fields, testCases, products } from '../dbqueryTestUtils';
+import type { Model } from 'mongoose';
+import { Schema } from 'mongoose';
+import { fields, products, testCases } from '../dbqueryTestUtils';
 import { expressionRuleProcessorMongoDBQuery } from '../index';
 
 if (typeof vi !== 'undefined' && typeof vi.setConfig === 'function') {
@@ -19,13 +20,13 @@ interface ProductDoc {
   rating: number | null;
 }
 
-let Product: mongoose.Model<ProductDoc>;
+let Product: Model<ProductDoc>;
 
 beforeAll(async () => {
   const conn = await getSharedMongo();
   Product = conn.model(
     'product',
-    new mongoose.Schema<ProductDoc>({
+    new Schema<ProductDoc>({
       id: { type: Number, required: true },
       name: { type: String, required: true },
       price: { type: Number, required: true },

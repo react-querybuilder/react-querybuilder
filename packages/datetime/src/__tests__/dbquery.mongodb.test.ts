@@ -2,7 +2,8 @@
 
 import { formatQuery } from '@react-querybuilder/core';
 import { getSharedMongo } from '@rqb-dbmongo';
-import mongoose from 'mongoose';
+import type { Model } from 'mongoose';
+import { Schema } from 'mongoose';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
 import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
 
@@ -11,6 +12,7 @@ if (typeof vi !== 'undefined' && typeof vi.setConfig === 'function') {
 }
 
 type Result = {
+  id: string;
   first_name: string;
   middle_name?: string | null | undefined;
   last_name: string;
@@ -19,9 +21,10 @@ type Result = {
   updated_at: Date;
 };
 
-let Musician: mongoose.Model<Result>;
+let Musician: Model<Result>;
 
 const musicianSchema = {
+  id: { type: String, required: true },
   first_name: { type: String, required: true },
   middle_name: { type: String },
   last_name: { type: String, required: true },
@@ -32,10 +35,15 @@ const musicianSchema = {
 
 beforeAll(async () => {
   const conn = await getSharedMongo();
-  Musician = conn.model('musician', new mongoose.Schema(musicianSchema));
+  Musician = conn.model('musician', new Schema(musicianSchema));
   await Musician.syncIndexes();
   await Musician.insertMany(
-    musicians.map(m => ({ ...m, created_at: new Date(), updated_at: new Date() }))
+    musicians.map(m => ({
+      ...m,
+      id: `${m.last_name}, ${m.first_name}`,
+      created_at: new Date(),
+      updated_at: new Date(),
+    }))
   );
 }, 30_000);
 
