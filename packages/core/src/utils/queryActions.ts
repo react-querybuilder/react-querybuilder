@@ -353,7 +353,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
       // A path that no longer resolves isn't caught by the guards, so confirm it before
       // computing anything or handing a null node to the callback.
       const ruleGroup = findPath(path, query);
-      if (!isRuleGroup(ruleGroup)) return undefined;
+      if (path.length === 0 || !isRuleGroup(ruleGroup)) return undefined;
 
       // Computed before the callback so it can inspect the prospective result, e.g. to decline
       // when the group's `not` property would otherwise be discarded.
