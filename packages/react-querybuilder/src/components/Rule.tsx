@@ -474,8 +474,8 @@ export interface UseRule extends RuleProps {
   operators: OptionList<FullOperator>;
   outerClassName: string;
   removeRule: ActionElementEventHandler;
-  shiftRuleUp: (event?: MouseEvent, _context?: any) => void;
-  shiftRuleDown: (event?: MouseEvent, _context?: any) => void;
+  shiftRuleUp: (event?: MouseEvent, context?: any) => void;
+  shiftRuleDown: (event?: MouseEvent, context?: any) => void;
   subproperties: UseFields<FullField>;
   subQueryBuilderProps: Record<string, unknown>;
   toggleLockRule: ActionElementEventHandler;

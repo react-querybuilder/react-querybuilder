@@ -614,9 +614,9 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const onCombinatorChange: ValueChangeEventHandler = useCallback(
-    value => {
+    (value, context) => {
       if (!disabled) {
-        onPropChange('combinator', value, path);
+        onPropChange('combinator', value, path, context);
       }
     },
     [disabled, onPropChange, path]
@@ -624,9 +624,9 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
 
   const onIndependentCombinatorChange = useCallback(
     // oxlint-disable-next-line typescript/no-explicit-any
-    (value: any, index: number, _context?: any) => {
+    (value: any, index: number, context?: any) => {
       if (!disabled) {
-        onPropChange('combinator', value, [...path, index]);
+        onPropChange('combinator', value, [...path, index], context);
       }
     },
     [disabled, onPropChange, path]
@@ -634,9 +634,9 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
 
   const onNotToggleChange = useCallback(
     // oxlint-disable-next-line typescript/no-explicit-any
-    (checked: boolean, _context?: any) => {
+    (checked: boolean, context?: any) => {
       if (!disabled) {
-        onPropChange('not', checked, path);
+        onPropChange('not', checked, path, context);
       }
     },
     [disabled, onPropChange, path]
@@ -662,24 +662,30 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     [createRuleGroup, disabled, onGroupAdd, path]
   );
 
-  const cloneGroup: ActionElementEventHandler = useCallback(() => {
-    if (!disabled) {
-      const newPath = [...getParentPath(path), path.at(-1)! + 1];
-      moveRule(path, newPath, true);
-    }
-  }, [disabled, moveRule, path]);
+  const cloneGroup: ActionElementEventHandler = useCallback(
+    (_event, context) => {
+      if (!disabled) {
+        const newPath = [...getParentPath(path), path.at(-1)! + 1];
+        moveRule(path, newPath, true, context);
+      }
+    },
+    [disabled, moveRule, path]
+  );
 
-  const ungroup: ActionElementEventHandler = useCallback(() => {
-    if (!disabled) {
-      ungroupRuleGroup(path);
-    }
-  }, [disabled, path, ungroupRuleGroup]);
+  const ungroup: ActionElementEventHandler = useCallback(
+    (_event, context) => {
+      if (!disabled) {
+        ungroupRuleGroup(path, context);
+      }
+    },
+    [disabled, path, ungroupRuleGroup]
+  );
 
   const shiftGroupUp = useCallback(
     // oxlint-disable-next-line typescript/no-explicit-any
-    (event?: MouseEvent, _context?: any) => {
+    (event?: MouseEvent, context?: any) => {
       if (!disabled && !shiftUpDisabled) {
-        moveRule(path, 'up', event?.altKey);
+        moveRule(path, 'up', event?.altKey, context);
       }
     },
     [disabled, moveRule, path, shiftUpDisabled]
@@ -687,27 +693,36 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
 
   const shiftGroupDown = useCallback(
     // oxlint-disable-next-line typescript/no-explicit-any
-    (event?: MouseEvent, _context?: any) => {
+    (event?: MouseEvent, context?: any) => {
       if (!disabled && !shiftDownDisabled) {
-        moveRule(path, 'down', event?.altKey);
+        moveRule(path, 'down', event?.altKey, context);
       }
     },
     [disabled, moveRule, path, shiftDownDisabled]
   );
 
-  const toggleLockGroup: ActionElementEventHandler = useCallback(() => {
-    onPropChange('disabled', !disabled, path);
-  }, [disabled, onPropChange, path]);
+  const toggleLockGroup: ActionElementEventHandler = useCallback(
+    (_event, context) => {
+      onPropChange('disabled', !disabled, path, context);
+    },
+    [disabled, onPropChange, path]
+  );
 
-  const toggleMuteGroup: ActionElementEventHandler = useCallback(() => {
-    onPropChange('muted', !ruleGroup.muted, path);
-  }, [ruleGroup.muted, onPropChange, path]);
+  const toggleMuteGroup: ActionElementEventHandler = useCallback(
+    (_event, context) => {
+      onPropChange('muted', !ruleGroup.muted, path, context);
+    },
+    [ruleGroup.muted, onPropChange, path]
+  );
 
-  const removeGroup: ActionElementEventHandler = useCallback(() => {
-    if (!disabled) {
-      onGroupRemove(path);
-    }
-  }, [disabled, onGroupRemove, path]);
+  const removeGroup: ActionElementEventHandler = useCallback(
+    _event => {
+      if (!disabled) {
+        onGroupRemove(path);
+      }
+    },
+    [disabled, onGroupRemove, path]
+  );
 
   const validationResult =
     validationMap[id ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */];
