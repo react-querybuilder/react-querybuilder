@@ -611,6 +611,12 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    */
   undoRedoActions: ComponentType<UndoRedoActionsProps> | null;
   /**
+   * Replaces the current group with its own rules in the parent group.
+   *
+   * @default ActionElement
+   */
+  ungroupAction: ComponentType<ActionProps> | null;
+  /**
    * Updates the `value` property for the current rule.
    *
    * @default ValueEditor
@@ -690,6 +696,7 @@ export interface Schema<F extends FullField, O extends string> {
   showShiftActions: boolean;
   showUndoRedo: boolean;
   showCloneButtons: boolean;
+  showUngroupButtons: boolean;
   showLockButtons: boolean;
   showMuteButtons: boolean;
   autoSelectField: boolean;
@@ -1203,6 +1210,24 @@ export type QueryBuilderProps<
         nextQuery: RG,
         /** The options passed to {@link group} to generate `nextQuery`. */
         options: GroupOptions,
+        // oxlint-disable-next-line typescript/no-explicit-any
+        context?: any
+      ): RG | boolean;
+      /**
+       * This callback is invoked before a group is replaced by its own rules in the parent group.
+       * The function should return `true` to allow the ungrouping to proceed as normal, `false` to
+       * cancel it, or a new query object (presumably based on `query` or `nextQuery`) which will
+       * become the new query state.
+       */
+      onUngroup?(
+        /** The group being ungrouped. */
+        ruleGroup: RG,
+        /** The path of the group being ungrouped. */
+        path: Path,
+        /** The current query, before the ungroup. */
+        query: RG,
+        /** The next query, if the ungroup is allowed to proceed. */
+        nextQuery: RG,
         // oxlint-disable-next-line typescript/no-explicit-any
         context?: any
       ): RG | boolean;

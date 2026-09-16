@@ -40,6 +40,7 @@ export const primeTranslations: Partial<Translations> = {
   removeRule: { label: <i className="pi pi-times" /> },
   cloneRule: { label: <i className="pi pi-copy" /> },
   cloneRuleGroup: { label: <i className="pi pi-copy" /> },
+  ungroupRuleGroup: { label: <i className="pi pi-objects-column" /> },
   lockGroup: { label: <i className="pi pi-lock-open" /> },
   lockRule: { label: <i className="pi pi-lock-open" /> },
   lockGroupDisabled: { label: <i className="pi pi-lock" /> },

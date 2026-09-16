@@ -102,6 +102,7 @@ export const useMergedContext = <
       body: cc.body,
       cloneGroup: cc.cloneGroup,
       cloneRule: cc.cloneRule,
+      ungroup: cc.ungroup,
       combinators: cc.combinators,
       dragHandle: cc.dragHandle,
       fields: cc.fields,
@@ -153,6 +154,7 @@ export const useMergedContext = <
       cc.branches,
       cc.cloneGroup,
       cc.cloneRule,
+      cc.ungroup,
       cc.combinators,
       cc.disabled,
       cc.dndCopy,
@@ -252,6 +254,7 @@ export const useMergedContext = <
           contextCE.cloneGroupAction
         ),
         mergeControlElement('cloneRuleAction', propsCE.cloneRuleAction, contextCE.cloneRuleAction),
+        mergeControlElement('ungroupAction', propsCE.ungroupAction, contextCE.ungroupAction),
         mergeControlElement(
           'combinatorSelector',
           propsCE.combinatorSelector,
@@ -333,6 +336,7 @@ export const useMergedContext = <
       contextCE.addRuleAction,
       contextCE.cloneGroupAction,
       contextCE.cloneRuleAction,
+      contextCE.ungroupAction,
       contextCE.combinatorSelector,
       contextCE.dragHandle,
       contextCE.fieldSelector,
@@ -362,6 +366,7 @@ export const useMergedContext = <
       propsCE.addRuleAction,
       propsCE.cloneGroupAction,
       propsCE.cloneRuleAction,
+      propsCE.ungroupAction,
       propsCE.combinatorSelector,
       propsCE.dragHandle,
       propsCE.fieldSelector,
@@ -422,6 +427,14 @@ export const useMergedContext = <
           {
             label: [propsT.cloneRuleGroup?.label, contextT.cloneRuleGroup?.label],
             title: [propsT.cloneRuleGroup?.title, contextT.cloneRuleGroup?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'ungroupRuleGroup',
+          {
+            label: [propsT.ungroupRuleGroup?.label, contextT.ungroupRuleGroup?.label],
+            title: [propsT.ungroupRuleGroup?.title, contextT.ungroupRuleGroup?.title],
           },
           finalize ? defaultTranslations : undefined
         ),
@@ -639,6 +652,8 @@ export const useMergedContext = <
       contextT.cloneRule?.title,
       contextT.cloneRuleGroup?.label,
       contextT.cloneRuleGroup?.title,
+      contextT.ungroupRuleGroup?.label,
+      contextT.ungroupRuleGroup?.title,
       contextT.combinators?.title,
       contextT.dragHandle?.label,
       contextT.dragHandle?.title,
@@ -698,6 +713,8 @@ export const useMergedContext = <
       propsT.cloneRule?.title,
       propsT.cloneRuleGroup?.label,
       propsT.cloneRuleGroup?.title,
+      propsT.ungroupRuleGroup?.label,
+      propsT.ungroupRuleGroup?.title,
       propsT.combinators?.title,
       propsT.dragHandle?.label,
       propsT.dragHandle?.title,

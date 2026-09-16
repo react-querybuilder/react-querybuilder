@@ -300,6 +300,103 @@ describe('createQueryActions', () => {
     });
   });
 
+  describe('ungroupRuleGroup', () => {
+    const nested = (): RuleGroupType => ({
+      id: 'root',
+      combinator: 'and',
+      rules: [
+        {
+          id: 'g1',
+          combinator: 'or',
+          rules: [
+            { id: 'r1', ...rule() },
+            { id: 'r2', ...rule('f2') },
+          ],
+        },
+        { id: 'r3', ...rule('f3') },
+      ],
+    });
+
+    it('promotes the group rules into the parent', () => {
+      const result = createQueryActions().ungroupRuleGroup(nested(), [0]);
+      expect(result.rules.map((r: RuleType) => r.id)).toEqual(['r1', 'r2', 'r3']);
+    });
+
+    it('aborts for a disabled target', () => {
+      const q: RuleGroupType = {
+        combinator: 'and',
+        rules: [{ id: 'g1', combinator: 'or', disabled: true, rules: [rule()] }],
+      };
+      expect(createQueryActions().ungroupRuleGroup(q, [0])).toBeUndefined();
+    });
+
+    it('aborts when the whole query is disabled', () => {
+      expect(
+        createQueryActions({ queryDisabled: true }).ungroupRuleGroup(nested(), [0])
+      ).toBeUndefined();
+    });
+
+    it('aborts for a rule target, without invoking the callback', () => {
+      const onUngroup = vi.fn(() => true);
+      expect(createQueryActions({ onUngroup }).ungroupRuleGroup(nested(), [1])).toBeUndefined();
+      expect(onUngroup).not.toHaveBeenCalled();
+    });
+
+    it('aborts on an unresolvable path, without invoking the callback', () => {
+      const onUngroup = vi.fn(() => true);
+      expect(createQueryActions({ onUngroup }).ungroupRuleGroup(nested(), [99])).toBeUndefined();
+      expect(onUngroup).not.toHaveBeenCalled();
+    });
+
+    it('aborts when the callback declines', () => {
+      expect(
+        createQueryActions({ onUngroup: () => false }).ungroupRuleGroup(nested(), [0])
+      ).toBeUndefined();
+    });
+
+    it('applies a replacement query returned by the callback', () => {
+      const replacement: RuleGroupType = { combinator: 'or', rules: [] };
+      expect(
+        createQueryActions({ onUngroup: () => replacement }).ungroupRuleGroup(nested(), [0])
+      ).toBe(replacement);
+    });
+
+    it('lets the callback intercept a negated group', () => {
+      const q: RuleGroupType = {
+        combinator: 'and',
+        rules: [{ id: 'g1', combinator: 'or', not: true, rules: [rule()] }],
+      };
+      const onUngroup = vi.fn((rg: RuleGroupType) => !rg.not);
+      expect(createQueryActions({ onUngroup }).ungroupRuleGroup(q, [0])).toBeUndefined();
+      expect(onUngroup).toHaveBeenCalled();
+    });
+
+    it('passes the current and next queries to the callback', () => {
+      const onUngroup = vi.fn(() => true);
+      const q = nested();
+      createQueryActions({ onUngroup }).ungroupRuleGroup(q, [0], 'ctx');
+      expect(onUngroup).toHaveBeenCalledWith(
+        q.rules[0],
+        [0],
+        q,
+        expect.objectContaining({ combinator: 'and' }),
+        'ctx'
+      );
+    });
+
+    it('removes an empty group', () => {
+      const q: RuleGroupType = {
+        combinator: 'and',
+        rules: [
+          { id: 'g1', combinator: 'or', rules: [] },
+          { id: 'r1', ...rule() },
+        ],
+      };
+      const result = createQueryActions().ungroupRuleGroup(q, [0]);
+      expect(result.rules).toHaveLength(1);
+    });
+  });
+
   describe('logging', () => {
     const logTypes = (onLog: ReturnType<typeof vi.fn>) =>
       onLog.mock.calls.map(c => (c[0] as { type: string }).type);
@@ -336,6 +433,15 @@ describe('createQueryActions', () => {
         (a: ReturnType<typeof createQueryActions>) => a.groupRule(query(), [0], [1]),
         LogType.group,
       ],
+      [
+        'ungroup',
+        (a: ReturnType<typeof createQueryActions>) =>
+          a.ungroupRuleGroup(
+            { combinator: 'and', rules: [{ combinator: 'or', rules: [rule()] }] },
+            [0]
+          ),
+        LogType.ungroup,
+      ],
     ])('logs %s on success', (_label, run, expected) => {
       const onLog = vi.fn();
       run(createQueryActions({ onLog }));
@@ -365,7 +471,9 @@ describe('createQueryActions', () => {
       a.propChange(withDisabled(), 'value', 'x', [0]);
       a.moveRule(withDisabled(), [0], [2]);
       a.groupRule(withDisabled(), [0], [1]);
+      a.ungroupRuleGroup(withDisabled(), [0]);
       expect(logTypes(onLog)).toEqual([
+        LogType.pathDisabled,
         LogType.pathDisabled,
         LogType.pathDisabled,
         LogType.pathDisabled,
@@ -413,6 +521,16 @@ describe('createQueryActions', () => {
         { onGroupRule: () => false },
         (a: ReturnType<typeof createQueryActions>) => a.groupRule(query(), [0], [1]),
         LogType.onGroupRuleFalse,
+      ],
+      [
+        'onUngroupFalse',
+        { onUngroup: () => false },
+        (a: ReturnType<typeof createQueryActions>) =>
+          a.ungroupRuleGroup(
+            { combinator: 'and', rules: [{ combinator: 'or', rules: [rule()] }] },
+            [0]
+          ),
+        LogType.onUngroupFalse,
       ],
     ])('logs %s when the callback declines', (_label, config, run, expected) => {
       const onLog = vi.fn();
@@ -499,6 +617,14 @@ describe('createQueryActions', () => {
       expect(Object.isFrozen(frozen.removeRuleOrGroup(query(), [0]))).toBe(true);
       expect(Object.isFrozen(frozen.moveRule(query(), [0], [2]))).toBe(true);
       expect(Object.isFrozen(frozen.groupRule(query(), [0], [1]))).toBe(true);
+      expect(
+        Object.isFrozen(
+          frozen.ungroupRuleGroup(
+            { combinator: 'and', rules: [{ combinator: 'or', rules: [rule()] }] },
+            [0]
+          )
+        )
+      ).toBe(true);
     });
 
     it('does not freeze when `freeze` is false', () => {
@@ -510,6 +636,14 @@ describe('createQueryActions', () => {
       expect(Object.isFrozen(unfrozen.removeRuleOrGroup(query(), [0]))).toBe(false);
       expect(Object.isFrozen(unfrozen.moveRule(query(), [0], [2]))).toBe(false);
       expect(Object.isFrozen(unfrozen.groupRule(query(), [0], [1]))).toBe(false);
+      expect(
+        Object.isFrozen(
+          unfrozen.ungroupRuleGroup(
+            { combinator: 'and', rules: [{ combinator: 'or', rules: [rule()] }] },
+            [0]
+          )
+        )
+      ).toBe(false);
     });
 
     it('does not freeze nested nodes either', () => {

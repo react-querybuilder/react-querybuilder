@@ -80,13 +80,14 @@ import type {
   AbortReason,
   AddOptions,
   GroupOptions,
+  UngroupOptions,
   GuardOptions,
   InsertOptions,
   MoveOptions,
   RemoveOptions,
   UpdateOptions,
 } from './queryTools';
-import { add, group, insert, move, remove, update } from './queryTools';
+import { add, group, insert, move, remove, ungroup, update } from './queryTools';
 import { regenerateIDs } from './regenerateIDs';
 import { createRule, createRuleGroup } from './ruleFactory';
 import { signatureOf, unchangedSignature } from './signature';
@@ -1061,6 +1062,23 @@ export class QueryManager<
     const { strict, onInvalidTarget, ...toolOptions } = options;
     this.commit(
       group(this.state.query, sourcePathOrID, targetPathOrID, {
+        ...this.toolOptions(),
+        ...toolOptions,
+        onAbort: this.onAbort({ strict, onInvalidTarget }),
+      })
+    );
+    return this;
+  }
+
+  /**
+   * Replaces the group at `pathOrID` with its own rules in the parent group. The group's
+   * `combinator`, `not`, `id`, `muted`, and `disabled` properties are discarded; an empty group
+   * is simply removed.
+   */
+  ungroup(pathOrID: Path | string, options: UngroupOptions & StrictOptions = {}): this {
+    const { strict, onInvalidTarget, ...toolOptions } = options;
+    this.commit(
+      ungroup(this.state.query, pathOrID, {
         ...this.toolOptions(),
         ...toolOptions,
         onAbort: this.onAbort({ strict, onInvalidTarget }),

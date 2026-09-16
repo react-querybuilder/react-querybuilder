@@ -47,9 +47,11 @@ export type AbortReason =
   | 'parent-not-found'
   /** The given parent path or `id` refers to a rule rather than a group. */
   | 'parent-not-a-group'
+  /** The given path or `id` refers to a rule rather than a group. */
+  | 'target-not-a-group'
   /** The destination's parent group does not exist. */
   | 'destination-not-found'
-  /** The root group cannot be removed, moved, or grouped. */
+  /** The root group cannot be removed, moved, grouped, or ungrouped. */
   | 'root-not-allowed'
   /** In a query with independent combinators, the target index holds a rule, not a combinator. */
   | 'not-a-combinator-slot'
@@ -73,7 +75,7 @@ export interface AbortInfo {
   /** Why the operation was aborted. */
   reason: AbortReason;
   /** The query tool that aborted. */
-  operation: 'add' | 'remove' | 'update' | 'move' | 'insert' | 'group';
+  operation: 'add' | 'remove' | 'update' | 'move' | 'insert' | 'group' | 'ungroup';
   /** The path or `id` that could not be used, when the reason relates to a specific target. */
   pathOrID?: Path | string;
 }
@@ -720,6 +722,104 @@ export const removeInPlace: RemoveMethod = (query, pathOrID, options = {}): type
   } else {
     parent.rules.splice(index, 1);
   }
+
+  return query;
+};
+
+/**
+ * Options for {@link ungroup}.
+ *
+ * @group Query Tools
+ */
+export interface UngroupOptions extends QueryToolOptions {}
+
+export interface UngroupMethod {
+  <RG extends RuleGroupTypeAny>(
+    /** The query to update. */
+    query: RG,
+    /** The path or ID of the group to ungroup. */
+    pathOrID: Path | string,
+    /** Options. */
+    options?: UngroupOptions
+  ): RG;
+}
+
+/**
+ * Replaces a group with its own rules in its parent group, without mutating the original query.
+ *
+ * The group's `combinator`, `not`, `id`, `muted`, and `disabled` properties are discarded; its
+ * rules keep their `id`s since they remain in the same query. An empty group is simply removed.
+ *
+ * @returns A new query with the group's rules promoted into its parent group.
+ *
+ * @group Query Tools
+ */
+export const ungroup: UngroupMethod = (query, pathOrID, options = {}): typeof query =>
+  producerFor(options.freeze)(query, q => ungroupInPlace(q, pathOrID, options));
+
+/**
+ * Replaces a group with its own rules in its parent group, in place.
+ *
+ * @returns The query (mutated in place) with the group's rules promoted into its parent group.
+ *
+ * @group Query Tools
+ */
+export const ungroupInPlace: UngroupMethod = (query, pathOrID, options = {}): typeof query => {
+  const { onAbort } = options;
+  const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
+
+  // Ignore invalid paths/ids
+  if (!path) {
+    onAbort?.({ reason: 'target-not-found', operation: 'ungroup', pathOrID });
+    return query;
+  }
+
+  // Can't ungroup the root group
+  if (path.length === 0) {
+    onAbort?.({ reason: 'root-not-allowed', operation: 'ungroup', pathOrID });
+    return query;
+  }
+
+  const ungroupGuardReason = getGuardAbortReason(query, path, options);
+  if (ungroupGuardReason) {
+    onAbort?.({ reason: ungroupGuardReason, operation: 'ungroup', pathOrID });
+    return query;
+  }
+
+  // The target must actually exist. This also covers independent combinators, which `findPath`
+  // reports as missing because they are bare strings rather than rules.
+  const target = findPath(path, query);
+  if (!target) {
+    onAbort?.({ reason: 'target-not-found', operation: 'ungroup', pathOrID });
+    return query;
+  }
+
+  // Only groups can be ungrouped.
+  if (!isRuleGroup(target)) {
+    onAbort?.({ reason: 'target-not-a-group', operation: 'ungroup', pathOrID });
+    return query;
+  }
+
+  // The target resolved, so at a non-root path its parent is necessarily an existing group.
+  const index = path.at(-1)!;
+  const parent = findPath(getParentPath(path), query) as RuleGroupTypeAny;
+
+  // An empty group degenerates to a plain removal, including the adjacent-combinator cleanup
+  // independent combinator queries require.
+  if (target.rules.length === 0) {
+    if (!isRuleGroupType(parent) && parent.rules.length > 1) {
+      const idxStartDelete = index === 0 ? 0 : index - 1;
+      parent.rules.splice(idxStartDelete, 2);
+    } else {
+      parent.rules.splice(index, 1);
+    }
+    return query;
+  }
+
+  // For independent combinators, the group's rules are already in `[rule, comb, rule, ...]` form,
+  // so splicing them in place preserves the parent's alternation.
+  type AnyRules = (RuleType | RuleGroupTypeAny | string)[];
+  (parent.rules as AnyRules).splice(index, 1, ...(target.rules as AnyRules));
 
   return query;
 };

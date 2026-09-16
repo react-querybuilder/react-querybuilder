@@ -14,6 +14,7 @@ export const strictAbortReasons: readonly AbortReason[] = [
   'target-not-found',
   'parent-not-found',
   'parent-not-a-group',
+  'target-not-a-group',
   'destination-not-found',
   'root-not-allowed',
   'not-a-combinator-slot',

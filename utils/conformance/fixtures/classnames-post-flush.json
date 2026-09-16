@@ -2484,6 +2484,13 @@
         },
         {
           "tag": "button",
+          "testID": "ungroup",
+          "path": "[1]",
+          "className": "ruleGroup-ungroup",
+          "text": "⊟"
+        },
+        {
+          "tag": "button",
           "testID": "lock-group",
           "path": "[1]",
           "className": "ruleGroup-lock",
@@ -2629,6 +2636,13 @@
         },
         {
           "tag": "button",
+          "testID": "ungroup",
+          "path": "[1,1]",
+          "className": "ruleGroup-ungroup",
+          "text": "⊟"
+        },
+        {
+          "tag": "button",
           "testID": "lock-group",
           "path": "[1,1]",
           "className": "ruleGroup-lock",
@@ -2771,6 +2785,13 @@
           "path": "[1,1,1]",
           "className": "ruleGroup-cloneGroup",
           "text": "⧉"
+        },
+        {
+          "tag": "button",
+          "testID": "ungroup",
+          "path": "[1,1,1]",
+          "className": "ruleGroup-ungroup",
+          "text": "⊟"
         },
         {
           "tag": "button",
@@ -3244,6 +3265,13 @@
         },
         {
           "tag": "button",
+          "testID": "ungroup",
+          "path": "[2]",
+          "className": "ruleGroup-ungroup",
+          "text": "⊟"
+        },
+        {
+          "tag": "button",
           "testID": "lock-group",
           "path": "[2]",
           "className": "ruleGroup-lock",
@@ -3711,6 +3739,13 @@
           "path": "[2]",
           "className": "ruleGroup-cloneGroup",
           "text": "⧉"
+        },
+        {
+          "tag": "button",
+          "testID": "ungroup",
+          "path": "[2]",
+          "className": "ruleGroup-ungroup",
+          "text": "⊟"
         },
         {
           "tag": "button",
@@ -4600,6 +4635,13 @@
           "path": "[2]",
           "className": "ruleGroup-cloneGroup",
           "text": "⧉"
+        },
+        {
+          "tag": "button",
+          "testID": "ungroup",
+          "path": "[2]",
+          "className": "ruleGroup-ungroup",
+          "text": "⊟"
         },
         {
           "tag": "button",

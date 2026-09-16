@@ -62,6 +62,7 @@ export type RuleGroupClassnameKey =
   | 'addRule'
   | 'addGroup'
   | 'cloneGroup'
+  | 'ungroup'
   | 'lockGroup'
   | 'muteGroup'
   | 'removeGroup'
@@ -119,6 +120,7 @@ const ruleGroupClassnameSources: ClassnameSpecMap<RuleGroupClassnameKey, DndClas
   addRule: ['actionElement', 'addRule'],
   addGroup: ['actionElement', 'addGroup'],
   cloneGroup: ['actionElement', 'cloneGroup'],
+  ungroup: ['actionElement', 'ungroup'],
   lockGroup: ['actionElement', 'lockGroup'],
   muteGroup: ['actionElement', 'muteGroup'],
   removeGroup: ['actionElement', 'removeGroup'],

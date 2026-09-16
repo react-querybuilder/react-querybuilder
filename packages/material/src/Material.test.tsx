@@ -3,6 +3,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DragIndicator from '@mui/icons-material/DragIndicator';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import LayersClearIcon from '@mui/icons-material/LayersClear';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import RedoIcon from '@mui/icons-material/Redo';
@@ -103,6 +104,7 @@ const muiComponents = {
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
+  LayersClearIcon,
   LockIcon,
   LockOpenIcon,
   MenuItem,

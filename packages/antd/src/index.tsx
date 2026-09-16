@@ -5,6 +5,7 @@ import {
   LockOutlined,
   RedoOutlined,
   UndoOutlined,
+  UngroupOutlined,
   UnlockOutlined,
   UpOutlined,
 } from '@ant-design/icons';
@@ -50,6 +51,7 @@ export const antdTranslations: Partial<Translations> = {
   removeRule: { label: <CloseOutlined /> },
   cloneRule: { label: <CopyOutlined /> },
   cloneRuleGroup: { label: <CopyOutlined /> },
+  ungroupRuleGroup: { label: <UngroupOutlined /> },
   lockGroup: { label: <UnlockOutlined /> },
   lockRule: { label: <UnlockOutlined /> },
   lockGroupDisabled: { label: <LockOutlined /> },

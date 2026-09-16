@@ -11,7 +11,7 @@ import type {
 } from '../types';
 import { isRuleGroup } from './isRuleGroup';
 import { findPath } from './pathUtils';
-import { add, getGuardAbortReason, group, move, remove, update } from './queryTools';
+import { add, getGuardAbortReason, group, move, remove, ungroup, update } from './queryTools';
 
 /* oxlint-disable typescript/no-explicit-any */
 
@@ -23,6 +23,8 @@ import { add, getGuardAbortReason, group, move, remove, update } from './queryTo
  *   _replacement rule/group_ to add instead of the one provided.
  * - `onMoveRule`/`onMoveGroup`/`onGroupRule`/`onGroupGroup` may return `true` to proceed, a
  *   falsy value to cancel, or a _replacement query_ to apply instead of the computed one.
+ * - `onUngroup` may return `true` to proceed, a falsy value to cancel, or a _replacement query_
+ *   to apply instead of the computed one.
  * - `onRemove` is boolean only.
  *
  * @group Query Tools
@@ -40,6 +42,7 @@ export interface QueryActionCallbacks {
   onMoveGroup?: (...args: any[]) => RuleGroupTypeAny | boolean;
   onGroupRule?: (...args: any[]) => RuleGroupTypeAny | boolean;
   onGroupGroup?: (...args: any[]) => RuleGroupTypeAny | boolean;
+  onUngroup?: (...args: any[]) => RuleGroupTypeAny | boolean;
 }
 
 /**
@@ -89,7 +92,7 @@ export interface QueryActionsConfig extends QueryActionCallbacks {
 }
 
 /**
- * The six mutations a query builder performs. Each takes the current query and returns the next
+ * The seven mutations a query builder performs. Each takes the current query and returns the next
  * one, or `undefined` when the mutation was aborted—because the target is disabled, a
  * confirmation callback declined, or a depth limit was reached.
  *
@@ -114,10 +117,11 @@ export interface QueryActionHandlers {
     clone?: boolean,
     context?: any
   ) => any;
+  ungroupRuleGroup: (query: any, path: Path, context?: any) => any;
 }
 
 /**
- * Builds the query builder's six mutation handlers as pure functions of the current query.
+ * Builds the query builder's seven mutation handlers as pure functions of the current query.
  *
  * This is the framework-agnostic core of the action handlers in `useQueryBuilderSchema`. It owns
  * the policy that surrounds the query tools—disabled gating, the confirmation callback protocol,
@@ -149,6 +153,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
     onMoveGroup,
     onGroupRule,
     onGroupGroup,
+    onUngroup,
     onLog,
   } = config;
 
@@ -336,6 +341,34 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
 
       const newQuery = isRuleGroup(callbackResult) ? callbackResult : nextQuery;
       log({ type: LogType.group, query, newQuery, sourcePath, targetPath, clone });
+      return newQuery;
+    },
+
+    ungroupRuleGroup: (query, path, context) => {
+      if (blocked(query, path)) {
+        log({ type: LogType.pathDisabled, path, query });
+        return undefined;
+      }
+
+      // A path that no longer resolves isn't caught by the guards, so confirm it before
+      // computing anything or handing a null node to the callback.
+      const ruleGroup = findPath(path, query);
+      if (!isRuleGroup(ruleGroup)) return undefined;
+
+      // Computed before the callback so it can inspect the prospective result, e.g. to decline
+      // when the group's `not` property would otherwise be discarded.
+      const nextQuery = ungroup(query, path, { freeze });
+      const callbackResult = onUngroup
+        ? onUngroup(ruleGroup, path, query, nextQuery, context)
+        : true;
+
+      if (!callbackResult) {
+        log({ type: LogType.onUngroupFalse, ruleGroup, path, query, nextQuery });
+        return undefined;
+      }
+
+      const newQuery = isRuleGroup(callbackResult) ? callbackResult : nextQuery;
+      log({ type: LogType.ungroup, query, newQuery, path, ruleGroup });
       return newQuery;
     },
   };

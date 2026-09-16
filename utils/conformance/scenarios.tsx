@@ -123,11 +123,13 @@ export const scenarios: Scenario[] = [
   {
     name: 'allControls',
     description:
-      'Every optional control turned on: not-toggle, clone, lock, shift, and mute buttons.',
+      'Every optional control turned on: not-toggle, clone, ungroup, lock, shift, and mute ' +
+      'buttons.',
     props: {
       fields,
       showNotToggle: true,
       showCloneButtons: true,
+      showUngroupButtons: true,
       showLockButtons: true,
       showShiftActions: true,
       showMuteButtons: true,

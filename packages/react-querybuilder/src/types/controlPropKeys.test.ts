@@ -67,6 +67,7 @@ type _ruleGroupBodyElements = Assert<PropsMatch<'ruleGroupBodyElements', UseRule
 type _ruleGroupHeaderElements = Assert<PropsMatch<'ruleGroupHeaderElements', UseRuleGroup>>;
 type _shiftActions = Assert<PropsMatch<'shiftActions', ShiftActionsProps>>;
 type _undoRedoActions = Assert<PropsMatch<'undoRedoActions', UndoRedoActionsProps>>;
+type _ungroupAction = Assert<PropsMatch<'ungroupAction', ActionProps>>;
 type _valueEditor = Assert<PropsMatch<'valueEditor', ValueEditorProps>>;
 type _valueSelector = Assert<PropsMatch<'valueSelector', ValueSelectorProps>>;
 type _valueSourceSelector = Assert<PropsMatch<'valueSourceSelector', ValueSourceSelectorProps>>;

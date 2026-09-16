@@ -40,6 +40,7 @@ export const defaultNativeControlElements: Controls<FullField, string> = {
   shiftActions: NativeShiftActions,
   // Undo/redo requires the history recorder from `react-querybuilder/history`.
   undoRedoActions: null,
+  ungroupAction: NativeActionElement,
   valueEditor: NativeValueEditor,
   valueSelector: NativeValueSelector,
   valueSourceSelector: NativeValueSelector,

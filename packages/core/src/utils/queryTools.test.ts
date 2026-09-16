@@ -27,6 +27,8 @@ import {
   moveInPlace,
   remove,
   removeInPlace,
+  ungroup,
+  ungroupInPlace,
   update,
   updateInPlace,
 } from './queryTools';
@@ -116,6 +118,17 @@ describe('removeInPlace', () => {
       rules: [{ field: 'f1', operator: '=', value: 'v1' }],
     };
     const result = removeInPlace(original, [0]);
+    expect(original).toBe(result);
+  });
+});
+
+describe('ungroupInPlace', () => {
+  it('mutates the original query', () => {
+    const original: DefaultRuleGroupType = {
+      combinator: and,
+      rules: [{ combinator: or, rules: [r1] }],
+    };
+    const result = ungroupInPlace(original, [0]);
     expect(original).toBe(result);
   });
 });
@@ -1374,6 +1387,150 @@ describe('group', () => {
   });
 });
 
+describe('ungroup', () => {
+  describe.each(testLoop)('standard rule groups by %s', (_, p) => {
+    testQT(
+      'promotes the rules of the only subgroup',
+      ungroup({ combinator: and, rules: [id({ combinator: or, rules: [r1, r2] }, '[0]')] }, p([0])),
+      { combinator: and, rules: [r1, r2] }
+    );
+    testQT(
+      'promotes a first subgroup',
+      ungroup(
+        { combinator: and, rules: [id({ combinator: or, rules: [r1, r2] }, '[0]'), r3] },
+        p([0])
+      ),
+      { combinator: and, rules: [r1, r2, r3] }
+    );
+    testQT(
+      'promotes a middle subgroup',
+      ungroup(
+        { combinator: and, rules: [r1, id({ combinator: or, rules: [r2, r3] }, '[1]'), r4] },
+        p([1])
+      ),
+      { combinator: and, rules: [r1, r2, r3, r4] }
+    );
+    testQT(
+      'promotes a last subgroup',
+      ungroup(
+        { combinator: and, rules: [r1, id({ combinator: or, rules: [r2, r3] }, '[1]')] },
+        p([1])
+      ),
+      { combinator: and, rules: [r1, r2, r3] }
+    );
+    testQT(
+      'discards `not`, `muted`, and `disabled`',
+      ungroup(
+        {
+          combinator: and,
+          rules: [id({ combinator: or, not: true, muted: true, rules: [r1, r2] }, '[0]')],
+        },
+        p([0])
+      ),
+      { combinator: and, rules: [r1, r2] }
+    );
+    testQT(
+      'preserves nested groups',
+      ungroup(
+        {
+          combinator: and,
+          rules: [
+            id({ combinator: or, rules: [r1, { combinator: and, rules: [r2, r3] }] }, '[0]'),
+            r4,
+          ],
+        },
+        p([0])
+      ),
+      { combinator: and, rules: [r1, { combinator: and, rules: [r2, r3] }, r4] }
+    );
+    testQT(
+      'ungroups a nested subgroup',
+      ungroup(
+        {
+          combinator: and,
+          rules: [
+            { combinator: or, rules: [r1, id({ combinator: and, rules: [r2, r3] }, '[0,1]')] },
+          ],
+        },
+        p([0, 1])
+      ),
+      { combinator: and, rules: [{ combinator: or, rules: [r1, r2, r3] }] }
+    );
+    testQT(
+      'removes an empty subgroup',
+      ungroup({ combinator: and, rules: [r1, id(rg1, '[1]'), r2] }, p([1])),
+      { combinator: and, rules: [r1, r2] }
+    );
+    testQT('does not ungroup the root group', ungroup(rg1wID, p([])), rg1wID, true);
+    testQT('does not ungroup a rule', ungroup(rg3wIDs, p([0])), rg3wIDs, true);
+  });
+
+  describe.each(testLoop)('independent combinators by %s', (_, p) => {
+    testQT(
+      'preserves alternation for a middle subgroup',
+      ungroup({ rules: [r1, and, id({ rules: [r2, or, r3] }, '[2]'), and, r4] }, p([2])),
+      { rules: [r1, and, r2, or, r3, and, r4] }
+    );
+    testQT(
+      'preserves alternation for a first subgroup',
+      ungroup({ rules: [id({ rules: [r1, or, r2] }, '[0]'), and, r3] }, p([0])),
+      { rules: [r1, or, r2, and, r3] }
+    );
+    testQT(
+      'preserves alternation for a last subgroup',
+      ungroup({ rules: [r1, and, id({ rules: [r2, or, r3] }, '[2]')] }, p([2])),
+      { rules: [r1, and, r2, or, r3] }
+    );
+    testQT(
+      'promotes a lone subgroup',
+      ungroup({ rules: [id({ rules: [r1, or, r2] }, '[0]')] }, p([0])),
+      { rules: [r1, or, r2] }
+    );
+    testQT(
+      'removes an empty first subgroup along with its combinator',
+      ungroup({ rules: [id(rgic1, '[0]'), and, r1] }, p([0])),
+      { rules: [r1] }
+    );
+    testQT(
+      'removes an empty middle subgroup along with its combinator',
+      ungroup({ rules: [r1, and, id(rgic1, '[2]'), or, r2] }, p([2])),
+      { rules: [r1, or, r2] }
+    );
+    testQT('removes a lone empty subgroup', ungroup({ rules: [id(rgic1, '[0]')] }, p([0])), {
+      rules: [],
+    });
+    testQT('does not ungroup an independent combinator', ungroup(rgic2, [1]), rgic2, true);
+  });
+
+  describe.each(testLoop)('on bad %s', (_, p) => {
+    testQT('bails out', ungroup(rgNested, p(badPath)), rgNested, true);
+  });
+
+  it('respects `disabled` guards', () => {
+    const q: DefaultRuleGroupType = {
+      combinator: and,
+      rules: [{ combinator: or, disabled: true, rules: [r1, r2] }],
+    };
+    expect(ungroup(q, [0], { respectDisabled: true })).toBe(q);
+    expect(ungroup(q, [0], { queryDisabled: true })).toBe(q);
+    expect(ungroup(q, [0], { respectDisabled: true, disabledPaths: [[0]] })).toBe(q);
+    expect(stripIDs(ungroup(q, [0]))).toEqual({ combinator: and, rules: [r1, r2] });
+  });
+
+  it('does not freeze the result when `freeze` is false', () => {
+    const result = ungroup(rgNested, [0], { freeze: false });
+    expect(Object.isFrozen(result)).toBe(false);
+  });
+
+  it('should have the right types', () => {
+    const _newQuery = ungroup({ ...rgNested }, [0]);
+    const _newICQuery = ungroup({ ...rgic1 }, [0]);
+
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+  });
+});
+
 describe('draft handling', () => {
   it('handles draft objects when cloning in move', () => {
     const query: DefaultRuleGroupTypeAny = pathsAsIDs({
@@ -1668,6 +1825,55 @@ describe('onAbort', () => {
       expect(group(rg3, [0], [5], { onAbort })).toBe(rg3);
       expect(reasons()).toEqual(['target-not-found']);
       expect(onAbort.mock.calls[0][0]).toMatchObject({ pathOrID: [5] });
+    });
+  });
+
+  describe('ungroup', () => {
+    it('reports an unknown id', () => {
+      const { onAbort, reasons } = abort();
+      expect(ungroup(rgNested, 'nope', { onAbort })).toBe(rgNested);
+      expect(reasons()).toEqual(['target-not-found']);
+      expect(onAbort.mock.calls[0][0]).toMatchObject({ operation: 'ungroup', pathOrID: 'nope' });
+    });
+
+    it('reports ungrouping of the root group', () => {
+      const { onAbort, reasons } = abort();
+      expect(ungroup(rgNested, [], { onAbort })).toBe(rgNested);
+      expect(reasons()).toEqual(['root-not-allowed']);
+    });
+
+    it('reports an unresolvable path', () => {
+      const { onAbort, reasons } = abort();
+      expect(ungroup(rgNested, badPath, { onAbort })).toBe(rgNested);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports an independent combinator target', () => {
+      const { onAbort, reasons } = abort();
+      expect(ungroup(rgic2, [1], { onAbort })).toBe(rgic2);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a rule target', () => {
+      const { onAbort, reasons } = abort();
+      expect(ungroup(rg3, [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-a-group']);
+    });
+
+    it('reports a disabled target', () => {
+      const { onAbort, reasons } = abort();
+      const q: DefaultRuleGroupType = {
+        combinator: and,
+        rules: [{ combinator: or, disabled: true, rules: [r1] }],
+      };
+      expect(ungroup(q, [0], { onAbort, respectDisabled: true })).toBe(q);
+      expect(reasons()).toEqual(['target-disabled']);
+    });
+
+    it('is not called on success', () => {
+      const { onAbort } = abort();
+      ungroup(rgNested, [0], { onAbort });
+      expect(onAbort).not.toHaveBeenCalled();
     });
   });
 });

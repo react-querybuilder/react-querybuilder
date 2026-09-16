@@ -55,6 +55,10 @@ export interface Classnames {
    */
   cloneGroup: Classname;
   /**
+   * Classnames applied to the `<button>` to ungroup a RuleGroup.
+   */
+  ungroup: Classname;
+  /**
    * Classnames applied to the `<button>` to remove a RuleGroup.
    */
   removeGroup: Classname;
@@ -278,6 +282,7 @@ export interface BaseTranslations<LabelType = string> {
   notToggle: BaseTranslationWithLabel<LabelType>;
   cloneRule: BaseTranslationWithLabel<LabelType>;
   cloneRuleGroup: BaseTranslationWithLabel<LabelType>;
+  ungroupRuleGroup: BaseTranslationWithLabel<LabelType>;
   shiftActionUp: BaseTranslationWithLabel<LabelType>;
   shiftActionDown: BaseTranslationWithLabel<LabelType>;
   undo: BaseTranslationWithLabel<LabelType>;
@@ -319,6 +324,7 @@ export interface QueryActions {
   onRuleRemove(path: Path): void;
   moveRule(oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any): void;
   groupRule(sourcePath: Path, targetPath: Path, clone?: boolean, context?: any): void;
+  ungroupRuleGroup(path: Path, context?: any): void;
 }
 /* oxlint-enable typescript/no-explicit-any */
 
@@ -389,6 +395,13 @@ export interface QueryBuilderFlags {
    * @default false
    */
   showCloneButtons?: boolean;
+  /**
+   * Show the "Ungroup" button on each non-root group, which replaces the group with its
+   * own rules in the parent group.
+   *
+   * @default false
+   */
+  showUngroupButtons?: boolean;
   /**
    * Show the "Lock rule" and "Lock group" buttons.
    *

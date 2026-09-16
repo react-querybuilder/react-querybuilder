@@ -149,6 +149,45 @@ describe('cloneGroup', () => {
   });
 });
 
+describe('ungroup', () => {
+  it('calls ungroupRuleGroup from the schema with expected values', async () => {
+    const ungroupRuleGroup = vi.fn();
+    render(
+      <RuleGroup {...getRuleGroupProps({ showUngroupButtons: true }, { ungroupRuleGroup })} />
+    );
+
+    await user.click(screen.getByText(t.ungroupRuleGroup.label));
+    expect(ungroupRuleGroup).toHaveBeenCalledWith([0]);
+  });
+
+  it('does not call ungroupRuleGroup when disabled', async () => {
+    const ungroupRuleGroup = vi.fn();
+    render(
+      <RuleGroup
+        {...getRuleGroupProps({ showUngroupButtons: true }, { ungroupRuleGroup })}
+        disabled
+      />
+    );
+
+    await user.click(screen.getByText(t.ungroupRuleGroup.label));
+    expect(ungroupRuleGroup).not.toHaveBeenCalled();
+  });
+});
+
+describe('showUngroupButtons', () => {
+  it('does not display the ungroup button by default', () => {
+    const { container } = render(
+      <RuleGroup {...getRuleGroupProps({ showUngroupButtons: false })} />
+    );
+    expect(container.querySelectorAll(`.${sc.ungroup}`)).toHaveLength(0);
+  });
+
+  it('has the correct classNames', () => {
+    render(<RuleGroup {...getRuleGroupProps({ showUngroupButtons: true })} />);
+    expect(screen.getByTestId(TestID.ungroup)).toHaveClass(sc.ungroup, 'custom-ungroup-class');
+  });
+});
+
 describe('shiftRuleUp/Down', () => {
   it('calls moveRule with the right params', async () => {
     const moveRule = vi.fn();

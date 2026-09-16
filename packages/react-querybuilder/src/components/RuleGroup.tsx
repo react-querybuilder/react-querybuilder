@@ -56,6 +56,7 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
     const addRule = useStopEventPropagation(rg.addRule);
     const addGroup = useStopEventPropagation(rg.addGroup);
     const cloneGroup = useStopEventPropagation(rg.cloneGroup);
+    const ungroup = useStopEventPropagation(rg.ungroup);
     const toggleLockGroup = useStopEventPropagation(rg.toggleLockGroup);
     const toggleMuteGroup = useStopEventPropagation(rg.toggleMuteGroup);
     const removeGroup = useStopEventPropagation(rg.removeGroup);
@@ -67,6 +68,7 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
         addRule,
         addGroup,
         cloneGroup,
+        ungroup,
         toggleLockGroup,
         toggleMuteGroup,
         removeGroup,
@@ -77,6 +79,7 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
         addRule,
         addGroup,
         cloneGroup,
+        ungroup,
         toggleLockGroup,
         toggleMuteGroup,
         removeGroup,
@@ -128,6 +131,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
         addRuleAction: AddRuleActionControlElement,
         addGroupAction: AddGroupActionControlElement,
         cloneGroupAction: CloneGroupActionControlElement,
+        ungroupAction: UngroupActionControlElement,
         lockGroupAction: LockGroupActionControlElement,
         muteGroupAction: MuteGroupActionControlElement,
         removeGroupAction: RemoveGroupActionControlElement,
@@ -280,6 +284,19 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           title={rg.translations.cloneRuleGroup.title}
           className={rg.classNames.cloneGroup}
           handleOnClick={rg.cloneGroup}
+          rules={rg.ruleGroup.rules}
+          ruleOrGroup={rg.ruleGroup}
+        />
+      )}
+      {rg.schema.showUngroupButtons && rg.path.length > 0 && (
+        <UngroupActionControlElement
+          key={TestID.ungroup}
+          {...commonSubcomponentProps}
+          testID={TestID.ungroup}
+          label={rg.translations.ungroupRuleGroup.label}
+          title={rg.translations.ungroupRuleGroup.title}
+          className={rg.classNames.ungroup}
+          handleOnClick={rg.ungroup}
           rules={rg.ruleGroup.rules}
           ruleOrGroup={rg.ruleGroup}
         />
@@ -481,12 +498,14 @@ export interface UseRuleGroup extends RuleGroupProps {
     | 'addRule'
     | 'addGroup'
     | 'cloneGroup'
+    | 'ungroup'
     | 'lockGroup'
     | 'muteGroup'
     | 'removeGroup'
     | 'body'
   >;
   cloneGroup: ActionElementEventHandler;
+  ungroup: ActionElementEventHandler;
   onCombinatorChange: ValueChangeEventHandler;
   onGroupAdd: (group: RuleGroupTypeAny, parentPath: Path, context?: any) => void;
   onIndependentCombinatorChange: (value: any, index: number, context?: any) => void;
@@ -528,7 +547,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       getRuleGroupClassname,
       suppressStandardClassnames,
     },
-    actions: { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule },
+    actions: { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule, ungroupRuleGroup },
     disabled: disabledProp,
     parentDisabled,
     parentMuted,
@@ -650,6 +669,12 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     }
   }, [disabled, moveRule, path]);
 
+  const ungroup: ActionElementEventHandler = useCallback(() => {
+    if (!disabled) {
+      ungroupRuleGroup(path);
+    }
+  }, [disabled, path, ungroupRuleGroup]);
+
   const shiftGroupUp = useCallback(
     // oxlint-disable-next-line typescript/no-explicit-any
     (event?: MouseEvent, _context?: any) => {
@@ -741,6 +766,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     accessibleDescription,
     classNames,
     cloneGroup,
+    ungroup,
     combinator,
     disabled,
     dragMonitorId,

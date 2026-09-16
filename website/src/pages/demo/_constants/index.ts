@@ -16,6 +16,7 @@ export const defaultOptions = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showCloneButtons: false,
+  showUngroupButtons: false,
   showLockButtons: false,
   showMuteButtons: false,
   resetOnFieldChange: true,
@@ -45,6 +46,7 @@ export const optionOrder: DemoOption[] = [
   'showCombinatorsBetweenRules',
   'showNotToggle',
   'showCloneButtons',
+  'showUngroupButtons',
   'showLockButtons',
   'showMuteButtons',
   'showShiftActions',
@@ -95,6 +97,11 @@ export const optionsMetadata = {
     link: '/docs/components/querybuilder#showclonebuttons',
     label: 'Show clone buttons',
     title: 'Display buttons to clone rules and groups',
+  },
+  showUngroupButtons: {
+    link: '/docs/components/querybuilder#showungroupbuttons',
+    label: 'Show ungroup buttons',
+    title: 'Display a button on each subgroup to replace it with its own rules',
   },
   resetOnFieldChange: {
     link: '/docs/components/querybuilder#resetonfieldchange',

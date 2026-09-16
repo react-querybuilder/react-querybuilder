@@ -439,6 +439,7 @@ export const getCodeString = (
     getPropText('resetOnFieldChange'),
     getPropText('resetOnOperatorChange'),
     getPropText('showCloneButtons'),
+    getPropText('showUngroupButtons'),
     getPropText('showCombinatorsBetweenRules'),
     getPropText('showLockButtons'),
     getPropText('showNotToggle'),

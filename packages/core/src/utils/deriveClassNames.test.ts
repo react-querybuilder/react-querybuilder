@@ -238,6 +238,7 @@ describe('deriveRuleGroupClassNames', () => {
         'shiftActions',
         'undoAction',
         'undoRedoActions',
+        'ungroup',
       ].toSorted()
     );
   });

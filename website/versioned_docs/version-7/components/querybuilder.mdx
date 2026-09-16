@@ -148,6 +148,7 @@ function App() {
 | `addGroup`       | each <code>&lt;button&gt;</code> that adds a group                                         |
 | `cloneRule`      | each <code>&lt;button&gt;</code> that clones a rule                                        |
 | `cloneGroup`     | each <code>&lt;button&gt;</code> that clones a group                                       |
+| `ungroup`        | each <code>&lt;button&gt;</code> that ungroups a group                                     |
 | `removeGroup`    | each <code>&lt;button&gt;</code> that removes a group                                      |
 | `lockRule`       | each <code>&lt;button&gt;</code> that locks/disables a rule                                |
 | `lockGroup`      | each <code>&lt;button&gt;</code> that locks/disables a group                               |
@@ -373,6 +374,30 @@ Called before a group is moved or shifted. Return:
 2. `false` - Cancel the move/shift
 3. New query object (based on `query` or `nextQuery` parameters)
 
+### `onUngroup`
+
+```
+<RG extends RuleGroupTypeAny>(
+  ruleGroup: RG,
+  path: Path,
+  query: RG,
+  nextQuery: RG,
+  context?: any
+) => RG | boolean;
+```
+
+Called before a group is replaced by its own rules in the parent group (see [`showUngroupButtons`](#showungroupbuttons)). Return:
+
+1. `true` - Allow the ungroup
+2. `false` - Cancel the ungroup
+3. New query object (based on `query` or `nextQuery` parameters)
+
+Since ungrouping discards the group's `not` property, this is the place to intercept negated groups:
+
+```ts
+onUngroup={ruleGroup => !ruleGroup.not}
+```
+
 ### `onRemove`
 
 `<RG extends RuleGroupTypeAny>(ruleOrGroup: RG | RuleType, path: Path, query: RG, context?: any) => boolean`
@@ -408,6 +433,12 @@ Displays "Not" (inversion) toggle switch for each rule group.
 `boolean` (default `false`) _<DemoLink option="showCloneButtons" />_
 
 Displays "clone" button on each group header and rule. Clicking creates an exact duplicate (with new `id`) positioned immediately after the original.
+
+### `showUngroupButtons`
+
+`boolean` (default `false`) _<DemoLink option="showUngroupButtons" />_
+
+Displays an "Ungroup" button on each group header except the root. Clicking it replaces the group with its own rules in the parent group, discarding the group's `combinator`, `not`, `id`, `muted`, and `disabled` properties. An empty group is simply removed. Intercept or cancel the operation with [`onUngroup`](#onungroup).
 
 ### `showLockButtons`
 
