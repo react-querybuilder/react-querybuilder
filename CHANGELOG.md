@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.24.0] - 2026-09-15
+
 ### Added
 
 - [#1099] New "ungroup" operation, which replaces a group with its own rules in the parent group.
@@ -2528,7 +2530,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.0...HEAD
+[v8.24.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.1...v8.24.0
 [v8.23.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.0...v8.23.1
 [v8.23.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.4...v8.23.0
 [v8.22.5]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.4...v8.22.5
