@@ -90,7 +90,7 @@ describe('onCombinatorChange', () => {
       container.querySelector(`.${sc.combinators}`)!,
       'any_combinator_value'
     );
-    expect(onPropChange).toHaveBeenCalledWith('combinator', 'any_combinator_value', [0]);
+    expect(onPropChange).toHaveBeenCalledWith('combinator', 'any_combinator_value', [0], undefined);
   });
 });
 
@@ -100,7 +100,7 @@ describe('onNotToggleChange', () => {
     render(<RuleGroup {...getRuleGroupProps({ showNotToggle: true }, { onPropChange })} />);
 
     await user.click(screen.getByLabelText('Not'));
-    expect(onPropChange).toHaveBeenCalledWith('not', true, [0]);
+    expect(onPropChange).toHaveBeenCalledWith('not', true, [0], undefined);
   });
 });
 
@@ -145,7 +145,7 @@ describe('cloneGroup', () => {
     render(<RuleGroup {...getRuleGroupProps({ showCloneButtons: true }, { moveRule })} />);
 
     await user.click(screen.getByText(t.cloneRuleGroup.label));
-    expect(moveRule).toHaveBeenCalledWith([0], [1], true);
+    expect(moveRule).toHaveBeenCalledWith([0], [1], true, undefined);
   });
 });
 
@@ -157,7 +157,7 @@ describe('ungroup', () => {
     );
 
     await user.click(screen.getByText(t.ungroupRuleGroup.label));
-    expect(ungroupRuleGroup).toHaveBeenCalledWith([0]);
+    expect(ungroupRuleGroup).toHaveBeenCalledWith([0], undefined);
   });
 
   it('does not call ungroupRuleGroup when disabled', async () => {
@@ -216,20 +216,20 @@ describe('shiftRuleUp/Down', () => {
     rerender(<RuleGroup {...getRuleGroupProps({ showShiftActions: true }, { moveRule })} />);
 
     await user.click(screen.getByText(t.shiftActionUp.label));
-    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', false);
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', false, undefined);
 
     await user.click(screen.getByText(t.shiftActionDown.label));
-    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', false);
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', false, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionUp.label));
     await user.keyboard('{/Alt}');
-    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', true);
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', true, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionDown.label));
     await user.keyboard('{/Alt}');
-    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', true);
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', true, undefined);
   });
 });
 
@@ -350,7 +350,7 @@ describe('independent combinators', () => {
     );
 
     await user.selectOptions(screen.getByTitle(t.combinators.title), [screen.getByText('OR')]);
-    expect(onPropChange).toHaveBeenCalledWith('combinator', 'or', [0, 1]);
+    expect(onPropChange).toHaveBeenCalledWith('combinator', 'or', [0, 1], undefined);
   });
 
   it('clones independent combinator groups', async () => {
@@ -365,7 +365,7 @@ describe('independent combinators', () => {
     );
 
     await user.click(screen.getByText(t.cloneRuleGroup.label));
-    expect(moveRule).toHaveBeenCalledWith([0], [1], true);
+    expect(moveRule).toHaveBeenCalledWith([0], [1], true, undefined);
   });
 });
 
@@ -478,7 +478,7 @@ describe('lock buttons', () => {
     render(<RuleGroup {...getRuleGroupProps({ showLockButtons: true }, { onPropChange })} />);
 
     await user.click(screen.getByTestId(TestID.lockGroup));
-    expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
+    expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0], undefined);
   });
 
   it('unsets the disabled property', async () => {
@@ -488,7 +488,7 @@ describe('lock buttons', () => {
     );
 
     await user.click(screen.getByTestId(TestID.lockGroup));
-    expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
+    expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0], undefined);
   });
 });
 
