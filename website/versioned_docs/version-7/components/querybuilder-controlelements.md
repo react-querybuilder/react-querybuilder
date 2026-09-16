@@ -47,6 +47,7 @@ The following control overrides are supported via the `Controls` interface. Sett
 | [`ruleGroupHeaderElements`](#rulegroupheaderelements) | <code>React.ComponentType&lt;RuleGroupProps &amp; ReturnType&lt;typeof useRuleGroup&gt;&gt;</code>                       |
 | [`shiftActions`](#shiftactions)                       | <code>React.ComponentType&lt;ShiftActionsProps&gt; \| null</code>                                                        |
 | [`undoRedoActions`](#undoredoactions)                 | <code>React.ComponentType&lt;UndoRedoActionsProps&gt; \| null</code>                                                     |
+| [`ungroupAction`](#ungroupaction)                     | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`valueEditor`](#valueeditor)                         | <code>React.ComponentType&lt;ValueEditorProps&gt; \| null</code>                                                         |
 | [`valueSelector`](#valueselector)                     | <code>React.ComponentType&lt;ValueSelectorProps&gt;</code>                                                               |
 | [`valueSourceSelector`](#valuesourceselector)         | <code>React.ComponentType&lt;ValueSourceSelectorProps&gt; \| null</code>                                                 |
@@ -65,6 +66,7 @@ The base component for all button-type controls. Defaults to [`ActionElement`](.
 - [`muteRuleAction`](#muteruleaction)
 - [`removeGroupAction`](#removegroupaction)
 - [`removeRuleAction`](#removeruleaction)
+- [`ungroupAction`](#ungroupaction)
 
 For example, this:
 
@@ -87,6 +89,7 @@ For example, this:
     muteRuleAction: MyAwesomeButton
     removeGroupAction: MyAwesomeButton
     removeRuleAction: MyAwesomeButton
+    ungroupAction: MyAwesomeButton
   }}
 />
 ```
@@ -651,6 +654,30 @@ Per the `UndoRedoActionsProps` interface:
 | `disabled`    | `boolean`                                | Whether the query builder is disabled                                           |
 | `path`        | `Path`                                   | [Path](../tips/path) of the group (always `[]`)                                 |
 | `schema`      | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                     |
+
+</details>
+
+### `ungroupAction`
+
+Replaces the current group with its own rules in the parent group. Only rendered on non-root groups when [`showUngroupButtons`](./querybuilder#showungroupbuttons) is `true`. Defaults to [`ActionElement`](./actionelement).
+
+<details>
+<summary>Props for `ungroupAction`</summary>
+
+Per the `ActionProps` interface:
+
+| Prop            | Type                                     | Description                                                  |
+| --------------- | ---------------------------------------- | ------------------------------------------------------------ |
+| `label`         | `ReactNode`                              | `translations.ungroupRuleGroup.label`, e.g. "⊟"              |
+| `title`         | `string`                                 | `translations.ungroupRuleGroup.title`, e.g. "Ungroup"        |
+| `className`     | `string`                                 | CSS `classNames` to be applied                               |
+| `handleOnClick` | `(e: React.MouseEvent) => void`          | Ungroups this group                                          |
+| `rules`         | `RuleOrGroupArray`                       | The `rules` array for this group                             |
+| `ruleOrGroup`   | `RuleGroupTypeAny`                       | This group                                                   |
+| `level`         | `number`                                 | The `level` of this group                                    |
+| `context`       | `any`                                    | Container for custom props that are passed to all components |
+| `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
+| `disabled`      | `boolean`                                | Whether this group is disabled/locked                        |
 
 </details>
 

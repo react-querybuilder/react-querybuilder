@@ -3,6 +3,7 @@ import type ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import type DragIndicator from '@mui/icons-material/DragIndicator';
 import type KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import type KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import type LayersClearIcon from '@mui/icons-material/LayersClear';
 import type LockIcon from '@mui/icons-material/Lock';
 import type LockOpenIcon from '@mui/icons-material/LockOpen';
 import type RedoIcon from '@mui/icons-material/Redo';
@@ -36,6 +37,7 @@ export interface RQBMaterialComponents {
   KeyboardArrowDownIcon: typeof KeyboardArrowDownIcon;
   KeyboardArrowUpIcon: typeof KeyboardArrowUpIcon;
   ListSubheader: typeof ListSubheader;
+  LayersClearIcon: typeof LayersClearIcon;
   LockIcon: typeof LockIcon;
   LockOpenIcon: typeof LockOpenIcon;
   MenuItem: typeof MenuItem;

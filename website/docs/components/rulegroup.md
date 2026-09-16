@@ -26,6 +26,7 @@ This component renders the following elements in this order:
 - Add rule button
 - Add group button
 - Clone group button[^5]
+- Ungroup button[^9]
 - Lock group button[^6]
 - Remove group button[^7]
 
@@ -58,3 +59,5 @@ The `showCombinatorsBetweenRules` prop is ignored if the query is using independ
 [^7]: Only rendered if the group is not the query root.
 
 [^8]: The [`inlineCombinator`](./querybuilder-controlelements#inlinecombinator) component in turn renders the configured [`combinatorSelector`](./querybuilder-controlelements#combinatorselector).
+
+[^9]: Only rendered if [`showUngroupButtons`](./querybuilder#showungroupbuttons) is `true` and the group is not the query root.

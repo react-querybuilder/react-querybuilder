@@ -13,6 +13,7 @@ export type DemoOption =
   | 'showShiftActions'
   | 'showUndoRedo'
   | 'showCloneButtons'
+  | 'showUngroupButtons'
   | 'showLockButtons'
   | 'showMuteButtons'
   | 'resetOnFieldChange'

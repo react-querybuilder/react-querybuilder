@@ -19,6 +19,14 @@ const ContentCopyIconWrapper = () => {
   const { ContentCopyIcon } = muiComponents;
   return <ContentCopyIcon />;
 };
+const LayersClearIconWrapper = () => {
+  const muiComponents = React.useContext(RQBMaterialContext);
+  if (!muiComponents) {
+    return defaultTranslations.ungroupRuleGroup.label;
+  }
+  const { LayersClearIcon } = muiComponents;
+  return <LayersClearIcon />;
+};
 const LockIconWrapper = () => {
   const muiComponents = React.useContext(RQBMaterialContext);
   if (!muiComponents) {
@@ -74,6 +82,7 @@ export const materialTranslations: Pick<
   | 'removeRule'
   | 'cloneRule'
   | 'cloneRuleGroup'
+  | 'ungroupRuleGroup'
   | 'lockGroup'
   | 'lockRule'
   | 'lockGroupDisabled'
@@ -87,6 +96,7 @@ export const materialTranslations: Pick<
   removeRule: { label: <CloseIconWrapper /> },
   cloneRule: { label: <ContentCopyIconWrapper /> },
   cloneRuleGroup: { label: <ContentCopyIconWrapper /> },
+  ungroupRuleGroup: { label: <LayersClearIconWrapper /> },
   lockGroup: { label: <LockOpenIconWrapper /> },
   lockRule: { label: <LockOpenIconWrapper /> },
   lockGroupDisabled: { label: <LockIconWrapper /> },

@@ -116,6 +116,7 @@ export const defaultTranslations: BaseTranslationsFull = {
   notToggle: { label: 'Not', title: 'Invert this group' } as const,
   cloneRule: { label: '⧉', title: 'Clone rule' } as const,
   cloneRuleGroup: { label: '⧉', title: 'Clone group' } as const,
+  ungroupRuleGroup: { label: '⊟', title: 'Ungroup' } as const,
   shiftActionUp: { label: '˄', title: 'Shift up' } as const,
   shiftActionDown: { label: '˅', title: 'Shift down' } as const,
   undo: { label: '↶', title: 'Undo' } as const,
@@ -333,6 +334,7 @@ export const standardClassnames = {
   addGroup: 'ruleGroup-addGroup',
   cloneRule: 'rule-cloneRule',
   cloneGroup: 'ruleGroup-cloneGroup',
+  ungroup: 'ruleGroup-ungroup',
   removeGroup: 'ruleGroup-remove',
   notToggle: 'ruleGroup-notToggle',
   rule: 'rule',
@@ -389,6 +391,7 @@ export const defaultControlClassnames: Classnames = {
   addGroup: '',
   cloneRule: '',
   cloneGroup: '',
+  ungroup: '',
   removeGroup: '',
   notToggle: '',
   rule: '',
@@ -452,6 +455,7 @@ export const TestID = {
   addGroup: 'add-group',
   removeGroup: 'remove-group',
   cloneGroup: 'clone-group',
+  ungroup: 'ungroup',
   cloneRule: 'clone-rule',
   addRule: 'add-rule',
   removeRule: 'remove-rule',
@@ -484,11 +488,13 @@ export const LogType = {
   onMoveRuleFalse: 'onMoveRule callback returned false',
   onMoveGroupFalse: 'onMoveGroup callback returned false',
   onRemoveFalse: 'onRemove callback returned false',
+  onUngroupFalse: 'onUngroup callback returned false',
   add: 'rule or group added',
   remove: 'rule or group removed',
   update: 'rule or group updated',
   move: 'rule or group moved',
   group: 'rule or group grouped with another',
+  ungroup: 'group replaced by its own rules',
 } as const;
 
 /**
@@ -523,6 +529,7 @@ export const queryBuilderFlagDefaults: Required<QueryBuilderFlags> = {
   showNotToggle: false,
   showShiftActions: false,
   showUndoRedo: false,
+  showUngroupButtons: false,
   suppressStandardClassnames: false,
 };
 

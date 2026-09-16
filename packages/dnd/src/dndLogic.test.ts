@@ -47,6 +47,7 @@ const createMockSchema = (overrides: Partial<Schema<any, any>> = {}): Schema<any
 
 const createMockActions = (): QueryActions => ({
   onGroupAdd: vi.fn(),
+  ungroupRuleGroup: vi.fn(),
   onGroupRemove: vi.fn(),
   onPropChange: vi.fn(),
   onRuleAdd: vi.fn(),

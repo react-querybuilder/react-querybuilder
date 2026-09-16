@@ -487,6 +487,35 @@ describe('group', () => {
   });
 });
 
+describe('ungroup', () => {
+  it('promotes a subgroup rules into the parent', () => {
+    const q = new QueryManager(undefined, { fields });
+    q.add({ ...rule(), id: 'r1' })
+      .add({ ...rule('lastName'), id: 'r2' })
+      .group('r2', 'r1')
+      .ungroup([0]);
+    expect(q.getQuery().rules).toHaveLength(2);
+  });
+
+  it('ungroups by id', () => {
+    const q = new QueryManager<RuleGroupType>(
+      {
+        combinator: 'and',
+        rules: [{ id: 'g1', combinator: 'or', rules: [{ ...rule(), id: 'r1' }] }],
+      },
+      { fields }
+    );
+    q.ungroup('g1');
+    expect(q.getQuery().rules).toEqual([expect.objectContaining({ id: 'r1' })]);
+  });
+
+  it('throws in strict mode for a rule target', () => {
+    const q = new QueryManager(undefined, { fields, strict: true });
+    q.add({ ...rule(), id: 'r1' });
+    expect(() => q.ungroup([0])).toThrow(QueryManagerError);
+  });
+});
+
 describe('chaining and immutability', () => {
   it('returns the instance from every mutator', () => {
     const q = new QueryManager(undefined, { fields });
@@ -495,6 +524,7 @@ describe('chaining and immutability', () => {
     expect(q.move([0], 'down')).toBe(q);
     expect(q.insert(rule(), [0])).toBe(q);
     expect(q.group([0], [1])).toBe(q);
+    expect(q.ungroup([0])).toBe(q);
     expect(q.remove([0])).toBe(q);
     expect(q.setQuery({ combinator: 'and', rules: [] })).toBe(q);
   });

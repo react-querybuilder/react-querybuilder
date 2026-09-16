@@ -244,6 +244,8 @@ const publicApi: string[] = [
   'transformQuery',
   'trimIfString',
   'unchangedSignature',
+  'ungroup',
+  'ungroupInPlace',
   'uniqByIdentifier',
   'uniqByName',
   'uniqOptGroups',

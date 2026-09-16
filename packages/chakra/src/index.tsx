@@ -8,6 +8,7 @@ import {
   FaGripVertical,
   FaLock,
   FaLockOpen,
+  FaObjectUngroup,
   FaTimes,
 } from 'react-icons/fa';
 import type {
@@ -45,6 +46,7 @@ export const chakraTranslations: Partial<Translations> = {
   removeGroup: { label: <FaTimes /> },
   removeRule: { label: <FaTimes /> },
   cloneRuleGroup: { label: <FaCopy /> },
+  ungroupRuleGroup: { label: <FaObjectUngroup /> },
   cloneRule: { label: <FaCopy /> },
   lockGroup: { label: <FaLockOpen /> },
   lockRule: { label: <FaLockOpen /> },

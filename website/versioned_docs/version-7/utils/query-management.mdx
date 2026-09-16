@@ -88,6 +88,18 @@ Inserts a rule or group (and an independent combinator if necessary to keep the 
 
 </Details>
 
+### `ungroup`
+
+`(query: RuleGroupTypeAny, pathOrID: Path | string, options: UngroupOptions) => RuleGroupTypeAny`
+
+Replaces the group at the specified `path` or with the given `id` with its own rules in the parent group. The group's `combinator`, `not`, `id`, `muted`, and `disabled` properties are discarded; its rules keep their `id`s. In an independent combinators query, the promoted rules keep their combinators, preserving the parent's alternation. An empty group is simply removed, along with the adjacent independent combinator if one exists.
+
+<Details summary="UngroupOptions">
+
+%importcode /packages/core/src/utils/queryTools.ts#blockName=UngroupOptions
+
+</Details>
+
 ### `group`
 
 `(query: RuleGroupTypeAny, sourcePathOrID: Path | string, targetPathOrID: Path | string, options: GroupOptions) => RuleGroupTypeAny`
@@ -127,8 +139,9 @@ const newQuery = remove(query, 'some-id', {
 | `"target-not-found"`      | The rule/group identified by the given path or `id` does not exist.   |
 | `"parent-not-found"`      | The parent group identified by the given path or `id` does not exist. |
 | `"parent-not-a-group"`    | The given parent path or `id` refers to a rule rather than a group.   |
+| `"target-not-a-group"`    | The given path or `id` refers to a rule rather than a group.          |
 | `"destination-not-found"` | The destination's parent group does not exist.                        |
-| `"root-not-allowed"`      | The root group cannot be removed, moved, or grouped.                  |
+| `"root-not-allowed"`      | The root group cannot be removed, moved, grouped, or ungrouped.       |
 | `"not-a-combinator-slot"` | In an independent combinators query, the target index holds a rule.   |
 | `"same-location"`         | The rule/group is already at the destination. _Not an error._         |
 | `"no-change"`             | The property already has the given value. _Not an error._             |
@@ -241,6 +254,7 @@ Each method below delegates to the query tool of the same name, using the manage
 - `move(oldPathOrID, newPath, options?)`
 - `insert(ruleOrGroup, path, options?)` — Like the `insert` query tool, this accepts a path only, not an `id`.
 - `group(sourcePathOrID, targetPathOrID, options?)`
+- `ungroup(pathOrID, options?)`
 
 :::note
 
@@ -602,10 +616,11 @@ const actions = createQueryActions({
   onMoveGroup,
   onGroupRule,
   onGroupGroup,
+  onUngroup,
   onLog,
 });
 
-// { addRule, addGroup, propChange, removeRuleOrGroup, moveRule, groupRule }
+// { addRule, addGroup, propChange, removeRuleOrGroup, moveRule, groupRule, ungroupRuleGroup }
 ```
 
 This is the policy that surrounds the [query tools](#query-tools)—disabled gating, the confirmation callback protocol, depth limits, and debug logging. An implementation supplies only its own storage: read the current query, call the action, apply a non-`undefined` result.
@@ -621,9 +636,10 @@ The confirmation callbacks have three distinct return contracts:
 | ---------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `onAddRule`, `onAddGroup`                                  | `true` to proceed, falsy to cancel, or a **replacement rule/group** to add instead |
 | `onMoveRule`, `onMoveGroup`, `onGroupRule`, `onGroupGroup` | `true` to proceed, falsy to cancel, or a **replacement query** to apply instead    |
+| `onUngroup`                                                | `true` to proceed, falsy to cancel, or a **replacement query** to apply instead    |
 | `onRemove`                                                 | boolean only                                                                       |
 
-The move and group actions compute the prospective query _before_ invoking their callback, so it can inspect the result it is being asked to approve.
+The move, group, and ungroup actions compute the prospective query _before_ invoking their callback, so it can inspect the result it is being asked to approve.
 
 ### Controlled and uncontrolled queries
 

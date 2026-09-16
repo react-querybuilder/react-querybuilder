@@ -98,12 +98,14 @@ export function useQueryBuilderSchema<
     onMoveGroup = defaultOnAddMoveRemove,
     onGroupRule = defaultOnAddMoveRemove,
     onGroupGroup = defaultOnAddMoveRemove,
+    onUngroup = defaultOnAddMoveRemove,
     onRemove = defaultOnAddMoveRemove,
     onQueryChange,
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
     showNotToggle: showNotToggleProp = false,
     showShiftActions: showShiftActionsProp = false,
     showCloneButtons: showCloneButtonsProp = false,
+    showUngroupButtons: showUngroupButtonsProp = false,
     showLockButtons: showLockButtonsProp = false,
     showMuteButtons: showMuteButtonsProp = false,
     suppressStandardClassnames: suppressStandardClassnamesProp = false,
@@ -161,6 +163,7 @@ export function useQueryBuilderSchema<
   const showShiftActions = !!showShiftActionsProp;
   const showUndoRedo = !!showUndoRedoContext;
   const showCloneButtons = !!showCloneButtonsProp;
+  const showUngroupButtons = !!showUngroupButtonsProp;
   const showLockButtons = !!showLockButtonsProp;
   const showMuteButtons = !!showMuteButtonsProp;
   const resetOnFieldChange = !!resetOnFieldChangeProp;
@@ -375,6 +378,7 @@ export function useQueryBuilderSchema<
         onMoveGroup,
         onGroupRule,
         onGroupGroup,
+        onUngroup,
         onLog: log,
       }),
     [
@@ -390,6 +394,7 @@ export function useQueryBuilderSchema<
       onAddRule,
       onGroupGroup,
       onGroupRule,
+      onUngroup,
       onMoveGroup,
       onMoveRule,
       onRemove,
@@ -460,6 +465,14 @@ export function useQueryBuilderSchema<
     // oxlint-disable-next-line typescript/no-explicit-any
     (sourcePath: Path, targetPath: Path, clone?: boolean, context?: any) => {
       runAction(query => actionsCore.groupRule(query, sourcePath, targetPath, clone, context));
+    },
+    [actionsCore, runAction]
+  );
+
+  const ungroupRuleGroup = useCallback(
+    // oxlint-disable-next-line typescript/no-explicit-any
+    (path: Path, context?: any) => {
+      runAction(query => actionsCore.ungroupRuleGroup(query, path, context));
     },
     [actionsCore, runAction]
   );
@@ -551,6 +564,7 @@ export function useQueryBuilderSchema<
       resetOnFieldChange,
       resetOnOperatorChange,
       showCloneButtons,
+      showUngroupButtons,
       showCombinatorsBetweenRules,
       showLockButtons,
       showMuteButtons,
@@ -598,6 +612,7 @@ export function useQueryBuilderSchema<
       resetOnFieldChange,
       resetOnOperatorChange,
       showCloneButtons,
+      showUngroupButtons,
       showCombinatorsBetweenRules,
       showLockButtons,
       showMuteButtons,
@@ -618,8 +633,17 @@ export function useQueryBuilderSchema<
       onRuleAdd,
       onRuleRemove: onRuleOrGroupRemove,
       groupRule,
+      ungroupRuleGroup,
     }),
-    [groupRule, moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
+    [
+      groupRule,
+      moveRule,
+      onGroupAdd,
+      onPropChange,
+      onRuleAdd,
+      onRuleOrGroupRemove,
+      ungroupRuleGroup,
+    ]
   );
   // #endregion
 

@@ -28,6 +28,7 @@ export const mergeClassnames = (...args: MergeClassnamesParams): Classnames => (
   addGroup: joinClassnamesByName('addGroup', args),
   cloneRule: joinClassnamesByName('cloneRule', args),
   cloneGroup: joinClassnamesByName('cloneGroup', args),
+  ungroup: joinClassnamesByName('ungroup', args),
   removeGroup: joinClassnamesByName('removeGroup', args),
   rule: joinClassnamesByName('rule', args),
   fields: joinClassnamesByName('fields', args),

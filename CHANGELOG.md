@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#1099] New "ungroup" operation, which replaces a group with its own rules in the parent group.
+  - Set `showUngroupButtons` on `QueryBuilder` to display an "Ungroup" button on each non-root group header. The button renders with the new `ungroupAction` control element (defaults to `ActionElement`), the `ruleGroup-ungroup` standard classname, and the `ungroupRuleGroup` translation (default label `⊟`). Compatibility packages ship with matching icons where possible.
+  - The new `onUngroup` prop is invoked before the operation is applied, receiving the group, its path, the current query, and the prospective next query. Return `false` to cancel or a query object to apply instead—useful for intercepting groups with `not: true`, since ungrouping discards that property.
+  - New `ungroup`/`ungroupInPlace` query tools and a `QueryManager#ungroup(pathOrID, options?)` method. Independent combinator queries keep their alternation, and an empty group is removed along with its adjacent combinator. The new `"target-not-a-group"` abort reason reports a target that is a rule rather than a group.
+  - `createQueryActions` gains an `ungroupRuleGroup` handler, and `QueryActions` (passed to every subcomponent) gains a method of the same name.
+
 ### Fixed
 
 - The pragmatic-drag-and-drop adapter no longer re-registers drag/drop targets when a rule or group's path changes, which could reset hover state mid-drag.
@@ -2514,6 +2522,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1082]: https://github.com/react-querybuilder/react-querybuilder/pull/1082
 [#1084]: https://github.com/react-querybuilder/react-querybuilder/pull/1084
 [#1092]: https://github.com/react-querybuilder/react-querybuilder/issues/1092
+[#1099]: https://github.com/react-querybuilder/react-querybuilder/issues/1099
 
 <!-- #endregion -->
 

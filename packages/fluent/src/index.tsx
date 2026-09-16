@@ -5,6 +5,7 @@ import {
   DuplicateRowIcon,
   GripperDotsVerticalIcon,
   LockIcon,
+  UngroupObjectIcon,
   UnlockIcon,
 } from '@fluentui/react-icons-mdl2';
 import * as React from 'react';
@@ -49,6 +50,7 @@ export const fluentTranslations: Partial<Translations> = {
   removeRule: { label: <CancelIcon /> },
   cloneRule: { label: <DuplicateRowIcon /> },
   cloneRuleGroup: { label: <DuplicateRowIcon /> },
+  ungroupRuleGroup: { label: <UngroupObjectIcon /> },
   dragHandle: { label: <GripperDotsVerticalIcon /> },
   lockGroup: { label: <UnlockIcon /> },
   lockRule: { label: <UnlockIcon /> },

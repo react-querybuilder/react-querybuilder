@@ -68,6 +68,9 @@ export const ruleGroupControls: RemoveNullability<ControlElementsProp<FullField,
   cloneRuleAction: props => (
     <Button {...props} testID={TestID.cloneRule} label={translations.cloneRule.label} />
   ),
+  ungroupAction: props => (
+    <Button {...props} testID={TestID.ungroup} label={translations.ungroupRuleGroup.label} />
+  ),
   removeGroupAction: props => (
     <Button {...props} testID={TestID.removeGroup} label={translations.removeGroup.label} />
   ),
@@ -126,6 +129,7 @@ export const ruleGroupClassnames: Partial<Classnames> = {
   addRule: 'custom-addRule-class',
   addGroup: 'custom-addGroup-class',
   cloneGroup: 'custom-cloneGroup-class',
+  ungroup: 'custom-ungroup-class',
   removeGroup: 'custom-removeGroup-class',
   notToggle: { 'custom-notToggle-class': true },
   ruleGroup: ['custom-ruleGroup-class'],
@@ -159,6 +163,7 @@ const ruleGroupSchema = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showCloneButtons: false,
+  showUngroupButtons: false,
   independentCombinators: false,
   validationMap: {},
   disabledPaths: [],

@@ -85,6 +85,7 @@ describe('accessibility', () => {
           defaultQuery={queries.icNested}
           showNotToggle
           showCloneButtons
+          showUngroupButtons
           showLockButtons
           showShiftActions
           showMuteButtons

@@ -45,6 +45,7 @@ export const defaultControlElements: {
   ruleGroupHeaderElements: typeof RuleGroupHeaderComponents;
   shiftActions: typeof ShiftActions;
   undoRedoActions: null;
+  ungroupAction: typeof ActionElement;
   valueEditor: typeof ValueEditor;
   valueSelector: typeof ValueSelector;
   valueSourceSelector: typeof ValueSelector;
@@ -74,6 +75,7 @@ export const defaultControlElements: {
   shiftActions: ShiftActions,
   // Requires the history recorder from `react-querybuilder/history`; see `showUndoRedo`.
   undoRedoActions: null,
+  ungroupAction: ActionElement,
   valueEditor: ValueEditor,
   valueSelector: ValueSelector,
   valueSourceSelector: ValueSelector,

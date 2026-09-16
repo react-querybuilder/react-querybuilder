@@ -10,6 +10,7 @@ export type DemoOption =
   | 'showCombinatorsBetweenRules'
   | 'showNotToggle'
   | 'showCloneButtons'
+  | 'showUngroupButtons'
   | 'showLockButtons'
   | 'showMuteButtons'
   | 'showShiftActions'
