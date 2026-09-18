@@ -1,4 +1,7 @@
+import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 import { getCommonViteConfig } from '../../utils/vite.common';
 
-export default defineConfig(getCommonViteConfig());
+const config: UserConfig = defineConfig(getCommonViteConfig());
+
+export default config;

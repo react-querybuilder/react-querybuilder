@@ -1,4 +1,5 @@
 import path from 'node:path';
+import type { UserConfig } from 'vite';
 import { defineConfig } from 'vitest/config';
 
 // ANSI bg names (8 + bright). LabelColor omits bright, but they work at runtime.
@@ -40,7 +41,7 @@ const projects: Record<string, AnsiBg> = {
   tremor: 'blueBright', // #60a5fa
 };
 
-export default defineConfig({
+const config: UserConfig = defineConfig({
   test: {
     projects: Object.entries(projects).map(([dir, color]) => ({
       extends: `./packages/${dir}/vitest.config.mts`,
@@ -55,7 +56,7 @@ export default defineConfig({
       exclude: [
         'utils/testing/**',
         'packages/*/dist/**',
-        'packages/*/vitestSetup.ts',
+        'packages/*/vitestSetup.mts',
         '**/*TestUtils.ts',
         // Package-specific exclusions
         'packages/chakra/src/snippets/**',
@@ -67,3 +68,5 @@ export default defineConfig({
     },
   },
 });
+
+export default config;

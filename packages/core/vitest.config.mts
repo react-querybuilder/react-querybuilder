@@ -1,13 +1,11 @@
+import type { UserConfig } from 'vite';
 import { mergeConfig } from 'vitest/config';
-import shared from '../../vitest.shared.mts';
+import shared from '../../utils/testing/vitest.shared.mjs';
 
-export default mergeConfig(shared, {
+const config: UserConfig = mergeConfig(shared, {
   test: {
     environment: 'node',
-    exclude: [
-      '**/formatQuery/__tests__/dbquery.*.test.ts',
-      '**/generateID.nodeCrypto.test.ts',
-      '**/generateID.node.test.ts',
-    ],
   },
 });
+
+export default config;

@@ -1,14 +1,15 @@
-import { version } from './lerna.json' with { type: 'json' };
+import path from 'node:path';
+import { version } from '../lerna.json' with { type: 'json' };
 
-const packagesDir = `${import.meta.dirname}/packages`;
+const packagesDir = `${import.meta.dirname}/../packages`;
+
+Bun.$.cwd(path.join(import.meta.dirname, '..'));
 
 const pkgNames = await Bun.$`ls packages`.text();
 const pkgJsonPaths = pkgNames
   .split('\n')
   .filter(p => !!p && p !== 'react-querybuilder')
   .map(p => `${packagesDir}/${p}/package.json`);
-
-pkgJsonPaths.push(`${import.meta.dirname}/website/package.json`);
 
 await Promise.all(
   pkgJsonPaths.map(async pkgJsonPath => {

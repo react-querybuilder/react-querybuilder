@@ -54,6 +54,7 @@ jobs:
           /** @type {import("@docusaurus/plugin-content-docs").SidebarsConfig} */
           const typedocSidebar = { items: [] };
           module.exports = typedocSidebar.items;' > ./website/api/typedoc-sidebar.cjs
+      - run: bun run typecheck
       - run: bun run lint --format=github
       - run: bun run are-the-types-wrong
       - run: bun run check-dts-peer-leaks

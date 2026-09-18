@@ -1,4 +1,7 @@
+import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 import { getCommonViteConfig } from '../../utils/vite.common';
 
-export default defineConfig(getCommonViteConfig({ port: 3112 }));
+const config: UserConfig = defineConfig(getCommonViteConfig({ port: 3112 }));
+
+export default config;
