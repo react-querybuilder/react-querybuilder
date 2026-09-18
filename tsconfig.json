@@ -1,8 +1,6 @@
 {
-  // Root-level scripts only (version.ts, vitestSetup.ts).
-  // Shared compiler options live in tsconfig.base.json.
+  // Root-level scripts only. Shared compiler options live in tsconfig.base.json.
   // Packages, utils, examples, and website each own their own project.
   "extends": "./tsconfig.base.json",
-  "include": ["./*.ts"],
-  "exclude": ["vitest.config.mts", "vitest.shared.mts", "vitest.workspace.ts"]
+  "include": ["./*.mts", "./*.ts"]
 }

@@ -91,7 +91,7 @@
       }
     },
     {
-      "files": ["vitestSetup.ts", "utils/testing/**", "*.test.ts", "*.test.tsx"],
+      "files": ["utils/testing/**", "*.test.ts", "*.test.tsx"],
       "rules": {
         "no-await-in-loop": "off",
         "jsx-no-constructed-context-values": "off",

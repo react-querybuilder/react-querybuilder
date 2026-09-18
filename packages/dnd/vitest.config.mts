@@ -1,14 +1,10 @@
-import path from 'node:path';
 import { mergeConfig } from 'vitest/config';
-import shared from '../../vitest.shared.mts';
+import shared from '../../utils/testing/vitest.shared.mjs';
 
 export default mergeConfig(shared, {
   test: {
     environment: 'jsdom',
-    setupFiles: [
-      path.resolve(import.meta.dirname, '../../vitestSetup.ts'),
-      path.resolve(import.meta.dirname, './vitestSetup.ts'),
-    ],
+    setupFiles: ['../../utils/testing/vitestSetup.mts', './vitestSetup.mts'],
     deps: {
       optimizer: {
         web: {
