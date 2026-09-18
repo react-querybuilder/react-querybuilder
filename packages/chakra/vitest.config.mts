@@ -1,8 +1,11 @@
+import type { UserConfig } from 'vite';
 import { mergeConfig } from 'vitest/config';
 import shared from '../../utils/testing/vitest.shared.mjs';
 
-export default mergeConfig(shared, {
+const config: UserConfig = mergeConfig(shared, {
   test: {
     environment: 'jsdom',
   },
 });
+
+export default config;

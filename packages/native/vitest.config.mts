@@ -1,6 +1,7 @@
+import type { UserConfig } from 'vite';
 import { defineConfig } from 'vitest/config';
 
-export default import('vitest-native').then(({ reactNative }) =>
+const config: Promise<UserConfig> = import('vitest-native').then(({ reactNative }) =>
   defineConfig({
     plugins: [reactNative({ engine: 'mock' })],
     oxc: {
@@ -21,3 +22,5 @@ export default import('vitest-native').then(({ reactNative }) =>
     },
   })
 );
+
+export default config;

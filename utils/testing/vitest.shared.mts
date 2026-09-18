@@ -1,10 +1,11 @@
 import path from 'node:path';
+import type { UserConfig } from 'vite';
 import type { ViteUserConfig } from 'vitest/config';
 
 const root = path.resolve(`${import.meta.dirname}/../../`);
 const coreUtils = path.resolve(root, 'packages/core/src/utils');
 
-export default {
+const config: UserConfig = {
   oxc: {
     jsx: {
       runtime: 'automatic',
@@ -50,3 +51,5 @@ export default {
     ],
   },
 } satisfies ViteUserConfig;
+
+export default config;

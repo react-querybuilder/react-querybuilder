@@ -3,6 +3,5 @@
   "compilerOptions": {
     "types": ["vitest/globals", "@testing-library/react-native", "node", "web", "bun"]
   },
-  "include": ["./*.ts", "./src/", "./dev/"],
-  "exclude": ["vitest.config.mts"]
+  "include": ["./*.ts", "./*.mts", "./src/", "./dev/"]
 }
