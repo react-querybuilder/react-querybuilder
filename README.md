@@ -64,6 +64,20 @@ _For instructions on migrating from earlier versions of `react-querybuilder`, se
 
 In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts official compatibility component packages for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), [Fluent UI](https://www.npmjs.com/package/@react-querybuilder/fluent), [Mantine](https://www.npmjs.com/package/@react-querybuilder/mantine), [MUI](https://www.npmjs.com/package/@react-querybuilder/material), [PrimeReact](https://primereact.org/), and [Tremor](https://www.npmjs.com/package/@react-querybuilder/tremor). A [React Native component](https://www.npmjs.com/package/@react-querybuilder/native) is also available.
 
+## Other frameworks
+
+[![Solid](https://img.shields.io/badge/QB-Solid-blue?logo=solid&color=2c4f7c)](https://www.npmjs.com/package/solid-querybuilder)
+[![Svelte](https://img.shields.io/badge/QB-Svelte-blue?logo=svelte&color=ff3e00)](https://www.npmjs.com/package/svelte-querybuilder)
+[![Vue](https://img.shields.io/badge/QB-Vue-blue?logo=vuedotjs&color=42b883)](https://www.npmjs.com/package/@react-querybuilder/vue)
+
+Official ports of the query builder component to other frameworks are maintained in separate repos. Each one shares the same query object format and uses [`@react-querybuilder/core`](./packages/core) under the hood, so the import/export utilities (SQL, MongoDB, CEL, JsonLogic, etc.) and most configuration options work identically across frameworks.
+
+| Framework | Repo                                                                             | npm                                                                                |
+| --------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Solid     | [solid-querybuilder](https://github.com/react-querybuilder/solid-querybuilder)   | [`solid-querybuilder`](https://www.npmjs.com/package/solid-querybuilder)           |
+| Svelte    | [svelte-querybuilder](https://github.com/react-querybuilder/svelte-querybuilder) | [`svelte-querybuilder`](https://www.npmjs.com/package/svelte-querybuilder)         |
+| Vue       | [vue-querybuilder](https://github.com/react-querybuilder/vue-querybuilder)       | [`@react-querybuilder/vue`](https://www.npmjs.com/package/@react-querybuilder/vue) |
+
 ## Development
 
 See [the contribution guidelines](./CONTRIBUTING.md).

@@ -56,18 +56,21 @@ Customizations are not limited to the following libraries, but these have first-
 | [Fluent UI](https://github.com/microsoft/fluentui) | [@react-querybuilder/fluent](https://www.npmjs.com/package/@react-querybuilder/fluent)       | [demo](https://react-querybuilder.js.org/demo/fluent)    | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=fluent) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=fluent)       |
 | [Mantine](https://mantine.dev/)                    | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [demo](https://react-querybuilder.js.org/demo/mantine)   | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=mantine) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=mantine)     |
 | [MUI](https://mui.com/)                            | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [demo](https://react-querybuilder.js.org/demo/material)  | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=material) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=material)   |
+| [PrimeReact](https://primereact.org/)              | [@react-querybuilder/prime](https://www.npmjs.com/package/@react-querybuilder/prime)         | [demo](https://react-querybuilder.js.org/demo/prime)     | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=prime) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=prime)         |
 | [React Native](https://reactnative.dev/)           | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       |                                                          | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=native) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=native)       |
 | [Tremor](https://www.tremor.so/)                   | [@react-querybuilder/tremor](https://www.npmjs.com/package/@react-querybuilder/tremor)       | [demo](https://react-querybuilder.js.org/demo/tremor)    | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=tremor) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=tremor)       |
 
 > [!TIP]
 >
-> To enable drag-and-drop, use [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).
+> To enable **drag-and-drop**, use [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).
 >
-> For enhanced date/time support, use [`@react-querybuilder/datetime`](https://www.npmjs.com/package/@react-querybuilder/datetime).
+> For enhanced **date/time** support, use [`@react-querybuilder/datetime`](https://www.npmjs.com/package/@react-querybuilder/datetime).
 >
-> To enable expressions in rules, use [`@react-querybuilder/expr`](https://www.npmjs.com/package/@react-querybuilder/expr).
+> To enable **expressions** in rules, use [`@react-querybuilder/expr`](https://www.npmjs.com/package/@react-querybuilder/expr).
 >
-> For rules engine functionality (if-then-else) use [`@react-querybuilder/rules-engine`](https://www.npmjs.com/package/@react-querybuilder/rules-engine).
+> For **rules engine** functionality (if-then-else) use [`@react-querybuilder/rules-engine`](https://www.npmjs.com/package/@react-querybuilder/rules-engine).
+
+Not using React? Official ports: [`solid-querybuilder`](https://www.npmjs.com/package/solid-querybuilder), [`svelte-querybuilder`](https://www.npmjs.com/package/svelte-querybuilder), [`@react-querybuilder/vue`](https://www.npmjs.com/package/@react-querybuilder/vue).
 
 ## Export
 
