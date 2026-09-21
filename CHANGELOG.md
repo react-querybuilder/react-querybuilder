@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.24.1] - 2026-09-20
+
+### Added
+
+- Documented offical [SolidJS](https://www.npmjs.com/package/solid-querybuilder), [Svelte](https://www.npmjs.com/package/svelte-querybuilder), and [Vue.js](https://www.npmjs.com/package/@react-querybuilder/vue) ports in `react-querybuilder` README.md.
+
 ## [v8.24.0] - 2026-09-15
 
 ### Added
@@ -2530,7 +2536,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.1...HEAD
+[v8.24.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.0...v8.24.1
 [v8.24.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.1...v8.24.0
 [v8.23.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.0...v8.23.1
 [v8.23.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.22.4...v8.23.0
