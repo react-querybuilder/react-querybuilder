@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/native",
   "description": "React Native components for react-querybuilder",
-  "version": "8.24.0",
+  "version": "8.24.1",
   "publishConfig": {
     "access": "public"
   },
@@ -59,7 +59,7 @@
     "react-dom": "catalog:",
     "react-native": "~0.87.1",
     "react-native-web": "~0.21.2",
-    "react-querybuilder": "8.24.0",
+    "react-querybuilder": "8.24.1",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
@@ -67,7 +67,7 @@
   },
   "peerDependencies": {
     "react": "catalog:peer",
-    "react-querybuilder": "8.24.0",
+    "react-querybuilder": "8.24.1",
     "react-redux": "catalog:peer"
   }
 }
