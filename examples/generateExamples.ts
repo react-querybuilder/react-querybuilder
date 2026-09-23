@@ -46,6 +46,15 @@ const templatePkgJsonNewText = templatePkgJsonNewTextRaw.replaceAll(
 await Bun.write(path.join(templatePath, 'package.json'), templatePkgJsonNewText);
 const templatePkgJSON: PackageJSON = await Bun.file(path.join(templatePath, 'package.json')).json();
 
+const formatAndWrite = async (filepath: string, fileContents: string) => {
+  const formatted = await format(filepath, fileContents, oxfmtConfig);
+  if (formatted.errors?.length > 0) {
+    console.error(`Errors found in "${filepath}":`);
+    formatted.errors.forEach(error => console.error(error));
+  }
+  return Bun.write(filepath, formatted.code);
+};
+
 const generateExampleFromTemplate = async (exampleID: string) => {
   const exampleConfig = configs[exampleID];
   const examplePath = path.join(import.meta.dirname, exampleID);
@@ -58,15 +67,6 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   await rm(examplePath, { recursive: true, force: true });
   await mkdir(examplePath);
   await Promise.all([mkdir(exampleDotCS), mkdir(exampleSrc)]);
-
-  const formatAndWrite = async (filepath: string, fileContents: string) => {
-    const formatted = await format(filepath, fileContents, oxfmtConfig);
-    if (formatted.errors?.length > 0) {
-      console.error(`Errors found in "${filepath}":`);
-      formatted.errors.forEach(error => console.error(error));
-    }
-    return Bun.write(filepath, formatted.code);
-  };
 
   // Array of Bun.write promises
   const toWrite: ReturnType<typeof Bun.write>[] = [];
