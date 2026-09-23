@@ -5,6 +5,7 @@ export * from './NativeMatchModeEditor';
 export * from './NativeMatchModeEditorWeb';
 export * from './NativeNotToggle';
 export * from './NativeShiftActions';
+export * from './NativeUndoRedoActions';
 export * from './NativeValueEditor';
 export * from './NativeValueEditorWeb';
 export * from './NativeValueSelector';

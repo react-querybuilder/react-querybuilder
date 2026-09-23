@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New `NativeUndoRedoActions` component for `@react-querybuilder/native`. `QueryBuilderNative` renders it as the `undoRedoActions` control element when it descends from a `QueryBuilderHistory` provider (from `react-querybuilder/history`), so undo/redo works in React Native with the same setup as the web.
+
 ## [v8.24.1] - 2026-09-20
 
 ### Added

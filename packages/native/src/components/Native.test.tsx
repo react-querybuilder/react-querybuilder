@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import * as React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import type {
@@ -11,6 +11,7 @@ import type {
   ShiftActionsProps,
 } from 'react-querybuilder';
 import { TestID, convertToIC, toFullOption } from 'react-querybuilder';
+import { QueryBuilderHistory } from 'react-querybuilder/history';
 import type {
   ActionNativeProps,
   NotToggleNativeProps,
@@ -61,6 +62,46 @@ describe('QueryBuilderNative', () => {
     await render(<QueryBuilderNative query={queryIC} />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeOnTheScreen();
     expect(screen.getByTestId(TestID.inlineCombinator)).toBeOnTheScreen();
+  });
+
+  it('does not render undo/redo actions without a history provider', async () => {
+    await render(<QueryBuilderNative defaultQuery={query} showUndoRedo />);
+    expect(() => screen.getByTestId(TestID.undoRedoActions)).toThrow();
+  });
+
+  it('renders with undo/redo actions', async () => {
+    // First make sure the undo/redo actions are not rendered when `showUndoRedo` is false
+    const { rerender } = await render(
+      <QueryBuilderHistory showUndoRedo={false}>
+        <QueryBuilderNative defaultQuery={query} />
+      </QueryBuilderHistory>
+    );
+    expect(() => screen.getByTestId(TestID.undoRedoActions)).toThrow();
+
+    // `showUndoRedo` defaults to true beneath `QueryBuilderHistory`
+    await rerender(
+      <QueryBuilderHistory>
+        <QueryBuilderNative defaultQuery={query} />
+      </QueryBuilderHistory>
+    );
+    const undoRedoActions = screen.getByTestId(TestID.undoRedoActions);
+    expect(undoRedoActions).toBeOnTheScreen();
+
+    const undoBtn = within(undoRedoActions).getByTestId(TestID.undoAction);
+    const redoBtn = within(undoRedoActions).getByTestId(TestID.redoAction);
+    await act(async () => {
+      await fireEvent.press(screen.getByTestId(TestID.addGroup));
+    });
+    expect(undoBtn).toBeEnabled();
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(2);
+    await act(async () => {
+      await fireEvent.press(undoBtn);
+    });
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
+    await act(async () => {
+      await fireEvent.press(redoBtn);
+    });
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(2);
   });
 });
 
@@ -257,15 +298,15 @@ describe('NativeShiftActions', () => {
     // Enabled
     const enabledProps = { ...defaultProps, shiftUp, shiftDown };
     await render(<NativeShiftActions {...enabledProps} />);
-    const btnsEnabled = screen.getByTestId(TestID.shiftActions).children;
+    const btnsEnabled = screen.getByTestId(TestID.shiftActions);
+    const shiftUpBtn = within(btnsEnabled).getByLabelText(labels.shiftUp);
+    const shiftDownBtn = within(btnsEnabled).getByLabelText(labels.shiftDown);
     await act(async () => {
-      // oxlint-disable-next-line typescript/no-explicit-any
-      await fireEvent.press(btnsEnabled[0] as any);
+      await fireEvent.press(shiftUpBtn);
     });
     expect(shiftUp).toHaveBeenCalled();
     await act(async () => {
-      // oxlint-disable-next-line typescript/no-explicit-any
-      await fireEvent.press(btnsEnabled[1] as any);
+      await fireEvent.press(shiftDownBtn);
     });
     expect(shiftDown).toHaveBeenCalled();
   });

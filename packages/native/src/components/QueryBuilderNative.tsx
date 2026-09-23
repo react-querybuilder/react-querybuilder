@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import type {
   Controls,
   FullCombinator,
@@ -15,9 +15,11 @@ import {
   QueryBuilderStateContext,
   queryBuilderStore,
 } from 'react-querybuilder';
+import { QueryBuilderHistoryContext } from 'react-querybuilder/history';
 import { Provider } from 'react-redux';
 import type { QueryBuilderNativeProps } from '../types';
 import { defaultNativeControlElements } from './defaults';
+import { NativeUndoRedoActions } from './NativeUndoRedoActions';
 import { useQueryBuilderNative } from './useQueryBuilderNative';
 
 const rootPath = [] satisfies Path;
@@ -32,13 +34,18 @@ const QueryBuilderNativeInternal = <
 }: {
   props: QueryBuilderNativeProps<RG, F, O, C>;
 }) => {
+  // Undo/redo controls are only supplied beneath a `QueryBuilderHistory` ancestor, matching
+  // `QueryBuilder`. Without one, `undoRedoActions` stays `null` and renders nothing.
+  const { historyEnabled } = useContext(QueryBuilderHistoryContext);
+
   const controlElements = useMemo(
     () =>
-      ({ ...defaultNativeControlElements, ...props.controlElements }) as Controls<
-        F,
-        GetOptionIdentifierType<O>
-      >,
-    [props.controlElements]
+      ({
+        ...defaultNativeControlElements,
+        ...(historyEnabled ? { undoRedoActions: NativeUndoRedoActions } : null),
+        ...props.controlElements,
+      }) as Controls<F, GetOptionIdentifierType<O>>,
+    [historyEnabled, props.controlElements]
   );
   const qb = useQueryBuilderNative({ ...props, controlElements } as QueryBuilderNativeProps<
     RG,

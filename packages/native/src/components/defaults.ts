@@ -38,7 +38,8 @@ export const defaultNativeControlElements: Controls<FullField, string> = {
   ruleGroupBodyElements: RuleGroupBodyComponents,
   ruleGroupHeaderElements: RuleGroupHeaderComponents,
   shiftActions: NativeShiftActions,
-  // Undo/redo requires the history recorder from `react-querybuilder/history`.
+  // Undo/redo requires a `QueryBuilderHistory` ancestor, which `QueryBuilderNative` detects at
+  // render time and substitutes `NativeUndoRedoActions` for this `null`.
   undoRedoActions: null,
   ungroupAction: NativeActionElement,
   valueEditor: NativeValueEditor,
