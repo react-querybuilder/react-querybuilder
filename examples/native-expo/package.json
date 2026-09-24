@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@expo/metro-runtime": "~57.0.16",
+    "@react-querybuilder/native": "8.24.1",
+    "expo": "~57.0.25",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-web": "^0.21.2",
+    "react-querybuilder": "8.24.1"
+  },
+  "description": "React Query Builder Expo (React Native) Example",
+  "devDependencies": {
+    "@types/react": "~19.2.2",
+    "typescript": "~6.0.3"
+  },
+  "main": "expo/AppEntry",
+  "name": "react-querybuilder-native-expo-example",
+  "private": true,
+  "scripts": {
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "start": "expo start",
+    "web": "expo start --web"
+  }
+}

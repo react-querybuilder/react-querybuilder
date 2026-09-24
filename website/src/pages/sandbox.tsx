@@ -9,7 +9,26 @@ import { loading } from './_utils';
 const ghPathMain = 'react-querybuilder/react-querybuilder/tree/main/examples/_template';
 const ghPathChakra2 = 'react-querybuilder/react-querybuilder-chakra2/tree/main/example';
 
-const getFinalLink = (platform: 'StackBlitz' | 'CodeSandbox', template: string) => {
+type Platform = 'StackBlitz' | 'CodeSandbox' | 'Expo Snack';
+
+// Snack loads App.tsx from GitHub raw; deps resolved to SDK-compatible versions
+const getSnackLink = (template: string) => {
+  const files = {
+    'App.tsx': {
+      type: 'CODE',
+      url: `https://raw.githubusercontent.com/react-querybuilder/react-querybuilder/main/examples/${template}/App.tsx`,
+    },
+  };
+  const params = new URLSearchParams({
+    name: 'React Query Builder Expo Example',
+    dependencies: ['@react-querybuilder/native', 'react-querybuilder'].join(','),
+    files: JSON.stringify(files),
+  });
+  return `https://snack.expo.dev/?${params}`;
+};
+
+const getFinalLink = (platform: Platform, template: string) => {
+  if (platform === 'Expo Snack') return getSnackLink(template);
   let ghPath = template === 'chakra2' ? ghPathChakra2 : ghPathMain;
   ghPath = ghPath.replace('_template', template);
   const fileName = template === 'basic' ? 'App.js' : 'App.tsx';
@@ -24,9 +43,13 @@ function SandboxRedirectTimer() {
   const template = Array.isArray(qsTemplate) ? qsTemplate[0]! : qsTemplate;
   const qsPlatform = query.platform ?? query.p ?? 'csb';
   const platformPrelim = Array.isArray(qsPlatform) ? qsPlatform[0]! : qsPlatform;
-  const platform = ['sb', 'stackblitz'].includes(platformPrelim.toLocaleLowerCase())
-    ? 'StackBlitz'
-    : 'CodeSandbox';
+  const platformLC = platformPrelim.toLocaleLowerCase();
+  const platform: Platform =
+    platformLC === 'snack' || template === 'native-expo'
+      ? 'Expo Snack'
+      : ['sb', 'stackblitz'].includes(platformLC)
+        ? 'StackBlitz'
+        : 'CodeSandbox';
   const finalLink = getFinalLink(platform, template);
 
   const [_timerIsSet] = useState(() => {

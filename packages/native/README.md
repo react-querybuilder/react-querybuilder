@@ -3,7 +3,8 @@
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [React Native](https://reactnative.dev/).
 
 - [Full documentation](https://react-querybuilder.js.org/)
-- [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=native) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=native) example projects
+- [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=native) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=native) example projects (react-native-web)
+- [Expo Snack](https://react-querybuilder.js.org/sandbox?p=snack&t=native-expo) / [Expo example](https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/native-expo) (iOS/Android/web)
 
 ## Installation
 
