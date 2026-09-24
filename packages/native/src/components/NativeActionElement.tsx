@@ -19,7 +19,7 @@ export const NativeActionElement = ({
   return (
     <Pressable
       testID={testID}
-      accessibilityLabel={title}
+      accessibilityLabel={disabledTranslation && disabled ? disabledTranslation.title : title}
       accessibilityRole="button"
       accessibilityState={{ disabled: isDisabled }}
       disabled={isDisabled}

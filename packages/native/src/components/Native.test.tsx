@@ -590,6 +590,17 @@ describe('accessibility', () => {
       );
       expect(screen.getByTestId(TestID.addRule)).toBeEnabled();
     });
+
+    it('uses disabledTranslation title as accessible name when disabled', async () => {
+      await render(
+        <NativeActionElement
+          {...props}
+          disabled
+          disabledTranslation={{ label: 'Unlock', title: 'Unlock title' }}
+        />
+      );
+      expect(screen.getByTestId(TestID.addRule)).toHaveAccessibleName('Unlock title');
+    });
   });
 
   describe('NativeNotToggle', () => {
