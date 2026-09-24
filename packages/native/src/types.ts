@@ -15,6 +15,7 @@ import type {
   RuleProps,
   Schema,
   ShiftActionsProps,
+  UndoRedoActionsProps,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
@@ -67,6 +68,7 @@ export type QueryBuilderNativeStyles = {
   ruleGroupBody: ViewStyle;
   ruleGroupHeader: ViewStyle;
   shiftActions: ViewStyle;
+  undoRedoActions: ViewStyle;
   value: TextStyle;
   valueEditorOption: TextStyle;
   valueEditorSelector: TextStyle;
@@ -110,6 +112,11 @@ export type ActionNativeProps = ActionProps & WithSchemaNative;
  * @group Props
  */
 export type ShiftActionsNativeProps = ShiftActionsProps & WithSchemaNative;
+
+/**
+ * @group Props
+ */
+export type UndoRedoActionsNativeProps = UndoRedoActionsProps & WithSchemaNative;
 
 /**
  * @group Props

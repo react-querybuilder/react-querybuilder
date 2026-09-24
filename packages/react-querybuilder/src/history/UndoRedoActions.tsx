@@ -1,6 +1,6 @@
 import { TestID } from '@react-querybuilder/core';
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
 import type { UndoRedoActionsProps } from '../types';
 import { useQueryBuilderHistory } from './useQueryBuilderHistory';
 
@@ -18,6 +18,17 @@ import { useQueryBuilderHistory } from './useQueryBuilderHistory';
  * @group Components
  */
 export const UndoRedoActions = (props: UndoRedoActionsProps): React.JSX.Element => {
+  return (
+    <div data-testid={props.testID} className={props.className}>
+      <UndoRedoActionElements {...props} />
+    </div>
+  );
+};
+
+/**
+ * Default "undo"/"redo" action elements, used internally by {@link UndoRedoActions}.
+ */
+export const UndoRedoActionElements = (props: UndoRedoActionsProps): React.JSX.Element => {
   const { undo, redo, canUndo, canRedo } = useQueryBuilderHistory(props.schema.qbId);
   const { actionElement: ActionElementControlElement } = props.schema.controls;
 
@@ -38,7 +49,7 @@ export const UndoRedoActions = (props: UndoRedoActionsProps): React.JSX.Element 
   const handleRedo = useCallback(() => redo(), [redo]);
 
   return (
-    <div data-testid={props.testID} className={props.className}>
+    <Fragment>
       <ActionElementControlElement
         {...commonSubcomponentProps}
         testID={TestID.undoAction}
@@ -57,6 +68,6 @@ export const UndoRedoActions = (props: UndoRedoActionsProps): React.JSX.Element 
         handleOnClick={handleRedo}
         disabled={props.disabled || !canRedo}
       />
-    </div>
+    </Fragment>
   );
 };

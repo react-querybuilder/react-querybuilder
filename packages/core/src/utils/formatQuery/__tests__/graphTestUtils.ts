@@ -15,6 +15,8 @@ import { defaultRuleProcessorSPARQL } from '../defaultRuleProcessorSPARQL';
 
 const escapeSingleQuotes = (v: string) => v.replaceAll("'", "\\'");
 const escapeDoubleQuotes = (v: string) => v.replaceAll('"', '\\"');
+const escValSingle = (v: string) => `'${escapeSingleQuotes(v)}'`;
+const escValDouble = (v: string) => `"${escapeDoubleQuotes(v)}"`;
 
 // ─── Cypher Custom Processors ─────────────────────────────────────────────────
 
@@ -27,23 +29,22 @@ const escapeDoubleQuotes = (v: string) => v.replaceAll('"', '\\"');
 export const cypherGraphProcessor: RuleProcessor = (rule, opts) => {
   const { field, operator, value } = rule;
   const operatorTL = operator.toLowerCase();
-  const escVal = (v: string) => `'${escapeSingleQuotes(v)}'`;
 
   switch (operatorTL) {
     case 'matchesregex':
-      return `${field} =~ ${escVal(value)}`;
+      return `${field} =~ ${escValSingle(value)}`;
     case 'doesnotmatchregex':
-      return `NOT ${field} =~ ${escVal(value)}`;
+      return `NOT ${field} =~ ${escValSingle(value)}`;
     case 'listcontains':
-      return `${escVal(value)} IN ${field}`;
+      return `${escValSingle(value)} IN ${field}`;
     case 'listdoesnotcontain':
-      return `NOT ${escVal(value)} IN ${field}`;
+      return `NOT ${escValSingle(value)} IN ${field}`;
     case 'equalsignorecase':
-      return `toLower(${field}) = toLower(${escVal(value)})`;
+      return `toLower(${field}) = toLower(${escValSingle(value)})`;
     case 'containsignorecase':
-      return `toLower(${field}) CONTAINS toLower(${escVal(value)})`;
+      return `toLower(${field}) CONTAINS toLower(${escValSingle(value)})`;
     case 'beginswithignorecase':
-      return `toLower(${field}) STARTS WITH toLower(${escVal(value)})`;
+      return `toLower(${field}) STARTS WITH toLower(${escValSingle(value)})`;
     default:
       return defaultRuleProcessorCypher(rule, opts);
   }
@@ -59,19 +60,18 @@ export const cypherGraphProcessor: RuleProcessor = (rule, opts) => {
 export const sparqlGraphProcessor: RuleProcessor = (rule, opts) => {
   const { field, operator, value } = rule;
   const operatorTL = operator.toLowerCase();
-  const escVal = (v: string) => `"${escapeDoubleQuotes(v)}"`;
 
   switch (operatorTL) {
     case 'matchesregex':
-      return `REGEX(${field}, ${escVal(value)})`;
+      return `REGEX(${field}, ${escValDouble(value)})`;
     case 'doesnotmatchregex':
-      return `!REGEX(${field}, ${escVal(value)})`;
+      return `!REGEX(${field}, ${escValDouble(value)})`;
     case 'equalsignorecase':
-      return `LCASE(${field}) = LCASE(${escVal(value)})`;
+      return `LCASE(${field}) = LCASE(${escValDouble(value)})`;
     case 'containsignorecase':
-      return `CONTAINS(LCASE(${field}), LCASE(${escVal(value)}))`;
+      return `CONTAINS(LCASE(${field}), LCASE(${escValDouble(value)}))`;
     case 'beginswithignorecase':
-      return `STRSTARTS(LCASE(${field}), LCASE(${escVal(value)}))`;
+      return `STRSTARTS(LCASE(${field}), LCASE(${escValDouble(value)}))`;
     default:
       return defaultRuleProcessorSPARQL(rule, opts);
   }
@@ -126,23 +126,22 @@ export const gremlinGraphProcessor: RuleProcessor = (rule, opts) => {
   const { field, operator, value } = rule;
   const operatorTL = operator.toLowerCase();
   const prop = field.includes('.') ? field.split('.').pop()! : field;
-  const escVal = (v: string) => `'${escapeSingleQuotes(v)}'`;
 
   switch (operatorTL) {
     case 'matchesregex':
-      return `.has('${prop}', regex(${escVal(value)}))`;
+      return `.has('${prop}', regex(${escValSingle(value)}))`;
     case 'doesnotmatchregex':
-      return `.has('${prop}', notRegex(${escVal(value)}))`;
+      return `.has('${prop}', notRegex(${escValSingle(value)}))`;
     case 'listcontains':
-      return `.has('${prop}', containing(${escVal(value)}))`;
+      return `.has('${prop}', containing(${escValSingle(value)}))`;
     case 'listdoesnotcontain':
-      return `.has('${prop}', notContaining(${escVal(value)}))`;
+      return `.has('${prop}', notContaining(${escValSingle(value)}))`;
     case 'equalsignorecase':
-      return `.has('${prop}', eq(${escVal(value)}).ignoreCase())`;
+      return `.has('${prop}', eq(${escValSingle(value)}).ignoreCase())`;
     case 'containsignorecase':
-      return `.has('${prop}', containing(${escVal(value)}).ignoreCase())`;
+      return `.has('${prop}', containing(${escValSingle(value)}).ignoreCase())`;
     case 'beginswithignorecase':
-      return `.has('${prop}', startingWith(${escVal(value)}).ignoreCase())`;
+      return `.has('${prop}', startingWith(${escValSingle(value)}).ignoreCase())`;
     default:
       return defaultRuleProcessorGremlin(rule, opts);
   }

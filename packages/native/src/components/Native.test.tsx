@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import * as React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import type {
@@ -11,6 +11,7 @@ import type {
   ShiftActionsProps,
 } from 'react-querybuilder';
 import { TestID, convertToIC, toFullOption } from 'react-querybuilder';
+import { QueryBuilderHistory } from 'react-querybuilder/history';
 import type {
   ActionNativeProps,
   NotToggleNativeProps,
@@ -18,6 +19,7 @@ import type {
   ValueEditorNativeProps,
   ValueSelectorNativeProps,
 } from '../types';
+import { defaultNativeWebControlElements } from './defaults';
 import { NativeActionElement } from './NativeActionElement';
 import { NativeMatchModeEditorWeb } from './NativeMatchModeEditorWeb';
 import { NativeNotToggle } from './NativeNotToggle';
@@ -61,6 +63,121 @@ describe('QueryBuilderNative', () => {
     await render(<QueryBuilderNative query={queryIC} />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeOnTheScreen();
     expect(screen.getByTestId(TestID.inlineCombinator)).toBeOnTheScreen();
+  });
+
+  it('does not render undo/redo actions unless showUndoRedo is set', async () => {
+    await render(<QueryBuilderNative qbId="native-no-show" defaultQuery={query} />);
+    expect(() => screen.getByTestId(TestID.undoRedoActions)).toThrow();
+  });
+
+  it('renders working undo/redo actions without a history provider', async () => {
+    await render(
+      <QueryBuilderNative qbId="native-no-provider" defaultQuery={query} showUndoRedo />
+    );
+    const undoRedoActions = screen.getByTestId(TestID.undoRedoActions);
+    expect(undoRedoActions).toBeOnTheScreen();
+
+    const undoBtn = within(undoRedoActions).getByTestId(TestID.undoAction);
+    expect(undoBtn).toBeDisabled();
+    await act(async () => {
+      await fireEvent.press(screen.getByTestId(TestID.addGroup));
+    });
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(2);
+    await act(async () => {
+      await fireEvent.press(undoBtn);
+    });
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
+  });
+
+  it('renders undo/redo actions when the web preset is used', async () => {
+    await render(
+      <QueryBuilderHistory>
+        <QueryBuilderNative
+          qbId="native-web-preset"
+          defaultQuery={query}
+          controlElements={defaultNativeWebControlElements}
+        />
+      </QueryBuilderHistory>
+    );
+    const undoRedoActions = screen.getByTestId(TestID.undoRedoActions);
+    expect(within(undoRedoActions).getByTestId(TestID.undoAction)).toBeOnTheScreen();
+    expect(within(undoRedoActions).getByTestId(TestID.redoAction)).toBeOnTheScreen();
+  });
+
+  it('honors an explicit undoRedoActions opt-out', async () => {
+    await render(
+      <QueryBuilderHistory>
+        <QueryBuilderNative
+          qbId="native-opt-out"
+          defaultQuery={query}
+          controlElements={{ undoRedoActions: null }}
+        />
+      </QueryBuilderHistory>
+    );
+    expect(() => screen.getByTestId(TestID.undoRedoActions)).toThrow();
+  });
+
+  it('labels the undo/redo actions for accessibility', async () => {
+    await render(
+      <QueryBuilderHistory>
+        <QueryBuilderNative qbId="native-a11y" defaultQuery={query} />
+      </QueryBuilderHistory>
+    );
+    const undoRedoActions = screen.getByTestId(TestID.undoRedoActions);
+    const undoBtn = within(undoRedoActions).getByTestId(TestID.undoAction);
+    const redoBtn = within(undoRedoActions).getByTestId(TestID.redoAction);
+    expect(undoBtn).toHaveProp('accessibilityRole', 'button');
+    expect(undoBtn).toHaveAccessibleName('Undo');
+    expect(redoBtn).toHaveProp('accessibilityRole', 'button');
+    expect(redoBtn).toHaveAccessibleName('Redo');
+  });
+
+  it('applies the undoRedoActions style', async () => {
+    await render(
+      <QueryBuilderHistory>
+        <QueryBuilderNative
+          qbId="native-styles"
+          defaultQuery={query}
+          styles={{ undoRedoActions: { gap: 8 } }}
+        />
+      </QueryBuilderHistory>
+    );
+    expect(screen.getByTestId(TestID.undoRedoActions)).toHaveStyle({ gap: 8 });
+  });
+
+  it('renders with undo/redo actions', async () => {
+    // First make sure the undo/redo actions are not rendered when `showUndoRedo` is false
+    const { rerender } = await render(
+      <QueryBuilderHistory showUndoRedo={false}>
+        <QueryBuilderNative qbId="native-history" defaultQuery={query} />
+      </QueryBuilderHistory>
+    );
+    expect(() => screen.getByTestId(TestID.undoRedoActions)).toThrow();
+
+    // `showUndoRedo` defaults to true beneath `QueryBuilderHistory`
+    await rerender(
+      <QueryBuilderHistory>
+        <QueryBuilderNative qbId="native-history" defaultQuery={query} />
+      </QueryBuilderHistory>
+    );
+    const undoRedoActions = screen.getByTestId(TestID.undoRedoActions);
+    expect(undoRedoActions).toBeOnTheScreen();
+
+    const undoBtn = within(undoRedoActions).getByTestId(TestID.undoAction);
+    const redoBtn = within(undoRedoActions).getByTestId(TestID.redoAction);
+    await act(async () => {
+      await fireEvent.press(screen.getByTestId(TestID.addGroup));
+    });
+    expect(undoBtn).toBeEnabled();
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(2);
+    await act(async () => {
+      await fireEvent.press(undoBtn);
+    });
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
+    await act(async () => {
+      await fireEvent.press(redoBtn);
+    });
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(2);
   });
 });
 
@@ -257,15 +374,15 @@ describe('NativeShiftActions', () => {
     // Enabled
     const enabledProps = { ...defaultProps, shiftUp, shiftDown };
     await render(<NativeShiftActions {...enabledProps} />);
-    const btnsEnabled = screen.getByTestId(TestID.shiftActions).children;
+    const btnsEnabled = screen.getByTestId(TestID.shiftActions);
+    const shiftUpBtn = within(btnsEnabled).getByLabelText(labels.shiftUp);
+    const shiftDownBtn = within(btnsEnabled).getByLabelText(labels.shiftDown);
     await act(async () => {
-      // oxlint-disable-next-line typescript/no-explicit-any
-      await fireEvent.press(btnsEnabled[0] as any);
+      await fireEvent.press(shiftUpBtn);
     });
     expect(shiftUp).toHaveBeenCalled();
     await act(async () => {
-      // oxlint-disable-next-line typescript/no-explicit-any
-      await fireEvent.press(btnsEnabled[1] as any);
+      await fireEvent.press(shiftDownBtn);
     });
     expect(shiftDown).toHaveBeenCalled();
   });
@@ -435,5 +552,248 @@ describe('NativeValueEditor', () => {
     Platform.OS = 'web';
     await render(<NativeValueEditorWeb {...props} />);
     expect(screen.getByTestId(TestID.valueEditor)).toBeOnTheScreen();
+  });
+});
+
+describe('accessibility', () => {
+  const emptySchema = {} as Schema<FullField, string>;
+
+  describe('NativeActionElement', () => {
+    const title = 'Add rule';
+    const props: ActionNativeProps = {
+      handleOnClick: () => {},
+      className: '',
+      level: 0,
+      path: [],
+      ruleOrGroup: { combinator: 'and', rules: [] },
+      schema: emptySchema,
+      testID: TestID.addRule,
+      title,
+    };
+
+    it('exposes button role and accessible name', async () => {
+      await render(<NativeActionElement {...props} />);
+      const btn = screen.getByTestId(TestID.addRule);
+      expect(btn).toHaveProp('accessibilityRole', 'button');
+      expect(btn).toHaveAccessibleName(title);
+      expect(btn).toBeEnabled();
+    });
+
+    it('reports disabled state', async () => {
+      await render(<NativeActionElement {...props} disabled />);
+      expect(screen.getByTestId(TestID.addRule)).toBeDisabled();
+    });
+
+    it('does not report disabled state when disabledTranslation is present', async () => {
+      await render(
+        <NativeActionElement {...props} disabled disabledTranslation={{ label: 'Unlock' }} />
+      );
+      expect(screen.getByTestId(TestID.addRule)).toBeEnabled();
+    });
+
+    it('uses disabledTranslation title as accessible name when disabled', async () => {
+      await render(
+        <NativeActionElement
+          {...props}
+          disabled
+          disabledTranslation={{ label: 'Unlock', title: 'Unlock title' }}
+        />
+      );
+      expect(screen.getByTestId(TestID.addRule)).toHaveAccessibleName('Unlock title');
+    });
+  });
+
+  describe('NativeNotToggle', () => {
+    const title = 'Invert this group';
+    const props: NotToggleNativeProps = {
+      checked: false,
+      handleOnChange: () => {},
+      label: 'Not',
+      level: 0,
+      path: [],
+      schema: emptySchema,
+      testID: TestID.notToggle,
+      ruleGroup: { combinator: 'and', rules: [] },
+      title,
+    };
+
+    it('exposes switch role and accessible name', async () => {
+      await render(<NativeNotToggle {...props} />);
+      const switchEl = screen.getByLabelText(title);
+      expect(switchEl).toHaveProp('accessibilityRole', 'switch');
+      expect(switchEl).toBeEnabled();
+    });
+
+    it('reports disabled state', async () => {
+      await render(<NativeNotToggle {...props} disabled />);
+      expect(screen.getByLabelText(title)).toBeDisabled();
+    });
+  });
+
+  describe('NativeShiftActions', () => {
+    const props: ShiftActionsProps = {
+      level: 0,
+      path: [1],
+      ruleOrGroup: { combinator: 'and', rules: [] },
+      testID: TestID.shiftActions,
+      schema: emptySchema,
+      shiftUp: () => {},
+      shiftDown: () => {},
+      shiftUpDisabled: false,
+      shiftDownDisabled: false,
+    };
+
+    it('labels each button', async () => {
+      await render(<NativeShiftActions {...props} labels={{ shiftUp: 'up', shiftDown: 'down' }} />);
+      expect(screen.getByLabelText('up')).toBeOnTheScreen();
+      expect(screen.getByLabelText('down')).toBeOnTheScreen();
+    });
+
+    it('falls back to empty labels', async () => {
+      await render(<NativeShiftActions {...props} />);
+      const buttons = screen
+        .getByTestId(TestID.shiftActions)
+        .queryAll(n => n.props.accessibilityRole === 'button');
+      expect(buttons).toHaveLength(2);
+      for (const btn of buttons) {
+        expect(btn).toHaveProp('accessibilityLabel', '');
+      }
+    });
+  });
+
+  describe('NativeValueSelector', () => {
+    const title = 'Operators';
+    const props: ValueSelectorNativeProps = {
+      options: [toFullOption({ name: 'opt1', label: 'Option 1' })],
+      value: 'opt1',
+      handleOnChange: () => {},
+      level: 0,
+      path: [],
+      schema: { styles: {} } as SchemaNative<FullField, string>,
+      testID: TestID.operators,
+      title,
+    };
+
+    it('exposes combobox role and accessible name', async () => {
+      await render(<NativeValueSelector {...props} />);
+      const sel = screen.getByTestId(TestID.operators);
+      expect(sel).toHaveProp('accessibilityRole', 'combobox');
+      expect(sel).toHaveAccessibleName(title);
+      expect(sel).toHaveProp('editable', true);
+      expect(sel).toBeEnabled();
+    });
+
+    it('is non-editable and disabled when disabled', async () => {
+      await render(<NativeValueSelector {...props} disabled />);
+      const sel = screen.getByTestId(TestID.operators);
+      expect(sel).toHaveProp('editable', false);
+      expect(sel).toBeDisabled();
+    });
+  });
+
+  describe('NativeValueEditor', () => {
+    const title = 'Value';
+    const values: Option[] = [
+      { name: 'opt1', label: 'Option 1' },
+      { name: 'opt2', label: 'Option 2' },
+    ];
+    const props: ValueEditorNativeProps = {
+      field: 'f1',
+      operator: '=',
+      valueSource: 'value',
+      fieldData: toFullOption({ name: 'f1', label: 'f1' }),
+      handleOnChange: () => {},
+      path: [],
+      level: 0,
+      schema: { controls: { valueSelector: NativeValueSelector } } as Schema<FullField, string>,
+      testID: TestID.valueEditor,
+      rule: { field: '', operator: '', value: '' },
+      title,
+    };
+
+    for (const type of [undefined, 'textarea'] as const) {
+      it(`labels the ${type ?? 'default'} text input`, async () => {
+        const { rerender } = await render(<NativeValueEditor {...props} type={type} />);
+        const input = screen.getByTestId(TestID.valueEditor);
+        expect(input).toHaveAccessibleName(title);
+        expect(input).toHaveProp('editable', true);
+        expect(input).toBeEnabled();
+
+        await rerender(<NativeValueEditor {...props} type={type} disabled />);
+        const disabledInput = screen.getByTestId(TestID.valueEditor);
+        expect(disabledInput).toHaveProp('editable', false);
+        expect(disabledInput).toBeDisabled();
+      });
+    }
+
+    for (const type of ['switch', 'checkbox'] as const) {
+      it(`labels the ${type}`, async () => {
+        const { rerender } = await render(
+          <NativeValueEditor {...props} type={type} value={false} />
+        );
+        const switchEl = screen.getByTestId(TestID.valueEditor);
+        expect(switchEl).toHaveProp('accessibilityRole', 'switch');
+        expect(switchEl).toHaveAccessibleName(title);
+        expect(switchEl).toBeEnabled();
+
+        await rerender(<NativeValueEditor {...props} type={type} value={false} disabled />);
+        expect(screen.getByTestId(TestID.valueEditor)).toBeDisabled();
+      });
+    }
+
+    it('labels select/multiselect through the selector component', async () => {
+      await render(<NativeValueEditor {...props} type="select" values={values} />);
+      expect(screen.getByTestId(TestID.valueEditor)).toHaveAccessibleName(title);
+    });
+
+    it('distinguishes the "between" text inputs', async () => {
+      await render(<NativeValueEditor {...props} operator="between" type="text" />);
+      expect(screen.getByLabelText(`${title} (from)`)).toHaveProp('editable', true);
+      expect(screen.getByLabelText(`${title} (to)`)).toHaveProp('editable', true);
+    });
+
+    it('disables the "between" text inputs', async () => {
+      await render(<NativeValueEditor {...props} operator="between" type="text" disabled />);
+      for (const key of ['from', 'to']) {
+        const input = screen.getByLabelText(`${title} (${key})`);
+        expect(input).toHaveProp('editable', false);
+        expect(input).toBeDisabled();
+      }
+    });
+
+    it('falls back to bare from/to labels when title is absent', async () => {
+      await render(
+        <NativeValueEditor {...props} title={undefined} operator="between" type="text" />
+      );
+      expect(screen.getByLabelText('from')).toBeOnTheScreen();
+      expect(screen.getByLabelText('to')).toBeOnTheScreen();
+    });
+
+    it('distinguishes the "between" selectors', async () => {
+      await render(
+        <NativeValueEditor {...props} operator="between" type="select" values={values} />
+      );
+      expect(screen.getByLabelText(`${title} (from)`)).toBeOnTheScreen();
+      expect(screen.getByLabelText(`${title} (to)`)).toBeOnTheScreen();
+    });
+  });
+
+  describe('RuleGroupNative', () => {
+    it('exposes group role and accessible description', async () => {
+      await render(<QueryBuilderNative query={query} />);
+      const group = screen.getByTestId(TestID.ruleGroup);
+      expect(group).toHaveProp('role', 'group');
+      expect(group).toHaveAccessibleName('Query builder');
+    });
+
+    it('describes nested groups by path', async () => {
+      await render(
+        <QueryBuilderNative
+          query={{ combinator: 'and', rules: [{ combinator: 'or', rules: [] }] }}
+        />
+      );
+      const groups = screen.getAllByTestId(TestID.ruleGroup);
+      expect(groups[1]).toHaveAccessibleName('Rule group at path 0');
+    });
   });
 });

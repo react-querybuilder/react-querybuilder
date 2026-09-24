@@ -51,6 +51,7 @@ const defaultStylesObject: QueryBuilderNativeStyles = {
     alignItems: 'center',
   },
   shiftActions: { flexDirection: 'column' },
+  undoRedoActions: { flexDirection: 'row', gap: 10 },
   value: { ...defaultNativeSelectStyles.selector, width: 150 },
   valueEditorOption: defaultNativeSelectStyles.option,
   valueEditorSelector: defaultNativeSelectStyles.selector,
