@@ -34,7 +34,11 @@ export const RuleGroupNative = (props: RuleGroupNativeProps): React.JSX.Element 
   );
 
   return (
-    <View style={styles.ruleGroup} testID={TestID.ruleGroup}>
+    <View
+      style={styles.ruleGroup}
+      testID={TestID.ruleGroup}
+      role="group"
+      accessibilityLabel={rg.accessibleDescription}>
       <View style={styles.ruleGroupHeader}>
         <RuleGroupHeaderComponents {...rg} />
       </View>

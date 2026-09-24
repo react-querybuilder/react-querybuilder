@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New `NativeUndoRedoActions` component for `@react-querybuilder/native`. `QueryBuilderNative` renders it as the `undoRedoActions` control element when it descends from a `QueryBuilderHistory` provider (from `react-querybuilder/history`), so undo/redo works in React Native with the same setup as the web.
+- New `NativeUndoRedoActions` component for `@react-querybuilder/native`, assigned to the `undoRedoActions` control element by `QueryBuilderNative` so undo/redo works in React Native with the same setup as the web. The controls render whenever `showUndoRedo` is enabled, either explicitly or by a `QueryBuilderHistory` ancestor (from `react-querybuilder/history`); pass `controlElements={{ undoRedoActions: null }}` to opt out. The container is styled with the new `undoRedoActions` key of the `styles` prop.
+- Accessibility improvements for `@react-querybuilder/native` components. Action elements, not toggles, value editors, and value selectors now expose an `accessibilityRole`, an `accessibilityLabel` derived from their `title`, and an `accessibilityState` reflecting `disabled`. Rule groups expose `role="group"` with their accessible description, and text-based value editors and selectors are no longer editable while disabled.
 
 ## [v8.24.1] - 2026-09-20
 

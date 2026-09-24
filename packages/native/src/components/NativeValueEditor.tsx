@@ -72,10 +72,12 @@ export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.E
           <TextInput
             key={key}
             style={styles.value}
+            accessibilityLabel={title ? `${title} (${key})` : key}
+            accessibilityState={{ disabled: !!disabled }}
+            editable={!disabled}
             inputMode={inputMode}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
-            // TODO: disabled={disabled}
             onChangeText={v => multiValueHandler(v, i)}
           />
         );
@@ -86,6 +88,7 @@ export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.E
           {...propsForValueSelector}
           handleOnChange={v => multiValueHandler(v, i)}
           className={className}
+          title={title ? `${title} (${key})` : key}
           disabled={disabled}
           value={valueAsArray[i] ?? getFirstOption(values)}
           options={values}
@@ -125,6 +128,9 @@ export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.E
       return (
         <TextInput
           testID={testID}
+          accessibilityLabel={title}
+          accessibilityState={{ disabled: !!disabled }}
+          editable={!disabled}
           style={styles.value}
           placeholder={placeHolderText}
           value={value}
@@ -137,6 +143,9 @@ export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.E
       return (
         <Switch
           testID={testID}
+          accessibilityLabel={title}
+          accessibilityRole="switch"
+          accessibilityState={{ disabled: !!disabled }}
           style={styles.valueEditorSwitch}
           disabled={disabled}
           value={!!value}
@@ -167,6 +176,9 @@ export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.E
   return (
     <TextInput
       testID={testID}
+      accessibilityLabel={title}
+      accessibilityState={{ disabled: !!disabled }}
+      editable={!disabled}
       style={styles.value}
       inputMode={inputMode}
       placeholder={placeHolderText}

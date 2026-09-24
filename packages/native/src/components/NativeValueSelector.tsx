@@ -18,6 +18,7 @@ export const NativeValueSelector = <Opt extends FullOption = FullOption>({
   listsAsArrays,
   schema,
   testID,
+  title,
 }: ValueSelectorNativeProps<Opt>): React.JSX.Element => {
   const styles = useMemo(() => {
     switch (testID) {
@@ -104,6 +105,10 @@ export const NativeValueSelector = <Opt extends FullOption = FullOption>({
     <TextInput
       testID={testID}
       aria-disabled={disabled}
+      accessibilityLabel={title}
+      accessibilityRole="combobox"
+      accessibilityState={{ disabled: !!disabled }}
+      editable={!disabled}
       style={styles.selector}
       value={val}
       onChangeText={onChange}

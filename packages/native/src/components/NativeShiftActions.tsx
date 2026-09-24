@@ -28,14 +28,14 @@ export const NativeShiftActions = ({
       <Button
         disabled={disabled || shiftUpDisabled}
         onPress={_e => shiftUp()}
-        accessibilityLabel={labels?.shiftUp as string}
-        title={labels?.shiftUp as string}
+        accessibilityLabel={(labels?.shiftUp as string) ?? ''}
+        title={(labels?.shiftUp as string) ?? ''}
       />
       <Button
         disabled={disabled || shiftDownDisabled}
         onPress={_e => shiftDown()}
-        accessibilityLabel={labels?.shiftDown as string}
-        title={labels?.shiftDown as string}
+        accessibilityLabel={(labels?.shiftDown as string) ?? ''}
+        title={(labels?.shiftDown as string) ?? ''}
       />
     </View>
   );

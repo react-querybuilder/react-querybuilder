@@ -42,7 +42,7 @@ To place undo/redo controls anywhere else—a toolbar above the query builder, f
 
 ## React Native
 
-`@react-querybuilder/native` exports `NativeUndoRedoActions`, which renders the same two buttons inside a `<View>`. `QueryBuilderNative` assigns it to the `undoRedoActions` control element automatically when it descends from a `QueryBuilderHistory` provider. Style the container with the `undoRedoActions` key of the `styles` prop.
+`@react-querybuilder/native` exports `NativeUndoRedoActions`, which renders the same two buttons inside a `<View>`. `QueryBuilderNative` assigns it to the `undoRedoActions` control element by default, so it renders whenever [`showUndoRedo`](./querybuilder#showundoredo) is enabled—either explicitly or by a `QueryBuilderHistory` ancestor. Style the container with the `undoRedoActions` key of the `styles` prop. Pass `controlElements={{ undoRedoActions: null }}` to opt out.
 
 `UndoRedoActionElements`, also exported from `react-querybuilder/history`, renders just the two buttons (no wrapper element) and backs both the web and React Native containers. Use it if you need a custom wrapper.
 

@@ -175,7 +175,7 @@ const App = () => (
 );
 ```
 
-Without a `QueryBuilderHistory` ancestor, `showUndoRedo` has no effect in React Native.
+Without a `QueryBuilderHistory` ancestor, `showUndoRedo` still renders working undo/redo controls in React Native, since `QueryBuilderNative` assigns `NativeUndoRedoActions` to the `undoRedoActions` control element by default. Wrapping in `QueryBuilderHistory` is still the better option: it enables `showUndoRedo` automatically and lets you configure `maxHistory` and `coalesceMs`.
 
 ## Multiple query builders
 

@@ -12,19 +12,27 @@ export const NativeActionElement = ({
   disabled,
   disabledTranslation,
   testID,
-}: ActionNativeProps): React.JSX.Element => (
-  <Pressable
-    testID={testID}
-    disabled={disabled && !disabledTranslation}
-    onPress={_e => handleOnClick()}>
-    <View style={defaultNativeStyles.actionElement}>
-      <Text style={defaultNativeStyles.actionElementText}>
-        {
-          (disabledTranslation && disabled
-            ? (disabledTranslation.label ?? '')
-            : (label ?? '')) as string
-        }
-      </Text>
-    </View>
-  </Pressable>
-);
+  title,
+}: ActionNativeProps): React.JSX.Element => {
+  const isDisabled = !!disabled && !disabledTranslation;
+
+  return (
+    <Pressable
+      testID={testID}
+      accessibilityLabel={title}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: isDisabled }}
+      disabled={isDisabled}
+      onPress={_e => handleOnClick()}>
+      <View style={defaultNativeStyles.actionElement}>
+        <Text style={defaultNativeStyles.actionElementText}>
+          {
+            (disabledTranslation && disabled
+              ? (disabledTranslation.label ?? '')
+              : (label ?? '')) as string
+          }
+        </Text>
+      </View>
+    </Pressable>
+  );
+};

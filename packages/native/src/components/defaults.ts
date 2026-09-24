@@ -7,6 +7,7 @@ import { NativeMatchModeEditor } from './NativeMatchModeEditor';
 import { NativeMatchModeEditorWeb } from './NativeMatchModeEditorWeb';
 import { NativeNotToggle } from './NativeNotToggle';
 import { NativeShiftActions } from './NativeShiftActions';
+import { NativeUndoRedoActions } from './NativeUndoRedoActions';
 import { NativeValueEditor } from './NativeValueEditor';
 import { NativeValueEditorWeb } from './NativeValueEditorWeb';
 import { NativeValueSelector } from './NativeValueSelector';
@@ -38,9 +39,7 @@ export const defaultNativeControlElements: Controls<FullField, string> = {
   ruleGroupBodyElements: RuleGroupBodyComponents,
   ruleGroupHeaderElements: RuleGroupHeaderComponents,
   shiftActions: NativeShiftActions,
-  // Undo/redo requires a `QueryBuilderHistory` ancestor, which `QueryBuilderNative` detects at
-  // render time and substitutes `NativeUndoRedoActions` for this `null`.
-  undoRedoActions: null,
+  undoRedoActions: NativeUndoRedoActions,
   ungroupAction: NativeActionElement,
   valueEditor: NativeValueEditor,
   valueSelector: NativeValueSelector,

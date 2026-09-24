@@ -14,6 +14,7 @@ export const NativeNotToggle = ({
   disabled,
   schema,
   testID,
+  title,
 }: NotToggleNativeProps): React.JSX.Element => {
   const styles = useMemo(
     () => ({
@@ -36,6 +37,9 @@ export const NativeNotToggle = ({
       <Switch
         style={styles.notToggleSwitch}
         disabled={disabled}
+        accessibilityState={{ disabled: !!disabled }}
+        accessibilityRole="switch"
+        accessibilityLabel={title}
         value={checked}
         onValueChange={v => handleOnChange(v)}
       />
