@@ -1294,7 +1294,7 @@ export type QueryBuilderProps<
       /**
        * `id` generator function. Should always produce a unique/random value.
        *
-       * @default crypto.randomUUID
+       * @default generateID
        */
       idGenerator?: () => string;
       /**

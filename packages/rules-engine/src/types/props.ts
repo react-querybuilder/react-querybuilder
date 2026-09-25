@@ -234,7 +234,7 @@ export interface RulesEngineProps {
   /**
    * `id` generator function. Should always produce a unique/random string.
    *
-   * @default crypto.randomUUID
+   * @default generateID
    */
   idGenerator?: () => string;
 }
