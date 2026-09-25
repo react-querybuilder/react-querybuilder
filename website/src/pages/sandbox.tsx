@@ -11,7 +11,20 @@ const ghPathChakra2 = 'react-querybuilder/react-querybuilder-chakra2/tree/main/e
 
 type Platform = 'StackBlitz' | 'CodeSandbox' | 'Expo Snack';
 
-// Snack loads App.tsx from GitHub raw; deps resolved to SDK-compatible versions
+// Snack loads App.tsx from GitHub raw; deps resolved to SDK-compatible versions.
+// Snack doesn't auto-install peer deps: react-redux (peer of native), redux (peer of
+// react-redux), @types/react (TS App.tsx). Unversioned so Snack picks latest/SDK-compatible.
+// @react-querybuilder/core: editor type acquisition doesn't follow transitive deps, and RQB
+// re-exports core types (`export * from '@react-querybuilder/core'`).
+const snackDependencies = [
+  '@react-querybuilder/native',
+  'react-querybuilder',
+  '@react-querybuilder/core',
+  'react-redux',
+  'redux',
+  '@types/react',
+];
+
 const getSnackLink = (template: string) => {
   const files = {
     'App.tsx': {
@@ -21,7 +34,7 @@ const getSnackLink = (template: string) => {
   };
   const params = new URLSearchParams({
     name: 'React Query Builder Expo Example',
-    dependencies: ['@react-querybuilder/native', 'react-querybuilder'].join(','),
+    dependencies: snackDependencies.join(','),
     files: JSON.stringify(files),
   });
   return `https://snack.expo.dev/?${params}`;
