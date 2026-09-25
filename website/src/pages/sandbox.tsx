@@ -45,7 +45,7 @@ function SandboxRedirectTimer() {
   const platformPrelim = Array.isArray(qsPlatform) ? qsPlatform[0]! : qsPlatform;
   const platformLC = platformPrelim.toLocaleLowerCase();
   const platform: Platform =
-    platformLC === 'snack' || template === 'native-expo'
+    template === 'native-expo'
       ? 'Expo Snack'
       : ['sb', 'stackblitz'].includes(platformLC)
         ? 'StackBlitz'
