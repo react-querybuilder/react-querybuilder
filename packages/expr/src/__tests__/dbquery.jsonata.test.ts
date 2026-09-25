@@ -1,5 +1,3 @@
-/* @vitest-environment node */
-
 import { formatQuery } from '@react-querybuilder/core';
 import jsonata from 'jsonata';
 import { fields, products, testCases } from '../dbqueryTestUtils';

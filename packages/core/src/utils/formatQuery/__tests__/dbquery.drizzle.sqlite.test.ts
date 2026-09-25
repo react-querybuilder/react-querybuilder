@@ -1,5 +1,3 @@
-/* @vitest-environment node */
-
 import { Database } from 'bun:sqlite';
 import { getOperators } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/bun-sqlite';

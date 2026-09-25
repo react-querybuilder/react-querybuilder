@@ -1,5 +1,3 @@
-/* @vitest-environment node */
-
 import { createSchema, dropSchema, getSharedPGlite, reserveSchema } from '@rqb-dbpool';
 import { boolean, integer, pgSchema, text } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/pglite';

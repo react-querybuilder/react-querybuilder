@@ -1,5 +1,5 @@
-import { beforeAll, describe, expect, test } from 'bun:test';
-import { getSharedMongo } from '@rqb-dbmongo';
+import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
+import { reserveModel } from '@rqb-dbmongo';
 import type { Model, QueryFilter } from 'mongoose';
 import { Schema } from 'mongoose';
 import type { DefaultRuleGroupType, ExportFormat } from '../../../types';
@@ -49,28 +49,36 @@ const superHeroSchema = {
   powerUpAge: { type: Number },
 } as const;
 
+const drops: (() => Promise<void>)[] = [];
+
 beforeAll(async () => {
-  const conn = await getSharedMongo();
-  SuperHero = conn.model('superhero', new Schema(superHeroSchema));
+  const sh = await reserveModel('superhero', new Schema<SuperUserMongoDB>(superHeroSchema));
+  drops.push(sh.drop);
+  SuperHero = sh.model;
   await SuperHero.insertMany(superUsersMongoDB);
 
-  // const nestedSchema = new Schema({
   const nestedSchema = {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     generationalSuffix: { type: String },
   } as const;
   const nestedSchemaMongoose = new Schema(nestedSchema, { _id: false });
-  AugmentedSuperHero = conn.model(
+  const ash = await reserveModel(
     'augmentedsuperhero',
-    new Schema({
+    new Schema<AugmentedSuperUserMongoDB>({
       ...superHeroSchema,
       nicknames: { type: [String], required: true },
       earlyPencilers: { type: [nestedSchemaMongoose], required: true },
     })
   );
+  drops.push(ash.drop);
+  AugmentedSuperHero = ash.model;
   await AugmentedSuperHero.insertMany(augmentedSuperUsersMongoDB);
 }, 30_000);
+
+afterAll(async () => {
+  await Promise.all(drops.map(d => d()));
+});
 
 describe('MongoDB', () => {
   // Common tests

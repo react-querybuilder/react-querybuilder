@@ -1,6 +1,5 @@
-import { PGlite } from '@electric-sql/pglite';
 import { formatQuery } from '@react-querybuilder/core';
-import { PrismaPGlite } from 'pglite-prisma-adapter';
+import { createSchema, dropSchema, getSharedPrismaAdapter, reserveSchema } from '@rqb-dbpool';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -13,14 +12,14 @@ import { getDatetimeRuleProcessorPrisma } from '../getDatetimeRuleProcessorPrism
 // @ts-ignore This only fails before generating the adapter, but we don't care
 import { PrismaClient } from '../prisma/generated/prisma-client/client';
 
-const db = new PGlite();
-const adapter = new PrismaPGlite(db);
-const prisma = new PrismaClient({ adapter });
+const schema = reserveSchema('dt_prisma_pg');
+const prisma = new PrismaClient({ adapter: await getSharedPrismaAdapter(schema) });
 
 const now = new Date();
 
 beforeAll(async () => {
-  await prisma.$executeRawUnsafe(CREATE_MUSICIANS_TABLE('postgresql'));
+  const db = await createSchema(schema);
+  await db.exec(CREATE_MUSICIANS_TABLE('postgresql', `"${schema}".musicians`));
   await prisma.musicians.createMany({
     data: musicians.map(m => ({
       ...m,
@@ -33,7 +32,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await prisma.$disconnect();
-  await db.close();
+  await dropSchema(schema);
 });
 
 for (const [libName, apiFns] of dateLibraryFunctions) {

@@ -1,5 +1,4 @@
-import { PGlite } from '@electric-sql/pglite';
-import { PrismaPGlite } from 'pglite-prisma-adapter';
+import { createSchema, dropSchema, getSharedPrismaAdapter, reserveSchema } from '@rqb-dbpool';
 import type { TestSQLParams } from '../dbqueryTestUtils';
 import { CREATE_INDEX, CREATE_TABLE, dbTests, fields, superUsers } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
@@ -7,22 +6,20 @@ import { formatQuery } from '../formatQuery';
 // @ts-ignore This only fails before generating the adapter, but we don't care
 import { PrismaClient } from '../prisma/generated/prisma-client/client';
 
-const db = new PGlite();
-
+const schema = reserveSchema('prisma_pg');
 const superUsersPostgres = superUsers('postgres');
 
-const adapter = new PrismaPGlite(db);
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient({ adapter: await getSharedPrismaAdapter(schema) });
 
 beforeAll(async () => {
-  await prisma.$executeRawUnsafe(CREATE_TABLE('postgres'));
-  await prisma.$executeRawUnsafe(CREATE_INDEX());
+  const db = await createSchema(schema);
+  await db.exec(`${CREATE_TABLE('postgres', { schema })}; ${CREATE_INDEX({ schema })}`);
   await prisma.superusers.createMany({ data: superUsersPostgres });
 });
 
 afterAll(async () => {
   await prisma.$disconnect();
-  await db.close();
+  await dropSchema(schema);
 });
 
 const testPrisma = ({ query, expectedResult, fqOptions }: TestSQLParams) => {

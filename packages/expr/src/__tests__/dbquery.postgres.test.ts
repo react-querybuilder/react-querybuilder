@@ -1,7 +1,3 @@
-/* @vitest-environment node */
-
-// Runs under `bun test`; the directive only matters if executed via Vitest directly.
-
 import { formatQuery } from '@react-querybuilder/core';
 import { createSchema, dropSchema, getSharedSQL, reserveSchema } from '@rqb-dbpool';
 import {

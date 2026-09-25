@@ -1,5 +1,3 @@
-/* @vitest-environment node */
-
 import { formatQuery } from '@react-querybuilder/core';
 import { col, DataTypes, literal, Model, Op, Sequelize, where } from 'sequelize';
 import { fields, testCases, products } from '../dbqueryTestUtils';

@@ -1,15 +1,9 @@
-/* @vitest-environment node */
-
 import { formatQuery } from '@react-querybuilder/core';
-import { getSharedMongo } from '@rqb-dbmongo';
+import { reserveModel } from '@rqb-dbmongo';
 import type { Model } from 'mongoose';
 import { Schema } from 'mongoose';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
 import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
-
-if (typeof vi !== 'undefined' && typeof vi.setConfig === 'function') {
-  vi.setConfig({ testTimeout: 60_000 });
-}
 
 type Result = {
   id: string;
@@ -22,6 +16,11 @@ type Result = {
 };
 
 let Musician: Model<Result>;
+let drop: () => Promise<void>;
+
+afterAll(async () => {
+  await drop?.();
+});
 
 const musicianSchema = {
   id: { type: String, required: true },
@@ -34,9 +33,7 @@ const musicianSchema = {
 } as const;
 
 beforeAll(async () => {
-  const conn = await getSharedMongo();
-  Musician = conn.model('musician', new Schema(musicianSchema));
-  await Musician.syncIndexes();
+  ({ model: Musician, drop } = await reserveModel('musician', new Schema<Result>(musicianSchema)));
   await Musician.insertMany(
     musicians.map(m => ({
       ...m,

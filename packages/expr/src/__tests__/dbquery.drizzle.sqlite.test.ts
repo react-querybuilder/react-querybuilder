@@ -1,5 +1,3 @@
-/* @vitest-environment node */
-
 import { Database } from 'bun:sqlite';
 import { formatQuery } from '@react-querybuilder/core';
 import { getOperators } from 'drizzle-orm';

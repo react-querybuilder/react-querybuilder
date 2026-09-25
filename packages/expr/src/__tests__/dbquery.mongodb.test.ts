@@ -1,15 +1,9 @@
-/* @vitest-environment node */
-
 import { formatQuery } from '@react-querybuilder/core';
-import { getSharedMongo } from '@rqb-dbmongo';
+import { reserveModel } from '@rqb-dbmongo';
 import type { Model } from 'mongoose';
 import { Schema } from 'mongoose';
 import { fields, products, testCases } from '../dbqueryTestUtils';
 import { expressionRuleProcessorMongoDBQuery } from '../index';
-
-if (typeof vi !== 'undefined' && typeof vi.setConfig === 'function') {
-  vi.setConfig({ testTimeout: 60_000 });
-}
 
 interface ProductDoc {
   id: number;
@@ -21,10 +15,14 @@ interface ProductDoc {
 }
 
 let Product: Model<ProductDoc>;
+let drop: () => Promise<void>;
+
+afterAll(async () => {
+  await drop?.();
+});
 
 beforeAll(async () => {
-  const conn = await getSharedMongo();
-  Product = conn.model(
+  ({ model: Product, drop } = await reserveModel(
     'product',
     new Schema<ProductDoc>({
       id: { type: Number, required: true },
@@ -34,7 +32,7 @@ beforeAll(async () => {
       discount: { type: Number, required: true },
       rating: { type: Number, default: null },
     })
-  );
+  ));
   await Product.insertMany(products);
 }, 30_000);
 

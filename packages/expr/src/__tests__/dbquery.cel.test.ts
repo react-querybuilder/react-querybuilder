@@ -1,5 +1,3 @@
-/* @vitest-environment node */
-
 import type { RuleType } from '@react-querybuilder/core';
 import { formatQuery } from '@react-querybuilder/core';
 import { verifyCELEvaluator } from '../../../../utils/cel-evaluator/verifyCELEvaluator';
