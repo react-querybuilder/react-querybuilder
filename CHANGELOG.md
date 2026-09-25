@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.24.3] - 2026-09-25
+
+### Fixed
+
+- [#1103] `configureRqbStore`'s `addSlice` (used by `injectSlice`) no longer calls `crypto.randomUUID()` directly, instead using `generateID` and its fallbacks. Fixes errors in environments where `crypto` is undefined or lacks `randomUUID` (e.g., React Native/Hermes, insecure browser contexts).
+
 ## [v8.24.2] - 2026-09-25
 
 ### Fixed
@@ -2539,12 +2545,14 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1092]: https://github.com/react-querybuilder/react-querybuilder/issues/1092
 [#1099]: https://github.com/react-querybuilder/react-querybuilder/issues/1099
 [#1101]: https://github.com/react-querybuilder/react-querybuilder/issues/1101
+[#1103]: https://github.com/react-querybuilder/react-querybuilder/issues/1103
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.3...HEAD
+[v8.24.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.2...v8.24.3
 [v8.24.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.1...v8.24.2
 [v8.24.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.0...v8.24.1
 [v8.24.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.1...v8.24.0
