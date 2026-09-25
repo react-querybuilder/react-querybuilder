@@ -89,7 +89,7 @@ jobs:
       - name: Publish to npm
         run: npx lerna publish from-package --yes --no-git-reset --dist-tag ${{ needs.resolve.outputs.dist-tag }}
       - name: Publish to pkg.pr.new
-        run: bunx pkg-pr-new publish './packages/*' --template './examples/*' --packageManager=bun --bun
+        run: bunx pkg-pr-new publish './packages/*' --template './examples/!(native|native-expo)' --packageManager=bun --bun
       - name: Upload conformance fixtures to the release
         if: github.event_name == 'release'
         env:
