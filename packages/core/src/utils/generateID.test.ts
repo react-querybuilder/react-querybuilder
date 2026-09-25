@@ -19,7 +19,11 @@ const loadGenerateID = async (cryptoStub: unknown) => {
 };
 
 afterEach(() => {
-  if (realCryptoDesc) Object.defineProperty(globalThis, 'crypto', realCryptoDesc);
+  if (realCryptoDesc) {
+    Object.defineProperty(globalThis, 'crypto', realCryptoDesc);
+  } else {
+    Reflect.deleteProperty(globalThis, 'crypto');
+  }
 });
 
 const arr = Array.from({ length: 10_000 });
