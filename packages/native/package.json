@@ -58,7 +58,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "~0.87.1",
-    "react-native-web": "~0.21.2",
+    "react-native-web": "~0.21.3",
     "react-querybuilder": "8.24.2",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
