@@ -23,6 +23,27 @@ it('adds a slice with addSlice', () => {
   expect(counterSliceAS.selectors.selectValue(getAnyState(queryBuilderStore))).toBe(1);
 });
 
+// Hermes (RN iOS/Android) has no global `crypto`; module-level injectSlice calls must not throw
+it('adds a slice without global crypto', async () => {
+  vi.stubGlobal('crypto', undefined);
+  vi.resetModules();
+  try {
+    const { configureRqbStore } = await import('../configureRqbStore');
+    const store = configureRqbStore();
+    const slice = createSlice({
+      name: 'counter-nc',
+      initialState: { value: 0 },
+      reducers: {},
+      selectors: { selectValue: state => state.value },
+    });
+    expect(() => store.addSlice(slice)).not.toThrow();
+    expect(slice.selectors.selectValue(getAnyState(store))).toBe(0);
+  } finally {
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  }
+});
+
 it('adds a slice with injectSlice', () => {
   const counterSliceIS = createSlice({
     name: 'counter-is',

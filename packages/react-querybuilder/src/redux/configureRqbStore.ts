@@ -1,3 +1,4 @@
+import { generateID } from '@react-querybuilder/core';
 import type { Slice } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 import { storeCommon } from './_internal';
@@ -15,7 +16,7 @@ export const configureRqbStore = (devTools?: boolean): RqbStore => {
     // Initialize state for the new slice. This action is a no-op because
     // the `type` is random and will never match any reducers.
     queryBuilderStore.dispatch({
-      type: crypto.randomUUID().slice(0, 8),
+      type: generateID().slice(0, 8),
       meta: `Initializing state for slice "${slice.name}"`,
     });
   };
