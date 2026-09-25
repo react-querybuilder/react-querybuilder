@@ -228,6 +228,7 @@ const otherExamples = [
   'base-ui',
   'ci',
   'native',
+  'native-expo',
   'next',
   'preact',
   'rules-engine',

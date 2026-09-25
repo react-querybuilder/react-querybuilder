@@ -37,7 +37,7 @@ jobs:
           name: packs
           path: packs/*.tgz
       - name: Publish to pkg.pr.new
-        run: bunx pkg-pr-new publish './packages/*' --template './examples/*' --packageManager=bun --bun
+        run: bunx pkg-pr-new publish './packages/*' --template './examples/!(_template|native|native-expo)' --packageManager=bun --bun
 
   Typecheck_and_lint:
     runs-on: ubuntu-latest
