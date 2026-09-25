@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+## [v8.24.2] - 2026-09-25
 
-- New `NativeUndoRedoActions` component for `@react-querybuilder/native`, assigned to the `undoRedoActions` control element by `QueryBuilderNative` so undo/redo works in React Native with the same setup as the web. The controls render whenever `showUndoRedo` is enabled, either explicitly or by a `QueryBuilderHistory` ancestor (from `react-querybuilder/history`); pass `controlElements={{ undoRedoActions: null }}` to opt out. The container is styled with the new `undoRedoActions` key of the `styles` prop.
-- Accessibility improvements for `@react-querybuilder/native` components. Action elements, not toggles, value editors, and value selectors now expose an `accessibilityRole`, an `accessibilityLabel` derived from their `title`, and an `accessibilityState` reflecting `disabled`. Rule groups expose `role="group"` with their accessible description, and text-based value editors and selectors are no longer editable while disabled.
+### Fixed
+
+- [#1101] Implemented missing `NativeUndoRedoActions` component for `@react-querybuilder/native`, assigned to the `undoRedoActions` control element by `QueryBuilderNative` so undo/redo works in React Native with the same setup as the web. The controls render whenever `showUndoRedo` is enabled, either explicitly or by a `QueryBuilderHistory` ancestor (from `react-querybuilder/history`); pass `controlElements={{ undoRedoActions: null }}` to opt out. The container is styled with the new `undoRedoActions` key of the `styles` prop.
+- [#1101] Accessibility improvements for `@react-querybuilder/native` components. Action elements, not toggles, value editors, and value selectors now expose an `accessibilityRole`, an `accessibilityLabel` derived from their `title`, and an `accessibilityState` reflecting `disabled`. Rule groups expose `role="group"` with their accessible description, and text-based value editors and selectors are no longer editable while disabled.
 
 ## [v8.24.1] - 2026-09-20
 
@@ -2536,12 +2538,14 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1084]: https://github.com/react-querybuilder/react-querybuilder/pull/1084
 [#1092]: https://github.com/react-querybuilder/react-querybuilder/issues/1092
 [#1099]: https://github.com/react-querybuilder/react-querybuilder/issues/1099
+[#1101]: https://github.com/react-querybuilder/react-querybuilder/issues/1101
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.2...HEAD
+[v8.24.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.1...v8.24.2
 [v8.24.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.0...v8.24.1
 [v8.24.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.1...v8.24.0
 [v8.23.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.23.0...v8.23.1
