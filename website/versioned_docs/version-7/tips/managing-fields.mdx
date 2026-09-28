@@ -3,6 +3,8 @@ title: Managing fields
 description: Generate a field array from database table/view specification
 ---
 
+import { SandpackRQB } from '@site/src/components/SandpackRQB';
+
 The [`fields`](../components/querybuilder#fields) array forms the foundation of React Query Builder configuration, defining which data fields users can include in a query.
 
 {/* TODO: Describe each property in detail. */}
@@ -72,6 +74,436 @@ Existing rules that reference unchanged field names remain valid when the field 
 If your fields array is computed inline or derived from other state, wrap it in `useMemo` to avoid unnecessary re-normalization on every render.
 
 :::
+
+### Fields editor
+
+The following example lets users add, edit, and delete fields. It stores an editor-friendly `FieldDef` for each field and derives the `fields` prop from it, with some safeguards to keep the query consistent with the field list:
+
+- **Validation**: names must be valid identifiers and unique (case-insensitive). Labels are required, and `select` fields need at least one unique value. Errors appear inline and block saving.
+- **Immutable names**: a field's `name` is locked after creation because rules reference fields by name. Labels, types, and values can still change.
+- **Deleting fields in use**: each field shows how many rules use it. Deleting a field in use asks for confirmation, then removes those rules along with the field.
+- **Changing types or values**: if saving would invalidate existing rules (a type change, or removed `select` values), a warning shows how many rules will be affected. Saving resets those rules' operator and value.
+- **At least one field**: the last field can't be deleted.
+
+<SandpackRQB rqbVersion={8} options={{ editorHeight: 600 }}>
+
+```tsx
+import { useMemo, useState } from 'react';
+import type { RuleGroupType } from 'react-querybuilder';
+import { QueryBuilder, formatQuery } from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.css';
+import { FieldsEditor } from './FieldsEditor';
+import type { FieldDef } from './fieldUtils';
+import { reconcileRules, removeRulesForField, toField } from './fieldUtils';
+import './styles.css';
+
+const initialDefs: FieldDef[] = [
+  { name: 'firstName', label: 'First Name', kind: 'text', values: [] },
+  { name: 'age', label: 'Age', kind: 'number', values: [] },
+  { name: 'status', label: 'Status', kind: 'select', values: ['active', 'inactive'] },
+];
+
+const initialQuery: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+    { field: 'age', operator: '>', value: 28 },
+    { field: 'status', operator: '=', value: 'active' },
+  ],
+};
+
+export default function App() {
+  const [defs, setDefs] = useState(initialDefs);
+  const [query, setQuery] = useState(initialQuery);
+  const fields = useMemo(() => defs.map(toField), [defs]);
+
+  const saveField = (def: FieldDef, prev?: FieldDef) => {
+    if (prev) {
+      setDefs(ds => ds.map(d => (d.name === prev.name ? def : d)));
+      setQuery(q => reconcileRules(q, prev, def));
+    } else {
+      setDefs(ds => [...ds, def]);
+    }
+  };
+
+  const deleteField = (name: string) => {
+    setDefs(ds => ds.filter(d => d.name !== name));
+    setQuery(q => removeRulesForField(q, name));
+  };
+
+  return (
+    <div className="app">
+      <FieldsEditor defs={defs} query={query} onSave={saveField} onDelete={deleteField} />
+      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
+      <pre>{formatQuery(query, { format: 'sql', fields })}</pre>
+    </div>
+  );
+}
+```
+
+```tsx FieldsEditor.tsx
+import type { FormEvent } from 'react';
+import { useState } from 'react';
+import type { RuleGroupType } from 'react-querybuilder';
+import type { FieldDef, FieldKind } from './fieldUtils';
+import { countRules, fieldKinds, isInvalidatedBy, usesField, validateFieldDef } from './fieldUtils';
+
+interface Props {
+  defs: FieldDef[];
+  query: RuleGroupType;
+  onSave: (def: FieldDef, prev?: FieldDef) => void;
+  onDelete: (name: string) => void;
+}
+
+const blank: FieldDef = { name: '', label: '', kind: 'text', values: [] };
+const parseValues = (s: string) =>
+  s
+    .split('\n')
+    .map(v => v.trim())
+    .filter(Boolean);
+
+export const FieldsEditor = ({ defs, query, onSave, onDelete }: Props) => {
+  // `editing` null = adding new field
+  const [editing, setEditing] = useState<FieldDef | null>(null);
+  const [draft, setDraft] = useState(blank);
+  const [valuesText, setValuesText] = useState('');
+  const [touched, setTouched] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+
+  const next: FieldDef = { ...draft, name: draft.name.trim(), values: parseValues(valuesText) };
+  const errors = validateFieldDef(
+    next,
+    defs.filter(d => d.name !== editing?.name)
+  );
+  const valid = Object.keys(errors).length === 0;
+  const resetCount = editing ? countRules(query, isInvalidatedBy(editing, next)) : 0;
+
+  const startEdit = (def: FieldDef | null) => {
+    setEditing(def);
+    setDraft(def ?? blank);
+    setValuesText(def?.values.join('\n') ?? '');
+    setTouched(false);
+    setPendingDelete(null);
+  };
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    setTouched(true);
+    if (!valid) return;
+    onSave(next, editing ?? undefined);
+    startEdit(null);
+  };
+
+  const requestDelete = (name: string) => {
+    if (countRules(query, usesField(name)) === 0) return doDelete(name);
+    setPendingDelete(name);
+  };
+
+  const doDelete = (name: string) => {
+    onDelete(name);
+    setPendingDelete(null);
+    if (editing?.name === name) startEdit(null);
+  };
+
+  const err = (key: keyof typeof errors) =>
+    touched && errors[key] ? (
+      <span id={`fe-${key}-err`} className="fe-error">
+        {errors[key]}
+      </span>
+    ) : null;
+  const a11y = (key: keyof typeof errors) =>
+    touched && errors[key]
+      ? { 'aria-invalid': true, 'aria-describedby': `fe-${key}-err` }
+      : { 'aria-invalid': false };
+
+  return (
+    <div className="fe">
+      <ul className="fe-list" aria-label="Fields">
+        {defs.map(d => {
+          const used = countRules(query, usesField(d.name));
+          return (
+            <li key={d.name} className={editing?.name === d.name ? 'fe-active' : undefined}>
+              <span>
+                <span>
+                  <strong>{d.label}</strong>
+                  {used > 0 && <span className="fe-badge">{used} in use</span>}
+                </span>
+                <span>
+                  <code>{d.name}</code> (<em>{d.kind}</em>)
+                </span>
+              </span>
+              {pendingDelete === d.name ? (
+                <span role="alert">
+                  Also remove {used} rule{used === 1 ? '' : 's'}?{' '}
+                  <button type="button" onClick={() => doDelete(d.name)}>
+                    Remove
+                  </button>
+                  <button type="button" onClick={() => setPendingDelete(null)}>
+                    Cancel
+                  </button>
+                </span>
+              ) : (
+                <span>
+                  <button type="button" onClick={() => startEdit(d)}>
+                    ✎
+                  </button>
+                  <button
+                    type="button"
+                    disabled={defs.length === 1}
+                    title={defs.length === 1 ? 'At least one field is required' : undefined}
+                    onClick={() => requestDelete(d.name)}>
+                    🗑
+                  </button>
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      <form className="fe-form" onSubmit={submit} noValidate>
+        <h4>{editing ? `Edit "${editing.label}"` : 'Add field'}</h4>
+        <label>
+          Name
+          <input
+            value={draft.name}
+            readOnly={!!editing}
+            title={editing ? 'Name cannot be changed after creation' : undefined}
+            onChange={e => setDraft({ ...draft, name: e.target.value })}
+            {...a11y('name')}
+          />
+          {err('name')}
+        </label>
+        <label>
+          Label
+          <input
+            value={draft.label}
+            onChange={e => setDraft({ ...draft, label: e.target.value })}
+            {...a11y('label')}
+          />
+          {err('label')}
+        </label>
+        <label>
+          Type
+          <select
+            value={draft.kind}
+            onChange={e => setDraft({ ...draft, kind: e.target.value as FieldKind })}>
+            {fieldKinds.map(k => (
+              <option key={k}>{k}</option>
+            ))}
+          </select>
+        </label>
+        {draft.kind === 'select' && (
+          <label>
+            Values (one per line)
+            <textarea
+              rows={3}
+              value={valuesText}
+              onChange={e => setValuesText(e.target.value)}
+              {...a11y('values')}
+            />
+            {err('values')}
+          </label>
+        )}
+        {resetCount > 0 && (
+          <p role="status" className="fe-warn">
+            Saving will reset the operator and value of {resetCount} rule
+            {resetCount === 1 ? '' : 's'}.
+          </p>
+        )}
+        <div>
+          <button type="submit">{editing ? 'Save' : 'Add'}</button>
+          {editing && (
+            <button type="button" onClick={() => startEdit(null)}>
+              Cancel
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
+};
+```
+
+```ts fieldUtils.ts
+import type { Field, RuleGroupType, RuleType } from 'react-querybuilder';
+import { defaultOperators, isRuleGroup, transformQuery } from 'react-querybuilder';
+
+export type FieldKind = 'text' | 'number' | 'date' | 'boolean' | 'select';
+export const fieldKinds: FieldKind[] = ['text', 'number', 'date', 'boolean', 'select'];
+
+/** Editor model; `Field` objects are derived from this. */
+export interface FieldDef {
+  name: string;
+  label: string;
+  kind: FieldKind;
+  values: string[]; // select only
+}
+
+const ops = (...names: string[]) => defaultOperators.filter(op => names.includes(op.name));
+const comparisonOps = ops(
+  '=',
+  '!=',
+  '<',
+  '<=',
+  '>',
+  '>=',
+  'between',
+  'notBetween',
+  'null',
+  'notNull'
+);
+const noValueOps = new Set(['null', 'notNull']);
+
+const kindProps: Record<FieldKind, Partial<Field>> = {
+  text: {},
+  number: { inputType: 'number', operators: comparisonOps },
+  date: { inputType: 'date', operators: comparisonOps },
+  boolean: { valueEditorType: 'checkbox', operators: ops('='), defaultValue: false },
+  select: { valueEditorType: 'select', operators: ops('=', '!=', 'null', 'notNull') },
+};
+
+export const toField = ({ name, label, kind, values }: FieldDef): Field => ({
+  name,
+  label,
+  ...kindProps[kind],
+  ...(kind === 'select'
+    ? { values: values.map(v => ({ name: v, label: v })), defaultValue: values[0] }
+    : {}),
+});
+
+export type FieldErrors = Partial<Record<'name' | 'label' | 'values', string>>;
+
+/** `others` = all defs except the one being edited. */
+export const validateFieldDef = (def: FieldDef, others: FieldDef[]): FieldErrors => {
+  const errors: FieldErrors = {};
+  if (!/^[A-Za-z_]\w*$/.test(def.name)) {
+    errors.name = 'Letters, digits, and underscores only; must not start with a digit';
+  } else if (others.some(f => f.name.toLowerCase() === def.name.toLowerCase())) {
+    errors.name = 'Name already in use';
+  }
+  if (!def.label.trim()) errors.label = 'Label is required';
+  if (def.kind === 'select') {
+    if (def.values.length === 0) errors.values = 'At least one value is required';
+    else if (new Set(def.values).size !== def.values.length)
+      errors.values = 'Values must be unique';
+  }
+  return errors;
+};
+
+const walkRules = (group: RuleGroupType, fn: (r: RuleType) => void) => {
+  for (const r of group.rules) {
+    if (isRuleGroup(r)) walkRules(r, fn);
+    else if (typeof r !== 'string') fn(r);
+  }
+};
+
+export const countRules = (query: RuleGroupType, pred: (r: RuleType) => boolean) => {
+  let n = 0;
+  walkRules(query, r => void (pred(r) && n++));
+  return n;
+};
+
+export const usesField = (name: string) => (r: RuleType) => r.field === name;
+
+/** Removes rules for `name` at any depth. Empty groups are kept. */
+export const removeRulesForField = (group: RuleGroupType, name: string): RuleGroupType => ({
+  ...group,
+  rules: group.rules
+    .filter(r => isRuleGroup(r) || typeof r === 'string' || r.field !== name)
+    .map(r => (isRuleGroup(r) ? removeRulesForField(r, name) : r)),
+});
+
+/** Predicate: would saving `next` over `prev` invalidate this rule's operator/value? */
+export const isInvalidatedBy = (prev: FieldDef, next: FieldDef) => (r: RuleType) =>
+  r.field === prev.name &&
+  (prev.kind !== next.kind ||
+    (next.kind === 'select' && !noValueOps.has(r.operator) && !next.values.includes(r.value)));
+
+/** Resets operator/value of rules invalidated by the `prev` -> `next` edit. */
+export const reconcileRules = (query: RuleGroupType, prev: FieldDef, next: FieldDef) => {
+  const invalid = isInvalidatedBy(prev, next);
+  const { defaultValue = '' } = toField(next);
+  return transformQuery(query, {
+    ruleProcessor: (r: RuleType) => (invalid(r) ? { ...r, operator: '=', value: defaultValue } : r),
+  }) as RuleGroupType;
+};
+```
+
+```css
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+html.dark .fe {
+  color: #ddd;
+}
+.fe {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+}
+.fe-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.fe-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.25rem;
+}
+.fe-list li > span:first-child {
+  display: flex;
+  flex-direction: column;
+}
+.fe-list li.fe-active {
+  outline: 1px solid;
+}
+.fe-list em {
+  opacity: 0.7;
+}
+.fe-badge {
+  margin-left: 0.5rem;
+  font-size: 0.75em;
+  padding: 0 0.4em;
+  border: 1px solid;
+  border-radius: 1em;
+}
+.fe-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.fe-form h4 {
+  margin: 0;
+}
+.fe-form label {
+  display: flex;
+  flex-direction: column;
+}
+.fe-form [aria-invalid='true'] {
+  outline: 2px solid crimson;
+}
+.fe-form input[readonly] {
+  opacity: 0.6;
+}
+.fe-error {
+  color: crimson;
+  font-size: 0.85em;
+}
+.fe-warn {
+  margin: 0;
+  color: darkorange;
+}
+button + button {
+  margin-left: 0.25rem;
+}
+```
+
+</SandpackRQB>
 
 ## Generating `fields` dynamically
 
