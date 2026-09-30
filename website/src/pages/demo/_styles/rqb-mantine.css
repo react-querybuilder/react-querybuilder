@@ -38,7 +38,7 @@
   }
 }
 
-/* BEGIN_MANTINE_STYLES v9.6.2
+/* BEGIN_MANTINE_STYLES v9.6.3
 The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
@@ -5325,7 +5325,7 @@ fieldset:disabled .m_8ee546b8,
 .m_1f9675ae {
   display: flex;
   gap: var(--marquee-gap, var(--mantine-spacing-md));
-  animation-duration: var(--marquee-duration, 40000ms);
+  animation-duration: var(--marquee-duration, 100000ms);
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
