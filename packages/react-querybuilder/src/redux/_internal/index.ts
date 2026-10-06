@@ -34,7 +34,7 @@ export const _RQB_INTERNAL_dispatchThunk =
     }
   };
 
-const internalHooks = getInternalHooks(QueryBuilderStateContext);
+const internalHooks = /* @__PURE__ */ getInternalHooks(QueryBuilderStateContext);
 
 /**
  * Gets the `dispatch` function for the RQB Redux store.

@@ -61,8 +61,8 @@ const defaultSubproperties: FullOption[] = [{ name: '', value: '', label: '' }];
  *
  * @group Components
  */
-export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element> = React.memo(
-  function Rule(props: RuleProps): React.JSX.Element {
+export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element> =
+  /* @__PURE__ */ React.memo(function Rule(props: RuleProps): React.JSX.Element {
     const r = useRule(props);
     const { dndRef } = r;
 
@@ -102,8 +102,7 @@ export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element
         )}
       </div>
     );
-  }
-);
+  });
 
 interface RuleComponentsProps extends UseRule {
   subQuery?: UseRuleGroup;
@@ -120,7 +119,7 @@ interface RuleComponentsProps extends UseRule {
  */
 export const RuleComponents: React.MemoExoticComponent<
   (r: RuleComponentsProps) => React.JSX.Element
-> = React.memo(function RuleComponents(r: RuleComponentsProps) {
+> = /* @__PURE__ */ React.memo(function RuleComponents(r: RuleComponentsProps) {
   const {
     dragRef,
     schema: {
@@ -379,7 +378,7 @@ export const RuleWithSubQueryGroupComponentsWrapper = (
  */
 export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
   (r: RuleComponentsProps) => React.JSX.Element
-> = React.memo(function RuleComponentsWithSubQuery(r: RuleComponentsProps) {
+> = /* @__PURE__ */ React.memo(function RuleComponentsWithSubQuery(r: RuleComponentsProps) {
   const initialQuery = useMemo(() => r.schema.createRuleGroup() as RuleGroupType, [r.schema]);
   const subQB = useQueryBuilder({
     ...r.subQueryBuilderProps,

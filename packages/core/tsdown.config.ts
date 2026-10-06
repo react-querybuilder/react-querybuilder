@@ -5,8 +5,6 @@ import { defineConfig } from 'tsdown';
 import { commonBuildOptions, tsdownCommonConfig } from '../../utils/tsdown.common';
 
 export default defineConfig(async options => {
-  const buildConfig = await tsdownCommonConfig(import.meta.dirname)(options);
-
   const utilEntryPoints = {
     derivations: 'src/derivations.ts',
     formatQuery: 'src/utils/formatQuery/index.ts',
@@ -22,13 +20,14 @@ export default defineConfig(async options => {
     transformQuery: 'src/utils/transformQuery.ts',
   } as const;
 
+  const buildConfig = await tsdownCommonConfig(import.meta.dirname, {
+    // Dev ESM build: one file per module; util entry points share module files with main entry
+    unbundleEsm: true,
+    esmEntries: utilEntryPoints,
+  })(options);
+
   return [
     ...buildConfig,
-    {
-      ...commonBuildOptions,
-      ...options,
-      entry: utilEntryPoints,
-    },
     {
       ...commonBuildOptions,
       ...options,

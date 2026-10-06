@@ -18,7 +18,7 @@ export const setAutoFreeze: (autoFreeze: boolean) => void = immerSetAutoFreeze;
 // Immer has no per-call auto-freeze control, so a second instance with auto-freeze disabled
 // serves calls that opt out. `setAutoFreeze` (re-exported from the root) affects the default
 // instance only, which is what a global escape hatch should do.
-const unfrozenImmer = new Immer({ autoFreeze: false });
+const unfrozenImmer = /* @__PURE__ */ new Immer({ autoFreeze: false });
 
 /**
  * The `produce` implementation matching the requested freeze behavior.

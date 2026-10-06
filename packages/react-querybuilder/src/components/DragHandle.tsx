@@ -9,7 +9,7 @@ import type { DragHandleProps } from '../types';
  */
 export const DragHandle: React.ForwardRefExoticComponent<
   DragHandleProps & React.RefAttributes<HTMLSpanElement>
-> = forwardRef<HTMLSpanElement, DragHandleProps>((props, dragRef) => (
+> = /* @__PURE__ */ forwardRef<HTMLSpanElement, DragHandleProps>((props, dragRef) => (
   <span
     {...props.dragHandleAttributes}
     data-testid={props.testID}

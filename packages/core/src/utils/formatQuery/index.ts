@@ -21,7 +21,7 @@ const generateValueProcessor =
  *
  * @group Export
  */
-export const defaultValueProcessor: ValueProcessorLegacy = generateValueProcessor(
+export const defaultValueProcessor: ValueProcessorLegacy = /* @__PURE__ */ generateValueProcessor(
   defaultValueProcessorByRule
 );
 /**
@@ -29,23 +29,22 @@ export const defaultValueProcessor: ValueProcessorLegacy = generateValueProcesso
  *
  * @group Export
  */
-export const defaultMongoDBValueProcessor: ValueProcessorLegacy = generateValueProcessor(
-  defaultRuleProcessorMongoDB
-);
+export const defaultMongoDBValueProcessor: ValueProcessorLegacy =
+  /* @__PURE__ */ generateValueProcessor(defaultRuleProcessorMongoDB);
 /**
  * @deprecated Prefer {@link defaultRuleProcessorCEL}.
  *
  * @group Export
  */
 export const defaultCELValueProcessor: ValueProcessorLegacy =
-  generateValueProcessor(defaultRuleProcessorCEL);
+  /* @__PURE__ */ generateValueProcessor(defaultRuleProcessorCEL);
 /**
  * @deprecated Prefer {@link defaultRuleProcessorSpEL}.
  *
  * @group Export
  */
 export const defaultSpELValueProcessor: ValueProcessorLegacy =
-  generateValueProcessor(defaultRuleProcessorSpEL);
+  /* @__PURE__ */ generateValueProcessor(defaultRuleProcessorSpEL);
 
 export * from './defaultRuleGroupProcessorCEL';
 export * from './defaultRuleGroupProcessorCypher';

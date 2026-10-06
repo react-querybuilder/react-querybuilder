@@ -17,4 +17,6 @@ export const defaultQueryBuilderHistoryContext: QueryBuilderHistoryContextProps 
  * Provides undo/redo options to descendants of {@link QueryBuilderHistory}.
  */
 export const QueryBuilderHistoryContext: React.Context<QueryBuilderHistoryContextProps> =
-  React.createContext<QueryBuilderHistoryContextProps>(defaultQueryBuilderHistoryContext);
+  /* @__PURE__ */ React.createContext<QueryBuilderHistoryContextProps>(
+    defaultQueryBuilderHistoryContext
+  );

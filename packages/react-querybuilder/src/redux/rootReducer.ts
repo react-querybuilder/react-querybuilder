@@ -10,4 +10,7 @@ export interface LazyLoadedSlices {}
 export const rootReducer: CombinedSliceReducer<{
   queries: QueriesSliceState;
   warnings: WarningsSliceState;
-}> = combineSlices(queriesSlice, warningsSlice).withLazyLoadedSlices<LazyLoadedSlices>();
+}> = /* @__PURE__ */ combineSlices(
+  queriesSlice,
+  warningsSlice
+).withLazyLoadedSlices<LazyLoadedSlices>();

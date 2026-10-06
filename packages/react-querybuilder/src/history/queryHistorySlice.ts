@@ -93,7 +93,7 @@ export const queryHistorySlice: Slice<
       qbId: string
     ) => QueryHistoryEntry | undefined;
   }
-> = createSlice({
+> = /* @__PURE__ */ createSlice({
   name: sliceName,
   initialState,
   reducers: {

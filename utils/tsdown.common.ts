@@ -35,8 +35,23 @@ export const commonBuildOptions: UserConfig = {
   checks: { pluginTimings: false },
 };
 
+export interface TsdownCommonConfigOptions {
+  /**
+   * Emit the dev ESM build (`.mjs`) as one file per source module for finer tree-shaking.
+   * Bundled builds (legacy ESM, production ESM, CJS) are unaffected.
+   */
+  unbundleEsm?: boolean;
+  /**
+   * Extra entries for the dev ESM build. With `unbundleEsm`, entries in one build share module
+   * files, so sub-path entry points don't duplicate code from the main entry.
+   */
+  esmEntries?: Record<string, string>;
+  /** Extra options merged into the dev ESM build only. */
+  esmOptions?: UserConfig;
+}
+
 export const tsdownCommonConfig =
-  (sourceDir: string) =>
+  (sourceDir: string, { unbundleEsm, esmEntries, esmOptions }: TsdownCommonConfigOptions = {}) =>
   async (options: UserConfig): Promise<UserConfig[]> => {
     const pkgName = `react-querybuilder${sourceDir.endsWith('react-querybuilder') ? '' : `_${sourceDir.split('/').at(-1)}`}`;
     const x = (await Bun.file(path.join(sourceDir + '/src/index.tsx')).exists()) ? 'x' : '';
@@ -57,6 +72,9 @@ export const tsdownCommonConfig =
       // ESM, standard bundler dev, embedded `process` references
       {
         ...commonOptions,
+        ...esmOptions,
+        entry: { [pkgName]: entryPoint, ...esmEntries },
+        ...(unbundleEsm ? { unbundle: true } : {}),
         format: 'esm',
         clean: true,
         plugins: (['sunburst', 'treemap', 'flamegraph'] as const).map(template =>

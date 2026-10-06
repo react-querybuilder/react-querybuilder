@@ -10,7 +10,7 @@ export const lc = <T>(v: T): T => (typeof v === 'string' ? (v.toLowerCase() as T
  * Regex matching numeric strings. Passes for positive/negative integers, decimals,
  * and E notation, with optional surrounding whitespace.
  */
-export const numericRegex: RegExp = new RegExp(
+export const numericRegex: RegExp = /* @__PURE__ */ new RegExp(
   numericQuantityRegex.source.replace(/^\^/, String.raw`^\s*`).replace(/\$$/, String.raw`\s*$`)
 );
 

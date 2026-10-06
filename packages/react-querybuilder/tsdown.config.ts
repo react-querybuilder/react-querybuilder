@@ -62,8 +62,33 @@ const sharesMainBundle = (config: UserConfig): UserConfig => {
   };
 };
 
+const utilEntryPoints = {
+  formatQuery: 'src/fwd/formatQuery.ts',
+  parseCEL: 'src/fwd/parseCEL.ts',
+  parseCypher: 'src/fwd/parseCypher.ts',
+  parseGremlin: 'src/fwd/parseGremlin.ts',
+  parseJSONata: 'src/fwd/parseJSONata.ts',
+  parseJsonLogic: 'src/fwd/parseJsonLogic.ts',
+  parseMongoDB: 'src/fwd/parseMongoDB.ts',
+  parseSPARQL: 'src/fwd/parseSPARQL.ts',
+  parseSpEL: 'src/fwd/parseSpEL.ts',
+  parseSQL: 'src/fwd/parseSQL.ts',
+  transformQuery: 'src/fwd/transformQuery.ts',
+} as const;
+
+// Entry points that augment the main bundle's singletons (Redux store, React contexts,
+// `dispatchQuery` registry). See `sharesMainBundle`.
+const augmentingEntryPoints = {
+  async: 'src/async.ts',
+  history: 'src/history/index.ts',
+} as const;
+
 export default defineConfig(async options => {
-  const buildConfig = await tsdownCommonConfig(import.meta.dirname)(options);
+  const buildConfig = await tsdownCommonConfig(import.meta.dirname, {
+    // Dev ESM build: one file per module; all ESM entry points share module files
+    unbundleEsm: true,
+    esmEntries: { ...augmentingEntryPoints, ...utilEntryPoints },
+  })(options);
 
   for (const bc of buildConfig) {
     const entryKey = Object.keys(bc.entry!)[0];
@@ -83,19 +108,8 @@ export default defineConfig(async options => {
     }
   }
 
-  const utilEntryPoints = {
-    formatQuery: 'src/fwd/formatQuery.ts',
-    parseCEL: 'src/fwd/parseCEL.ts',
-    parseCypher: 'src/fwd/parseCypher.ts',
-    parseGremlin: 'src/fwd/parseGremlin.ts',
-    parseJSONata: 'src/fwd/parseJSONata.ts',
-    parseJsonLogic: 'src/fwd/parseJsonLogic.ts',
-    parseMongoDB: 'src/fwd/parseMongoDB.ts',
-    parseSPARQL: 'src/fwd/parseSPARQL.ts',
-    parseSpEL: 'src/fwd/parseSpEL.ts',
-    parseSQL: 'src/fwd/parseSQL.ts',
-    transformQuery: 'src/fwd/transformQuery.ts',
-  } as const;
+  // Augmenting entries in the dev ESM build import `react-querybuilder` by name; keep it external
+  buildConfig[0] = sharesMainBundle(buildConfig[0]);
 
   return [
     ...buildConfig,
@@ -108,36 +122,16 @@ export default defineConfig(async options => {
     sharesMainBundle({
       ...commonBuildOptions,
       ...options,
-      entry: 'src/async.ts',
-    }),
-    sharesMainBundle({
-      ...commonBuildOptions,
-      ...options,
       format: 'cjs',
-      entry: 'src/async.ts',
-    }),
-    sharesMainBundle({
-      ...commonBuildOptions,
-      ...options,
-      entry: { history: 'src/history/index.ts' },
-    }),
-    sharesMainBundle({
-      ...commonBuildOptions,
-      ...options,
-      format: 'cjs',
-      entry: { history: 'src/history/index.ts' },
+      entry: augmentingEntryPoints,
     }),
     {
       ...commonBuildOptions,
       ...options,
       entry: utilEntryPoints,
-    },
-    {
-      ...commonBuildOptions,
-      ...options,
-      entry: utilEntryPoints,
       format: 'cjs',
-      onSuccess: () => writeNode10pkg(['async', 'history', ...Object.keys(utilEntryPoints)]),
+      onSuccess: () =>
+        writeNode10pkg([...Object.keys(augmentingEntryPoints), ...Object.keys(utilEntryPoints)]),
     },
   ];
 }) as UserConfigExport;

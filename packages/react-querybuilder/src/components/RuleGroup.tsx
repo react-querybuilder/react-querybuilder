@@ -39,7 +39,7 @@ import type { RuleGroupProps, ShiftActionsProps, UndoRedoActionsProps } from '..
  * @group Components
  */
 export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => React.JSX.Element> =
-  React.memo(function RuleGroup(props: RuleGroupProps) {
+  /* @__PURE__ */ React.memo(function RuleGroup(props: RuleGroupProps) {
     const rg = useRuleGroup(props);
 
     const {
@@ -118,7 +118,7 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
  */
 export const RuleGroupHeaderComponents: React.MemoExoticComponent<
   (rg: UseRuleGroup) => React.JSX.Element
-> = React.memo(function RuleGroupHeaderComponents(rg: UseRuleGroup) {
+> = /* @__PURE__ */ React.memo(function RuleGroupHeaderComponents(rg: UseRuleGroup) {
   const {
     dragRef,
     schema: {
@@ -369,7 +369,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
  */
 export const RuleGroupBodyComponents: React.MemoExoticComponent<
   (rg: UseRuleGroup) => React.JSX.Element
-> = React.memo(function RuleGroupBodyComponents(rg: UseRuleGroup) {
+> = /* @__PURE__ */ React.memo(function RuleGroupBodyComponents(rg: UseRuleGroup) {
   const {
     schema: {
       controls: {

@@ -24,6 +24,6 @@ export const strictAbortReasons: readonly AbortReason[] = [
 ];
 
 /** @internal */
-export const strictAbortReasonSet: ReadonlySet<AbortReason> = new Set<AbortReason>(
+export const strictAbortReasonSet: ReadonlySet<AbortReason> = /* @__PURE__ */ new Set<AbortReason>(
   strictAbortReasons
 );

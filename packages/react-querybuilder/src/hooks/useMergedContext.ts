@@ -56,7 +56,7 @@ export interface UseMergedContext<
 
 const nullComp = () => null;
 const nullFwdComp: ForwardRefExoticComponent<DragHandleProps & RefAttributes<HTMLElement>> =
-  forwardRef(nullComp);
+  /* @__PURE__ */ forwardRef(nullComp);
 const emptyObject = {} as const;
 
 /**

@@ -65,7 +65,7 @@ export const queriesSlice: Slice<
   'queries',
   'queries',
   { getQuerySelectorById: (state: QueriesSliceState, qbId: string) => RuleGroupTypeAny }
-> = createSlice({
+> = /* @__PURE__ */ createSlice({
   name: 'queries',
   initialState,
   reducers: {

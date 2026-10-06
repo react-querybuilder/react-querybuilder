@@ -8,59 +8,69 @@ import type {
 
 // ─── Lexer Tokens ────────────────────────────────────────────────────────────
 
-const WhiteSpace = createToken({ name: 'WhiteSpace', pattern: /\s+/, group: Lexer.SKIPPED });
+const WhiteSpace = /* @__PURE__ */ createToken({
+  name: 'WhiteSpace',
+  pattern: /\s+/,
+  group: Lexer.SKIPPED,
+});
 
 // Keywords (longer/multi-word first)
-const OptionalMatch = createToken({
+const OptionalMatch = /* @__PURE__ */ createToken({
   name: 'OptionalMatch',
   pattern: /OPTIONAL\s+MATCH/i,
   longer_alt: undefined,
 });
-const StartsWith = createToken({ name: 'StartsWith', pattern: /STARTS\s+WITH/i });
-const EndsWith = createToken({ name: 'EndsWith', pattern: /ENDS\s+WITH/i });
-const IsNotNull = createToken({ name: 'IsNotNull', pattern: /IS\s+NOT\s+NULL/i });
-const IsNull = createToken({ name: 'IsNull', pattern: /IS\s+NULL/i });
-const NotIn = createToken({ name: 'NotIn', pattern: /NOT\s+IN/i });
-const Match = createToken({ name: 'Match', pattern: /MATCH/i });
-const Where = createToken({ name: 'Where', pattern: /WHERE/i });
-const Return = createToken({ name: 'Return', pattern: /RETURN/i });
-const And = createToken({ name: 'And', pattern: /AND/i });
-const Or = createToken({ name: 'Or', pattern: /OR/i });
-const Not = createToken({ name: 'Not', pattern: /NOT/i });
-const Contains = createToken({ name: 'Contains', pattern: /CONTAINS/i });
-const In = createToken({ name: 'In', pattern: /IN/i });
-const NullLit = createToken({ name: 'NullLit', pattern: /null\b/ });
-const TrueLit = createToken({ name: 'TrueLit', pattern: /true\b/ });
-const FalseLit = createToken({ name: 'FalseLit', pattern: /false\b/ });
+const StartsWith = /* @__PURE__ */ createToken({ name: 'StartsWith', pattern: /STARTS\s+WITH/i });
+const EndsWith = /* @__PURE__ */ createToken({ name: 'EndsWith', pattern: /ENDS\s+WITH/i });
+const IsNotNull = /* @__PURE__ */ createToken({ name: 'IsNotNull', pattern: /IS\s+NOT\s+NULL/i });
+const IsNull = /* @__PURE__ */ createToken({ name: 'IsNull', pattern: /IS\s+NULL/i });
+const NotIn = /* @__PURE__ */ createToken({ name: 'NotIn', pattern: /NOT\s+IN/i });
+const Match = /* @__PURE__ */ createToken({ name: 'Match', pattern: /MATCH/i });
+const Where = /* @__PURE__ */ createToken({ name: 'Where', pattern: /WHERE/i });
+const Return = /* @__PURE__ */ createToken({ name: 'Return', pattern: /RETURN/i });
+const And = /* @__PURE__ */ createToken({ name: 'And', pattern: /AND/i });
+const Or = /* @__PURE__ */ createToken({ name: 'Or', pattern: /OR/i });
+const Not = /* @__PURE__ */ createToken({ name: 'Not', pattern: /NOT/i });
+const Contains = /* @__PURE__ */ createToken({ name: 'Contains', pattern: /CONTAINS/i });
+const In = /* @__PURE__ */ createToken({ name: 'In', pattern: /IN/i });
+const NullLit = /* @__PURE__ */ createToken({ name: 'NullLit', pattern: /null\b/ });
+const TrueLit = /* @__PURE__ */ createToken({ name: 'TrueLit', pattern: /true\b/ });
+const FalseLit = /* @__PURE__ */ createToken({ name: 'FalseLit', pattern: /false\b/ });
 
 // Literals
-const StringLiteral = createToken({ name: 'StringLiteral', pattern: /'(?:[^'\\]|\\.)*'/ });
-const NumberLiteral = createToken({ name: 'NumberLiteral', pattern: /-?\d+(?:\.\d+)?/ });
+const StringLiteral = /* @__PURE__ */ createToken({
+  name: 'StringLiteral',
+  pattern: /'(?:[^'\\]|\\.)*'/,
+});
+const NumberLiteral = /* @__PURE__ */ createToken({
+  name: 'NumberLiteral',
+  pattern: /-?\d+(?:\.\d+)?/,
+});
 
 // Operators
-const LessEqual = createToken({ name: 'LessEqual', pattern: /<=/ });
-const GreaterEqual = createToken({ name: 'GreaterEqual', pattern: />=/ });
-const NotEqual = createToken({ name: 'NotEqual', pattern: /<>/ });
-const Less = createToken({ name: 'Less', pattern: /</ });
-const Greater = createToken({ name: 'Greater', pattern: />/ });
-const Equal = createToken({ name: 'Equal', pattern: /=/ });
+const LessEqual = /* @__PURE__ */ createToken({ name: 'LessEqual', pattern: /<=/ });
+const GreaterEqual = /* @__PURE__ */ createToken({ name: 'GreaterEqual', pattern: />=/ });
+const NotEqual = /* @__PURE__ */ createToken({ name: 'NotEqual', pattern: /<>/ });
+const Less = /* @__PURE__ */ createToken({ name: 'Less', pattern: /</ });
+const Greater = /* @__PURE__ */ createToken({ name: 'Greater', pattern: />/ });
+const Equal = /* @__PURE__ */ createToken({ name: 'Equal', pattern: /=/ });
 
 // Punctuation
-const LParen = createToken({ name: 'LParen', pattern: /\(/ });
-const RParen = createToken({ name: 'RParen', pattern: /\)/ });
-const LBracket = createToken({ name: 'LBracket', pattern: /\[/ });
-const RBracket = createToken({ name: 'RBracket', pattern: /\]/ });
-const Comma = createToken({ name: 'Comma', pattern: /,/ });
-const Colon = createToken({ name: 'Colon', pattern: /:/ });
-const Dot = createToken({ name: 'Dot', pattern: /\./ });
+const LParen = /* @__PURE__ */ createToken({ name: 'LParen', pattern: /\(/ });
+const RParen = /* @__PURE__ */ createToken({ name: 'RParen', pattern: /\)/ });
+const LBracket = /* @__PURE__ */ createToken({ name: 'LBracket', pattern: /\[/ });
+const RBracket = /* @__PURE__ */ createToken({ name: 'RBracket', pattern: /\]/ });
+const Comma = /* @__PURE__ */ createToken({ name: 'Comma', pattern: /,/ });
+const Colon = /* @__PURE__ */ createToken({ name: 'Colon', pattern: /:/ });
+const Dot = /* @__PURE__ */ createToken({ name: 'Dot', pattern: /\./ });
 
 // Arrow parts for relationship patterns
-const DashArrowRight = createToken({ name: 'DashArrowRight', pattern: /->/ });
-const ArrowLeftDash = createToken({ name: 'ArrowLeftDash', pattern: /<-/ });
-const Dash = createToken({ name: 'Dash', pattern: /-/ });
+const DashArrowRight = /* @__PURE__ */ createToken({ name: 'DashArrowRight', pattern: /->/ });
+const ArrowLeftDash = /* @__PURE__ */ createToken({ name: 'ArrowLeftDash', pattern: /<-/ });
+const Dash = /* @__PURE__ */ createToken({ name: 'Dash', pattern: /-/ });
 
 // Identifier (must come after all keywords)
-const Identifier = createToken({ name: 'Identifier', pattern: /[a-zA-Z_]\w*/ });
+const Identifier = /* @__PURE__ */ createToken({ name: 'Identifier', pattern: /[a-zA-Z_]\w*/ });
 
 // Token order matters: longer patterns and keywords before shorter ones
 const allTokens = [
@@ -110,7 +120,8 @@ const allTokens = [
   Identifier,
 ];
 
-const cypherLexer = new Lexer(allTokens);
+// Lexer/parser built on first use; construction (esp. `performSelfAnalysis`) is costly
+let cypherLexer: Lexer | undefined;
 
 // ─── CST Parser ──────────────────────────────────────────────────────────────
 
@@ -360,7 +371,7 @@ class CypherCstParser extends CstParser {
   });
 }
 
-const parserInstance = new CypherCstParser();
+let parserInstance: CypherCstParser | undefined;
 
 // ─── CST Visitor (CST → RuleGroupType) ──────────────────────────────────────
 
@@ -558,6 +569,8 @@ export function parseCypher(
     input = `WHERE ${input}`;
   }
 
+  cypherLexer ??= new Lexer(allTokens);
+  parserInstance ??= new CypherCstParser();
   const lexResult = cypherLexer.tokenize(input);
   if (lexResult.errors.length > 0) {
     return { combinator: 'and', rules: [] };

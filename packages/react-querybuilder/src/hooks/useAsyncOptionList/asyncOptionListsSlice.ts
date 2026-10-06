@@ -27,7 +27,7 @@ export const asyncOptionListsSlice: Slice<
     selectIsLoadingByKey: (state: State, cacheKey: string) => boolean;
     selectErrorByKey: (state: State, cacheKey: string) => string | null;
   }
-> = createSlice({
+> = /* @__PURE__ */ createSlice({
   name: sliceName,
   initialState,
   reducers: {

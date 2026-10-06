@@ -30,7 +30,7 @@ export const getOptionListsAsync: AsyncThunk<
   { cacheKey: string; data: FullOptionList<FullOption>; fromCache: boolean },
   GetOptionListsAsyncParams,
   AsyncThunkConfig
-> = createAsyncThunk(
+> = /* @__PURE__ */ createAsyncThunk(
   'asyncOptionLists/asyncOptionListsThunk',
   async (params, { getState, rejectWithValue }) => {
     const {

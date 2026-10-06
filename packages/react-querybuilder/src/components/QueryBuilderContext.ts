@@ -14,4 +14,6 @@ interface QueryBuilderContextType
  * Context provider for {@link QueryBuilder}. Any descendant query builders
  * will inherit the props from a context provider.
  */
-export const QueryBuilderContext: Context<QueryBuilderContextType> = createContext({});
+export const QueryBuilderContext: Context<QueryBuilderContextType> =
+  /* @__PURE__ */
+  createContext({});

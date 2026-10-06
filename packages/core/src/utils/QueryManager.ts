@@ -404,13 +404,16 @@ type AsRuleGroup<T> = T extends RuleGroupTypeAny ? T : RuleGroupTypeAny;
  * `Object.getOwnPropertySymbols`, say) is not a supported access path and its contents may change
  * in any release.
  */
-const kState: unique symbol = Symbol('QueryManager.state');
+const kState: unique symbol = /* @__PURE__ */ Symbol('QueryManager.state');
 
 // The three possible notification payloads. Shared and frozen: subscribers receive them
 // directly, and there is no per-notification data beyond the two flags.
-const queryChange: SubscriptionChange = freeze({ query: true, config: false });
-const configChange: SubscriptionChange = freeze({ query: false, config: true });
-const queryAndConfigChange: SubscriptionChange = freeze({ query: true, config: true });
+const queryChange: SubscriptionChange = /* @__PURE__ */ freeze({ query: true, config: false });
+const configChange: SubscriptionChange = /* @__PURE__ */ freeze({ query: false, config: true });
+const queryAndConfigChange: SubscriptionChange = /* @__PURE__ */ freeze({
+  query: true,
+  config: true,
+});
 
 /**
  * Every mutable member of a {@link QueryManager}. The option-derived members are assigned by

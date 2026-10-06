@@ -34,7 +34,7 @@ export const warningsSlice: Slice<
     rqbWarn: (state: any, { payload }: PayloadAction<Messages>) => void;
   },
   'warnings'
-> = createSlice({
+> = /* @__PURE__ */ createSlice({
   name: 'warnings',
   initialState,
   reducers: {

@@ -86,7 +86,11 @@ for (const entryPoint of entryPoints) {
       console.error(`${entryPoint}: ${mod} was bundled into ${where}.`);
     }
 
-    const identifier = forbiddenIdentifierRE.exec(stripComments(code));
+    // Specifiers are path strings (e.g. unbundled `./formatQuery/utils.mjs`); modules they name
+    // are covered by the region check
+    const identifier = forbiddenIdentifierRE.exec(
+      stripComments(code).replaceAll(importRE, '').replaceAll(requireRE, '')
+    );
     if (identifier) {
       failed = true;
       console.error(`${entryPoint}: "${identifier[0]}" appears in the code of ${where}.`);
