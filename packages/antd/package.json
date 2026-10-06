@@ -2,6 +2,7 @@
   "name": "@react-querybuilder/antd",
   "description": "Custom Ant Design components for react-querybuilder",
   "version": "8.24.3",
+  "type": "commonjs",
   "publishConfig": {
     "access": "public"
   },
@@ -27,7 +28,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "url": "git+https://github.com/react-querybuilder/react-querybuilder.git",
     "directory": "packages/antd"
   },
   "license": "MIT",

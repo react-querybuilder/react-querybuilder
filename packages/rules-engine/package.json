@@ -2,6 +2,7 @@
   "name": "@react-querybuilder/rules-engine",
   "description": "Rules engine extension for react-querybuilder",
   "version": "8.24.3",
+  "type": "commonjs",
   "publishConfig": {
     "access": "public"
   },
@@ -31,7 +32,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "url": "git+https://github.com/react-querybuilder/react-querybuilder.git",
     "directory": "packages/rules-engine"
   },
   "license": "MIT",

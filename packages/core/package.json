@@ -1,6 +1,7 @@
 {
   "name": "@react-querybuilder/core",
   "version": "8.24.3",
+  "type": "commonjs",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
     "access": "public"
@@ -164,7 +165,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "url": "git+https://github.com/react-querybuilder/react-querybuilder.git",
     "directory": "packages/core"
   },
   "keywords": [

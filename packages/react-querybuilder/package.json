@@ -1,6 +1,7 @@
 {
   "name": "react-querybuilder",
   "version": "8.24.3",
+  "type": "commonjs",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder.legacy-esm.js",
@@ -186,7 +187,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "url": "git+https://github.com/react-querybuilder/react-querybuilder.git",
     "directory": "packages/react-querybuilder"
   },
   "keywords": [
