@@ -1,5 +1,6 @@
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import type { OutputOptions } from 'rolldown';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { UserConfig } from 'tsdown';
 
@@ -34,6 +35,28 @@ export const commonBuildOptions: UserConfig = {
   },
   checks: { pluginTimings: false },
 };
+
+type OutputOptionsFn = Extract<NonNullable<UserConfig['outputOptions']>, Function>;
+type ChunkFileNames = NonNullable<OutputOptions['entryFileNames']>;
+
+/**
+ * Unbundled builds emit bundled deps (`onlyBundle`) under `dist/node_modules/`. Rename to
+ * `dist/_vendor/` so pack tools that skip nested `node_modules` can't drop them.
+ */
+const vendorize =
+  (fileNames: ChunkFileNames): ChunkFileNames =>
+  chunk => {
+    const name = typeof fileNames === 'function' ? fileNames(chunk) : fileNames;
+    return chunk.name.startsWith('node_modules/')
+      ? name.replace('[name]', chunk.name.replace(/^node_modules\//, '_vendor/'))
+      : name;
+  };
+
+export const vendorizeOutputOptions: OutputOptionsFn = opts => ({
+  ...opts,
+  ...(opts.entryFileNames ? { entryFileNames: vendorize(opts.entryFileNames) } : {}),
+  ...(opts.chunkFileNames ? { chunkFileNames: vendorize(opts.chunkFileNames) } : {}),
+});
 
 export interface TsdownCommonConfigOptions {
   /**
@@ -74,7 +97,7 @@ export const tsdownCommonConfig =
         ...commonOptions,
         ...esmOptions,
         entry: { [pkgName]: entryPoint, ...esmEntries },
-        ...(unbundleEsm ? { unbundle: true } : {}),
+        ...(unbundleEsm ? { unbundle: true, outputOptions: vendorizeOutputOptions } : {}),
         format: 'esm',
         clean: true,
         plugins: (['sunburst', 'treemap', 'flamegraph'] as const).map(template =>
