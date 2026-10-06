@@ -14,9 +14,9 @@ import {
   asyncOptionListsSlice,
   DEFAULT_CACHE_TTL,
   getOptionListsAsync,
-} from './asyncOptionListsSlice';
-import { useAsyncOptionList } from './index';
-import type { UseAsyncOptionListParams } from './types';
+} from '../asyncOptionListsSlice';
+import { useAsyncOptionList } from '../index';
+import type { UseAsyncOptionListParams } from '../types';
 
 const defaultSchema = {
   suppressStandardClassnames: false,

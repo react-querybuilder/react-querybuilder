@@ -7,7 +7,7 @@ import type {
   RuleType,
 } from '@react-querybuilder/core';
 import type { WithSlice } from '@reduxjs/toolkit';
-import type { ValueEditorProps, VersatileSelectorProps } from '../../types';
+import type { ValueEditorProps, VersatileSelectorProps } from '../types';
 import type { asyncOptionListsSlice } from './asyncOptionListsSlice';
 
 declare module 'react-querybuilder' {

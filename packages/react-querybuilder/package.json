@@ -182,7 +182,6 @@
     "*.scss",
     "./dist/async.*",
     "./dist/history.*",
-    "./dist/hooks/useAsyncOptionList/index.*",
     "./dist/**/*.debug.*"
   ],
   "repository": {

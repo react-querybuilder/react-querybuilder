@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ValueEditorProps, VersatileSelectorProps } from '../../types';
+import type { ValueEditorProps, VersatileSelectorProps } from '../types';
 import type { UseAsyncOptionListParams } from './types';
 
 /**

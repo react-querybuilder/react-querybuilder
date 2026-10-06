@@ -1,20 +1,14 @@
 import { clsx, standardClassnames } from '@react-querybuilder/core';
 import { useEffect, useMemo } from 'react';
-import { injectSlice, QueryBuilderStateContext } from 'react-querybuilder';
-import { getInternalHooks } from '../../redux/_internal/hooks';
-import type { ValueEditorProps, VersatileSelectorProps } from '../../types';
+import { QueryBuilderStateContext } from 'react-querybuilder';
+import { getInternalHooks } from '../redux/_internal/hooks';
+import type { ValueEditorProps, VersatileSelectorProps } from '../types';
 import { asyncOptionListsSlice, getOptionListsAsync } from './asyncOptionListsSlice';
 import type { UseAsyncOptionList, UseAsyncOptionListParams } from './types';
 import { useAsyncCacheKey } from './useAsyncCacheKey';
 
-export * from './asyncOptionListsSlice';
-export * from './types';
-export * from './useAsyncCacheKey';
-
 const { useRQB_INTERNAL_QueryBuilderDispatch, useRQB_INTERNAL_QueryBuilderSelector } =
   getInternalHooks(QueryBuilderStateContext);
-
-injectSlice(asyncOptionListsSlice);
 
 /**
  * Augments a {@link ValueSelectorProps} object with async option loading.

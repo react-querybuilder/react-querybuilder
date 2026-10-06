@@ -79,7 +79,7 @@ const utilEntryPoints = {
 // Entry points that augment the main bundle's singletons (Redux store, React contexts,
 // `dispatchQuery` registry). See `sharesMainBundle`.
 const augmentingEntryPoints = {
-  async: 'src/async.ts',
+  async: 'src/async/index.ts',
   history: 'src/history/index.ts',
 } as const;
 
