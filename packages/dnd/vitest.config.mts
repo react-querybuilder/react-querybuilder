@@ -8,7 +8,7 @@ const config: UserConfig = mergeConfig(shared, {
     setupFiles: ['../../utils/testing/vitestSetup.mts', './vitestSetup.mts'],
     deps: {
       optimizer: {
-        web: {
+        client: {
           include: [
             'react-dnd',
             'react-dnd-html5-backend',
