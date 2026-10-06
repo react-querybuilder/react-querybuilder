@@ -1,5 +1,4 @@
-/* oxlint-disable prefer-global-this */
-
+import { ChakraProvider, createSystem, defaultConfig } from '@chakra-ui/react';
 import {
   testActionElement,
   testNotToggle,
@@ -17,21 +16,12 @@ import { ChakraShiftActions } from './ChakraShiftActions';
 import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
 import { QueryBuilderChakra } from './index';
-import { Provider } from './snippets/provider';
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(), // deprecated
-    removeListener: vi.fn(), // deprecated
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
+const chakraTheme = createSystem(defaultConfig);
+
+const Provider = ({ children }: React.PropsWithChildren) => (
+  <ChakraProvider value={chakraTheme}>{children}</ChakraProvider>
+);
 
 // oxlint-disable-next-line typescript/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
