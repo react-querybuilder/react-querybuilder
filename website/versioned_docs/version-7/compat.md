@@ -303,10 +303,10 @@ This installs the React Query Builder components into your project's configured 
 ### Usage
 
 ```tsx
-import { QueryBuilderShadcn } from '@/components/query-builder';
 import { QueryBuilder } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.css';
 import { defaultQuery, fields } from './constants';
+import 'react-querybuilder/dist/query-builder.css';
+import { QueryBuilderShadcn } from '@/components/query-builder';
 
 export function App() {
   return (
@@ -324,8 +324,8 @@ If you prefer not to use the CLI, copy the component files from [`website/regist
 The `shadcnControlElements` named export is also available for the [`controlElements` prop](./components/querybuilder#controlelements):
 
 ```tsx
-import { shadcnControlElements } from '@/components/query-builder';
 import { QueryBuilder } from 'react-querybuilder';
+import { shadcnControlElements } from '@/components/query-builder';
 
 export function App() {
   return <QueryBuilder controlElements={shadcnControlElements} fields={fields} />;

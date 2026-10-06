@@ -22,8 +22,8 @@ All React exports live in the `/ui` entry point (`@react-querybuilder/expr/ui`);
 Wrap your `QueryBuilder` in the `QueryBuilderExpressions` context provider. It overrides the field selector, value-source selector, and value editor to host expressions. Rules without expressions render exactly as before.
 
 ```tsx
-import { QueryBuilder } from 'react-querybuilder';
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
+import { QueryBuilder } from 'react-querybuilder';
 
 const App = () => (
   <QueryBuilderExpressions allowFunctionsOnLHS>
@@ -42,8 +42,8 @@ Pass custom function metadata (UI label + arity) via the `functions` prop; it is
 `formatQuery` needs an expression-aware rule processor to serialize the `lhs`/`rhs` nodes. The package provides a ready-to-use processor (and a `getExpressionRuleProcessor*` factory) for every export format that can represent computed operands:
 
 ```ts
-import { formatQuery } from 'react-querybuilder';
 import { expressionRuleProcessorSQL } from '@react-querybuilder/expr';
+import { formatQuery } from 'react-querybuilder';
 
 formatQuery(query, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL });
 ```
@@ -75,8 +75,8 @@ Expression rules support scalar comparisons (`=`, `!=`, `<`, `<=`, `>`, `>=`), `
 The library-backed formats need the same `context` helpers their stock processors need. For example, `drizzle`:
 
 ```ts
-import { getOperators } from 'drizzle-orm';
 import { expressionRuleProcessorDrizzle } from '@react-querybuilder/expr';
+import { getOperators } from 'drizzle-orm';
 
 const where = formatQuery(query, {
   format: 'drizzle',
@@ -89,8 +89,8 @@ const where = formatQuery(query, {
 and `sequelize`:
 
 ```ts
-import { col, literal, Op, where } from 'sequelize';
 import { expressionRuleProcessorSequelize } from '@react-querybuilder/expr';
+import { col, literal, Op, where } from 'sequelize';
 
 const whereClause = formatQuery(query, {
   format: 'sequelize',
@@ -126,8 +126,8 @@ Each `getExpressionRuleProcessor*` factory takes a single serializer registry me
 Before applying the `jsonlogic` output, register the operators the expressions emit. JsonLogic ships `+` `-` `*` `/` `%`, `min`, and `max` as built-ins, but others like `abs`, `upper`, and `lower` are not. Add them to your JsonLogic instance like so:
 
 ```ts
-import { add_operation, apply } from 'json-logic-js';
 import { jsonLogicExpressionOperators } from '@react-querybuilder/expr';
+import { add_operation, apply } from 'json-logic-js';
 
 for (const [op, func] of Object.entries(jsonLogicExpressionOperators)) {
   add_operation(op, func);

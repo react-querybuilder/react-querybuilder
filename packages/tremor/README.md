@@ -20,8 +20,8 @@ npm i react-querybuilder @react-querybuilder/tremor @tremor/react
 To configure the query builder to use Tremor-compatible components, place `QueryBuilderTremor` above `QueryBuilder` in the component hierarchy.
 
 ```tsx
-import { useState } from 'react';
 import { QueryBuilderTremor } from '@react-querybuilder/tremor';
+import { useState } from 'react';
 import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
 const fields: Field[] = [

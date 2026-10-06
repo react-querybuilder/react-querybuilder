@@ -51,11 +51,11 @@ See the [Components documentation](https://react-querybuilder.js.org/docs/dateti
 To add date/time functionality to `formatQuery`, import a rule processor from `@react-querybuilder/datetime/dayjs`, `@react-querybuilder/datetime/date-fns`, or `@react-querybuilder/datetime/luxon`—depending on which library you wish to use or are already using—and pass it to the `ruleProcessor` option.
 
 ```ts
-import { formatQuery } from 'react-querybuilder';
 import {
   datetimeRuleProcessorMongoDBQuery,
   datetimeRuleProcessorSQL,
 } from '@react-querybuilder/datetime/dayjs';
+import { formatQuery } from 'react-querybuilder';
 
 // SQL
 formatQuery(query, { preset: 'postgresql', fields, ruleProcessor: datetimeRuleProcessorSQL });
