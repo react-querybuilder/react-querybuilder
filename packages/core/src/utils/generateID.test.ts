@@ -14,7 +14,9 @@ const loadGenerateID = async (cryptoStub: unknown) => {
     configurable: true,
     writable: true,
   });
-  const mod: { generateID: typeof GenerateID } = await import(`./generateID?v=${++importCount}`);
+  const mod: { generateID: typeof GenerateID } = await import(
+    /* @vite-ignore */ `./generateID?v=${++importCount}`
+  );
   return mod.generateID;
 };
 
