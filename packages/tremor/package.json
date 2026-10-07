@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/tremor",
   "description": "Custom Tremor components for react-querybuilder",
-  "version": "8.24.3",
+  "version": "8.24.4",
   "type": "commonjs",
   "publishConfig": {
     "access": "public"
@@ -65,7 +65,7 @@
     "postcss": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-querybuilder": "8.24.3",
+    "react-querybuilder": "8.24.4",
     "rollup-plugin-visualizer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
@@ -75,6 +75,6 @@
     "@tremor/react": "catalog:peer",
     "dayjs": "catalog:peer",
     "react": "catalog:peer",
-    "react-querybuilder": "8.24.3"
+    "react-querybuilder": "8.24.4"
   }
 }
