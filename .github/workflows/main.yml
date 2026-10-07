@@ -32,12 +32,13 @@ jobs:
           for dir in $(ls packages); do
             (cd packages/$dir && bun pm pack --destination ${{ github.workspace }}/packs)
           done
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: packs
-          path: packs/*.tgz
-      - name: Publish to pkg.pr.new
-        run: bunx pkg-pr-new publish './packages/*' --template './examples/!(_template|native|native-expo)' --packageManager=bun --bun
+      - parallel:
+          - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+            with:
+              name: packs
+              path: packs/*.tgz
+          - name: Publish to pkg.pr.new
+            run: bunx pkg-pr-new publish './packages/*' --template './examples/!(_template|native|native-expo)' --packageManager=bun --bun
 
   Typecheck_and_lint:
     runs-on: ubuntu-latest
@@ -53,11 +54,13 @@ jobs:
           echo '// @ts-check
           /** @type {import("@docusaurus/plugin-content-docs").SidebarsConfig} */
           const typedocSidebar = { items: [] };
-          module.exports = typedocSidebar.items;' > ./website/api/typedoc-sidebar.cjs
-      - run: bun run typecheck
-      - run: bun run lint --format=github
-      - run: bun run are-the-types-wrong
-      - run: bun run check-dts-peer-leaks
+          module.exports = typedocSidebar.items;' \
+          > ./website/api/typedoc-sidebar.cjs
+      - parallel:
+          - run: bun run typecheck
+          - run: bun run lint --format=github
+          - run: bun run are-the-types-wrong
+          - run: bun run check-dts-peer-leaks
 
   Test:
     runs-on: ubuntu-latest
@@ -70,21 +73,31 @@ jobs:
         # with:
         #   bun-version: 1.1.29
       # JDK 17 for the real-Spring SpEL dbquery suite (Spring 6.1 requires Java 17).
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+      # Java setup + jar cache only needed by `test`; run in background during install/build.
+      - id: setup-java
+        background: true
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
           java-version: "17"
       # Cache the Maven-fetched jars (see verifySpELEvaluator.ts). Key is pinned to the hard-coded
       # Spring/Jackson versions so a version bump forces a fresh download.
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - id: spel-cache
+        background: true
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: utils/spel-evaluator/lib
           key: spel-jars-spring6.1.14-jackson2.17.2
       - run: bun install --frozen-lockfile
-      - run: bun run build:core
-      - run: bun run check-derivations-purity
-      - run: bun run test
-      - run: bun run conformance:check
+      - parallel:
+          - run: bun run build:core
+          - run: bun run generate-prisma-client
+      - wait: [setup-java, spel-cache]
+      - parallel:
+          - run: bun run check-derivations-purity
+          - run: bun run test:bun
+          - run: bun run test:coverage
+          - run: bun run conformance:check
       - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -133,7 +146,7 @@ jobs:
           merge-multiple: true
       - name: Typecheck with React 18
         run: |
-          TSC_FAILED=0
+          FAILED=()
           for dir in $(find examples -mindepth 1 -maxdepth 1 -type d); do
             if [ "$dir" != "examples/_template" ] \
             && [ "$dir" != "examples/basic" ] \
@@ -187,14 +200,15 @@ jobs:
               fi
 
               # Typecheck
-              bunx tsc --noEmit || TSC_FAILED=1
+              bunx tsc --noEmit || FAILED+=("$dir")
 
               echo "::endgroup::"
               cd ../..
             else
               echo "SKIPPING $dir"
             fi
-            if [ $TSC_FAILED -ne 0 ]; then
-              exit 1
-            fi
           done
+          if [ ${#FAILED[@]} -gt 0 ]; then
+            printf "::error::React 18 typecheck failed: %s\n" "${FAILED[*]}"
+            exit 1
+          fi
