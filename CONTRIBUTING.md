@@ -58,7 +58,7 @@ Before submitting a pull request, please do the following:
 - Run `bun check:all` to make sure CI will run successfully.
 - If adding a new feature, add corresponding tests (we maintain 100% coverage).
 - If changing behavior or adding a feature, update the documentation. You may need to update both the [current (aka "next") docs](./website/docs/) and the latest [versioned docs](./website/versioned_docs/).
-- If your editor doesn't automatically format code with [oxfmt][oxfmt] when saving changes, run `bun fmt`. A pre-commit hook (installed by `bun install`) checks formatting of staged files; bypass with `git commit --no-verify`.
+- If your editor doesn't automatically format code with [oxfmt][oxfmt] when saving changes, run `bun fmt`.
 - When addressing a bug, refer to an existing GitHub issue or provide a reproducible example. Any interactive demo or minimal repository is fine, including [CodeSandbox][codesandbox] or [StackBlitz][stackblitz]. You can use the [CI base][example-ci], the [basic example][example-basic-ts] ([JS version][example-basic]), or any of the other [examples](./examples/) as a starter template.
 
 ## Generated files
