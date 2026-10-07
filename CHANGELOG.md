@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.24.4] - 2026-10-06
+
 ### Fixed
 
 - [#1109] Improved tree-shaking for ESM builds. Module-level calls are annotated `/* @__PURE__ */`, `sideEffects` in `react-querybuilder`'s `package.json` now lists only the files that really have side effects, and the `parseCypher` lexer/parser is built on first use rather than at import time. `react-querybuilder`'s development ESM build (`.mjs`) is now emitted as one file per module, and the `/async` and `/history` entry points share those files with the main entry instead of duplicating its code.
@@ -2557,7 +2559,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.4...HEAD
+[v8.24.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.3...v8.24.4
 [v8.24.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.2...v8.24.3
 [v8.24.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.1...v8.24.2
 [v8.24.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.0...v8.24.1
