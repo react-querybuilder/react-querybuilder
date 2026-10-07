@@ -110,6 +110,8 @@
     "attw:tremor": "attw --format table-flipped --pack ./packages/tremor",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
+    "fmt:staged": "git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 -r oxfmt --check --no-error-on-unmatched-pattern",
+    "prepare": "[ -n \"$CI\" ] || simple-git-hooks",
     "check-derivations-purity": "bun ./utils/check-derivations-purity.ts",
     "check-dts-peer-leaks": "bun ./utils/check-dts-peer-leaks.ts",
     "conformance:check": "bun ./utils/conformance/check.ts",
@@ -288,6 +290,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
+    "simple-git-hooks": "^2.14.0",
     "tsdown": "^0.23.0",
     "typescript": "catalog:",
     "vite": "catalog:",
@@ -301,5 +304,8 @@
   "patchedDependencies": {
     "spel2js@0.2.9": "patches/spel2js@0.2.9.patch",
     "react-dnd-test-utils@16.0.1": "patches/react-dnd-test-utils@16.0.1.patch"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "bun run fmt:staged"
   }
 }
