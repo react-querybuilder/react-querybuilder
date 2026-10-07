@@ -93,7 +93,8 @@ jobs:
       - wait: [setup-java, spel-cache]
       - parallel:
           - run: bun run check-derivations-purity
-          - run: bun run test
+          - run: bun run test:bun
+          - run: bun run test:coverage
           - run: bun run conformance:check
       - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         env:
