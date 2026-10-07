@@ -89,7 +89,9 @@ jobs:
           path: utils/spel-evaluator/lib
           key: spel-jars-spring6.1.14-jackson2.17.2
       - run: bun install --frozen-lockfile
-      - run: bun run build:core
+      - parallel:
+          - run: bun run build:core
+          - run: bun run generate-prisma-client
       - wait: [setup-java, spel-cache]
       - parallel:
           - run: bun run check-derivations-purity
