@@ -125,7 +125,8 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
 
   const sqlOperator = operatorProcessor(rule, opts);
   const sqlOperatorLowerCase = lc(sqlOperator);
-  const [qPre, qPost] = quoteFieldNamesWith;
+  // No separator here (preserves prior behavior); escape closing quote only
+  const qf = getQuotedFieldName(rule.field, { quoteFieldNamesWith });
 
   if (
     (sqlOperatorLowerCase === 'in' ||
@@ -136,7 +137,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
   ) {
     return finalize('');
   } else if (sqlOperatorLowerCase === 'is null' || sqlOperatorLowerCase === 'is not null') {
-    return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator}`);
+    return finalize(`${qf} ${sqlOperator}`);
   } else if (rule.valueSource === 'parameter') {
     // Named-parameter reference: emit inline (binding supplied externally). For
     // "parameterized_named", register the key(s) with a `null` placeholder so callers
@@ -154,22 +155,20 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       const valueAsArray = toArray(rule.value, { retainEmptyStrings: true });
       const [first, second] = valueAsArray.slice(0, 2);
       return finalize(
-        `${qPre}${rule.field}${qPost} ${sqlOperator} ${registerParam(first)} and ${registerParam(second)}`.trim()
+        `${qf} ${sqlOperator} ${registerParam(first)} and ${registerParam(second)}`.trim()
       );
     }
     if (sqlOperatorLowerCase === 'in' || sqlOperatorLowerCase === 'not in') {
       const splitValue = toArray(rule.value);
-      return finalize(
-        `${qPre}${rule.field}${qPost} ${sqlOperator} (${splitValue.map(v => registerParam(v)).join(', ')})`
-      );
+      return finalize(`${qf} ${sqlOperator} (${splitValue.map(v => registerParam(v)).join(', ')})`);
     }
     // String-match operators concatenate `%` wildcards onto the bind-variable reference;
     // `wrapLikeFragment` is a no-op for all other operators.
     return finalize(
-      `${qPre}${rule.field}${qPost} ${sqlOperator} ${wrapLikeFragment(registerParam(rule.value), lc(rule.operator), { concatOperator })}`.trim()
+      `${qf} ${sqlOperator} ${wrapLikeFragment(registerParam(rule.value), lc(rule.operator), { concatOperator })}`.trim()
     );
   } else if (rule.valueSource === 'field') {
-    return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} ${value}`.trim());
+    return finalize(`${qf} ${sqlOperator} ${value}`.trim());
   } else if (sqlOperatorLowerCase === 'in' || sqlOperatorLowerCase === 'not in') {
     const splitValue = toArray(rule.value);
     if (parameterized) {
@@ -177,7 +176,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
         params.push(shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v);
       }
       return finalize(
-        `${qPre}${rule.field}${qPost} ${sqlOperator} (${splitValue
+        `${qf} ${sqlOperator} (${splitValue
           .map((_v, i) =>
             numberedParams
               ? `${paramPrefix}${processedParams.length + 1 + splitValue.length - (splitValue.length - i)}`
@@ -197,7 +196,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
         ? parseNumber(v, { parseNumbers })
         : v;
     }
-    return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} (${inParams.join(', ')})`);
+    return finalize(`${qf} ${sqlOperator} (${inParams.join(', ')})`);
   } else if (sqlOperatorLowerCase === 'between' || sqlOperatorLowerCase === 'not between') {
     const valueAsArray = toArray(rule.value, { retainEmptyStrings: true });
     const [first, second] = valueAsArray
@@ -206,7 +205,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     if (parameterized) {
       params.push(first, second);
       return finalize(
-        `${qPre}${rule.field}${qPost} ${sqlOperator} ${
+        `${qf} ${sqlOperator} ${
           numberedParams ? `${paramPrefix}${processedParams.length + 1}` : '?'
         } and ${numberedParams ? `${paramPrefix}${processedParams.length + 2}` : '?'}`
       );
@@ -216,7 +215,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     paramsNamed[`${paramsKeepPrefix ? paramPrefix : ''}${firstParamName}`] = first;
     paramsNamed[`${paramsKeepPrefix ? paramPrefix : ''}${secondParamName}`] = second;
     return finalize(
-      `${qPre}${rule.field}${qPost} ${sqlOperator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`
+      `${qf} ${sqlOperator} ${paramPrefix}${firstParamName} and ${paramPrefix}${secondParamName}`
     );
   }
 
@@ -242,7 +241,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
   }
 
   return finalize(
-    `${qPre}${rule.field}${qPost} ${sqlOperator} ${
+    `${qf} ${sqlOperator} ${
       parameterized
         ? numberedParams
           ? `${paramPrefix}${processedParams.length + 1}`

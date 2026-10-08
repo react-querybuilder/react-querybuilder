@@ -290,19 +290,24 @@ export const getQuoteFieldNamesWithArray = (
  * Given a field name and relevant {@link ValueProcessorOptions}, returns the field name
  * wrapped in the configured quote character(s).
  *
+ * Unless `escape` is `false`, occurrences of the closing quote character within each
+ * identifier part are doubled (standard SQL/MSSQL/MySQL identifier escaping, e.g.
+ * `a"b` → `"a""b"`). Unquoted identifiers (no closing quote configured) can't be escaped
+ * and are emitted verbatim.
+ *
  * @group Export
  */
 export const getQuotedFieldName = (
   fieldName: string,
-  { quoteFieldNamesWith, fieldIdentifierSeparator }: ValueProcessorOptions
+  { quoteFieldNamesWith, fieldIdentifierSeparator }: ValueProcessorOptions,
+  escape = true
 ): string => {
   const [qPre, qPost] = getQuoteFieldNamesWithArray(quoteFieldNamesWith);
+  const quote = (part: string) =>
+    `${qPre}${escape && qPost ? `${part}`.replaceAll(qPost, `${qPost}${qPost}`) : part}${qPost}`;
   return typeof fieldIdentifierSeparator === 'string' && fieldIdentifierSeparator.length > 0
-    ? joinWith(
-        splitBy(fieldName, fieldIdentifierSeparator).map(part => `${qPre}${part}${qPost}`),
-        fieldIdentifierSeparator
-      )
-    : `${qPre}${fieldName}${qPost}`;
+    ? joinWith(splitBy(fieldName, fieldIdentifierSeparator).map(quote), fieldIdentifierSeparator)
+    : quote(fieldName);
 };
 
 const defaultWordOrder = ['S', 'V', 'O'];

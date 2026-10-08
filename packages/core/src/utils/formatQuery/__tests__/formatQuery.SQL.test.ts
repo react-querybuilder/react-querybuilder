@@ -287,6 +287,90 @@ it('handles fieldIdentifierSeparator correctly', () => {
   );
 });
 
+describe('escapes closing quote chars in quoted field names', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 't.a"b]c`d', operator: '=', value: 'x' },
+      { field: 't.e"f]g`h', operator: 'in', value: 'x, y' },
+      { field: 't.a"b]c`d', operator: '!=', value: 't.e"f]g`h', valueSource: 'field' },
+      { field: 't.a"b]c`d', operator: 'between', value: 't.e"f]g`h,z', valueSource: 'field' },
+    ],
+  };
+
+  it.each([
+    [
+      '"',
+      `("t.a""b]c\`d" = 'x' and "t.e""f]g\`h" in ('x', 'y') and "t.a""b]c\`d" != "t.e""f]g\`h" and "t.a""b]c\`d" between "t.e""f]g\`h" and "z")`,
+    ],
+    [
+      '`',
+      '(`t.a"b]c``d` = \'x\' and `t.e"f]g``h` in (\'x\', \'y\') and `t.a"b]c``d` != `t.e"f]g``h` and `t.a"b]c``d` between `t.e"f]g``h` and `z`)',
+    ],
+    [
+      ['[', ']'] as [string, string],
+      `([t.a"b]]c\`d] = 'x' and [t.e"f]]g\`h] in ('x', 'y') and [t.a"b]]c\`d] != [t.e"f]]g\`h] and [t.a"b]]c\`d] between [t.e"f]]g\`h] and [z])`,
+    ],
+  ])('quoteFieldNamesWith %j', (quoteFieldNamesWith, expected) => {
+    expect(formatQuery(q, { format: 'sql', quoteFieldNamesWith })).toBe(expected);
+  });
+
+  it('escapes each part with fieldIdentifierSeparator', () => {
+    expect(
+      formatQuery(
+        {
+          combinator: 'and',
+          rules: [{ field: 't"x.a"b', operator: '=', value: 'b.c"d', valueSource: 'field' }],
+        },
+        { format: 'sql', quoteFieldNamesWith: '"', fieldIdentifierSeparator: '.' }
+      )
+    ).toBe(`("t""x"."a""b" = "b"."c""d")`);
+  });
+
+  it('leaves unquoted field names verbatim', () => {
+    expect(
+      formatQuery(
+        { combinator: 'and', rules: [{ field: 'a"b', operator: '=', value: 'x' }] },
+        'sql'
+      )
+    ).toBe(`(a"b = 'x')`);
+  });
+
+  it('escapes in parameterized formats', () => {
+    const r: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'a"b', operator: '=', value: 'x' },
+        { field: 'a"b', operator: '=', value: 'c"d', valueSource: 'field' },
+      ],
+    };
+    const opts = { quoteFieldNamesWith: '"' };
+    expect(formatQuery(r, { ...opts, format: 'parameterized' }).sql).toBe(
+      `("a""b" = ? and "a""b" = "c""d")`
+    );
+    // Param name not asserted (derived from raw field name; separate follow-up)
+    expect(formatQuery(r, { ...opts, format: 'parameterized_named' }).sql).toMatch(
+      /^\("a""b" = :\S+ and "a""b" = "c""d"\)$/
+    );
+  });
+
+  it.each([
+    ['ansi', `(a"b] = 'x')`],
+    ['sqlite', `(a"b] = 'x')`],
+    ['oracle', `(a"b] = 'x')`],
+    ['mysql', `(a"b] = 'x')`],
+    ['mssql', `([a"b]]] = 'x')`],
+    ['postgresql', `("a""b]" = 'x')`],
+  ] as [SQLPreset, string][])('preset %s', (preset, expected) => {
+    expect(
+      formatQuery(
+        { combinator: 'and', rules: [{ field: 'a"b]', operator: '=', value: 'x' }] },
+        { preset }
+      )
+    ).toBe(expected);
+  });
+});
+
 it('handles quoteValuesWith correctly', () => {
   expect(formatQuery(query, { format: 'sql', quoteValuesWith: `'` })).toBe(sqlString);
 

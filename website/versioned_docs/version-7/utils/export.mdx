@@ -640,7 +640,7 @@ const jsonTree = formatRAQB(query, { fields });
 const immutableTree = Utils.checkTree(Utils.loadTree(jsonTree), config);
 ```
 
-This is the inverse of `parseRAQB`. See [Migrating from react-awesome-query-builder](../tips/migrate-from-raqb) for the full concept mapping.
+This is the inverse of [`parseRAQB`](./import#react-awesome-query-builder). See [Migrating from react-awesome-query-builder](../tips/migrate-from-raqb) for the full concept mapping.
 
 Output (object):
 
@@ -1086,6 +1086,14 @@ formatQuery(query, { format: 'sql', quoteFieldNamesWith: ['[', ']'] });
 "([firstName] = 'Steve' and [lastName] = 'Vai')"
 */
 ```
+
+The closing quote character is escaped within field names by doubling it (`a"b` → `"a""b"`, `a]b` → `[a]]b]`). This applies to the SQL-based formats ("sql", "parameterized", "parameterized_named"), but not "jsonata" or "natural_language".
+
+:::caution Untrusted queries
+
+Unquoted field names (the default) can't be escaped, and operators and combinators are always emitted verbatim. When formatting queries from untrusted sources, quote field names _and_ validate fields, operators, and combinators against a whitelist on the server before calling `formatQuery`.
+
+:::
 
 #### Field identifier chains
 
