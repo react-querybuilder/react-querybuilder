@@ -5,6 +5,8 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
 } from '../../types';
+import type { ParserCommonOptions } from '../../types/import';
+import { filterRulesByFields } from '../parserUtils';
 
 // Reuse a single parser instance (Chevrotain-backed; creating parsers is expensive)
 let parserInstance: SparqlParser | undefined;
@@ -344,7 +346,10 @@ const ensurePrefixes = (sparql: string): string => {
 /**
  * Options for {@link parseSPARQL}.
  */
-export interface ParseSPARQLOptions {
+export interface ParseSPARQLOptions extends Pick<
+  ParserCommonOptions,
+  'fields' | 'getValueSources'
+> {
   independentCombinators?: boolean;
 }
 
@@ -378,7 +383,7 @@ export function parseSPARQL(
 ): DefaultRuleGroupTypeIC;
 export function parseSPARQL(
   sparql: string,
-  _options?: ParseSPARQLOptions
+  options: ParseSPARQLOptions = {}
 ): DefaultRuleGroupTypeAny {
   const trimmed = sparql.trim();
   if (!trimmed) return { combinator: 'and', rules: [] };
@@ -408,5 +413,5 @@ export function parseSPARQL(
 
   const rules: (DefaultRuleType | DefaultRuleGroupType)[] = [];
   visitPatterns(typed.where.patterns ?? [], rules);
-  return { combinator: 'and', rules };
+  return { combinator: 'and', rules: filterRulesByFields(rules, options) };
 }

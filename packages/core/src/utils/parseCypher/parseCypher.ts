@@ -5,6 +5,8 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
 } from '../../types';
+import type { ParserCommonOptions } from '../../types/import';
+import { filterRulesByFields } from '../parserUtils';
 
 // ─── Lexer Tokens ────────────────────────────────────────────────────────────
 
@@ -519,7 +521,10 @@ const visitCondition = (node: CstNode): DefaultRuleType => {
 /**
  * Options for {@link parseCypher}.
  */
-export interface ParseCypherOptions {
+export interface ParseCypherOptions extends Pick<
+  ParserCommonOptions,
+  'fields' | 'getValueSources'
+> {
   independentCombinators?: boolean;
 }
 
@@ -557,7 +562,7 @@ export function parseCypher(
 ): DefaultRuleGroupTypeIC;
 export function parseCypher(
   cypher: string,
-  _options?: ParseCypherOptions
+  options: ParseCypherOptions = {}
 ): DefaultRuleGroupTypeAny {
   const trimmed = cypher.trim();
   if (!trimmed) return { combinator: 'and', rules: [] };
@@ -605,7 +610,7 @@ export function parseCypher(
     }
   }
 
-  return { combinator: 'and', rules };
+  return { combinator: 'and', rules: filterRulesByFields(rules, options) };
 }
 
 /**

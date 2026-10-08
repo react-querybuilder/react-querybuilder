@@ -1,5 +1,7 @@
 import type {
   DefaultOperatorName,
+  DefaultRuleGroupType,
+  DefaultRuleType,
   FullField,
   FullOption,
   OptionList,
@@ -7,8 +9,10 @@ import type {
   ValueSourceFlexibleOptions,
   ValueSources,
 } from '../types';
+import type { ParserCommonOptions } from '../types/import';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
+import { isRuleGroup } from './isRuleGroup';
 import { isFlexibleOptionArray, toFlatOptionArray, toFullOption } from './optGroupUtils';
 
 export const getFieldsArray = (
@@ -72,3 +76,34 @@ export function fieldIsValidUtil(params: {
 
   return valid;
 }
+
+type RuleOrGroupNoIC = DefaultRuleType | DefaultRuleGroupType;
+
+/**
+ * Drops rules whose field/operator combo is invalid per `fields`/`getValueSources`, then prunes
+ * groups left empty. No-op when `fields` is empty/undefined. Non-IC groups only.
+ */
+export const filterRulesByFields = (
+  rules: RuleOrGroupNoIC[],
+  options: Pick<ParserCommonOptions, 'fields' | 'getValueSources'>
+): RuleOrGroupNoIC[] => {
+  const fieldsFlat = getFieldsArray(options.fields) as FullField[];
+  if (fieldsFlat.length === 0) return rules;
+  const { getValueSources } = options;
+  const walk = (rs: RuleOrGroupNoIC[]): RuleOrGroupNoIC[] =>
+    rs.flatMap((r): RuleOrGroupNoIC[] => {
+      if (isRuleGroup(r)) {
+        const kept = walk(r.rules);
+        return kept.length > 0 ? [{ ...r, rules: kept }] : [];
+      }
+      return fieldIsValidUtil({
+        fieldName: r.field,
+        fieldsFlat,
+        operator: r.operator,
+        getValueSources,
+      })
+        ? [r]
+        : [];
+    });
+  return walk(rules);
+};

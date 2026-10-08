@@ -4,11 +4,16 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
 } from '../../types';
+import type { ParserCommonOptions } from '../../types/import';
+import { filterRulesByFields } from '../parserUtils';
 
 /**
  * Options for {@link parseGremlin}.
  */
-export interface ParseGremlinOptions {
+export interface ParseGremlinOptions extends Pick<
+  ParserCommonOptions,
+  'fields' | 'getValueSources'
+> {
   independentCombinators?: boolean;
 }
 
@@ -43,7 +48,7 @@ export function parseGremlin(
 ): DefaultRuleGroupTypeIC;
 export function parseGremlin(
   gremlin: string,
-  _options?: ParseGremlinOptions
+  options: ParseGremlinOptions = {}
 ): DefaultRuleGroupTypeAny {
   const trimmed = gremlin.trim();
   if (!trimmed) return { combinator: 'and', rules: [] };
@@ -88,7 +93,7 @@ export function parseGremlin(
     }
   }
 
-  return { combinator: 'and', rules };
+  return { combinator: 'and', rules: filterRulesByFields(rules, options) };
 }
 
 /** Tokenizes a Gremlin traversal string into individual step strings. */

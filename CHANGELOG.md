@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `parseCypher`, `parseGQL`, `parseGremlin`, and `parseSPARQL` accept `fields` and `getValueSources` options. When `fields` is provided, rules with unknown fields are dropped (and empty groups pruned), matching the other parsers. Field names are matched as emitted (e.g. `n.age` for Cypher, `?age` for SPARQL).
+
 ### Fixed
 
 - `formatQuery` now escapes the closing quote character inside quoted field names by doubling it (`"` → `""`, `]` → `]]`, `` ` `` → ` `` `) for "sql", "parameterized", and "parameterized_named" formats, including `valueSource: "field"` values and each part split by `fieldIdentifierSeparator`. Previously, field names containing the closing quote produced invalid or injectable SQL. `getQuotedFieldName` accepts a new third argument `escape` (default `true`). "jsonata" and "natural_language" output is unchanged (JSONata has no identifier escape syntax; NL is not executable). Unquoted field names (the default) can't be escaped and are still emitted verbatim.
