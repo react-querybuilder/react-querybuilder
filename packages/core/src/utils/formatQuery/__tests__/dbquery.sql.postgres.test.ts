@@ -193,8 +193,8 @@ describe('PostgreSQL', () => {
       test(format, async () => {
         const sql = await getSharedSQL();
         const fq = formatQuery(query, { format, preset: 'postgresql' }) as unknown as
-            | string
-            | { sql: string; params: never };
+          | string
+          | { sql: string; params: never };
         const [where, params] = typeof fq === 'string' ? [fq, []] : [fq.sql, fq.params];
         const rows = await sql.unsafe(
           `SELECT id FROM "${quoteSchema}".t WHERE ${where} ORDER BY id`,
