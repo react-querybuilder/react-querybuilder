@@ -1305,6 +1305,29 @@ describe('formatQuery("diagnostics")', () => {
       expect(result.diagnostics).toContainEqual(
         expect.objectContaining({ id: 'r-1', code: 'UNDEFINED_FIELD', source: 'field-check' })
       );
+      expect(result.query.valid).toBe(false);
+      expect(result.query.rules[0]).toMatchObject({ valid: false });
+      expect(result.stats).toMatchObject({ validRules: 0, invalidRules: 1, invalidGroups: 1 });
+      expect(result.fieldSummary.unknownField).toEqual({ ruleCount: 1, invalidCount: 1 });
+    });
+
+    it('does not flag type mismatch for valueSource "field"', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [
+          { id: 'r-1', field: 'age', operator: '=', value: 'otherAge', valueSource: 'field' },
+        ],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [
+          { name: 'age', label: 'Age', inputType: 'number' },
+          { name: 'otherAge', label: 'Other Age', inputType: 'number' },
+        ],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+      expect(result.stats).toMatchObject({ validRules: 1, invalidRules: 0 });
     });
 
     it('does not flag fields that are in the config', () => {
