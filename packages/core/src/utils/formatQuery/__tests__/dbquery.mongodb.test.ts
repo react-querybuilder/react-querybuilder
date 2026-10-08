@@ -171,3 +171,22 @@ describe('MongoDB', () => {
     });
   });
 });
+
+describe('MongoDB hostile field names ($where)', () => {
+  test('bracket-quoted path never returns extra rows', async () => {
+    // Unescaped: `this.firstName.includes('')||true||this.firstName.includes(...)` → all rows
+    const field = "firstName.includes('')||true||this.firstName";
+    const mongoDbQuery = formatQuery(
+      {
+        combinator: 'and',
+        rules: [{ field, operator: 'contains', value: 'lastName', valueSource: 'field' }],
+      },
+      'mongodb_query'
+    );
+    // Escaped path is a nonexistent property, so the JS may throw; either way, no rows
+    const queryResult = await SuperHero.find(mongoDbQuery as QueryFilter<SuperUserMongoDB>).catch(
+      () => []
+    );
+    expect(queryResult).toHaveLength(0);
+  });
+});

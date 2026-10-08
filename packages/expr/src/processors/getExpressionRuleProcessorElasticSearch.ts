@@ -1,5 +1,10 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
-import { betweenOperators, defaultRuleProcessorElasticSearch, lc } from '@react-querybuilder/core';
+import {
+  betweenOperators,
+  defaultRuleProcessorElasticSearch,
+  escapeSingleQuotedString,
+  lc,
+} from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
 import { defaultPainlessSerializers } from '../functions/painless';
 import { getRuleExpressions } from '../registry';
@@ -34,7 +39,7 @@ const STRING_MATCH: Record<
 
 // Painless field access: `doc['field'].value`. String leaves use single quotes (escaped).
 const dialect: InfixDialect = {
-  renderField: field => `doc['${field.replaceAll(`'`, `\\'`)}'].value`,
+  renderField: field => `doc['${escapeSingleQuotedString(field)}'].value`,
   renderLeaf: (node, opts) => quoteLeaf(node, `'`, { ...opts, escapeQuotes: true }),
 };
 

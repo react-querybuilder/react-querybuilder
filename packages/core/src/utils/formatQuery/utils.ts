@@ -312,6 +312,43 @@ export const getQuotedFieldName = (
 
 const defaultWordOrder = ['S', 'V', 'O'];
 
+const plainIdentifierRegex = /^[A-Za-z_]\w*$/;
+
+/**
+ * Escapes backslashes and single quotes for embedding in a single-quoted string literal
+ * (Gremlin/Groovy, Painless, JS). Used for field names (property keys, `doc['…']`).
+ *
+ * @group Export
+ */
+export const escapeSingleQuotedString = <S extends string | null | undefined>(s: S): S =>
+  (typeof s === 'string' ? s.replaceAll(/(['\\])/g, '\\$1') : s) as S;
+
+/**
+ * Renders a (possibly `.`-delimited) field name as a Cypher/GQL property path. Segments that
+ * aren't plain identifiers are backtick-quoted, with embedded backticks doubled
+ * (e.g. `n.first name` → ``n.`first name` ``). Plain identifiers are emitted as-is.
+ *
+ * @group Export
+ */
+export const quoteCypherIdentifier = (fieldName: string): string =>
+  `${fieldName}`
+    .split('.')
+    .map(p => (plainIdentifierRegex.test(p) ? p : `\`${p.replaceAll('`', '``')}\``))
+    .join('.');
+
+/**
+ * Renders a (possibly `.`-delimited) field name as a JS property accessor on `obj` (default
+ * `"this"`) for MongoDB `$where` expressions. Segments that aren't plain identifiers use
+ * bracket notation with a JSON-escaped string (e.g. `a.b c` → `this.a["b c"]`).
+ *
+ * @group Export
+ */
+export const getJSPropertyAccessor = (fieldName: string, obj = 'this'): string =>
+  `${obj}${`${fieldName}`
+    .split('.')
+    .map(p => (plainIdentifierRegex.test(p) ? `.${p}` : `[${JSON.stringify(p)}]`))
+    .join('')}`;
+
 /**
  * Given a [Constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders)
  * like "svo" or "sov", returns a permutation of `["S", "V", "O"]` based on the first occurrence of

@@ -4,7 +4,16 @@ import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorMongoDBQuery } from './defaultRuleGroupProcessorMongoDBQuery';
-import { isValidValue, mongoOperators, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  getJSPropertyAccessor,
+  isValidValue,
+  mongoOperators,
+  processMatchMode,
+  shouldRenderAsNumber,
+} from './utils';
+
+// `$where` is server-side JS; non-identifier path segments → bracket access
+const jsRef = (f: unknown) => getJSPropertyAccessor(`${f}`);
 
 const processNumber = <T>(value: unknown, fallback: T, parseNumbers = false) =>
   shouldRenderAsNumber(value, parseNumbers || typeof value === 'bigint')
@@ -124,42 +133,42 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
 
     case 'contains':
       return valueIsField
-        ? { $where: `this.${field}.includes(this.${value})` }
+        ? { $where: `${jsRef(field)}.includes(${jsRef(value)})` }
         : avoidFieldsAsKeys
           ? { $regexMatch: { input: `$${field}`, regex: value } }
           : { [field]: { $regex: value } };
 
     case 'beginswith':
       return valueIsField
-        ? { $where: `this.${field}.startsWith(this.${value})` }
+        ? { $where: `${jsRef(field)}.startsWith(${jsRef(value)})` }
         : avoidFieldsAsKeys
           ? { $regexMatch: { input: `$${field}`, regex: `^${value}` } }
           : { [field]: { $regex: `^${value}` } };
 
     case 'endswith':
       return valueIsField
-        ? { $where: `this.${field}.endsWith(this.${value})` }
+        ? { $where: `${jsRef(field)}.endsWith(${jsRef(value)})` }
         : avoidFieldsAsKeys
           ? { $regexMatch: { input: `$${field}`, regex: `${value}$` } }
           : { [field]: { $regex: `${value}$` } };
 
     case 'doesnotcontain':
       return valueIsField
-        ? { $where: `!this.${field}.includes(this.${value})` }
+        ? { $where: `!${jsRef(field)}.includes(${jsRef(value)})` }
         : avoidFieldsAsKeys
           ? { $not: { $regexMatch: { input: `$${field}`, regex: value } } }
           : { [field]: { $not: { $regex: value } } };
 
     case 'doesnotbeginwith':
       return valueIsField
-        ? { $where: `!this.${field}.startsWith(this.${value})` }
+        ? { $where: `!${jsRef(field)}.startsWith(${jsRef(value)})` }
         : avoidFieldsAsKeys
           ? { $not: { $regexMatch: { input: `$${field}`, regex: `^${value}` } } }
           : { [field]: { $not: { $regex: `^${value}` } } };
 
     case 'doesnotendwith':
       return valueIsField
-        ? { $where: `!this.${field}.endsWith(this.${value})` }
+        ? { $where: `!${jsRef(field)}.endsWith(${jsRef(value)})` }
         : avoidFieldsAsKeys
           ? { $not: { $regexMatch: { input: `$${field}`, regex: `${value}$` } } }
           : { [field]: { $not: { $regex: `${value}$` } } };
@@ -176,8 +185,8 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
       return valueIsField
         ? {
             $where: `${operatorLC === 'notin' ? '!' : ''}[${valueAsArray
-              .map(val => `this.${val}`)
-              .join(',')}].includes(this.${field})`,
+              .map(val => jsRef(val))
+              .join(',')}].includes(${jsRef(field)})`,
           }
         : avoidFieldsAsKeys
           ? operatorLC === 'notin'

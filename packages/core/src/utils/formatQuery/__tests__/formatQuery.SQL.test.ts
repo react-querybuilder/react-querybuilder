@@ -287,6 +287,54 @@ it('handles fieldIdentifierSeparator correctly', () => {
   );
 });
 
+describe('parameterized formats honor fieldIdentifierSeparator', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 't.a', operator: '=', value: 'x' },
+      { field: 't.a', operator: 'in', value: 'x, y' },
+      { field: 't.a', operator: 'between', value: '1, 2' },
+      { field: 't.a', operator: 'null', value: null },
+      { field: 't.a', operator: '=', value: 'u.b', valueSource: 'field' },
+      { field: 't.a', operator: 'contains', value: 'u.b', valueSource: 'field' },
+      { field: 't.a', operator: 'in', value: 'u.b, u.c', valueSource: 'field' },
+      { field: 't.a', operator: 'between', value: 'u.b, u.c', valueSource: 'field' },
+    ],
+  };
+  const sqlExpected =
+    "([t].[a] = 'x' and [t].[a] in ('x', 'y') and [t].[a] between '1' and '2' and [t].[a] is null and [t].[a] = [u].[b] and [t].[a] like '%' + [u].[b] + '%' and [t].[a] in ([u].[b], [u].[c]) and [t].[a] between [u].[b] and [u].[c])";
+
+  it('sql (baseline)', () => {
+    expect(formatQuery(q, { format: 'sql', preset: 'mssql' })).toBe(sqlExpected);
+  });
+
+  it('parameterized', () => {
+    expect(formatQuery(q, { format: 'parameterized', preset: 'mssql' }).sql).toBe(
+      "([t].[a] = ? and [t].[a] in (?, ?) and [t].[a] between ? and ? and [t].[a] is null and [t].[a] = [u].[b] and [t].[a] like '%' + [u].[b] + '%' and [t].[a] in ([u].[b], [u].[c]) and [t].[a] between [u].[b] and [u].[c])"
+    );
+  });
+
+  it('parameterized_named', () => {
+    expect(formatQuery(q, { format: 'parameterized_named', preset: 'mssql' }).sql).toBe(
+      "([t].[a] = @t.a_1 and [t].[a] in (@t.a_2, @t.a_3) and [t].[a] between @t.a_4 and @t.a_5 and [t].[a] is null and [t].[a] = [u].[b] and [t].[a] like '%' + [u].[b] + '%' and [t].[a] in ([u].[b], [u].[c]) and [t].[a] between [u].[b] and [u].[c])"
+    );
+  });
+
+  it.each(['parameterized', 'parameterized_named'] as const)(
+    '%s quotes identifiers same as sql',
+    format => {
+      const quotedIds = (s: string) => s.match(/\[[^\]]*\](?:\.\[[^\]]*\])*/g);
+      const opts = {
+        quoteFieldNamesWith: ['[', ']'] as [string, string],
+        fieldIdentifierSeparator: '.',
+      };
+      expect(quotedIds(formatQuery(q, { ...opts, format: format as 'parameterized' }).sql)).toEqual(
+        quotedIds(formatQuery(q, { ...opts, format: 'sql' }))
+      );
+    }
+  );
+});
+
 describe('escapes closing quote chars in quoted field names', () => {
   const q: RuleGroupType = {
     combinator: 'and',

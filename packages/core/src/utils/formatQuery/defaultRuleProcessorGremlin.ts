@@ -1,6 +1,6 @@
 import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
-import { shouldRenderAsNumber } from './utils';
+import { escapeSingleQuotedString, shouldRenderAsNumber } from './utils';
 
 const escapeSingleQuotes = (v: unknown, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll("'", "\\'");
@@ -22,8 +22,8 @@ export const defaultRuleProcessorGremlin: RuleProcessor = (
   const valueIsField = valueSource === 'field';
   const operatorTL = operator.toLowerCase();
 
-  // Gremlin uses the last segment of dotted field names as the property key
-  const prop = field.includes('.') ? field.split('.').pop()! : field;
+  // Last segment of dotted field names is the property key; always escaped (string literal)
+  const prop = escapeSingleQuotedString(field.includes('.') ? field.split('.').pop()! : field);
 
   const fmtVal = (v: unknown): string => {
     if (v === null || v === undefined) return 'null';

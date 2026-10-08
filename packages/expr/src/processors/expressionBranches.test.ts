@@ -109,6 +109,20 @@ describe('ElasticSearch processor branches', () => {
     expect(out.bool.filter.script.script).toContain("doc['x'].value");
   });
 
+  it('escapes quotes and backslashes in field names', () => {
+    const out = p(
+      rule({
+        field: "x'\\",
+        operator: '=',
+        valueSource: 'expression',
+        value: fn('abs', field("d'")),
+      })
+    );
+    expect(out.bool.filter.script.script).toBe(
+      String.raw`doc['x\'\\'].value == Math.abs(doc['d\''].value)`
+    );
+  });
+
   it('scripts field-source rhs', () => {
     const out = p(
       rule({

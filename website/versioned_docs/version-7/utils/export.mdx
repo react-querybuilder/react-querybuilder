@@ -1093,6 +1093,15 @@ The closing quote character is escaped within field names by doubling it (`a"b` 
 
 Unquoted field names (the default) can't be escaped, and operators and combinators are always emitted verbatim. When formatting queries from untrusted sources, quote field names _and_ validate fields, operators, and combinators against a whitelist on the server before calling `formatQuery`.
 
+Other formats escape field names where the target language has an escape mechanism:
+
+- "cypher"/"gql": `.`-delimited segments that aren't plain identifiers are backtick-quoted (`n.first name` → ``n.`first name` ``).
+- "gremlin": property keys are escaped within the `'…'` string literal.
+- "elasticsearch": field names inside Painless scripts (`doc['…']`) are escaped.
+- "mongodb_query"/"mongodb": field names inside `$where` JavaScript use bracket notation when they aren't plain identifiers (`this["first name"]`). Object keys and `$field` references are emitted as-is (a leading `$` or embedded `.` keeps its MongoDB meaning).
+
+"cel", "spel", "sparql", "ldap", and "jsonata" have no identifier escape syntax, so field names are emitted verbatim. Validate them against a whitelist.
+
 :::
 
 #### Field identifier chains
