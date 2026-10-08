@@ -10,7 +10,7 @@ import type { TanStackDbWhereCallback, TsDbExpression, TsDbOperators } from './t
  * Returns a `WhereCallback` suitable for TanStack DB's `.where()` method.
  *
  * @example
- * const where = formatQuery(query, { format: 'tanstack_db', context: { tanstackDb: tsdb } });
+ * const where = formatQuery(query, { format: 'tanstack_db', context: { tanStackDbOperators: tsdb } });
  * const results = useLiveQuery(q => q.from({ todo: todosCollection }).where(where));
  *
  * @group Export
