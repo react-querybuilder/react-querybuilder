@@ -1,4 +1,5 @@
-import type { DefaultRuleGroupType, DefaultRuleType, FullField } from '../../types';
+import type { DefaultRuleGroupType, DefaultRuleType, Field, FullField } from '../../types';
+import type { ParserCommonOptions } from '../../types/import';
 import { toFullOption } from '../optGroupUtils';
 import { parseCEL } from '../parseCEL';
 import { parseCypher } from '../parseCypher';
@@ -167,5 +168,32 @@ it('prunes only invalid rules from mixed groups', () => {
       { field: 'n.a', operator: '=', value: 1 },
       { combinator: 'or', rules: [{ field: 'n.a', operator: '=', value: 3 }] },
     ],
+  });
+});
+
+describe('non-FullField `fields` shapes', () => {
+  const sql = 'a = 1 and b = 2';
+  const expected = { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] };
+
+  it.each([
+    ['Field[] (name only)', [{ name: 'a', label: 'A' }]],
+    ['value-only options', [{ value: 'a', label: 'A' }]],
+    ['option groups', [{ label: 'G', options: [{ name: 'a', label: 'A' }] }]],
+    ['object map', { a: { name: 'a', label: 'A' } }],
+    // Untyped JS: name filled from key
+    ['object map (no name)', { a: { label: 'A' } } as never],
+  ] satisfies [string, ParserCommonOptions['fields']][])('%s', (_name, flds) => {
+    expect(parseSQL(sql, { fields: flds })).toEqual(expected);
+  });
+
+  it('field-to-field with name-only fields', () => {
+    const flds: Field[] = [
+      { name: 'a', label: 'A', valueSources: ['value', 'field'] },
+      { name: 'c', label: 'C' },
+    ];
+    expect(parseSQL('a = c', { fields: flds })).toEqual({
+      combinator: 'and',
+      rules: [{ field: 'a', operator: '=', value: 'c', valueSource: 'field' }],
+    });
   });
 });
