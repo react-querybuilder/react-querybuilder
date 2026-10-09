@@ -1,6 +1,6 @@
 import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
-import { shouldRenderAsNumber } from './utils';
+import { quoteCypherIdentifier, shouldRenderAsNumber } from './utils';
 
 const escapeSingleQuotes = (v: unknown, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll("'", "\\'");
@@ -16,14 +16,15 @@ export const defaultRuleProcessorCypher: RuleProcessor = (
   opts = {}
 ) => {
   const { escapeQuotes, parseNumbers } = opts;
-  const { field, operator, value, valueSource } = rule;
+  const { operator, value, valueSource } = rule;
+  const field = quoteCypherIdentifier(rule.field);
   const valueIsField = valueSource === 'field';
   const operatorTL = operator.toLowerCase();
 
   const fmtVal = (v: unknown): string => {
     if (v === null || v === undefined) return 'null';
     if (typeof v === 'boolean' || typeof v === 'bigint') return String(v);
-    if (valueIsField) return trimIfString(v) as string;
+    if (valueIsField) return quoteCypherIdentifier(trimIfString(v) as string);
     if (typeof v === 'number' || shouldRenderAsNumber(v, parseNumbers))
       return trimIfString(v) as string;
     return `'${escapeSingleQuotes(v, escapeQuotes)}'`;

@@ -232,7 +232,8 @@ export const defaultRuleGroupProcessorDiagnostics: RuleGroupProcessor<Diagnostic
         isRuleOrGroupValid(rule, validationResult, fieldValidator) &&
         rule.field !== placeholderFieldName &&
         rule.operator !== placeholderOperatorName &&
-        !(placeholderValueName !== undefined && rule.value === placeholderValueName);
+        !(placeholderValueName !== undefined && rule.value === placeholderValueName) &&
+        !(hasFieldsConfig && !fieldsByName.has(rule.field));
 
       // Collect rule-level diagnostics
       collectRuleDiagnostics(
@@ -444,8 +445,8 @@ const collectRuleDiagnostics = (
     });
   }
 
-  // Value/type mismatch check
-  if (hasFieldsConfig) {
+  // Value/type mismatch check (skip field-to-field comparisons; value is a field name)
+  if (hasFieldsConfig && rule.valueSource !== 'field') {
     const fieldDef = fieldsByName.get(rule.field);
     if (fieldDef?.inputType) {
       const mismatchCode = checkValueTypeMismatch(rule.value, fieldDef.inputType);

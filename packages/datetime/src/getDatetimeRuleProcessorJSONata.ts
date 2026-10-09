@@ -45,7 +45,7 @@ export const getDatetimeRuleProcessorJSONata =
     const value = valueIsField ? rule.value : materializeRelativeValues(apiFns, rule.value, opts);
 
     const fldToMs = (f: string) =>
-      `$toMillis(${getQuotedFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator })})`;
+      `$toMillis(${getQuotedFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator }, false)})`;
     const valToMs = (v: string | Date) => `$toMillis("${apiFns.toISOString(v)}")`;
 
     switch (operator) {

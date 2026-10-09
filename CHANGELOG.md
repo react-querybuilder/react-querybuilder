@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `parseCypher`, `parseGQL`, `parseGremlin`, and `parseSPARQL` accept `fields` and `getValueSources` options. When `fields` is provided, rules with unknown fields are dropped (and empty groups pruned), matching the other parsers. Field names are matched as emitted (e.g. `n.age` for Cypher, `?age` for SPARQL).
+
+### Fixed
+
+- `formatQuery` now escapes the closing quote character inside quoted field names by doubling it (`"` → `""`, `]` → `]]`, `` ` `` → ` `` `) for "sql", "parameterized", and "parameterized_named" formats, including `valueSource: "field"` values and each part split by `fieldIdentifierSeparator`. Previously, field names containing the closing quote produced invalid or injectable SQL. `getQuotedFieldName` accepts a new third argument `escape` (default `true`). "jsonata" and "natural_language" output is unchanged (JSONata has no identifier escape syntax; NL is not executable). Unquoted field names (the default) can't be escaped and are still emitted verbatim.
+- "parameterized" and "parameterized_named" formats now honor `fieldIdentifierSeparator` (including the "mssql" preset) for both rule fields and `valueSource: "field"` values, matching "sql" output (e.g. `[t].[a]` instead of `[t.a]`).
+- `formatQuery` now escapes field names in non-SQL formats that have an escape mechanism: "cypher"/"gql" (backtick-quotes non-identifier segments), "gremlin" (escapes `'`/`\` in property keys), "elasticsearch" (escapes `'`/`\` in `in`/`between` field-to-field Painless scripts; other script paths already did), and "mongodb_query"/"mongodb" `$where` expressions (bracket notation for non-identifier segments). Output is unchanged for plain identifiers. The `@react-querybuilder/expr` Cypher/ElasticSearch processors and `@react-querybuilder/datetime` Cypher processor do the same. New exported helpers: `quoteCypherIdentifier`, `escapeSingleQuotedString`, `getJSPropertyAccessor`. "cel", "spel", "sparql", "ldap", and "jsonata" still emit field names verbatim (no escape syntax).
+- `parseSQL` (`IN`/`NOT IN` and `BETWEEN`/`NOT BETWEEN` with literal values), `parseMongoDB` (`$and`→`between` and `$or`→`notBetween` shortcuts), and `parseJsonLogic` (`in` with literal values) now drop rules whose field isn't in the `fields` option, consistent with all other rule types.
+- Parser `fields` option (`ParserCommonOptions['fields']`) now accepts the same shapes as the `QueryBuilder` `fields` prop (`FlexibleOptionList<FullField> | BaseOptionMap<FullField>`), so `Field[]` without `value` typechecks. Fields are normalized with `toFullOptionList` before validation.
+- "diagnostics" export format: rules flagged `UNDEFINED_FIELD` are now marked invalid (`valid: false`, counted in `stats.invalidRules` and `fieldSummary[...].invalidCount`, invalidating ancestor groups). Rules with `valueSource: "field"` are no longer checked for `VALUE_TYPE_MISMATCH` against the field's `inputType`.
+
 ## [v8.24.4] - 2026-10-06
 
 ### Fixed

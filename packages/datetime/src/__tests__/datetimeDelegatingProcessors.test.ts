@@ -79,6 +79,27 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
   });
 }
 
+describe('parameterized honors fieldIdentifierSeparator', () => {
+  const apiFns = dateLibraryFunctions.find(([name]) => name === 'date-fns')![1];
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 't.birthdate', operator: '>', value: '1957-01-01' },
+      { field: 't.birthdate', operator: '=', value: 'u.created_at', valueSource: 'field' },
+    ],
+  };
+  test.each(['parameterized', 'parameterized_named'] as const)('%s', format => {
+    expect(
+      formatQuery(query, {
+        format: format as 'parameterized',
+        preset: 'mssql',
+        ruleProcessor: getDatetimeRuleProcessorParameterized(apiFns),
+        context: { isDateField: true },
+      }).sql
+    ).toMatch(/^\(\[t\]\.\[birthdate\] > \S+ and \[t\]\.\[birthdate\] = \[u\]\.\[created_at\]\)$/);
+  });
+});
+
 describe('isDateField', () => {
   const query: RuleGroupType = {
     combinator: 'and',

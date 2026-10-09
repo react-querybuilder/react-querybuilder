@@ -43,7 +43,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     shouldRenderAsNumber(value, parseNumbers);
 
   const qfn = (f: unknown) =>
-    getQuotedFieldName(f as string, { quoteFieldNamesWith, fieldIdentifierSeparator });
+    getQuotedFieldName(f as string, { quoteFieldNamesWith, fieldIdentifierSeparator }, false);
 
   const matchEval = processMatchMode(rule);
 

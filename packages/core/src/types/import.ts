@@ -1,11 +1,15 @@
 import type { FullField, ValueSources } from './basic';
-import type { OptionList } from './options';
+import type { BaseOptionMap, FlexibleOptionList } from './options';
 
 /**
  * Options common to all parsers.
  */
 export interface ParserCommonOptions {
-  fields?: OptionList<FullField> | Record<string, FullField>;
+  /**
+   * Field whitelist (same shapes as the `QueryBuilder` `fields` prop). Rules with unknown fields
+   * are dropped.
+   */
+  fields?: FlexibleOptionList<FullField> | BaseOptionMap<FullField>;
   getValueSources?: (field: string, operator: string) => ValueSources;
   listsAsArrays?: boolean;
   /**

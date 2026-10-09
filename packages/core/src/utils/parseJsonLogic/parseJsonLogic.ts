@@ -398,11 +398,11 @@ function parseJsonLogic(
           .filter(sf => fieldIsValid(field, operator, sf));
         value = listsAsArrays ? fieldList : joinWith(fieldList, ',');
       } else {
-        // v8 ignore else
         if (
-          logic.in[1].every(el => typeof el === 'string') ||
-          logic.in[1].every(el => typeof el === 'number') ||
-          logic.in[1].every(el => typeof el === 'boolean')
+          fieldIsValid(field, operator) &&
+          (logic.in[1].every(el => typeof el === 'string') ||
+            logic.in[1].every(el => typeof el === 'number') ||
+            logic.in[1].every(el => typeof el === 'boolean'))
         ) {
           value = listsAsArrays
             ? logic.in[1]

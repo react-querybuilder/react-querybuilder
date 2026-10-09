@@ -115,3 +115,28 @@ describe('parameter value source', () => {
     ).toEqual(formatQuery(query, { format: 'cypher', fields }));
   });
 });
+
+describe('field name quoting', () => {
+  const apiFns = dateLibraryFunctions.find(([name]) => name === 'date-fns')![1];
+
+  test('backtick-quotes non-identifier segments', () => {
+    expect(
+      formatQuery(
+        {
+          combinator: 'and',
+          rules: [
+            { field: 'n.birth date', operator: '>', value: '1957-01-01' },
+            { field: 'n.birth date', operator: 'olderThanDuration', value: 'P30D' },
+          ],
+        },
+        {
+          format: 'cypher',
+          ruleProcessor: getDatetimeRuleProcessorCypher(apiFns),
+          context: { isDateField: true },
+        }
+      )
+    ).toBe(
+      "n.`birth date` > date('1957-01-01') AND datetime() - n.`birth date` > duration('P30D')"
+    );
+  });
+});

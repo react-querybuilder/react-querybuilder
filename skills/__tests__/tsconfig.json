@@ -1,0 +1,30 @@
+{
+  // Typechecks snippets extracted from the skill (`bun skills:check`). Resolves all packages to src.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "isolatedDeclarations": false,
+    "declaration": false,
+    "jsx": "react-jsx",
+    "paths": {
+      "react-querybuilder": ["../../packages/react-querybuilder/src"],
+      "react-querybuilder/async": ["../../packages/react-querybuilder/src/async"],
+      "react-querybuilder/history": ["../../packages/react-querybuilder/src/history"],
+      "react-querybuilder/*": ["../../packages/react-querybuilder/src/fwd/*"],
+      "@react-querybuilder/core/derivations": ["../../packages/core/src/derivations"],
+      "@react-querybuilder/core/transformQuery": ["../../packages/core/src/utils/transformQuery"],
+      "@react-querybuilder/core/*": ["../../packages/core/src/utils/*"],
+      "@react-querybuilder/datetime/*": ["../../packages/datetime/src/index.*"],
+      "@react-querybuilder/dnd/*": ["../../packages/dnd/src/*"],
+      "@react-querybuilder/expr/ui": ["../../packages/expr/src/index.ui"],
+      "@react-querybuilder/*": ["../../packages/*/src"],
+      "@rqb-parsecel": ["../../packages/core/src/utils/parseCEL"],
+      "@rqb-parsejsonata": ["../../packages/core/src/utils/parseJSONata"],
+      "@rqb-parsejsonlogic": ["../../packages/core/src/utils/parseJsonLogic"],
+      "@rqb-parsemongodb": ["../../packages/core/src/utils/parseMongoDB"],
+      "@rqb-parsespel": ["../../packages/core/src/utils/parseSpEL"],
+      "@rqb-parsesql": ["../../packages/core/src/utils/parseSQL"],
+      "@rqb-utils": ["../../packages/core/src/utils"]
+    }
+  },
+  "include": ["./globals.d.ts", "./snippets/*.tsx", "./*.test.ts"]
+}

@@ -421,8 +421,10 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
             .filter(sf => fieldIsValid(f, operator, sf.value))
             .map(v => getFieldName(v));
           if (valueArray.length > 0) {
-            const value = options?.listsAsArrays ? valueArray : joinWith(valueArray, ', ');
-            return { field: getFieldName(expr.left), operator, value };
+            if (fieldIsValid(f, operator)) {
+              const value = options?.listsAsArrays ? valueArray : joinWith(valueArray, ', ');
+              return { field: f, operator, value };
+            }
           } else if (fieldArray.length > 0) {
             const value = options?.listsAsArrays ? fieldArray : joinWith(fieldArray, ', ');
             return {
@@ -448,7 +450,8 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           );
           const value = options?.listsAsArrays ? valueArray : joinWith(valueArray, ', ');
           const operator = expr.hasNot ? 'notBetween' : 'between';
-          return { field: getFieldName(expr.left), operator, value };
+          const f = getFieldName(expr.left);
+          if (fieldIsValid(f, operator)) return { field: f, operator, value };
         } else if (
           isSQLIdentifier(expr.left) &&
           isSQLIdentifier(expr.right.left) &&

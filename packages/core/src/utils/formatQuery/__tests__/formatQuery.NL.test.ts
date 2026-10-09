@@ -647,3 +647,13 @@ describe('match modes', () => {
     );
   });
 });
+
+it('does not escape quote chars in field names (human-readable output)', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'a`b', operator: '=', value: 'c`d', valueSource: 'field' }],
+  };
+  expect(formatQuery(q, { format: 'natural_language', quoteFieldNamesWith: '`' })).toBe(
+    '`a`b` is the same as the value in `c`d`'
+  );
+});

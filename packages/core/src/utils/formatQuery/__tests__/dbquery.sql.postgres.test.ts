@@ -17,6 +17,7 @@ import { formatQuery } from '../formatQuery';
 const commonSchema = reserveSchema('pg_common');
 const unquotedSchema = reserveSchema('pg_unquoted');
 const nestedSchema = reserveSchema('pg_nested');
+const quoteSchema = reserveSchema('pg_quote');
 
 const superUsersPostgres = superUsers('postgres');
 const augmentedSuperUsersPostgres = augmentedSuperUsers('postgres');
@@ -165,6 +166,43 @@ describe('PostgreSQL', () => {
         superUsersPostgres.filter(u => (u.powerUpAge ?? -1) >= 10 && (u.powerUpAge ?? -1) <= 30)
       );
     });
+  });
+
+  // Closing quote char in field name must round-trip as a real column, not break out of the
+  // identifier (unescaped, the payload below would match every row)
+  describe('field name containing closing quote', () => {
+    const col = `enhanced" > 0 or 1=1 or "x`;
+    const qcol = `"${col.replaceAll('"', '""')}"`;
+    beforeAll(async () => {
+      const db = await createSchema(quoteSchema);
+      await db.exec(
+        `CREATE TABLE "${quoteSchema}".t (id int, ${qcol} text); ` +
+          `INSERT INTO "${quoteSchema}".t VALUES (1, 'x'), (2, 'y'), (3, 'z');`
+      );
+    });
+
+    afterAll(async () => {
+      await dropSchema(quoteSchema);
+    });
+
+    const query: DefaultRuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: col, operator: '=', value: 'x' }],
+    };
+    for (const format of ['sql', 'parameterized'] as const) {
+      test(format, async () => {
+        const sql = await getSharedSQL();
+        const fq = formatQuery(query, { format, preset: 'postgresql' }) as unknown as
+          | string
+          | { sql: string; params: never };
+        const [where, params] = typeof fq === 'string' ? [fq, []] : [fq.sql, fq.params];
+        const rows = await sql.unsafe(
+          `SELECT id FROM "${quoteSchema}".t WHERE ${where} ORDER BY id`,
+          params
+        );
+        expect(rows).toEqual([{ id: 1 }]);
+      });
+    }
   });
 
   // Postgres-specific tests

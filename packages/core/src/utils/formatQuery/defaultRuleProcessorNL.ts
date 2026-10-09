@@ -124,10 +124,14 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     wordOrder = 'SVO',
   } = opts ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
 
-  const processedField = getQuotedFieldName(fieldData?.label ?? field, {
-    quoteFieldNamesWith,
-    fieldIdentifierSeparator,
-  });
+  const processedField = getQuotedFieldName(
+    fieldData?.label ?? field,
+    {
+      quoteFieldNamesWith,
+      fieldIdentifierSeparator,
+    },
+    false
+  );
 
   const matchEval = processMatchMode(rule);
 

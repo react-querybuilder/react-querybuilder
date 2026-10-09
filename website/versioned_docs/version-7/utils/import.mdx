@@ -30,7 +30,7 @@ Since `parse*` functions are used less frequently and rarely together, they were
 +import { parseJSONata } from '@react-querybuilder/core/parseJSONata'
  // (New in version 8)
 +import { parseCypher } from '@react-querybuilder/core/parseCypher'
-+import { parseGQL } from '@react-querybuilder/core/parseGQL'
++import { parseGQL } from '@react-querybuilder/core/parseCypher'
 +import { parseSPARQL } from '@react-querybuilder/core/parseSPARQL'
 +import { parseGremlin } from '@react-querybuilder/core/parseGremlin'
 ```
@@ -708,6 +708,17 @@ Output (`RuleGroupTypeIC`):
     }
   ]
 }
+```
+
+### Field validation
+
+When the `fields` option is provided, `parse*` functions drop any rule whose field isn't in the list (or whose operator isn't valid for the field per `getValueSources`/`valueSources`), then drop any group left empty. Use this to whitelist fields when parsing untrusted input.
+
+`parseCypher`, `parseGremlin`, and `parseSPARQL` support `fields` and `getValueSources` for this purpose only (not for "Fields as value source" below). Field names are matched exactly as emitted, e.g. `n.age` for Cypher and `?age` for SPARQL.
+
+```ts
+parseCypher('n.age > 30 AND n.secret = 1', { fields: [{ name: 'n.age', label: 'Age' }] });
+// { combinator: 'and', rules: [{ field: 'n.age', operator: '>', value: 30 }] }
 ```
 
 ### Fields as value source

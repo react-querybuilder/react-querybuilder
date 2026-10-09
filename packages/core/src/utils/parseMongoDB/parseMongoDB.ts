@@ -359,6 +359,7 @@ function parseMongoDB(
         const [ruleKey1, ruleKey2] = keyValue.map(kv => objectKeys(kv)[0]);
         if (
           ruleKey1 === ruleKey2 &&
+          fieldIsValid(ruleKey1, 'between') &&
           isPojo(rule1[ruleKey1]) &&
           objectKeys(rule1[ruleKey1]).length === 1 &&
           isPojo(rule2[ruleKey2]) &&
@@ -399,6 +400,7 @@ function parseMongoDB(
         const [ruleKey1, ruleKey2] = keyValue.map(kv => objectKeys(kv)[0]);
         if (
           ruleKey1 === ruleKey2 &&
+          fieldIsValid(ruleKey1, 'notBetween') &&
           isPojo(rule1[ruleKey1]) &&
           objectKeys(rule1[ruleKey1]).length === 1 &&
           isPojo(rule2[ruleKey2]) &&

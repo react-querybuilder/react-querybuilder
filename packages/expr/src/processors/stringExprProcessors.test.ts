@@ -315,6 +315,19 @@ describe('SpEL processor', () => {
 describe('Cypher processor', () => {
   const f = (q: RuleGroupType) =>
     formatQuery(q, { format: 'cypher', ruleProcessor: expressionRuleProcessorCypher });
+  it('backtick-quotes non-identifier field segments', () => {
+    expect(
+      f(
+        group(
+          exprRule({ field: 'n.a b', operator: '=' }, { rhs: fn('abs', field('n.c`d')) }),
+          exprRule(
+            { field: 'n.a b', operator: '=', value: 'n.e f', valueSource: 'field' },
+            { lhs: fn('abs', field('n.a b')) }
+          )
+        )
+      )
+    ).toBe('n.`a b` = abs(n.`c``d`) AND abs(n.`a b`) = n.`e f`');
+  });
   it('emits a parameter node as a string literal (paradigm B)', () => {
     expect(
       f(
