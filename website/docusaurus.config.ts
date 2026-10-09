@@ -164,6 +164,12 @@ const config: Config = {
                 url: 'https://github.com/react-querybuilder/react-querybuilder',
               },
               { title: 'Discord server', url: 'https://discord.gg/MnAQWyUtEg' },
+              {
+                title: 'Agent skill (SKILL.md)',
+                url: 'https://github.com/react-querybuilder/react-querybuilder/tree/main/skills/react-querybuilder',
+                description:
+                  'Install: `npx skills add react-querybuilder/react-querybuilder --skill react-querybuilder`. Also shipped in `node_modules/react-querybuilder/skills/` and `node_modules/@react-querybuilder/core/skills/`.',
+              },
             ],
             depth: 2,
             content: {
