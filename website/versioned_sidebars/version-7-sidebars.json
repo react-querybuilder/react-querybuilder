@@ -1,6 +1,7 @@
 {
   "mySidebar": [
     "intro",
+    "ai",
     {
       "type": "category",
       "label": "Components",
@@ -76,6 +77,7 @@
       },
       "items": [
         "tips/showcase",
+        "tips/recipes",
         "tips/option-lists",
         "tips/maximizing-performance",
         "tips/managing-fields",

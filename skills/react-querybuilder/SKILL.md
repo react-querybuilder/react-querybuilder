@@ -75,3 +75,5 @@ Full list: [pitfalls](references/pitfalls.md).
 
 - Full docs: https://react-querybuilder.js.org/docs/intro
 - LLM-friendly docs: https://react-querybuilder.js.org/llms.txt
+- Exact output of every format/parser: https://react-querybuilder.js.org/docs/tips/recipes.md
+- Condensed API index (every export): https://react-querybuilder.js.org/llms-api.txt

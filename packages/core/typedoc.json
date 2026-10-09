@@ -3,9 +3,12 @@
     "src/index.ts",
     "src/utils/formatQuery/index.ts",
     "src/utils/parseCEL/index.ts",
+    "src/utils/parseCypher/index.ts",
+    "src/utils/parseGremlin/index.ts",
     "src/utils/parseJSONata/index.ts",
     "src/utils/parseJsonLogic/index.ts",
     "src/utils/parseMongoDB/index.ts",
+    "src/utils/parseSPARQL/index.ts",
     "src/utils/parseSpEL/index.ts",
     "src/utils/parseSQL/index.ts",
     "src/utils/transformQuery.ts"

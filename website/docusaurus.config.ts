@@ -9,7 +9,12 @@ import { themes } from 'prism-react-renderer';
 import rehypeRaw from 'rehype-raw';
 import type { TypeDocOptions } from 'typedoc';
 import { discordLink } from './src/constants';
+import { llmsApiPlugin } from './src/plugins/llms-api';
+import { rehypeLlmsCleanup } from './src/plugins/rehype-llms-cleanup';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
+
+// TypeDoc JSON (emitted w/ API markdown) → `llms-api.txt`
+const typedocJsonPath = './api/.typedoc.json';
 
 const config: Config = {
   title: 'React Query Builder',
@@ -94,6 +99,7 @@ const config: Config = {
             entryPointStrategy: 'packages',
             entryPoints: ['../packages/*'],
             out: './api',
+            json: typedocJsonPath,
             cleanOutputDir: false,
             includeVersion: true,
             name: 'React Query Builder API',
@@ -151,6 +157,7 @@ const config: Config = {
         sidebarPath: require.resolve('./sidebar-api.js'),
       } satisfies PluginContentDocsOptions,
     ],
+    process.env.CI ? llmsApiPlugin({ jsonPath: typedocJsonPath }) : null,
     process.env.CI
       ? [
           '@signalwire/docusaurus-plugin-llms-txt',
@@ -170,11 +177,23 @@ const config: Config = {
                 description:
                   'Install: `npx skills add react-querybuilder/react-querybuilder --skill react-querybuilder`. Also shipped in `node_modules/react-querybuilder/skills/` and `node_modules/@react-querybuilder/core/skills/`.',
               },
+              {
+                title: 'API index (llms-api.txt)',
+                url: 'https://react-querybuilder.js.org/llms-api.txt',
+                description: 'Every exported symbol of every package, one line each.',
+              },
+              {
+                title: 'MCP server (@react-querybuilder/mcp)',
+                url: 'https://www.npmjs.com/package/@react-querybuilder/mcp',
+                description:
+                  'Coming soon. Stdio MCP server: format/parse/convert/validate queries, docs search.',
+              },
             ],
             depth: 2,
             content: {
               includeVersionedDocs: false,
               enableLlmsFullTxt: true,
+              beforeDefaultRehypePlugins: [rehypeLlmsCleanup],
               excludeRoutes: [
                 '/api/**',
                 '/docs/api/**',
@@ -192,7 +211,8 @@ const config: Config = {
                 { route: '/docs/utils/**', categoryName: 'Utilities' },
                 { route: '/docs/tips/**', categoryName: 'Tips and Tricks' },
                 {
-                  route: '/docs/{intro,buildless,compat,typescript,migrate,dnd,datetime}',
+                  route:
+                    '/docs/{intro,ai,buildless,compat,typescript,migrate,dnd,datetime,expr,rules-engine}',
                   categoryName: 'Miscellaneous',
                   depth: 1,
                 },
