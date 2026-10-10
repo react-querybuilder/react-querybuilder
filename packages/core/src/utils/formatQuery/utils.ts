@@ -333,7 +333,12 @@ export const escapeSingleQuotedString = <S extends string | null | undefined>(s:
 export const quoteCypherIdentifier = (fieldName: string): string =>
   `${fieldName}`
     .split('.')
-    .map(p => (plainIdentifierRegex.test(p) ? p : `\`${p.replaceAll('`', '``')}\``))
+    // Neo4j decodes `\u0060` as a backtick, so normalize before doubling
+    .map(p =>
+      plainIdentifierRegex.test(p)
+        ? p
+        : `\`${p.replaceAll(/\\u0060/gi, '`').replaceAll('`', '``')}\``
+    )
     .join('.');
 
 /**

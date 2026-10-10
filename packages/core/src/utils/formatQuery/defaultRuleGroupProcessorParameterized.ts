@@ -38,13 +38,20 @@ export const defaultRuleGroupProcessorParameterized: RuleGroupProcessor<
   // oxlint-disable-next-line typescript/no-explicit-any
   const paramsNamed: Record<string, any> = {};
   const fieldParams: Map<string, Set<string>> = new Map();
+  const usedParamNames = new Set<string>();
 
+  // Non-word chars (e.g. `.` in `t.a`) are invalid in named params; replace w/ `_` and skip
+  // names already taken (e.g. by field `t_a`)
   const getNextNamedParam = (field: string) => {
     if (!fieldParams.has(field)) {
       fieldParams.set(field, new Set());
     }
-    const nextNamedParam = `${field}_${fieldParams.get(field)!.size + 1}`;
+    const base = `${field}`.replaceAll(/\W/g, '_');
+    let n = fieldParams.get(field)!.size + 1;
+    while (usedParamNames.has(`${base}_${n}`)) n++;
+    const nextNamedParam = `${base}_${n}`;
     fieldParams.get(field)!.add(nextNamedParam);
+    usedParamNames.add(nextNamedParam);
     return nextNamedParam;
   };
 
@@ -97,7 +104,10 @@ export const defaultRuleGroupProcessorParameterized: RuleGroupProcessor<
       // `getNextNamedParam` already adds new params to the list, but a custom
       // rule processor might not call it so we need to make sure we add
       // any new params here.
-      for (const p of Object.keys(customParams)) fieldParams.get(rule.field)?.add(p);
+      for (const p of Object.keys(customParams)) {
+        fieldParams.get(rule.field)?.add(p);
+        usedParamNames.add(p);
+      }
     }
 
     return sql;

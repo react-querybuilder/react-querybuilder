@@ -17,6 +17,10 @@ describe('helpers', () => {
     expect(quoteCypherIdentifier('n.first name')).toBe('n.`first name`');
     expect(quoteCypherIdentifier('n.a`b')).toBe('n.`a``b`');
     expect(quoteCypherIdentifier('1abc')).toBe('`1abc`');
+    expect(quoteCypherIdentifier('n.x\\u0060 IS NULL OR true //')).toBe(
+      'n.`x`` IS NULL OR true //`'
+    );
+    expect(quoteCypherIdentifier('n.a\\U0060b')).toBe('n.`a``b`');
   });
 
   it('getJSPropertyAccessor', () => {

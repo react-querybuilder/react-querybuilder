@@ -48,6 +48,9 @@ const globals: Record<string, unknown> = {
   input: JSON.stringify({ '==': [{ var: 'firstName' }, 'Steve'] }),
   savedWhereClause: "firstName = 'Steve'",
   assertSafeQuery: () => {},
+  assertRestricted: (sql: string) => {
+    if (sql === '(1 = 1)') throw new Error('Query has no effective rules');
+  },
   db: { query: async () => [] },
 };
 
@@ -75,8 +78,12 @@ describe('skill snippets (core-only)', () => {
     // Exercise exported functions with sample input where obvious
     for (const [name, fn] of Object.entries(mod)) {
       if (typeof fn !== 'function') continue;
-      if (name === 'buildWhere') expect(fn(sampleQuery)).toHaveProperty('sql');
+      if (name === 'buildWhere') {
+        expect(fn(sampleQuery)).toHaveProperty('sql');
+        expect(() => fn({ combinator: 'and', rules: [] })).toThrow();
+      }
       if (name === 'jsonLogicToSql') expect(fn(globals.input)).toHaveProperty('sql');
+      if (name === 'assertRestricted') expect(() => fn('(1 = 1)')).toThrow();
       if (name === 'assertSafeQuery') {
         const names = globals.fieldNames;
         expect(() => fn(sampleQuery, names)).not.toThrow();

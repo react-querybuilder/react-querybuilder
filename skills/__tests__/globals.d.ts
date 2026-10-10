@@ -37,5 +37,6 @@ declare global {
   const savedWhereClause: string;
   const dndAdapter: DnD.DndAdapter;
   const assertSafeQuery: (rg: RQB.RuleGroupTypeAny, fieldNames: ReadonlySet<string>) => void;
+  const assertRestricted: (sql: string) => void;
   const db: { query: (sql: string, params?: unknown[]) => Promise<unknown> };
 }

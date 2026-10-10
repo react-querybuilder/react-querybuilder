@@ -80,15 +80,23 @@ const fields: Field[] = [
 ];
 const fieldNames = new Set(fields.map(f => f.name));
 
+// Empty/fully-invalid queries format to `(1 = 1)` (matches every row)
+const assertRestricted = (sql: string) => {
+  if (sql === '(1 = 1)') throw new Error('Query has no effective rules');
+};
+
 export const buildWhere = (input: unknown) => {
   const query = input as RuleGroupTypeAny; // shape-check first (zod/valibot/JSON Schema) if possible
+  if (query.rules.length === 0) throw new Error('Empty query');
   assertSafeQuery(query, fieldNames);
-  return formatQuery(query, {
+  const result = formatQuery(query, {
     format: 'parameterized',
     preset: 'postgresql',
     fields,
     parseNumbers: 'strict-limited',
   });
+  assertRestricted(result.sql);
+  return result;
 };
 
 // const { sql, params } = buildWhere(body.query);
@@ -101,12 +109,14 @@ export const buildWhere = (input: unknown) => {
 import { formatQuery } from '@react-querybuilder/core';
 import { parseJsonLogic } from '@react-querybuilder/core/parseJsonLogic';
 
-// `fields`, `fieldNames`, `assertSafeQuery` as above
+// `fields`, `fieldNames`, `assertSafeQuery`, `assertRestricted` as above
 export const jsonLogicToSql = (input: Parameters<typeof parseJsonLogic>[0]) => {
   const query = parseJsonLogic(input, { fields }); // drops unknown fields
   if (query.rules.length === 0) throw new Error('Empty or unparseable query');
   assertSafeQuery(query, fieldNames); // still needed: operators, older versions
-  return formatQuery(query, { format: 'parameterized', fields });
+  const result = formatQuery(query, { format: 'parameterized', fields });
+  assertRestricted(result.sql); // rules may still be dropped as invalid
+  return result;
 };
 ```
 

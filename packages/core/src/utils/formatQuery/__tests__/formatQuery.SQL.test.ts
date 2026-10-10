@@ -315,9 +315,27 @@ describe('parameterized formats honor fieldIdentifierSeparator', () => {
   });
 
   it('parameterized_named', () => {
-    expect(formatQuery(q, { format: 'parameterized_named', preset: 'mssql' }).sql).toBe(
-      "([t].[a] = @t.a_1 and [t].[a] in (@t.a_2, @t.a_3) and [t].[a] between @t.a_4 and @t.a_5 and [t].[a] is null and [t].[a] = [u].[b] and [t].[a] like '%' + [u].[b] + '%' and [t].[a] in ([u].[b], [u].[c]) and [t].[a] between [u].[b] and [u].[c])"
+    const { sql, params: p } = formatQuery(q, { format: 'parameterized_named', preset: 'mssql' });
+    expect(sql).toBe(
+      "([t].[a] = @t_a_1 and [t].[a] in (@t_a_2, @t_a_3) and [t].[a] between @t_a_4 and @t_a_5 and [t].[a] is null and [t].[a] = [u].[b] and [t].[a] like '%' + [u].[b] + '%' and [t].[a] in ([u].[b], [u].[c]) and [t].[a] between [u].[b] and [u].[c])"
     );
+    expect(p).toEqual({ t_a_1: 'x', t_a_2: 'x', t_a_3: 'y', t_a_4: '1', t_a_5: '2' });
+  });
+
+  it('parameterized_named avoids sanitized param name collisions', () => {
+    const { sql, params: p } = formatQuery(
+      {
+        combinator: 'and',
+        rules: [
+          { field: 't.a', operator: '=', value: 'x' },
+          { field: 't_a', operator: '=', value: 'y' },
+          { field: 't a', operator: '=', value: 'z' },
+        ],
+      },
+      { format: 'parameterized_named', preset: 'mssql' }
+    );
+    expect(sql).toBe('([t].[a] = @t_a_1 and [t_a] = @t_a_2 and [t a] = @t_a_3)');
+    expect(p).toEqual({ t_a_1: 'x', t_a_2: 'y', t_a_3: 'z' });
   });
 
   it.each(['parameterized', 'parameterized_named'] as const)(

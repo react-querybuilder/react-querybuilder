@@ -143,8 +143,8 @@ export const llmsApiPlugin =
       let project: Reflection;
       try {
         project = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
-      } catch {
-        console.warn(`[rqb-llms-api] ${jsonPath} not found; skipping llms-api.txt`);
+      } catch (err) {
+        console.warn(`[rqb-llms-api] could not read ${jsonPath}; skipping llms-api.txt`, err);
         return;
       }
       await fs.writeFile(
