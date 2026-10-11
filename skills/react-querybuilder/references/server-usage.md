@@ -7,7 +7,7 @@ import { formatQuery, defaultValidator, isRuleGroupTypeIC } from '@react-querybu
 import { parseSQL } from '@react-querybuilder/core/parseSQL'; // parsers: subpath only
 ```
 
-Subpaths: `/formatQuery`, `/parseSQL`, `/parseCEL`, `/parseMongoDB`, `/parseJsonLogic`, `/parseSpEL`, `/parseJSONata`, `/parseCypher` (also exports `parseGQL`), `/parseGremlin`, `/parseSPARQL`, `/transformQuery`, `/derivations`.
+Subpaths: `/formatQuery`, `/parseSQL`, `/parseCEL`, `/parseMongoDB`, `/parseJsonLogic`, `/parseSpEL`, `/parseJSONata`, `/parseCypher` (also exports `parseGQL`), `/parseGremlin`, `/parseSPARQL`, `/transformQuery`, `/getQueryJsonSchema`, `/derivations`.
 
 ## Security: queries from clients are untrusted
 
@@ -86,7 +86,7 @@ const assertRestricted = (sql: string) => {
 };
 
 export const buildWhere = (input: unknown) => {
-  const query = input as RuleGroupTypeAny; // shape-check first (zod/valibot/JSON Schema) if possible
+  const query = input as RuleGroupTypeAny; // shape-check first (Ajv + getQueryJsonSchema, zod, …)
   if (query.rules.length === 0) throw new Error('Empty query');
   assertSafeQuery(query, fieldNames);
   const result = formatQuery(query, {
@@ -102,6 +102,30 @@ export const buildWhere = (input: unknown) => {
 // const { sql, params } = buildWhere(body.query);
 // await db.query(`SELECT * FROM users WHERE ${sql}`, params);
 ```
+
+## LLM-generated queries: `getQueryJsonSchema` + `diagnostics`
+
+`getQueryJsonSchema(fields, options?)` (v8.25+) returns a plain JSON Schema (no deps) for valid queries: per-field operator/value constraints, `between` = 2-item array, `values` → `enum`, etc. Pass it as LLM structured-output/tool input schema, MCP `inputSchema`, or to Ajv.
+
+- `strict: true` for OpenAI structured outputs/Anthropic tools/MCP (no extra props, all props required + nullable, object root). Safe default for every provider.
+- `queryType: 'ic'` for `RuleGroupTypeIC`. `mode: 'loose'` for large `fields` (~50+). Numeric `maxDepth` if the consumer rejects recursive `$ref`.
+- `includeIds` defaults to `false`; run `prepareRuleGroup` on the result before passing to a controlled `<QueryBuilder>`.
+- Schema is necessary, not sufficient (IC alternation, comma-string arity, everything in loose mode). Always follow with `diagnostics`, then the whitelist checks above.
+
+```ts
+import { formatQuery, getQueryJsonSchema } from '@react-querybuilder/core';
+const schema = getQueryJsonSchema(fields, { strict: true });
+// e.g. AI SDK: generateObject({ model, schema: jsonSchema(schema), prompt })
+// e.g. OpenAI: response_format: { type: 'json_schema', json_schema: { name: 'query', strict: true, schema } }
+// e.g. Anthropic: tools: [{ name: 'set_filter', input_schema: schema }]
+
+// `query` = parsed LLM output
+const { diagnostics } = formatQuery(query, { format: 'diagnostics', fields });
+const problems = diagnostics.filter(d => d.code !== 'UNREFERENCED_FIELD');
+// problems non-empty → reject or send back to the LLM to fix
+```
+
+Diagnostic codes beyond placeholders/validators (need `fields`, except `INVALID_STRUCTURE`): `UNDEFINED_FIELD`, `INVALID_OPERATOR` (only if field has `operators`), `INVALID_VALUE_ARITY`, `VALUE_NOT_IN_OPTIONS`, `VALUE_TYPE_MISMATCH`, `INVALID_STRUCTURE`. Most don't flip `valid`; check the `diagnostics` array, not just `query.valid`.
 
 ## Pipeline: parse → validate → format (conversion)
 

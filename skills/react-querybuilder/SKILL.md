@@ -28,6 +28,7 @@ Never invent props or options. Verify against the installed `.d.ts`: `QueryBuild
 | Send a query to a DB/API (SQL, Mongo, ORM, CEL, …)      | [export-formats](references/export-formats.md)                         |
 | Load existing filters (SQL, Mongo, JsonLogic, …)        | [import-parsers](references/import-parsers.md)                         |
 | Server-only (API route, worker, CLI)                    | [server-usage](references/server-usage.md)                             |
+| JSON Schema for LLM output/tool inputs, checking it     | [server-usage](references/server-usage.md)                             |
 | Validate rules / skip invalid rules on export           | [validation](references/validation.md)                                 |
 | Typing fields, generics, `RuleGroupType` vs IC          | [typescript](references/typescript.md)                                 |
 | Drag-and-drop, dates, expressions, rules engine         | [extensions](references/extensions.md)                                 |

@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Other options:** `queryType` (`"standard"`/`"ic"`), `strict` (provider compatibility: `additionalProperties: false`, all properties required, optional ones nullable, object root), `maxDepth` (recursive `$ref` or a fully inlined fixed nesting depth), `includeIds`, `allowFieldValueSource`, `includeNot`, `combinators`, `operators`, `descriptions`, and `listsAsArrays`.
   - **Limits:** the schema can't express the alternation of rules and combinators in independent-combinator queries. Only the `"value"` and `"field"` value sources are represented.
   - New `JSONSchema` type.
+- [#1113] The "diagnostics" format reports what a `getQueryJsonSchema` schema can't express. These new checks only add entries to `diagnostics`; they don't change `valid`, `stats`, or `fieldSummary`.
+  - `INVALID_STRUCTURE` (new source `"structure-check"`): independent combinator groups whose `rules` don't alternate rule/group and combinator string, and standard groups whose `rules` contain combinator strings.
+  - `INVALID_OPERATOR` (`"field-check"`): operator isn't in the field's `operators`. Only checked for fields that define `operators`.
+  - `INVALID_VALUE_ARITY` (`"type-check"`): `between`/`notBetween` values without exactly 2 items, and empty `in`/`notIn` values.
+  - `VALUE_NOT_IN_OPTIONS` (`"type-check"`): values not in the field's `values` (skipped when `valueEditorType` is `"text"`/`"textarea"`).
+  - `VALUE_TYPE_MISMATCH` also covers non-boolean values for `"checkbox"`/`"switch"` value editors.
+  - New checks need `fields` (except `INVALID_STRUCTURE`) and skip muted rules. Value checks skip unary operators and placeholder values.
+- [#1113] New [JSON Schema](https://react-querybuilder.js.org/docs/utils/json-schema) docs page.
 
 ### Fixed
 

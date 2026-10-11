@@ -12,7 +12,7 @@ import path from 'node:path';
 import type { FormatConfig } from 'oxfmt';
 import { format } from 'oxfmt';
 import type { ExportFormat, Field, RuleGroupType } from '../packages/core/src';
-import { formatQuery } from '../packages/core/src';
+import { formatQuery, getQueryJsonSchema } from '../packages/core/src';
 
 const root = path.join(import.meta.dirname, '..');
 // Current docs + latest version (served at /docs)
@@ -20,6 +20,7 @@ const [latest] = (await Bun.file(path.join(root, 'website/versions.json')).json(
 const outFiles = ['website/docs', `website/versioned_docs/version-${latest}`].map(d =>
   path.join(root, d, 'tips/recipes.mdx')
 );
+const [currentOutFile] = outFiles;
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First name' },
@@ -237,6 +238,22 @@ const genParsers = async () => {
     .join('\n\n');
 };
 
+// Unreleased: current docs only. Move into `content` once released.
+const genJsonSchema = () =>
+  [
+    '## JSON Schema (`getQueryJsonSchema`)',
+    'JSON Schema for queries matching `fields`, for LLM structured output/tool inputs or Ajv. Loose mode shown for brevity; the default `full` mode also constrains operators and values per field. Check the result with the `diagnostics` format. See [JSON Schema](../utils/json-schema).',
+    fence(
+      'ts',
+      `import { getQueryJsonSchema } from '@react-querybuilder/core';\n\ngetQueryJsonSchema(fields, { mode: 'loose', operators: ['=', 'in'] });`
+    ),
+    fence(
+      'json',
+      show(getQueryJsonSchema(fields, { mode: 'loose', operators: ['=', 'in'] })),
+      'Output'
+    ),
+  ].join('\n\n');
+
 const content = `${header}
 ${genFormats()}
 
@@ -256,8 +273,9 @@ const check = process.argv.includes('--check');
 let drift = false;
 
 for (const outFile of outFiles) {
+  const fullContent = outFile === currentOutFile ? `${content}\n${genJsonSchema()}\n` : content;
   // oxlint-disable-next-line no-await-in-loop
-  const next = (await format(outFile, content, fmtConfig)).code;
+  const next = (await format(outFile, fullContent, fmtConfig)).code;
   const file = Bun.file(outFile);
   // oxlint-disable-next-line no-await-in-loop
   const current = (await file.exists()) ? await file.text() : '';

@@ -151,6 +151,27 @@ describe('getQueryJsonSchema', () => {
     expectInvalid(getQueryJsonSchema(fields), { combinator: 'and', rules: [rule] });
   });
 
+  it('diagnostics flag what the schema rejects', () => {
+    const query: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'nope', operator: '=', value: 'x' },
+        { field: 'lastName', operator: 'contains', value: 'x' },
+        { field: 'age', operator: '=', value: 'x' },
+        { field: 'age', operator: 'between', value: [1] },
+        { field: 'color', operator: '=', value: 'green' },
+        { field: 'isMember', operator: '=', value: 'yes' },
+      ],
+    };
+    const { diagnostics } = formatQuery(query, { format: 'diagnostics', fields });
+    expect(diagnostics.filter(d => d.code !== 'UNREFERENCED_FIELD').map(d => d.path[0])).toEqual([
+      0, 1, 2, 3, 4, 5,
+    ]);
+    expect(formatQuery(validQuery, { format: 'diagnostics', fields }).diagnostics).toEqual(
+      expect.not.arrayContaining([expect.objectContaining({ source: 'type-check' })])
+    );
+  });
+
   it('rejects bad combinator/missing rules', () => {
     const schema = getQueryJsonSchema(fields);
     expectInvalid(schema, { combinator: 'xor', rules: [] });
@@ -231,8 +252,15 @@ describe('getQueryJsonSchema', () => {
       ],
     };
     expectValid(schema, q);
-    // alternation not enforced by schema
-    expectValid(schema, { rules: ['and', 'or'] });
+    const icCodes = (query: unknown) =>
+      formatQuery(query as RuleGroupTypeIC, { format: 'diagnostics', fields })
+        .diagnostics.map(d => d.code)
+        .filter(c => c === 'INVALID_STRUCTURE');
+    expect(icCodes(q)).toEqual([]);
+    // alternation not enforced by schema; caught by diagnostics
+    const broken = { rules: ['and', 'or'] };
+    expectValid(schema, broken);
+    expect(icCodes(broken)).toEqual(['INVALID_STRUCTURE']);
     expectInvalid(schema, { rules: ['xor'] });
   });
 

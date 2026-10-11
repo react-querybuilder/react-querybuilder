@@ -64,6 +64,7 @@ export default {
         'utils/hooks',
         'utils/framework-adapters',
         'utils/validation',
+        'utils/json-schema',
         'utils/misc',
       ],
     },

@@ -807,18 +807,28 @@ The root-level `valid` property is `true` only when the group itself is valid _a
 
 `result.diagnostics` is a flat array of `DiagnosticEntry` objects, each with an `id`, `path`, `code`, `message`, and `source`. Diagnostic codes include:
 
-| Code                   | Source                                | Description                                        |
-| ---------------------- | ------------------------------------- | -------------------------------------------------- |
-| `PLACEHOLDER_FIELD`    | `placeholder`                         | Rule has a placeholder field name                  |
-| `PLACEHOLDER_OPERATOR` | `placeholder`                         | Rule has a placeholder operator name               |
-| `PLACEHOLDER_VALUE`    | `placeholder`                         | Rule has a placeholder value                       |
-| `MUTED`                | `muted`                               | Rule or group is muted                             |
-| `CUSTOM_VALIDATOR`     | `query-validator` / `field-validator` | Failed a custom validator                          |
-| `UNDEFINED_FIELD`      | `field-check`                         | Rule references a field not in the `fields` config |
-| `UNREFERENCED_FIELD`   | `field-check`                         | A field in the config is not used by any rule      |
-| `VALUE_TYPE_MISMATCH`  | `type-check`                          | Value is incompatible with the field's `inputType` |
+| Code                   | Source                                | Description                                                                                                                                    |
+| ---------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PLACEHOLDER_FIELD`    | `placeholder`                         | Rule has a placeholder field name                                                                                                              |
+| `PLACEHOLDER_OPERATOR` | `placeholder`                         | Rule has a placeholder operator name                                                                                                           |
+| `PLACEHOLDER_VALUE`    | `placeholder`                         | Rule has a placeholder value                                                                                                                   |
+| `MUTED`                | `muted`                               | Rule or group is muted                                                                                                                         |
+| `CUSTOM_VALIDATOR`     | `query-validator` / `field-validator` | Failed a custom validator                                                                                                                      |
+| `UNDEFINED_FIELD`      | `field-check`                         | Rule references a field not in the `fields` config                                                                                             |
+| `UNREFERENCED_FIELD`   | `field-check`                         | A field in the config is not used by any rule                                                                                                  |
+| `VALUE_TYPE_MISMATCH`  | `type-check`                          | Value is incompatible with the field's `inputType`, or isn't a boolean for a `checkbox`/`switch` `valueEditorType`                             |
+| `INVALID_OPERATOR`     | `field-check`                         | Operator isn't in the field's `operators` (only checked when the field defines `operators`)                                                    |
+| `INVALID_VALUE_ARITY`  | `type-check`                          | `between`/`notBetween` value doesn't have exactly 2 items, or `in`/`notIn` value is empty                                                      |
+| `VALUE_NOT_IN_OPTIONS` | `type-check`                          | Value isn't in the field's `values` (unless `valueEditorType` is `text`/`textarea`)                                                            |
+| `INVALID_STRUCTURE`    | `structure-check`                     | An independent combinator group's `rules` don't alternate rule/group and combinator, or a standard group's `rules` contain a combinator string |
 
-The `UNDEFINED_FIELD`, `UNREFERENCED_FIELD`, and `VALUE_TYPE_MISMATCH` diagnostics are only produced when a `fields` config is provided.
+All diagnostics except `INVALID_STRUCTURE` and the placeholder, muted, and validator checks are only produced when a `fields` config is provided. The `INVALID_OPERATOR`, `INVALID_VALUE_ARITY`, `VALUE_NOT_IN_OPTIONS`, `VALUE_TYPE_MISMATCH`, and `INVALID_STRUCTURE` diagnostics don't affect `valid` or `stats`. Operator, arity, `values`, and boolean checks are skipped for muted rules. Arity, `values`, and boolean checks are also skipped for unary operators (`null`/`notNull`, or `arity: 'unary'` in `field.operators`) and placeholder values, and `values`/boolean checks are skipped for `valueSource: 'field'`.
+
+:::tip
+
+`diagnostics` covers what a [JSON Schema from `getQueryJsonSchema`](./json-schema) can't express, so use it to check LLM-generated queries.
+
+:::
 
 #### Stats and field summary
 
