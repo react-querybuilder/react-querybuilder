@@ -120,7 +120,15 @@ it('handles "like" comparisons', () => {
   );
   expectParseJSONata(
     '$contains(f1, /Test/i)',
-    wrapRule({ field: 'f1', operator: 'contains', value: new RegExp('Test', 'gi') })
+    wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
+  );
+  expectParseJSONata(
+    '$contains(f1, /Te.st/)',
+    wrapRule({ field: 'f1', operator: 'contains', value: 'Te.st' })
+  );
+  expectParseJSONata('f1 = /Te.st/i', wrapRule({ field: 'f1', operator: '=', value: 'Te.st' }));
+  expect(JSON.parse(JSON.stringify(parseJSONata('$contains(f1, /Test/i)')))).toEqual(
+    parseJSONata('$contains(f1, /Test/i)')
   );
   expectParseJSONata(
     '$contains(f1, f2)',

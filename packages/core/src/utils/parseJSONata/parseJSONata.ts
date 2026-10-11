@@ -266,7 +266,7 @@ function parseJSONata(
     } else if (isJSONataContains(expr)) {
       const [arg1, arg2] = expr.arguments;
       let field: string = '';
-      let regex: string | RegExp = '';
+      let regex = '';
       let valueSource: ValueSource | undefined = undefined;
       // v8 ignore else
       if (isJSONataIdentifier(arg1)) {
@@ -285,7 +285,7 @@ function parseJSONata(
       // v8 ignore else
       if (
         valueSource === 'field'
-          ? fieldIsValid(field, 'contains', regex as string)
+          ? fieldIsValid(field, 'contains', regex)
           : fieldIsValid(field, 'contains')
       ) {
         return {

@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `quoteCypherIdentifier` normalizes `\u0060` escape sequences to backticks before doubling, since Neo4j decodes them inside quoted identifiers.
 - `parseCypher`/`parseGQL` no longer split identifiers that begin with a keyword (e.g. `notes` → `NOT es`, `order` → `OR der`, `index` → `IN dex`), which previously produced wrong rules or an empty result. `true`/`false`/`null` literals are now case-insensitive, `match`/`where`/`return` are accepted as field names, and `NOT x IN [...]` (as emitted by `formatQuery`'s "cypher" format) parses as `notIn`, so "cypher" output round-trips.
 - `parseSPARQL` no longer returns an empty result for queries using the empty (default) prefix (e.g. `?p :age ?age`), blank nodes (`_:b`), or prefix names containing `-`/`.` (e.g. `my-ns:a`), or for prefixes differing only in case from a declared one (prefix names are case-sensitive). Prefixed names using the empty prefix are now emitted as `:foo` (previously `foo`).
+- `parseJSONata` now imports regular expression literals (e.g. `$contains(f1, /Te.st/i)` or `f1 = /Te.st/`) as the pattern string (`"Te.st"`) instead of a `RegExp` object, consistent with `parseMongoDB` and `parseJsonLogic`. Previously the `RegExp` serialized to `{}` (`JSON.stringify`, "parameterized" `params`, "mongodb_query", "jsonlogic") or was stringified with slashes and flags (`"/Te.st/gi"`) by other export formats. Regex flags are not retained.
 
 ## [v8.24.4] - 2026-10-06
 
