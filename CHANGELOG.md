@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `parseCypher`, `parseGQL`, `parseGremlin`, and `parseSPARQL` accept `fields` and `getValueSources` options. When `fields` is provided, rules with unknown fields are dropped (and empty groups pruned), matching the other parsers. Field names are matched as emitted (e.g. `n.age` for Cypher, `?age` for SPARQL).
+- New `getQueryJsonSchema(fields, options?)` utility generates a JSON Schema describing valid queries for a `fields` config, for use as LLM structured-output/tool input schemas, MCP `inputSchema`, or with generic validators like Ajv. It is exported from the root of `@react-querybuilder/core` and `react-querybuilder`, from `@react-querybuilder/core/derivations`, and from a new `/getQueryJsonSchema` subpath in both packages.
+  - **Output:** only keywords that mean the same thing in draft-07 and 2020-12. No `$schema` unless `includeSchemaDeclaration: true`.
+  - **Full mode** (default) constrains each field's operators and values. Values are typed from `values`, `valueEditorType`, and `inputType`, and `between`/`in` values become lists. When the `"field"` value source is allowed, the value must name a comparable field. **Loose mode** (`mode: "loose"`) only restricts the field and operator names, for large `fields` configs.
+  - **Other options:** `queryType` (`"standard"`/`"ic"`), `strict` (provider compatibility: `additionalProperties: false`, all properties required, optional ones nullable, object root), `maxDepth` (recursive `$ref` or a fully inlined fixed nesting depth), `includeIds`, `allowFieldValueSource`, `includeNot`, `combinators`, `operators`, `descriptions`, and `listsAsArrays`.
+  - **Limits:** the schema can't express the alternation of rules and combinators in independent-combinator queries. Only the `"value"` and `"field"` value sources are represented.
+  - New `JSONSchema` type.
 
 ### Fixed
 

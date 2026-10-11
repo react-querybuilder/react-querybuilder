@@ -64,6 +64,7 @@ const sharesMainBundle = (config: UserConfig): UserConfig => {
 
 const utilEntryPoints = {
   formatQuery: 'src/fwd/formatQuery.ts',
+  getQueryJsonSchema: 'src/fwd/getQueryJsonSchema.ts',
   parseCEL: 'src/fwd/parseCEL.ts',
   parseCypher: 'src/fwd/parseCypher.ts',
   parseGremlin: 'src/fwd/parseGremlin.ts',

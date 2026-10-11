@@ -142,6 +142,7 @@ const publicApi: string[] = [
   'getQuoteFieldNamesWithArray',
   'getQuotedFieldName',
   'getRuleDefaultValue',
+  'getQueryJsonSchema',
   'getRuleGroupCombinator',
   'getRuleInputType',
   'getRuleValidationResult',
