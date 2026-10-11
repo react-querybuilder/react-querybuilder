@@ -1,5 +1,10 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
-import { defaultRuleProcessorCypher, lc, toArray } from '@react-querybuilder/core';
+import {
+  defaultRuleProcessorCypher,
+  lc,
+  quoteCypherIdentifier,
+  toArray,
+} from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
 import {
   isNonDateValueSource,
@@ -42,7 +47,7 @@ export const getDatetimeRuleProcessorCypher =
       return defaultRuleProcessorCypher(rule, opts);
     }
 
-    const { field } = rule;
+    const field = quoteCypherIdentifier(rule.field);
     const operator = resolveDatetimeOperator(rule, opts);
     const operatorTL = lc(operator);
 

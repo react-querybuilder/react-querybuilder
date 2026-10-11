@@ -14,12 +14,27 @@ import type {
   RuleValidator,
   ValidationResult,
 } from '../../types';
+import { toArray } from '../arrayUtils';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid, isValidationResult } from '../isRuleOrGroupValid';
 import { numericRegex } from '../misc';
 import { toFlatOptionArray } from '../optGroupUtils';
 
 const numericInputTypes = new Set(['number', 'range', 'bigint']);
+const listOperators = new Set(['in', 'notin', 'between', 'notbetween']);
+
+/** Rule value as list: arrays as-is, comma-split strings for list operators, else single. */
+const getValueList = (rule: RuleType): unknown[] =>
+  Array.isArray(rule.value) ||
+  (typeof rule.value === 'string' && listOperators.has(rule.operator.toLowerCase()))
+    ? toArray(rule.value)
+    : [rule.value];
+
+/** Referenced field names in a `valueSource: "field"` rule not defined in config. */
+const getUndefinedValueFields = (rule: RuleType, fieldsByName: Map<string, FullField>) =>
+  rule.valueSource === 'field'
+    ? toArray(rule.value).filter(f => typeof f !== 'string' || !fieldsByName.has(f))
+    : [];
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const timeRegex = /^\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/;
@@ -232,7 +247,9 @@ export const defaultRuleGroupProcessorDiagnostics: RuleGroupProcessor<Diagnostic
         isRuleOrGroupValid(rule, validationResult, fieldValidator) &&
         rule.field !== placeholderFieldName &&
         rule.operator !== placeholderOperatorName &&
-        !(placeholderValueName !== undefined && rule.value === placeholderValueName);
+        !(placeholderValueName !== undefined && rule.value === placeholderValueName) &&
+        !(hasFieldsConfig && !fieldsByName.has(rule.field)) &&
+        !(hasFieldsConfig && getUndefinedValueFields(rule, fieldsByName).length > 0);
 
       // Collect rule-level diagnostics
       collectRuleDiagnostics(
@@ -444,11 +461,27 @@ const collectRuleDiagnostics = (
     });
   }
 
-  // Value/type mismatch check
+  // Undefined field(s) referenced as value
   if (hasFieldsConfig) {
+    for (const vf of getUndefinedValueFields(rule, fieldsByName)) {
+      diagnostics.push({
+        id,
+        path,
+        code: 'UNDEFINED_FIELD',
+        message: `Value field "${vf}" is not defined in the fields config`,
+        source: 'field-check',
+      });
+    }
+  }
+
+  // Value/type mismatch check (skip field-to-field comparisons; value is a field name)
+  if (hasFieldsConfig && rule.valueSource !== 'field') {
     const fieldDef = fieldsByName.get(rule.field);
     if (fieldDef?.inputType) {
-      const mismatchCode = checkValueTypeMismatch(rule.value, fieldDef.inputType);
+      const { inputType } = fieldDef;
+      const mismatchCode = getValueList(rule)
+        .map(v => checkValueTypeMismatch(v, inputType))
+        .find(Boolean);
       if (mismatchCode) {
         diagnostics.push({
           id,

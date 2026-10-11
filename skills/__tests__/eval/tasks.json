@@ -1,0 +1,112 @@
+{
+  "$comment": "Manual eval fixtures for the react-querybuilder agent skill. For each task, run an agent in a scratch app (Vite React TS for UI tasks, Bun/Node TS for server tasks) once without and once with the skill installed. Score each run on `scoring`; record results in the PR. Not run in CI.",
+  "scoring": {
+    "typechecks": "`tsc --noEmit` passes with no `any` casts added to silence RQB types",
+    "runs": "App renders / script runs without errors",
+    "correct": "Output matches `expect` (exact where given)",
+    "noInventedApi": "No nonexistent props, options, exports, or subpaths (verify against installed .d.ts)",
+    "pitfallsAvoided": "None of the `pitfalls` listed for the task occur"
+  },
+  "tasks": [
+    {
+      "id": "mantine-parameterized",
+      "prompt": "Add a Mantine query builder for fields firstName (text), age (number), and status (select: active/inactive). Show the query as parameterized SQL for PostgreSQL below it.",
+      "expect": "QueryBuilderMantine wrapper inside MantineProvider; formatQuery(query, { format: 'parameterized', preset: 'postgresql', ... }) rendered",
+      "pitfalls": ["missing CSS", "hand-wired controlElements", "fields recreated every render"]
+    },
+    {
+      "id": "mongo-to-ui",
+      "prompt": "Parse this saved MongoDB filter and render it in the query builder: { \"$and\": [{ \"age\": { \"$gte\": 18 } }, { \"city\": { \"$in\": [\"Paris\", \"Rome\"] } }] }",
+      "expect": "parseMongoDB from '@react-querybuilder/core/parseMongoDB' (or react-querybuilder/parseMongoDB); controlled QueryBuilder",
+      "pitfalls": ["importing parseMongoDB from package root", "query + defaultQuery both passed"]
+    },
+    {
+      "id": "server-jsonlogic-to-sql",
+      "prompt": "Write a server endpoint (no React) that accepts a JsonLogic rule in the request body, validates it against an allowed list of fields, and returns parameterized SQL.",
+      "expect": "@react-querybuilder/core only; parseJsonLogic with fields; whitelist check for operators/combinators; empty-query rejected rather than returning (1 = 1)",
+      "pitfalls": [
+        "react-querybuilder imported on server",
+        "fallback (1 = 1) executed",
+        "field names unvalidated"
+      ]
+    },
+    {
+      "id": "server-validate-posted-query",
+      "prompt": "An API receives a RuleGroupType JSON from the browser. Convert it to a SQL WHERE clause safely for SQL Server.",
+      "expect": "Whitelist fields/operators/combinators before formatQuery; format 'parameterized' with preset 'mssql'",
+      "pitfalls": [
+        "format 'sql' with untrusted input",
+        "assumes formatQuery's fields option rejects unknown fields"
+      ]
+    },
+    {
+      "id": "custom-value-editor",
+      "prompt": "Add a star-rating (0-5) value editor for a 'rating' field, keeping the default editor for other fields.",
+      "expect": "Module-scope component; falls back to ValueEditor; passed via controlElements={{ valueEditor }}",
+      "pitfalls": ["component declared inside App", "inline arrow in controlElements"]
+    },
+    {
+      "id": "ic-mode",
+      "prompt": "Make the query builder show combinators between each rule (independently selectable), and export to CEL.",
+      "expect": "RuleGroupTypeIC query state (no combinator prop); formatQuery(query, 'cel')",
+      "pitfalls": [
+        "independentCombinators prop used",
+        "showCombinatorsBetweenRules mistaken for IC mode"
+      ]
+    },
+    {
+      "id": "prisma-where",
+      "prompt": "Use the query builder output as a Prisma `where` for prisma.user.findMany.",
+      "expect": "formatQuery(query, 'prisma') passed to where",
+      "pitfalls": ["SQL string passed to Prisma", "valueSource 'field' expected to work"]
+    },
+    {
+      "id": "drizzle-select",
+      "prompt": "Filter a Drizzle `users` table with the query builder output using the query builder API (db.select()).",
+      "expect": "formatQuery(query, 'drizzle')(usersTable, getOperators())",
+      "pitfalls": ["treating drizzle output as SQL object"]
+    },
+    {
+      "id": "dnd",
+      "prompt": "Enable drag-and-drop reordering of rules using dnd-kit.",
+      "expect": "QueryBuilderDnD with createDndKitAdapter from '@react-querybuilder/dnd/dnd-kit'",
+      "pitfalls": ["enableDragAndDrop without QueryBuilderDnD", "react-dnd installed unnecessarily"]
+    },
+    {
+      "id": "datetime-sql",
+      "prompt": "Fields createdAt and updatedAt are dates. Export to PostgreSQL SQL so date comparisons work, using dayjs.",
+      "expect": "datetimeRuleProcessorSQL from '@react-querybuilder/datetime/dayjs'; fields with datatype 'date'",
+      "pitfalls": ["dates exported as plain strings", "custom ruleProcessor reimplementing dates"]
+    },
+    {
+      "id": "validation-submit",
+      "prompt": "Require age to be a non-negative integer and block form submission while any rule is invalid.",
+      "expect": "Field validator on age; submit handler checks validity (e.g. diagnostics stats.invalidRules or validator) instead of relying on UI",
+      "pitfalls": ["assumes UI blocks invalid input", "ValidationMap used without ids"]
+    },
+    {
+      "id": "natural-language",
+      "prompt": "Show a human-readable sentence describing the current query, and persist the query to localStorage.",
+      "expect": "formatQuery(query, 'natural_language') for display; json_without_ids (or the query object) persisted",
+      "pitfalls": ["natural_language persisted and parsed back"]
+    },
+    {
+      "id": "custom-operator",
+      "prompt": "Add a custom operator 'isAdult' (no value) for the age field and export it to parameterized SQL as `age >= 18`.",
+      "expect": "Custom ruleProcessor handling isAdult, delegating to defaultRuleProcessorParameterized with forwarded opts; returns { sql, params }",
+      "pitfalls": ["SQL rule processor used for parameterized", "opts not forwarded"]
+    },
+    {
+      "id": "sql-roundtrip",
+      "prompt": "Load the WHERE clause `firstName LIKE 'Ste%' AND age BETWEEN 20 AND 30` into the builder and handle invalid SQL gracefully.",
+      "expect": "parseSQL in try/catch; result as controlled query",
+      "pitfalls": ["no try/catch around parseSQL"]
+    },
+    {
+      "id": "material-wrapper",
+      "prompt": "Switch the existing query builder to MUI styling.",
+      "expect": "QueryBuilderMaterial inside ThemeProvider; base CSS kept; same @react-querybuilder/material version as react-querybuilder",
+      "pitfalls": ["version mismatch", "manual controlElements"]
+    }
+  ]
+}

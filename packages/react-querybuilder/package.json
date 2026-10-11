@@ -176,6 +176,7 @@
     "parseSPARQL",
     "parseSpEL",
     "parseSQL",
+    "skills",
     "transformQuery"
   ],
   "sideEffects": [
@@ -235,7 +236,8 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "vite",
-    "build": "bun run build:main && bun run build:css",
+    "build": "bun run build:main && bun run build:css && bun run build:skills",
+    "build:skills": "bun ../../utils/copy-skills.ts",
     "build:main": "bun --bun tsdown",
     "build:css": "mkdir -p dist/styles && cp ../core/src/*.scss dist && cp ../core/src/styles/*.scss dist/styles && bun sass --style=compressed dist",
     "typecheck": "../../node_modules/typescript/bin/tsc --noEmit",

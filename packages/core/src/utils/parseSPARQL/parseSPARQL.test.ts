@@ -115,4 +115,71 @@ describe('parseSPARQL', () => {
     const result = parseSPARQL('SELECT ?x WHERE { }');
     expect(result.rules.length).toBe(0);
   });
+
+  describe('prefixed names', () => {
+    const ageGt30 = [{ field: '?age', operator: '>', value: 30 }];
+
+    it('handles undeclared empty prefix', () => {
+      expect(parseSPARQL('SELECT ?p WHERE { ?p :age ?age . FILTER(?age > 30) }').rules).toEqual(
+        ageGt30
+      );
+    });
+
+    it('handles declared empty prefix', () => {
+      expect(
+        parseSPARQL('PREFIX : <http://x/> SELECT ?p WHERE { ?p :age ?age . FILTER(?age > 30) }')
+          .rules
+      ).toEqual(ageGt30);
+    });
+
+    it('preserves empty prefix in values', () => {
+      expect(parseSPARQL('?x = :foo').rules).toEqual([
+        { field: '?x', operator: '=', value: ':foo' },
+      ]);
+      expect(parseSPARQL('SELECT * WHERE { FILTER(?x = :foo) }').rules).toEqual([
+        { field: '?x', operator: '=', value: ':foo' },
+      ]);
+    });
+
+    it('preserves named prefix and full IRI in values', () => {
+      expect(parseSPARQL('?x = ex:foo').rules).toEqual([
+        { field: '?x', operator: '=', value: 'ex:foo' },
+      ]);
+      expect(parseSPARQL('?x = <http://x/foo>').rules).toEqual([
+        { field: '?x', operator: '=', value: 'http://x/foo' },
+      ]);
+    });
+
+    it('does not treat blank nodes as prefixed names', () => {
+      expect(parseSPARQL('SELECT * WHERE { ?s ?p _:b . FILTER(?age > 30) }').rules).toEqual(
+        ageGt30
+      );
+    });
+
+    it('handles prefixes containing hyphens and dots', () => {
+      expect(
+        parseSPARQL('SELECT * WHERE { ?s my-ns:a ?x . ?s a.b:c ?age . FILTER(?age > 30) }').rules
+      ).toEqual(ageGt30);
+    });
+
+    it('treats prefix names as case-sensitive', () => {
+      // `ex` undeclared despite `EX` declaration → needs stub
+      expect(
+        parseSPARQL(
+          'PREFIX EX: <http://x/> SELECT * WHERE { ?s EX:a ?t . ?s ex:b ?age . FILTER(?age > 30) }'
+        ).rules
+      ).toEqual(ageGt30);
+      // lowercase `prefix` keyword still recognized as a declaration (no duplicate stub)
+      expect(
+        parseSPARQL('prefix ex: <http://x/> SELECT * WHERE { ?s ex:b ?age . FILTER(?age > 30) }')
+          .rules
+      ).toEqual(ageGt30);
+    });
+
+    it('ignores colons in IRIs and string literals', () => {
+      expect(
+        parseSPARQL('SELECT * WHERE { ?s <urn:a:b> ?t . FILTER(?t = "12:30" && ?age > 30) }').rules
+      ).toEqual([{ field: '?t', operator: '=', value: '12:30' }, ...ageGt30]);
+    });
+  });
 });

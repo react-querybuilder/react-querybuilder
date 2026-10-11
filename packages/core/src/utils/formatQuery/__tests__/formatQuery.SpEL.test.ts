@@ -50,7 +50,7 @@ it('handles operator case variations', () => {
 });
 
 it('escapes quotes when appropriate', () => {
-  expect(formatQuery(testQuerySQ, 'spel')).toEqual(`f1 == 'Te\\'st'`);
+  expect(formatQuery(testQuerySQ, 'spel')).toEqual(`f1 == 'Te''st'`);
 });
 
 it('independent combinators', () => {
@@ -120,6 +120,21 @@ it('parseNumbers', () => {
   };
   expect(formatQuery(queryForNumberParsingSpEL, { format: 'spel', parseNumbers: true })).toBe(
     `f matches '^1.*' and f matches '^hasCaret.*' and f matches '.*1$' and f matches '.*hasDollarSign$'`
+  );
+});
+
+it('escapes regex metacharacters in string-match values', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'contains', value: 'a.b' },
+      { field: 'f', operator: 'beginsWith', value: '(x|y)' },
+      { field: 'f', operator: 'endsWith', value: '1+1' },
+      { field: 'f', operator: 'beginsWith', value: 1.5 },
+    ],
+  };
+  expect(formatQuery(q, { format: 'spel', parseNumbers: true })).toBe(
+    String.raw`f matches '.*a\.b.*' and f matches '^\(x\|y\).*' and f matches '.*1\+1$' and f matches '^1\.5.*'`
   );
 });
 

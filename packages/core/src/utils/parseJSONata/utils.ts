@@ -203,6 +203,9 @@ export const getValidValue = (expr: Any): Any => {
     return expr.expressions.map((v: Any) => getValidValue(v));
   } else if (isJSONataIdentifierList(expr)) {
     return expr.expressions.map((v: Any) => getFieldFromPath(v));
+  } else if (isJSONataRegex(expr)) {
+    // Pattern only; flags dropped (consistent w/ other parsers, keeps query serializable)
+    return expr.value.source;
   }
   return expr.value;
 };

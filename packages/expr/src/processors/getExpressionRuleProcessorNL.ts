@@ -63,8 +63,8 @@ export const getExpressionRuleProcessorNL =
     const quoteValuesWith = opts.quoteValuesWith ?? `'`;
     const dialect: InfixDialect = {
       renderField: field =>
-        getQuotedFieldName(field, { quoteFieldNamesWith, fieldIdentifierSeparator }),
-      renderLeaf: (node, o) => quoteLeaf(node, quoteValuesWith, o),
+        getQuotedFieldName(field, { quoteFieldNamesWith, fieldIdentifierSeparator }, false),
+      renderLeaf: (node, o) => quoteLeaf(node, quoteValuesWith, o, 'quote-only'),
     };
     const ser = (n: NonNullable<typeof expr.lhs>) => serializeInfix(n, serial, dialect, opts);
 

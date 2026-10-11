@@ -2,6 +2,7 @@ import type { FormatQueryFinalOptions, RuleGroupType, RuleProcessor } from '../.
 import { toArray, trimIfString } from '../arrayUtils';
 import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
+import { escapeRegexLiteral } from '../regexLiteral';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { processMatchMode, shouldRenderAsNumber } from './utils';
@@ -11,7 +12,7 @@ const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('does
 const wrapInNegation = (clause: string, negate: boolean) => (negate ? `!(${clause})` : clause);
 
 const escapeSingleQuotes = (v: unknown, escapeQuotes?: boolean) =>
-  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`'`, `\\'`);
+  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`'`, `''`);
 
 /**
  * Default rule processor used by {@link formatQuery} for "spel" format.
@@ -92,7 +93,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
     case 'doesnotcontain': {
       const valueTL = valueIsField
         ? `'.*'.concat(${trimIfString(value)}).concat('.*')`
-        : `'.*${escapeSingleQuotes(value, escapeQuotes)}.*'`;
+        : `'.*${escapeSingleQuotes(escapeRegexLiteral(`${value}`), escapeQuotes)}.*'`;
 
       return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
     }
@@ -101,7 +102,10 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
     case 'doesnotbeginwith': {
       const valueTL = valueIsField
         ? `'^'.concat(${trimIfString(value)}).concat('.*')`
-        : `'${(typeof value === 'string' && !value.startsWith('^')) || useBareValue ? '^' : ''}${escapeSingleQuotes(value, escapeQuotes)}.*'`;
+        : // Leading `^` = legacy raw-regex value, emitted unescaped
+          typeof value === 'string' && value.startsWith('^')
+          ? `'${escapeSingleQuotes(value, escapeQuotes)}.*'`
+          : `'^${escapeSingleQuotes(escapeRegexLiteral(`${value}`), escapeQuotes)}.*'`;
 
       return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
     }
@@ -110,7 +114,10 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
     case 'doesnotendwith': {
       const valueTL = valueIsField
         ? `'.*'.concat(${trimIfString(value)}).concat('$')`
-        : `'.*${escapeSingleQuotes(value, escapeQuotes)}${(typeof value === 'string' && !value.endsWith('$')) || useBareValue ? '$' : ''}'`;
+        : // Trailing `$` = legacy raw-regex value, emitted unescaped
+          typeof value === 'string' && value.endsWith('$')
+          ? `'.*${escapeSingleQuotes(value, escapeQuotes)}'`
+          : `'.*${escapeSingleQuotes(escapeRegexLiteral(`${value}`), escapeQuotes)}$'`;
 
       return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
     }

@@ -640,6 +640,29 @@ describe('Parameterized processor', () => {
     expect(expressionRuleProcessorParameterized(rule)).toEqual({ sql: 'price = ?', params: [100] });
   });
 
+  it.each(['parameterized', 'parameterized_named'] as const)(
+    'honors fieldIdentifierSeparator (%s)',
+    format => {
+      const q = group(
+        exprRule({ field: 't.a', operator: '=' }, { rhs: fn('abs', field('u.b')) }),
+        exprRule(
+          { field: 't.a', operator: 'contains', value: 'u.c', valueSource: 'field' },
+          { lhs: fn('upper', field('t.a')) }
+        ),
+        { field: 't.a', operator: '=', value: 'u.d', valueSource: 'field' } as RuleType
+      );
+      expect(
+        formatQuery(q, {
+          format: format as 'parameterized',
+          preset: 'mssql',
+          ruleProcessor: expressionRuleProcessorParameterized,
+        }).sql
+      ).toBe(
+        "([t].[a] = ABS([u].[b]) and UPPER([t].[a]) like '%' + [u].[c] + '%' and [t].[a] = [u].[d])"
+      );
+    }
+  );
+
   it('uses custom serializers and binds nested value args', () => {
     const proc = getExpressionRuleProcessorParameterized({
       pow: (_opts, a, b) => `POWER(${a}, ${b})`,

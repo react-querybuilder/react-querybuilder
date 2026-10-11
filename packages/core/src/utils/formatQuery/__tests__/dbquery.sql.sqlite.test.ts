@@ -80,6 +80,36 @@ describe('SQLite', () => {
     });
   }
 
+  // Closing quote char in field name must not break out of the identifier
+  describe('field name containing closing quote', () => {
+    for (const [pre, post] of [
+      ['"', '"'],
+      ['`', '`'],
+      ['[', ']'],
+    ] as [string, string][]) {
+      const query: DefaultRuleGroupType = {
+        combinator: 'and',
+        rules: [{ field: `enhanced${post} > 0 or 1=1 or ${pre}x`, operator: '=', value: 'x' }],
+      };
+      for (const format of ['sql', 'parameterized', 'parameterized_named'] as const) {
+        test(`${pre}${post} ${format}`, async () => {
+          const fq = formatQuery(query, { format, quoteFieldNamesWith: [pre, post] }) as unknown as
+            | string
+            | { sql: string; params: never };
+          const [where, params] = typeof fq === 'string' ? [fq, []] : [fq.sql, fq.params];
+          // Unescaped, this would return every row. Escaped: no such column → error (SQLite may
+          // instead treat unknown `"…"` as a string literal → no rows).
+          const result = await sql
+            .unsafe(`${sqlBase()} ${where} ${getSqlOrderBy()}`, params)
+            .catch((e: Error) => e);
+          // Errors seen: no such column; `]]` (MSSQL escape, unsupported by SQLite); named param
+          // names derived from raw field name (known follow-up). Never every row.
+          expect(result instanceof Error || result.length === 0).toBe(true);
+        });
+      }
+    }
+  });
+
   // "parameter" value source: the generated SQL references bind variables that must
   // be supplied at execution time, so these can't use the shared `dbTests` harness.
   describe('parameter value source', () => {

@@ -1,4 +1,12 @@
-import type { DefaultRuleGroupType, FullField, OptionGroup, ValueSources } from '../../types';
+import type {
+  DefaultOperatorName,
+  DefaultRuleGroupType,
+  DefaultRuleType,
+  FullField,
+  OptionGroup,
+  ValueSources,
+} from '../../types';
+import { formatQuery } from '../formatQuery';
 import { toFullOption } from '../optGroupUtils';
 import { parseMongoDB } from './parseMongoDB';
 
@@ -245,6 +253,40 @@ describe('valueSource: "field"', () => {
       rules: [{ field: 'f1', operator: 'in', value: 'f2,f3', valueSource: 'field' }],
     });
   });
+});
+
+it('reverses formatQuery string-match regexes', () => {
+  const wrap = (rule: DefaultRuleType): DefaultRuleGroupType => ({
+    combinator: 'and',
+    rules: [rule],
+  });
+  expect(parseMongoDB({ f: { $regex: '^a$' } })).toEqual(
+    wrap({ field: 'f', operator: '=', value: 'a' })
+  );
+  expect(parseMongoDB({ f: { $not: { $regex: '^a$' } } })).toEqual(
+    wrap({ field: 'f', operator: '!=', value: 'a' })
+  );
+  expect(parseMongoDB({ f: { $regex: String.raw`^a\.b` } })).toEqual(
+    wrap({ field: 'f', operator: 'beginsWith', value: 'a.b' })
+  );
+  // Real regex syntax kept as-is
+  expect(parseMongoDB({ f: { $regex: 'a.b' } })).toEqual(
+    wrap({ field: 'f', operator: 'contains', value: 'a.b' })
+  );
+  const ops: DefaultOperatorName[] = [
+    'contains',
+    'beginsWith',
+    'endsWith',
+    'doesNotContain',
+    'doesNotBeginWith',
+    'doesNotEndWith',
+  ];
+  for (const operator of ops) {
+    for (const value of ['Stev', 'a.b', '(a|b)*[x]{2}?+^$y', 'x-y/z', 'a\\']) {
+      const q = wrap({ field: 'f', operator, value });
+      expect(parseMongoDB(formatQuery(q, 'mongodb_query'))).toEqual(q);
+    }
+  }
 });
 
 it('parses MongoDB as string', () => {

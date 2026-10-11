@@ -44,6 +44,11 @@ packages/*/parseSpEL/package.json
 packages/*/parseSQL/package.json
 packages/*/transformQuery/package.json
 
+# Copied from /skills at build time (utils/copy-skills.ts)
+packages/*/skills/
+# Extracted by utils/skill-snippets.ts
+skills/__tests__/snippets/
+
 # website/api is (re)generated when running `bun web` or `bun website:build`...
 website/api/*
 # ...but it needs to exist for docusaurus to begin

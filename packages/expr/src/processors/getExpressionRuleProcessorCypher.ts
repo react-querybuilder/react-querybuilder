@@ -1,5 +1,5 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
-import { defaultRuleProcessorCypher } from '@react-querybuilder/core';
+import { defaultRuleProcessorCypher, quoteCypherIdentifier } from '@react-querybuilder/core';
 import { defaultCypherSerializers } from '../functions/cypher';
 import type { SQLSerializerRegistry } from '../types';
 import { quoteLeaf } from '../utils/serializeInfix';
@@ -9,7 +9,7 @@ const factory = makeStringExprProcessor({
   serializers: defaultCypherSerializers,
   fallback: defaultRuleProcessorCypher,
   dialect: {
-    renderField: field => field,
+    renderField: quoteCypherIdentifier,
     renderLeaf: (node, opts) => quoteLeaf(node, `'`, opts),
   },
   compare: { '=': '=', '!=': '<>', '<': '<', '<=': '<=', '>': '>', '>=': '>=' },

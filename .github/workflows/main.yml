@@ -61,6 +61,7 @@ jobs:
           - run: bun run lint --format=github
           - run: bun run are-the-types-wrong
           - run: bun run check-dts-peer-leaks
+          - run: bun run skills:check
 
   Test:
     runs-on: ubuntu-latest

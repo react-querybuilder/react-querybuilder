@@ -40,6 +40,17 @@ it('escapes quotes when appropriate', () => {
   expect(formatQuery(testQueryDQ, 'jsonata')).toEqual(`f1 = "Te\\"st"`);
 });
 
+it('escapes backslashes in string values', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: '=', value: 'a\\' },
+      { field: 'f', operator: 'contains', value: 'a\\"b' },
+    ],
+  };
+  expect(formatQuery(q, 'jsonata')).toBe(String.raw`f = "a\\" and $contains(f, "a\\\"b")`);
+});
+
 it('independent combinators', () => {
   expect(formatQuery(queryIC, 'jsonata')).toBe(
     `firstName = "Test" and middleName = "Test" or lastName = "Test"`
@@ -206,4 +217,12 @@ it('handles match modes', () => {
   expect(formatQuery(queryWithMatchModes, 'jsonata')).toBe(
     `$count($filter(fs, function($v) {$contains($v, "S")})) = $count(fs) and $count($filter(fs, function($v) {$contains($v.fv, "S")})) = $count(fs) and $count($filter(fs, function($v) {$contains($v, "S")})) = 0 and $count($filter(fs, function($v) {$contains($v, "S")})) > 0 and $count($filter(fs, function($v) {$contains($v, "S")})) > 0 and $count($filter(fs, function($v) {$contains($v, "S")})) = 0 and $count($filter(fs, function($v) {$contains($v, "S")})) >= 2 and $count($filter(fs, function($v) {$contains($v.fv, "S")})) >= 2 and $count($filter(fs, function($v) {$contains($v, "S")})) >= ($count(fs) * 0.5) and $count($filter(fs, function($v) {$contains($v, "S")})) <= 2 and $count($filter(fs, function($v) {$contains($v, "S")})) <= ($count(fs) * 0.5) and $count($filter(fs, function($v) {$contains($v, "S")})) = 2 and $count($filter(fs, function($v) {$contains($v, "S")})) = ($count(fs) * 0.5) and $count($filter(fs, function($v) {$contains($v, "S") and $contains($v, "S")})) = $count(fs) and $count($filter(fs, function($v) {$contains($v, "S") and $contains($v, "S")})) >= 2`
   );
+});
+
+it('does not escape quote chars in field names (JSONata has no escape syntax)', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'a`b', operator: '=', value: 'c`d', valueSource: 'field' }],
+  };
+  expect(formatQuery(q, { format: 'jsonata', quoteFieldNamesWith: '`' })).toBe('`a`b` = `c`d`');
 });

@@ -148,10 +148,11 @@ export const getDatetimeRuleProcessorNL =
       }
     }
 
-    const processedField = getQuotedFieldName(fieldData?.label ?? rule.field, {
-      quoteFieldNamesWith,
-      fieldIdentifierSeparator,
-    });
+    const processedField = getQuotedFieldName(
+      fieldData?.label ?? rule.field,
+      { quoteFieldNamesWith, fieldIdentifierSeparator },
+      false
+    );
 
     const processedOperator = operatorProcessor(
       { ...rule, operator },

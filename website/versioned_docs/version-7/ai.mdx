@@ -1,0 +1,98 @@
+---
+title: Using with AI agents
+description: Agent skill, MCP server, and LLM-friendly docs for coding agents
+---
+
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+React Query Builder provides several resources that help coding agents (Claude Code, opencode, Cursor, Codex, GitHub Copilot, etc.) use the library correctly.
+
+## Agent skill
+
+The [agent skill](https://agentskills.io) teaches agents setup, UI packages, export formats, parsers, validation, server-side usage, and common pitfalls. Install it with the [`skills` CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add react-querybuilder/react-querybuilder --skill react-querybuilder
+```
+
+The skill is a standard `SKILL.md` directory, so any installer works, or you can copy it manually:
+
+- **From `node_modules`**: `react-querybuilder` and `@react-querybuilder/core` ship the skill at `node_modules/<package>/skills/react-querybuilder/`, matching the installed version. Copy or symlink that directory into your agent's skills directory (e.g. `.claude/skills/`, `.agents/skills/`).
+- **From GitHub**: [`skills/react-querybuilder`](https://github.com/react-querybuilder/react-querybuilder/tree/main/skills/react-querybuilder).
+
+## MCP server
+
+:::info[Coming soon]
+
+`@react-querybuilder/mcp` is not published yet. The configuration below shows how it will be set up.
+
+:::
+
+`@react-querybuilder/mcp` is a local (stdio) [Model Context Protocol](https://modelcontextprotocol.io) server. Its tools format, parse, convert, and validate queries using the real library code, generate JSON Schemas for queries, and search these docs (pinned to the installed version).
+
+<Tabs>
+<TabItem value="claude" label="Claude Code">
+
+```bash
+claude mcp add rqb -- npx -y @react-querybuilder/mcp
+```
+
+</TabItem>
+<TabItem value="opencode" label="opencode">
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "rqb": {
+      "type": "local",
+      "command": ["npx", "-y", "@react-querybuilder/mcp"]
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="cursor" label="Cursor">
+
+```json title=".cursor/mcp.json"
+{
+  "mcpServers": {
+    "rqb": {
+      "command": "npx",
+      "args": ["-y", "@react-querybuilder/mcp"]
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="vscode" label="VS Code">
+
+```json title=".vscode/mcp.json"
+{
+  "servers": {
+    "rqb": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@react-querybuilder/mcp"]
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+## LLM-friendly docs
+
+- [`/llms.txt`](pathname:///llms.txt): index of all documentation pages, with a markdown version of each page.
+- [`/llms-full.txt`](pathname:///llms-full.txt): full documentation in one file (excludes the API reference, changelog, and migration guides).
+- [`/llms-api.txt`](pathname:///llms-api.txt): condensed API reference, one line per exported symbol of every package.
+
+Append `.md` to any documentation URL for its markdown version (e.g. [`/docs/utils/export.md`](pathname:///docs/utils/export.md)).
+
+## Recipes
+
+The [Recipes](./tips/recipes) page shows the shortest working snippet and the exact output for every export format and import parser. The outputs are generated from the library source, so they're a reliable reference for agents.

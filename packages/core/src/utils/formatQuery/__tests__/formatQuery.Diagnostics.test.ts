@@ -1289,6 +1289,31 @@ describe('formatQuery("diagnostics")', () => {
       });
       expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
     });
+
+    it.each([
+      ['between', [18, 65], 0],
+      ['between', '18, 65', 0],
+      ['in', ['1', 2, '3'], 0],
+      ['notBetween', [18, 'abc'], 1],
+      ['in', '1, abc', 1],
+      ['=', '18, 65', 1],
+    ] as [DefaultOperatorName, unknown, number][])(
+      'checks each list element (%s %j)',
+      (operator, value, mismatches) => {
+        const query: DefaultRuleGroupType = {
+          id: 'g-root',
+          combinator: 'and',
+          rules: [{ id: 'r-1', field: 'age', operator, value }],
+        };
+        const result = formatQuery(query, {
+          format: 'diagnostics',
+          fields: [{ name: 'age', label: 'Age', inputType: 'number' }],
+        });
+        expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(
+          mismatches
+        );
+      }
+    );
   });
 
   describe('undefined fields', () => {
@@ -1305,6 +1330,56 @@ describe('formatQuery("diagnostics")', () => {
       expect(result.diagnostics).toContainEqual(
         expect.objectContaining({ id: 'r-1', code: 'UNDEFINED_FIELD', source: 'field-check' })
       );
+      expect(result.query.valid).toBe(false);
+      expect(result.query.rules[0]).toMatchObject({ valid: false });
+      expect(result.stats).toMatchObject({ validRules: 0, invalidRules: 1, invalidGroups: 1 });
+      expect(result.fieldSummary.unknownField).toEqual({ ruleCount: 1, invalidCount: 1 });
+    });
+
+    it('does not flag type mismatch for valueSource "field"', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [
+          { id: 'r-1', field: 'age', operator: '=', value: 'otherAge', valueSource: 'field' },
+        ],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [
+          { name: 'age', label: 'Age', inputType: 'number' },
+          { name: 'otherAge', label: 'Other Age', inputType: 'number' },
+        ],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+      expect(result.stats).toMatchObject({ validRules: 1, invalidRules: 0 });
+    });
+
+    it.each([
+      ['string', 'otherAge, missingA'],
+      ['array', ['otherAge', 'missingA']],
+    ])('flags undefined fields referenced by valueSource "field" (%s value)', (_, value) => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'age', operator: 'between', value, valueSource: 'field' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [
+          { name: 'age', label: 'Age', inputType: 'number' },
+          { name: 'otherAge', label: 'Other Age', inputType: 'number' },
+        ],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'UNDEFINED_FIELD')).toEqual([
+        expect.objectContaining({
+          id: 'r-1',
+          message: 'Value field "missingA" is not defined in the fields config',
+          source: 'field-check',
+        }),
+      ]);
+      expect(result.query.rules[0]).toMatchObject({ valid: false });
+      expect(result.stats).toMatchObject({ validRules: 0, invalidRules: 1 });
     });
 
     it('does not flag fields that are in the config', () => {

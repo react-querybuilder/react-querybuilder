@@ -1,28 +1,35 @@
 import type {
   DefaultOperatorName,
+  DefaultRuleGroupType,
+  DefaultRuleType,
   FullField,
-  FullOption,
-  OptionList,
   ValueSource,
   ValueSourceFlexibleOptions,
   ValueSources,
 } from '../types';
+import type { ParserCommonOptions } from '../types/import';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
-import { isFlexibleOptionArray, toFlatOptionArray, toFullOption } from './optGroupUtils';
+import { isRuleGroup } from './isRuleGroup';
+import {
+  isFlexibleOptionArray,
+  toFlatOptionArray,
+  toFullOption,
+  toFullOptionList,
+} from './optGroupUtils';
 
-export const getFieldsArray = (
-  fields?: OptionList<FullField> | Record<string, FullField>
-): FullOption[] => {
-  const fieldsArray = fields
+/** Flattens/normalizes parser `fields` (array, option groups, or map) to `FullField`s. */
+export const getFieldsArray = (fields?: ParserCommonOptions['fields']): FullField[] => {
+  const fieldsArray: unknown[] = fields
     ? Array.isArray(fields)
       ? fields
-      : Object.keys(fields)
-          .map(fld => Object.assign({}, fields[fld], { name: fld }))
+      : Object.entries(fields)
+          .map(([name, fld]) => Object.assign({}, fld, { name, value: name }))
           // oxlint-disable-next-line no-array-sort
           .sort((a, b) => a.label.localeCompare(b.label))
     : [];
-  return toFlatOptionArray(fieldsArray);
+  // Fill in `name`/`value` when only one is present
+  return toFlatOptionArray(toFullOptionList<FullField>(fieldsArray));
 };
 
 export function fieldIsValidUtil(params: {
@@ -72,3 +79,34 @@ export function fieldIsValidUtil(params: {
 
   return valid;
 }
+
+type RuleOrGroupNoIC = DefaultRuleType | DefaultRuleGroupType;
+
+/**
+ * Drops rules whose field/operator combo is invalid per `fields`/`getValueSources`, then prunes
+ * groups left empty. No-op when `fields` is empty/undefined. Non-IC groups only.
+ */
+export const filterRulesByFields = (
+  rules: RuleOrGroupNoIC[],
+  options: Pick<ParserCommonOptions, 'fields' | 'getValueSources'>
+): RuleOrGroupNoIC[] => {
+  const fieldsFlat = getFieldsArray(options.fields);
+  if (fieldsFlat.length === 0) return rules;
+  const { getValueSources } = options;
+  const walk = (rs: RuleOrGroupNoIC[]): RuleOrGroupNoIC[] =>
+    rs.flatMap((r): RuleOrGroupNoIC[] => {
+      if (isRuleGroup(r)) {
+        const kept = walk(r.rules);
+        return kept.length > 0 ? [{ ...r, rules: kept }] : [];
+      }
+      return fieldIsValidUtil({
+        fieldName: r.field,
+        fieldsFlat,
+        operator: r.operator,
+        getValueSources,
+      })
+        ? [r]
+        : [];
+    });
+  return walk(rules);
+};

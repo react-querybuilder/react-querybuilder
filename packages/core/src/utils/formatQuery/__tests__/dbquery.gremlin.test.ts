@@ -503,3 +503,15 @@ describe('Gremlin graph patterns (Grafeo)', () => {
     });
   });
 });
+
+describe('Gremlin (Grafeo) hostile field names', () => {
+  test('escaped property key never returns extra rows', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [{ field: `firstName', neq('z')).has('x`, operator: '=', value: 'z' }],
+      },
+      []
+    );
+  });
+});

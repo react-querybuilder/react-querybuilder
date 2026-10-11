@@ -278,3 +278,15 @@ describe('Cypher graph patterns (Grafeo)', () => {
     });
   });
 });
+
+describe('Cypher (Grafeo) hostile field names', () => {
+  test('quoted field name never returns extra rows', async () => {
+    await expectCypher(
+      {
+        combinator: 'and',
+        rules: [{ field: 'su.firstName IS NULL OR true OR NOT true', operator: '=', value: 'z' }],
+      },
+      []
+    );
+  });
+});

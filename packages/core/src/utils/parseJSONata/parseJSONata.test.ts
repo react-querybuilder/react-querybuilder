@@ -1,6 +1,7 @@
 import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
+  DefaultOperatorName,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
@@ -9,6 +10,7 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types';
+import { formatQuery } from '../formatQuery';
 import { toFullOption } from '../optGroupUtils';
 import type { ParseJSONataOptions } from './parseJSONata';
 import { parseJSONata } from './parseJSONata';
@@ -120,7 +122,35 @@ it('handles "like" comparisons', () => {
   );
   expectParseJSONata(
     '$contains(f1, /Test/i)',
-    wrapRule({ field: 'f1', operator: 'contains', value: new RegExp('Test', 'gi') })
+    wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
+  );
+  expectParseJSONata(
+    '$contains(f1, /Te.st/)',
+    wrapRule({ field: 'f1', operator: 'contains', value: 'Te.st' })
+  );
+  expectParseJSONata('f1 = /Te.st/i', wrapRule({ field: 'f1', operator: '=', value: 'Te.st' }));
+  expect(JSON.parse(JSON.stringify(parseJSONata('$contains(f1, /Test/i)')))).toEqual(
+    parseJSONata('$contains(f1, /Test/i)')
+  );
+  expectParseJSONata(
+    '$contains(f1, /^Test/)',
+    wrapRule({ field: 'f1', operator: 'beginsWith', value: 'Test' })
+  );
+  expectParseJSONata(
+    '$contains(f1, /Test$/)',
+    wrapRule({ field: 'f1', operator: 'endsWith', value: 'Test' })
+  );
+  expectParseJSONata(
+    '$contains(f1, /^Test$/)',
+    wrapRule({ field: 'f1', operator: '=', value: 'Test' })
+  );
+  expectParseJSONata(
+    String.raw`$contains(f1, /^a\.b\x2dc\/d/)`,
+    wrapRule({ field: 'f1', operator: 'beginsWith', value: 'a.b-c/d' })
+  );
+  expectParseJSONata(
+    String.raw`$contains(f1, /^\d+/)`,
+    wrapRule({ field: 'f1', operator: 'beginsWith', value: String.raw`\d+` })
   );
   expectParseJSONata(
     '$contains(f1, f2)',
@@ -133,6 +163,37 @@ it('negates "like" comparisons', () => {
     '$not($contains(f1, "Test"))',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
   );
+  expectParseJSONata(
+    '$not($contains(f1, /^Test/))',
+    wrapRule({ field: 'f1', operator: 'doesNotBeginWith', value: 'Test' })
+  );
+  expectParseJSONata(
+    '$not($contains(f1, /^Test$/))',
+    wrapRule({ field: 'f1', operator: '!=', value: 'Test' })
+  );
+  // `$not` on a non-`$contains` equality still produces a negated group
+  expectParseJSONata('$not(f1 = "Test")', {
+    combinator: 'and',
+    not: true,
+    rules: [{ field: 'f1', operator: '=', value: 'Test' }],
+  });
+});
+
+it('round-trips formatQuery "jsonata" string-match output', () => {
+  const ops: DefaultOperatorName[] = [
+    'contains',
+    'beginsWith',
+    'endsWith',
+    'doesNotContain',
+    'doesNotBeginWith',
+    'doesNotEndWith',
+  ];
+  for (const operator of ops) {
+    for (const value of ['Stev', 'a.b', '(a|b)*[x]{2}?+^$y', 'x-y/z']) {
+      const rule = { field: 'f1', operator, value };
+      expectParseJSONata(formatQuery(wrapRule(rule), 'jsonata'), wrapRule(rule));
+    }
+  }
 });
 
 it('handles date values', () => {

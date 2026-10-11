@@ -3,6 +3,7 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 export default {
   mySidebar: [
     'intro',
+    'ai',
     {
       type: 'category',
       label: 'Components',
@@ -76,6 +77,7 @@ export default {
       },
       items: [
         'tips/showcase',
+        'tips/recipes',
         'tips/option-lists',
         'tips/maximizing-performance',
         'tips/managing-fields',

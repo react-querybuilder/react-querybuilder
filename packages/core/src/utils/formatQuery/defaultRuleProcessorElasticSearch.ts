@@ -9,7 +9,12 @@ import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
-import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  escapeSingleQuotedString,
+  isValidValue,
+  processMatchMode,
+  shouldRenderAsNumber,
+} from './utils';
 
 type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte';
 type RangeRule = (
@@ -52,8 +57,6 @@ const negateIfNotOp = (
   op.startsWith('not') || op.startsWith('doesnot')
     ? { bool: { must_not: elasticSearchRule } }
     : elasticSearchRule;
-
-const escapeSQ = (s: string) => s?.replace(/('|\\)/g, `\\$1`);
 
 const textFunctionMap: Partial<Record<Lowercase<DefaultOperatorName>, string>> = {
   beginswith: 'startsWith',
@@ -147,7 +150,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
     // Bail out if not all values are strings
     if (toArray(value).some(v => typeof v !== 'string')) return false;
 
-    const fieldForScript = escapeSQ(field);
+    const fieldForScript = escapeSingleQuotedString(field);
 
     switch (operatorLC) {
       case '=':
@@ -157,7 +160,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       case '<':
       case '<=': {
         const operatorForScript = operatorLC === '=' ? '==' : operatorLC;
-        const valueForScript = escapeSQ(value);
+        const valueForScript = escapeSingleQuotedString(value);
         return valueForScript
           ? {
               bool: {
@@ -177,7 +180,11 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         if (valueAsArray.length > 0) {
           const arr = valueAsArray.map(v => ({
             bool: {
-              filter: { script: { script: `doc['${fieldForScript}'].value == doc['${v}'].value` } },
+              filter: {
+                script: {
+                  script: `doc['${fieldForScript}'].value == doc['${escapeSingleQuotedString(v)}'].value`,
+                },
+              },
             },
           }));
           return { bool: operatorLC === 'in' ? { should: arr } : { must_not: arr } };
@@ -189,7 +196,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       case 'notbetween': {
         const valueAsArray = toArray(value);
         if (valueAsArray.length >= 2 && valueAsArray[0] && valueAsArray[1]) {
-          const script = `doc['${fieldForScript}'].value >= doc['${valueAsArray[0]}'].value && doc['${fieldForScript}'].value <= doc['${valueAsArray[1]}'].value`;
+          const script = `doc['${fieldForScript}'].value >= doc['${escapeSingleQuotedString(valueAsArray[0])}'].value && doc['${fieldForScript}'].value <= doc['${escapeSingleQuotedString(valueAsArray[1])}'].value`;
           return {
             bool: {
               filter: { script: { script: operatorLC === 'notbetween' ? `!(${script})` : script } },
@@ -205,7 +212,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       case 'doesnotbeginwith':
       case 'endswith':
       case 'doesnotendwith': {
-        const valueForScript = escapeSQ(value);
+        const valueForScript = escapeSingleQuotedString(value);
         if (!valueForScript) return false;
         const script = getTextScript(fieldForScript, operatorLC, valueForScript);
         return {

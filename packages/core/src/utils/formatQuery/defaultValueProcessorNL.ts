@@ -38,7 +38,7 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: string) =>
-    getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
+    getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator }, false);
 
   const t = translations ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
   const orTL = t.or ?? 'or';

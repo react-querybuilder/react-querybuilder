@@ -1,5 +1,6 @@
 ---
 title: Drag-and-drop
+description: Drag-and-drop rules and groups with @react-querybuilder/dnd
 ---
 
 import { DemoLink } from '@site/src/components/DemoLink';

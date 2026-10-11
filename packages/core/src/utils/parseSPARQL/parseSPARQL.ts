@@ -5,6 +5,8 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
 } from '../../types';
+import type { ParserCommonOptions } from '../../types/import';
+import { filterRulesByFields } from '../parserUtils';
 
 // Reuse a single parser instance (Chevrotain-backed; creating parsers is expensive)
 let parserInstance: SparqlParser | undefined;
@@ -99,7 +101,7 @@ const termToString = (term: TraqulaTerm): string => {
       case 'variable':
         return `?${term.value}`;
       case 'namedNode':
-        if (term.prefix !== undefined && term.prefix !== '') {
+        if (term.prefix !== undefined) {
           return `${term.prefix}:${term.value}`;
         }
         return term.value ?? '';
@@ -313,14 +315,17 @@ const negateRule = (rule: DefaultRuleType): DefaultRuleType => {
  */
 const ensurePrefixes = (sparql: string): string => {
   const declaredPrefixes = new Set<string>();
-  const prefixDeclRegex = /PREFIX\s+(\w*):/gi;
+  const prefixDeclRegex = /PREFIX\s+([\w.-]*):/gi;
   let m: RegExpExecArray | null;
   while ((m = prefixDeclRegex.exec(sparql)) !== null) {
-    declaredPrefixes.add(m[1].toLowerCase());
+    // Prefix names are case-sensitive (only the PREFIX keyword isn't)
+    declaredPrefixes.add(m[1]);
   }
 
   const usedPrefixes = new Set<string>();
-  const prefixUsageRegex = /\b(\w+):\w+/g;
+  // PN_PREFIX (optional; empty = default prefix) + ':' + local name start.
+  // Lookbehind excludes `_:` blank nodes, digits (e.g. times), and mid-token matches.
+  const prefixUsageRegex = /(?<![\w.\-?$:])((?:[A-Za-z](?:[\w.-]*\w)?)?):(?=\w)/g;
   while ((m = prefixUsageRegex.exec(sparql)) !== null) {
     const prefix = m[1];
     if (/^https?$/i.test(prefix) || /^urn$/i.test(prefix)) continue;
@@ -328,7 +333,7 @@ const ensurePrefixes = (sparql: string): string => {
     const lastOpen = before.lastIndexOf('<');
     const lastClose = before.lastIndexOf('>');
     if (lastOpen > lastClose) continue;
-    if (!declaredPrefixes.has(prefix.toLowerCase())) {
+    if (!declaredPrefixes.has(prefix)) {
       usedPrefixes.add(prefix);
     }
   }
@@ -344,7 +349,10 @@ const ensurePrefixes = (sparql: string): string => {
 /**
  * Options for {@link parseSPARQL}.
  */
-export interface ParseSPARQLOptions {
+export interface ParseSPARQLOptions extends Pick<
+  ParserCommonOptions,
+  'fields' | 'getValueSources'
+> {
   independentCombinators?: boolean;
 }
 
@@ -378,7 +386,7 @@ export function parseSPARQL(
 ): DefaultRuleGroupTypeIC;
 export function parseSPARQL(
   sparql: string,
-  _options?: ParseSPARQLOptions
+  options: ParseSPARQLOptions = {}
 ): DefaultRuleGroupTypeAny {
   const trimmed = sparql.trim();
   if (!trimmed) return { combinator: 'and', rules: [] };
@@ -408,5 +416,5 @@ export function parseSPARQL(
 
   const rules: (DefaultRuleType | DefaultRuleGroupType)[] = [];
   visitPatterns(typed.where.patterns ?? [], rules);
-  return { combinator: 'and', rules };
+  return { combinator: 'and', rules: filterRulesByFields(rules, options) };
 }

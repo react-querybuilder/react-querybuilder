@@ -2,9 +2,19 @@ import type { FormatQueryFinalOptions, RuleGroupType, RuleProcessor } from '../.
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
+import { escapeRegexLiteral } from '../regexLiteral';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorMongoDBQuery } from './defaultRuleGroupProcessorMongoDBQuery';
-import { isValidValue, mongoOperators, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  getJSPropertyAccessor,
+  isValidValue,
+  mongoOperators,
+  processMatchMode,
+  shouldRenderAsNumber,
+} from './utils';
+
+// `$where` is server-side JS; non-identifier path segments → bracket access
+const jsRef = (f: unknown) => getJSPropertyAccessor(`${f}`);
 
 const processNumber = <T>(value: unknown, fallback: T, parseNumbers = false) =>
   shouldRenderAsNumber(value, parseNumbers || typeof value === 'bigint')
@@ -102,6 +112,8 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
   }
 
   const operatorLC = lc(operator);
+  // String-match values are literals, not patterns
+  const rx = escapeRegexLiteral(`${value}`);
   switch (operatorLC) {
     case '<':
     case '<=':
@@ -124,45 +136,45 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
 
     case 'contains':
       return valueIsField
-        ? { $where: `this.${field}.includes(this.${value})` }
+        ? { $where: `${jsRef(field)}.includes(${jsRef(value)})` }
         : avoidFieldsAsKeys
-          ? { $regexMatch: { input: `$${field}`, regex: value } }
-          : { [field]: { $regex: value } };
+          ? { $regexMatch: { input: `$${field}`, regex: rx } }
+          : { [field]: { $regex: rx } };
 
     case 'beginswith':
       return valueIsField
-        ? { $where: `this.${field}.startsWith(this.${value})` }
+        ? { $where: `${jsRef(field)}.startsWith(${jsRef(value)})` }
         : avoidFieldsAsKeys
-          ? { $regexMatch: { input: `$${field}`, regex: `^${value}` } }
-          : { [field]: { $regex: `^${value}` } };
+          ? { $regexMatch: { input: `$${field}`, regex: `^${rx}` } }
+          : { [field]: { $regex: `^${rx}` } };
 
     case 'endswith':
       return valueIsField
-        ? { $where: `this.${field}.endsWith(this.${value})` }
+        ? { $where: `${jsRef(field)}.endsWith(${jsRef(value)})` }
         : avoidFieldsAsKeys
-          ? { $regexMatch: { input: `$${field}`, regex: `${value}$` } }
-          : { [field]: { $regex: `${value}$` } };
+          ? { $regexMatch: { input: `$${field}`, regex: `${rx}$` } }
+          : { [field]: { $regex: `${rx}$` } };
 
     case 'doesnotcontain':
       return valueIsField
-        ? { $where: `!this.${field}.includes(this.${value})` }
+        ? { $where: `!${jsRef(field)}.includes(${jsRef(value)})` }
         : avoidFieldsAsKeys
-          ? { $not: { $regexMatch: { input: `$${field}`, regex: value } } }
-          : { [field]: { $not: { $regex: value } } };
+          ? { $not: { $regexMatch: { input: `$${field}`, regex: rx } } }
+          : { [field]: { $not: { $regex: rx } } };
 
     case 'doesnotbeginwith':
       return valueIsField
-        ? { $where: `!this.${field}.startsWith(this.${value})` }
+        ? { $where: `!${jsRef(field)}.startsWith(${jsRef(value)})` }
         : avoidFieldsAsKeys
-          ? { $not: { $regexMatch: { input: `$${field}`, regex: `^${value}` } } }
-          : { [field]: { $not: { $regex: `^${value}` } } };
+          ? { $not: { $regexMatch: { input: `$${field}`, regex: `^${rx}` } } }
+          : { [field]: { $not: { $regex: `^${rx}` } } };
 
     case 'doesnotendwith':
       return valueIsField
-        ? { $where: `!this.${field}.endsWith(this.${value})` }
+        ? { $where: `!${jsRef(field)}.endsWith(${jsRef(value)})` }
         : avoidFieldsAsKeys
-          ? { $not: { $regexMatch: { input: `$${field}`, regex: `${value}$` } } }
-          : { [field]: { $not: { $regex: `${value}$` } } };
+          ? { $not: { $regexMatch: { input: `$${field}`, regex: `${rx}$` } } }
+          : { [field]: { $not: { $regex: `${rx}$` } } };
 
     case 'null':
       return avoidFieldsAsKeys ? { $eq: [`$${field}`, null] } : { [field]: null };
@@ -176,8 +188,8 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
       return valueIsField
         ? {
             $where: `${operatorLC === 'notin' ? '!' : ''}[${valueAsArray
-              .map(val => `this.${val}`)
-              .join(',')}].includes(this.${field})`,
+              .map(val => jsRef(val))
+              .join(',')}].includes(${jsRef(field)})`,
           }
         : avoidFieldsAsKeys
           ? operatorLC === 'notin'

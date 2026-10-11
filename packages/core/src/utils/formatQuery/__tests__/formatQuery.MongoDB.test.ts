@@ -628,6 +628,33 @@ it('escapes quotes when appropriate', () => {
   expectBoth(testQueryDQ, { f1: `Te"st` });
 });
 
+it('escapes regex metacharacters in string-match values', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'contains', value: 'a.b' },
+      { field: 'f', operator: 'beginsWith', value: '(x|y)' },
+      { field: 'f', operator: 'doesNotEndWith', value: '1+1' },
+    ],
+  };
+  expect(formatQuery(q, 'mongodb_query')).toEqual({
+    $and: [
+      { f: { $regex: String.raw`a\.b` } },
+      { f: { $regex: String.raw`^\(x\|y\)` } },
+      { f: { $not: { $regex: String.raw`1\+1$` } } },
+    ],
+  });
+  expect(formatQuery(q, { format: 'mongodb_query', context: { avoidFieldsAsKeys: true } })).toEqual(
+    {
+      $and: [
+        { $regexMatch: { input: '$f', regex: String.raw`a\.b` } },
+        { $regexMatch: { input: '$f', regex: String.raw`^\(x\|y\)` } },
+        { $not: { $regexMatch: { input: '$f', regex: String.raw`1\+1$` } } },
+      ],
+    }
+  );
+});
+
 it('independent combinators', () => {
   expectBoth(queryIC, {
     $or: [{ $and: [{ firstName: 'Test' }, { middleName: 'Test' }] }, { lastName: 'Test' }],

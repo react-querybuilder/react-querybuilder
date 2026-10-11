@@ -8,8 +8,9 @@ import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './ut
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
+// Backslashes escaped first so they can't consume the following quote/char
 const quote = (v: unknown, escapeQuotes?: boolean) =>
-  `"${typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`)}"`;
+  `"${typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll('\\', '\\\\').replaceAll(`"`, `\\"`)}"`;
 
 const negate = (clause: string, neg: boolean) => (neg ? `$not(${clause})` : clause);
 
@@ -43,7 +44,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     shouldRenderAsNumber(value, parseNumbers);
 
   const qfn = (f: unknown) =>
-    getQuotedFieldName(f as string, { quoteFieldNamesWith, fieldIdentifierSeparator });
+    getQuotedFieldName(f as string, { quoteFieldNamesWith, fieldIdentifierSeparator }, false);
 
   const matchEval = processMatchMode(rule);
 

@@ -354,6 +354,13 @@ export const dbTests = (
     },
     expectedResult: superUserList.filter(u => !u.madeUpName.startsWith('S')),
   },
+  containsRegexMetachar: {
+    query: {
+      combinator: 'and',
+      rules: [{ field: 'madeUpName', operator: 'contains', value: '.' }],
+    },
+    expectedResult: superUserList.filter(u => u.madeUpName.includes('.')),
+  },
   endsWith: {
     query: {
       combinator: 'and',
