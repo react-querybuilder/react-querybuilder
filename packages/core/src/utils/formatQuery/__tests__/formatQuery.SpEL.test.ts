@@ -123,6 +123,21 @@ it('parseNumbers', () => {
   );
 });
 
+it('escapes regex metacharacters in string-match values', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'contains', value: 'a.b' },
+      { field: 'f', operator: 'beginsWith', value: '(x|y)' },
+      { field: 'f', operator: 'endsWith', value: '1+1' },
+      { field: 'f', operator: 'beginsWith', value: 1.5 },
+    ],
+  };
+  expect(formatQuery(q, { format: 'spel', parseNumbers: true })).toBe(
+    String.raw`f matches '.*a\.b.*' and f matches '^\(x\|y\).*' and f matches '.*1\+1$' and f matches '^1\.5.*'`
+  );
+});
+
 it('preserveValueOrder', () => {
   expect(formatQuery(queryForPreserveValueOrder, { format: 'spel', parseNumbers: true })).toBe(
     `(f1 >= 12 and f1 <= 14) and (f2 >= 12 and f2 <= 14)`

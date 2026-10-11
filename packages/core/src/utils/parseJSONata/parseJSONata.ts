@@ -16,6 +16,8 @@ import type { ParserCommonOptions } from '../../types/import';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
+import type { RegexStringMatchOperator } from '../regexLiteral';
+import { regexToStringMatch } from '../regexLiteral';
 import type {
   JSONataExprNode,
   JSONataExpressionOperand,
@@ -255,6 +257,13 @@ function parseJSONata(
             operator: negatedLikeOperators[negatedExpr.operator],
           };
         }
+        if (
+          !isRuleGroup(negatedExpr) &&
+          negatedExpr.operator === '=' &&
+          isJSONataContains(expr.arguments[0])
+        ) {
+          return { ...negatedExpr, operator: '!=' };
+        }
         return ic
           ? ({ rules: [negatedExpr], not: true } as DefaultRuleGroupTypeIC)
           : ({
@@ -267,6 +276,7 @@ function parseJSONata(
       const [arg1, arg2] = expr.arguments;
       let field: string = '';
       let regex = '';
+      let operator: RegexStringMatchOperator = 'contains';
       let valueSource: ValueSource | undefined = undefined;
       // v8 ignore else
       if (isJSONataIdentifier(arg1)) {
@@ -276,8 +286,11 @@ function parseJSONata(
           valueSource = 'field';
         } else {
           // v8 ignore else
-          if (isJSONataString(arg2) || isJSONataRegex(arg2)) {
+          if (isJSONataString(arg2)) {
             regex = getValidValue(arg2);
+          } else if (isJSONataRegex(arg2)) {
+            // Reverse `formatQuery` templates (`/^x/` → beginsWith, etc.)
+            ({ operator, value: regex } = regexToStringMatch(getValidValue(arg2), 'find'));
           }
         }
       }
@@ -286,11 +299,11 @@ function parseJSONata(
       if (
         valueSource === 'field'
           ? fieldIsValid(field, 'contains', regex)
-          : fieldIsValid(field, 'contains')
+          : fieldIsValid(field, operator)
       ) {
         return {
           field,
-          operator: 'contains',
+          operator,
           value: regex,
           ...(valueSource ? { valueSource } : {}),
         };

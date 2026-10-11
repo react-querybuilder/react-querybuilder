@@ -17,6 +17,7 @@ import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
+import { regexToStringMatch } from '../regexLiteral';
 import type {
   ParseSpELExpressionContext,
   SpELExpressionNode,
@@ -138,6 +139,13 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
               .replace('s', '')}` as DefaultOperatorName,
           };
         }
+        if (
+          !isRuleGroup(negatedExpr) &&
+          negatedExpr.operator === '=' &&
+          isSpELOpMatches(expr.children[0])
+        ) {
+          return { ...negatedExpr, operator: '!=' };
+        }
         return ic
           ? ({ rules: [negatedExpr], not: true } as DefaultRuleGroupTypeIC)
           : ({
@@ -210,38 +218,17 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
         }
       }
 
-      if (/^(?!\^).*?(?<!\$)$/.test(regex)) {
+      if (valueSource === 'field') {
         // v8 ignore else
         if (fieldIsValid(field, 'contains')) {
-          return {
-            field,
-            operator: 'contains',
-            value: regex,
-            ...(valueSource ? { valueSource } : {}),
-          };
+          return { field, operator: 'contains', value: regex, valueSource };
         }
       } else {
-        if (/^\^.*?(?<!\$)$/.test(regex)) {
-          // v8 ignore else
-          if (fieldIsValid(field, 'beginsWith')) {
-            return {
-              field,
-              operator: 'beginsWith',
-              value: regex.replace(/^\^/, ''),
-            };
-          }
-        } else {
-          // v8 ignore else
-          if (/^(?!\^).*?\$$/.test(regex)) {
-            // v8 ignore else
-            if (fieldIsValid(field, 'endsWith')) {
-              return {
-                field,
-                operator: 'endsWith',
-                value: regex.replace(/\$$/, ''),
-              };
-            }
-          }
+        // `matches` is a full-string match; reverse `formatQuery` templates
+        const { operator, value } = regexToStringMatch(`${regex}`, 'full');
+        // v8 ignore else
+        if (fieldIsValid(field, operator)) {
+          return { field, operator, value };
         }
       }
     } else if (isSpELBetweenValues(expr) || isSpELBetweenFields(expr)) {

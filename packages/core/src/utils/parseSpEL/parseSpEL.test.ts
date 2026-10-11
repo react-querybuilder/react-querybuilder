@@ -1,6 +1,7 @@
 import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
+  DefaultOperatorName,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
@@ -9,6 +10,7 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types';
+import { formatQuery } from '../formatQuery';
 import { toFullOption } from '../optGroupUtils';
 import type { ParseSpELOptions } from './parseSpEL';
 import { parseSpEL } from './parseSpEL';
@@ -85,19 +87,28 @@ it('handles every letter within strings', () => {
 });
 
 it('handles "like" comparisons', () => {
+  // `matches` is a full-string match; unwrapped literal = equality
+  expectParseSpEL('f1 matches "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  expectParseSpEL('"Test" matches f1', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  expectParseSpEL('f1 matches "^Test$"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
   expectParseSpEL(
-    'f1 matches "Test"',
-    wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
-  );
-  expectParseSpEL('f1 matches "T"', wrapRule({ field: 'f1', operator: 'contains', value: 'T' }));
-  expectParseSpEL(
-    '"Test" matches f1',
-    wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
-  );
-  expectParseSpEL(
-    'f1.f2.f3 matches "Test"',
+    'f1.f2.f3 matches ".*Test.*"',
     wrapRule({ field: 'f1.f2.f3', operator: 'contains', value: 'Test' })
   );
+  expectParseSpEL(
+    'f1 matches ".*Test.*"',
+    wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
+  );
+  expectParseSpEL('f1 matches ".*.*"', wrapRule({ field: 'f1', operator: 'contains', value: '' }));
+  expectParseSpEL(
+    'f1 matches "^Test.*"',
+    wrapRule({ field: 'f1', operator: 'beginsWith', value: 'Test' })
+  );
+  expectParseSpEL(
+    'f1 matches ".*Test$"',
+    wrapRule({ field: 'f1', operator: 'endsWith', value: 'Test' })
+  );
+  // Legacy formatter output
   expectParseSpEL(
     'f1 matches "^Test"',
     wrapRule({ field: 'f1', operator: 'beginsWith', value: 'Test' })
@@ -108,6 +119,28 @@ it('handles "like" comparisons', () => {
     wrapRule({ field: 'f1', operator: 'endsWith', value: 'Test' })
   );
   expectParseSpEL('f1 matches "T$"', wrapRule({ field: 'f1', operator: 'endsWith', value: 'T' }));
+  // Escaped literals are unescaped; real regex syntax is kept as-is
+  expectParseSpEL(
+    String.raw`f1 matches ".*a\.b\$.*"`,
+    wrapRule({ field: 'f1', operator: 'contains', value: 'a.b$' })
+  );
+  expectParseSpEL(
+    String.raw`f1 matches "^\(a\|b\).*"`,
+    wrapRule({ field: 'f1', operator: 'beginsWith', value: '(a|b)' })
+  );
+  expectParseSpEL(
+    'f1 matches ".*a.b.*"',
+    wrapRule({ field: 'f1', operator: 'contains', value: 'a.b' })
+  );
+  expectParseSpEL(
+    String.raw`f1 matches "^\d+.*"`,
+    wrapRule({ field: 'f1', operator: 'beginsWith', value: String.raw`\d+` })
+  );
+  // Escaped suffix isn't a template suffix
+  expectParseSpEL(
+    String.raw`f1 matches "a\$"`,
+    wrapRule({ field: 'f1', operator: '=', value: 'a$' })
+  );
   expectParseSpEL(
     'f1 matches f2',
     wrapRule({ field: 'f1', operator: 'contains', value: 'f2', valueSource: 'field' })
@@ -116,17 +149,41 @@ it('handles "like" comparisons', () => {
 
 it('negates "matches" comparisons appropriately', () => {
   expectParseSpEL(
-    '!(f1 matches "Test")',
+    '!(f1 matches ".*Test.*")',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
   );
   expectParseSpEL(
-    '!(f1 matches "^Test")',
+    '!(f1 matches "^Test.*")',
     wrapRule({ field: 'f1', operator: 'doesNotBeginWith', value: 'Test' })
   );
   expectParseSpEL(
-    '!(f1 matches "Test$")',
+    '!(f1 matches ".*Test$")',
     wrapRule({ field: 'f1', operator: 'doesNotEndWith', value: 'Test' })
   );
+  expectParseSpEL('!(f1 matches "Test")', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
+  // `!` on a non-`matches` equality still produces a negated group
+  expectParseSpEL('!(f1 == "Test")', {
+    combinator: 'and',
+    not: true,
+    rules: [{ field: 'f1', operator: '=', value: 'Test' }],
+  });
+});
+
+it('round-trips formatQuery "spel" string-match output', () => {
+  const ops: DefaultOperatorName[] = [
+    'contains',
+    'beginsWith',
+    'endsWith',
+    'doesNotContain',
+    'doesNotBeginWith',
+    'doesNotEndWith',
+  ];
+  for (const operator of ops) {
+    for (const value of ['Stev', 'a.b', '(a|b)*[x]{2}?+^$y', 'x-y/z']) {
+      const rule = { field: 'f1', operator, value };
+      expectParseSpEL(formatQuery(wrapRule(rule), 'spel'), wrapRule(rule));
+    }
+  }
 });
 
 it('handles "between" operators', () => {
@@ -192,7 +249,7 @@ it.skip('handles parentheses', () => {
     ],
   });
   expectParseSpEL(
-    '(((f1 matches "Test")))',
+    '(((f1 matches ".*Test.*")))',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
 });
@@ -493,7 +550,7 @@ describe('fields and getValueSources', () => {
 });
 
 it('handles multiple negations', () => {
-  expectParseSpEL('!!!(f1 matches "Test")', {
+  expectParseSpEL('!!!(f1 matches ".*Test.*")', {
     combinator: 'and',
     not: true,
     rules: [
@@ -504,7 +561,7 @@ it('handles multiple negations', () => {
       },
     ],
   });
-  expectParseSpEL('!!!!(f1 matches "Test")', {
+  expectParseSpEL('!!!!(f1 matches ".*Test.*")', {
     combinator: 'and',
     not: true,
     rules: [
