@@ -101,7 +101,7 @@ const termToString = (term: TraqulaTerm): string => {
       case 'variable':
         return `?${term.value}`;
       case 'namedNode':
-        if (term.prefix !== undefined && term.prefix !== '') {
+        if (term.prefix !== undefined) {
           return `${term.prefix}:${term.value}`;
         }
         return term.value ?? '';
@@ -315,14 +315,17 @@ const negateRule = (rule: DefaultRuleType): DefaultRuleType => {
  */
 const ensurePrefixes = (sparql: string): string => {
   const declaredPrefixes = new Set<string>();
-  const prefixDeclRegex = /PREFIX\s+(\w*):/gi;
+  const prefixDeclRegex = /PREFIX\s+([\w.-]*):/gi;
   let m: RegExpExecArray | null;
   while ((m = prefixDeclRegex.exec(sparql)) !== null) {
-    declaredPrefixes.add(m[1].toLowerCase());
+    // Prefix names are case-sensitive (only the PREFIX keyword isn't)
+    declaredPrefixes.add(m[1]);
   }
 
   const usedPrefixes = new Set<string>();
-  const prefixUsageRegex = /\b(\w+):\w+/g;
+  // PN_PREFIX (optional; empty = default prefix) + ':' + local name start.
+  // Lookbehind excludes `_:` blank nodes, digits (e.g. times), and mid-token matches.
+  const prefixUsageRegex = /(?<![\w.\-?$:])((?:[A-Za-z](?:[\w.-]*\w)?)?):(?=\w)/g;
   while ((m = prefixUsageRegex.exec(sparql)) !== null) {
     const prefix = m[1];
     if (/^https?$/i.test(prefix) || /^urn$/i.test(prefix)) continue;
@@ -330,7 +333,7 @@ const ensurePrefixes = (sparql: string): string => {
     const lastOpen = before.lastIndexOf('<');
     const lastClose = before.lastIndexOf('>');
     if (lastOpen > lastClose) continue;
-    if (!declaredPrefixes.has(prefix.toLowerCase())) {
+    if (!declaredPrefixes.has(prefix)) {
       usedPrefixes.add(prefix);
     }
   }

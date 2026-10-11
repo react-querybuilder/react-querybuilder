@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "parameterized_named" format: generated param names replace non-word characters in the field name with `_` (e.g. `t.a` → `t_a_1` instead of `t.a_1`), since dots, spaces, etc. are invalid in named params. Names already taken by another field (e.g. `t_a`) are skipped. Output for plain-identifier field names is unchanged, but `params` keys change for other field names.
 - `quoteCypherIdentifier` normalizes `\u0060` escape sequences to backticks before doubling, since Neo4j decodes them inside quoted identifiers.
 - `parseCypher`/`parseGQL` no longer split identifiers that begin with a keyword (e.g. `notes` → `NOT es`, `order` → `OR der`, `index` → `IN dex`), which previously produced wrong rules or an empty result. `true`/`false`/`null` literals are now case-insensitive, `match`/`where`/`return` are accepted as field names, and `NOT x IN [...]` (as emitted by `formatQuery`'s "cypher" format) parses as `notIn`, so "cypher" output round-trips.
+- `parseSPARQL` no longer returns an empty result for queries using the empty (default) prefix (e.g. `?p :age ?age`), blank nodes (`_:b`), or prefix names containing `-`/`.` (e.g. `my-ns:a`), or for prefixes differing only in case from a declared one (prefix names are case-sensitive). Prefixed names using the empty prefix are now emitted as `:foo` (previously `foo`).
 
 ## [v8.24.4] - 2026-10-06
 
