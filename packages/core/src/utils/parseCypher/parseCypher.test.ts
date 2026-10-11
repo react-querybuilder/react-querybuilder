@@ -1,4 +1,5 @@
-import type { DefaultRuleType } from '../../types';
+import type { DefaultRuleGroupType, DefaultRuleType } from '../../types';
+import { formatQuery } from '../formatQuery';
 import { parseCypher, parseGQL } from './parseCypher';
 
 describe('parseCypher', () => {
@@ -139,5 +140,82 @@ describe('parseGQL', () => {
     expect((gql.rules[0] as DefaultRuleType).field).toBe(
       (cypher.rules[0] as DefaultRuleType).field
     );
+  });
+});
+
+describe('keyword-prefixed identifiers', () => {
+  it.each([
+    'notes',
+    'order',
+    'index',
+    'android',
+    'matches',
+    'wherever',
+    'returned',
+    'contains_x',
+    'nullable',
+    'trueValue',
+    'falsey',
+    'isNullish',
+  ])('parses field %s', field => {
+    expect(parseCypher(`${field} = 1`)).toEqual({
+      combinator: 'and',
+      rules: [{ field, operator: '=', value: 1 }],
+    });
+  });
+
+  it('does not split multi-word keywords', () => {
+    expect(parseCypher('NOT index = 1')).toEqual({
+      combinator: 'and',
+      rules: [
+        { combinator: 'and', not: true, rules: [{ field: 'index', operator: '=', value: 1 }] },
+      ],
+    });
+    expect(parseCypher('a IS NULLx')).toEqual({ combinator: 'and', rules: [] });
+  });
+
+  it('parses literals case-insensitively', () => {
+    expect(parseCypher('a = TRUE AND b = False AND c = NULL')).toEqual({
+      combinator: 'and',
+      rules: [
+        { field: 'a', operator: '=', value: true },
+        { field: 'b', operator: '=', value: false },
+        { field: 'c', operator: '=', value: null },
+      ],
+    });
+  });
+
+  it('parses clause keywords as field names', () => {
+    expect(parseCypher('match = 1 AND where = 2 AND p.return = 3')).toEqual({
+      combinator: 'and',
+      rules: [
+        { field: 'match', operator: '=', value: 1 },
+        { field: 'where', operator: '=', value: 2 },
+        { field: 'p.return', operator: '=', value: 3 },
+      ],
+    });
+    expect(parseCypher('WHERE where = 1')).toEqual({
+      combinator: 'and',
+      rules: [{ field: 'where', operator: '=', value: 1 }],
+    });
+  });
+
+  it('round-trips formatQuery cypher output with bare fields', () => {
+    const query: DefaultRuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+        { field: 'lastName', operator: 'endsWith', value: 'n' },
+        { field: 'notes', operator: 'contains', value: 'x' },
+        { field: 'order', operator: 'in', value: ['a', 'b'] },
+        { field: 'index', operator: 'notIn', value: ['c'] },
+        { field: 'age', operator: '>', value: 28 },
+        { field: 'android', operator: '<=', value: 3 },
+        { field: 'isMusician', operator: '=', value: true },
+        { field: 'nullable', operator: 'null', value: null },
+        { field: 'matches', operator: 'notNull', value: null },
+      ],
+    };
+    expect(parseCypher(formatQuery(query, 'cypher'))).toEqual(query);
   });
 });

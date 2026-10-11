@@ -17,27 +17,31 @@ const WhiteSpace = /* @__PURE__ */ createToken({
 });
 
 // Keywords (longer/multi-word first)
+// Identifier defined first so keywords can reference it as `longer_alt` (list order still matters)
+const Identifier = /* @__PURE__ */ createToken({ name: 'Identifier', pattern: /[a-zA-Z_]\w*/ });
+const kw = (name: string, pattern: RegExp) =>
+  createToken({ name, pattern, longer_alt: Identifier });
+
 const OptionalMatch = /* @__PURE__ */ createToken({
   name: 'OptionalMatch',
-  pattern: /OPTIONAL\s+MATCH/i,
-  longer_alt: undefined,
+  pattern: /OPTIONAL\s+MATCH\b/i,
 });
-const StartsWith = /* @__PURE__ */ createToken({ name: 'StartsWith', pattern: /STARTS\s+WITH/i });
-const EndsWith = /* @__PURE__ */ createToken({ name: 'EndsWith', pattern: /ENDS\s+WITH/i });
-const IsNotNull = /* @__PURE__ */ createToken({ name: 'IsNotNull', pattern: /IS\s+NOT\s+NULL/i });
-const IsNull = /* @__PURE__ */ createToken({ name: 'IsNull', pattern: /IS\s+NULL/i });
-const NotIn = /* @__PURE__ */ createToken({ name: 'NotIn', pattern: /NOT\s+IN/i });
-const Match = /* @__PURE__ */ createToken({ name: 'Match', pattern: /MATCH/i });
-const Where = /* @__PURE__ */ createToken({ name: 'Where', pattern: /WHERE/i });
-const Return = /* @__PURE__ */ createToken({ name: 'Return', pattern: /RETURN/i });
-const And = /* @__PURE__ */ createToken({ name: 'And', pattern: /AND/i });
-const Or = /* @__PURE__ */ createToken({ name: 'Or', pattern: /OR/i });
-const Not = /* @__PURE__ */ createToken({ name: 'Not', pattern: /NOT/i });
-const Contains = /* @__PURE__ */ createToken({ name: 'Contains', pattern: /CONTAINS/i });
-const In = /* @__PURE__ */ createToken({ name: 'In', pattern: /IN/i });
-const NullLit = /* @__PURE__ */ createToken({ name: 'NullLit', pattern: /null\b/ });
-const TrueLit = /* @__PURE__ */ createToken({ name: 'TrueLit', pattern: /true\b/ });
-const FalseLit = /* @__PURE__ */ createToken({ name: 'FalseLit', pattern: /false\b/ });
+const StartsWith = /* @__PURE__ */ createToken({ name: 'StartsWith', pattern: /STARTS\s+WITH\b/i });
+const EndsWith = /* @__PURE__ */ createToken({ name: 'EndsWith', pattern: /ENDS\s+WITH\b/i });
+const IsNotNull = /* @__PURE__ */ createToken({ name: 'IsNotNull', pattern: /IS\s+NOT\s+NULL\b/i });
+const IsNull = /* @__PURE__ */ createToken({ name: 'IsNull', pattern: /IS\s+NULL\b/i });
+const NotIn = /* @__PURE__ */ createToken({ name: 'NotIn', pattern: /NOT\s+IN\b/i });
+const Match = /* @__PURE__ */ kw('Match', /MATCH/i);
+const Where = /* @__PURE__ */ kw('Where', /WHERE/i);
+const Return = /* @__PURE__ */ kw('Return', /RETURN/i);
+const And = /* @__PURE__ */ kw('And', /AND/i);
+const Or = /* @__PURE__ */ kw('Or', /OR/i);
+const Not = /* @__PURE__ */ kw('Not', /NOT/i);
+const Contains = /* @__PURE__ */ kw('Contains', /CONTAINS/i);
+const In = /* @__PURE__ */ kw('In', /IN/i);
+const NullLit = /* @__PURE__ */ kw('NullLit', /null/i);
+const TrueLit = /* @__PURE__ */ kw('TrueLit', /true/i);
+const FalseLit = /* @__PURE__ */ kw('FalseLit', /false/i);
 
 // Literals
 const StringLiteral = /* @__PURE__ */ createToken({
@@ -70,9 +74,6 @@ const Dot = /* @__PURE__ */ createToken({ name: 'Dot', pattern: /\./ });
 const DashArrowRight = /* @__PURE__ */ createToken({ name: 'DashArrowRight', pattern: /->/ });
 const ArrowLeftDash = /* @__PURE__ */ createToken({ name: 'ArrowLeftDash', pattern: /<-/ });
 const Dash = /* @__PURE__ */ createToken({ name: 'Dash', pattern: /-/ });
-
-// Identifier (must come after all keywords)
-const Identifier = /* @__PURE__ */ createToken({ name: 'Identifier', pattern: /[a-zA-Z_]\w*/ });
 
 // Token order matters: longer patterns and keywords before shorter ones
 const allTokens = [
@@ -328,11 +329,21 @@ class CypherCstParser extends CstParser {
 
   /** Dotted property reference: alias.prop or just identifier */
   public propertyRef = this.RULE('propertyRef', () => {
-    this.CONSUME(Identifier, { LABEL: 'head' });
+    this.SUBRULE(this.propName, { LABEL: 'head' });
     this.MANY(() => {
       this.CONSUME(Dot);
-      this.CONSUME1(Identifier, { LABEL: 'tail' });
+      this.SUBRULE1(this.propName, { LABEL: 'tail' });
     });
+  });
+
+  /** Property name; clause keywords allowed (e.g. field named `match`) */
+  public propName = this.RULE('propName', () => {
+    this.OR([
+      { ALT: () => this.CONSUME(Identifier) },
+      { ALT: () => this.CONSUME(Match) },
+      { ALT: () => this.CONSUME(Where) },
+      { ALT: () => this.CONSUME(Return) },
+    ]);
   });
 
   /** A literal value */
@@ -410,12 +421,13 @@ const extractLiteral = (literalNode: CstNode): unknown => {
 };
 
 /** Builds a dotted property reference string from a propertyRef CST node. */
-const extractPropertyRef = (node: CstNode): string => {
-  const head = (node.children.head as IToken[])[0].image;
-  const tails = (node.children.tail as IToken[] | undefined) ?? [];
-  if (tails.length === 0) return head;
-  return head + '.' + tails.map(t => t.image).join('.');
-};
+const propNameImage = (node: CstNode): string =>
+  (Object.values(node.children)[0] as IToken[])[0].image;
+
+const extractPropertyRef = (node: CstNode): string =>
+  [...(node.children.head as CstNode[]), ...((node.children.tail as CstNode[] | undefined) ?? [])]
+    .map(propNameImage)
+    .join('.');
 
 /** Extracts list items from a listLiteral CST node. */
 const extractList = (node: CstNode): unknown[] => {
@@ -465,6 +477,12 @@ const visitNotExpression = (node: CstNode): RuleOrGroup[] => {
   const atomicRules = visitAtomicExpression((node.children.atomicExpression as CstNode[])[0]);
 
   if (!hasNot) return atomicRules;
+
+  // `NOT x IN [...]` (formatQuery's cypher output) → notIn
+  const atomic = (node.children.atomicExpression as CstNode[])[0];
+  if (atomic.children.condition && (atomicRules[0] as DefaultRuleType).operator === 'in') {
+    return [{ ...(atomicRules[0] as DefaultRuleType), operator: 'notIn' }];
+  }
 
   return [{ combinator: 'and', not: true, rules: atomicRules }];
 };
@@ -567,26 +585,22 @@ export function parseCypher(
   const trimmed = cypher.trim();
   if (!trimmed) return { combinator: 'and', rules: [] };
 
-  // Auto-detect input shape (like parseSQL)
-  let input = trimmed;
-  if (!/^\s*match\b/i.test(input) && !/^\s*where\b/i.test(input)) {
-    // Bare expression — prepend WHERE so the parser can handle it
-    input = `WHERE ${input}`;
-  }
-
   cypherLexer ??= new Lexer(allTokens);
   parserInstance ??= new CypherCstParser();
-  const lexResult = cypherLexer.tokenize(input);
-  if (lexResult.errors.length > 0) {
-    return { combinator: 'and', rules: [] };
-  }
+  const parser = parserInstance;
+  const tryParse = (input: string): CstNode | undefined => {
+    const lexResult = cypherLexer!.tokenize(input);
+    if (lexResult.errors.length > 0) return undefined;
+    parser.input = lexResult.tokens;
+    const cst = parser.cypherQuery();
+    return parser.errors.length > 0 ? undefined : cst;
+  };
 
-  parserInstance.input = lexResult.tokens;
-  const cst = parserInstance.cypherQuery();
-
-  if (parserInstance.errors.length > 0) {
-    return { combinator: 'and', rules: [] };
-  }
+  // Auto-detect input shape (like parseSQL). Leading `match`/`where` may be a field name
+  // (e.g. `match = 1`), so fall back to bare-expression parse on failure.
+  const looksLikeClause = /^(?:match|where)\b/i.test(trimmed);
+  const cst = (looksLikeClause ? tryParse(trimmed) : undefined) ?? tryParse(`WHERE ${trimmed}`);
+  if (!cst) return { combinator: 'and', rules: [] };
 
   const rules: RuleOrGroup[] = [];
 
