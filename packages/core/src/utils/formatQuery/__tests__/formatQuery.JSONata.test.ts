@@ -40,6 +40,17 @@ it('escapes quotes when appropriate', () => {
   expect(formatQuery(testQueryDQ, 'jsonata')).toEqual(`f1 = "Te\\"st"`);
 });
 
+it('escapes backslashes in string values', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: '=', value: 'a\\' },
+      { field: 'f', operator: 'contains', value: 'a\\"b' },
+    ],
+  };
+  expect(formatQuery(q, 'jsonata')).toBe(String.raw`f = "a\\" and $contains(f, "a\\\"b")`);
+});
+
 it('independent combinators', () => {
   expect(formatQuery(queryIC, 'jsonata')).toBe(
     `firstName = "Test" and middleName = "Test" or lastName = "Test"`

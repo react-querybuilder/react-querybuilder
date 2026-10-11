@@ -18,6 +18,7 @@ import { isPojo } from '../misc';
 import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
+import { regexToStringMatch } from '../regexLiteral';
 import type {
   MongoDBExpressionOperand,
   MongoDbSupportedOperators,
@@ -293,29 +294,11 @@ function parseMongoDB(
           return { field, operator, value: keyValue };
         }
       }
-    } else if (mdbOperator === '$regex' && /^[^$^]$|^[^^].*[^$]$/.test(getRegExStr(keyValue))) {
-      if (fieldIsValid(field, 'contains')) {
-        return {
-          field,
-          operator: 'contains',
-          value: getRegExStr(keyValue),
-        };
-      }
-    } else if (mdbOperator === '$regex' && /^\^.*[^$]/.test(getRegExStr(keyValue))) {
-      if (fieldIsValid(field, 'beginsWith')) {
-        return {
-          field,
-          operator: 'beginsWith',
-          value: getRegExStr(keyValue).replace(/^\^/, ''),
-        };
-      }
-    } else if (mdbOperator === '$regex' && /[^^].*\$/.test(getRegExStr(keyValue))) {
-      if (fieldIsValid(field, 'endsWith')) {
-        return {
-          field,
-          operator: 'endsWith',
-          value: getRegExStr(keyValue).replace(/\$$/, ''),
-        };
+    } else if (mdbOperator === '$regex') {
+      // Reverse `formatQuery` templates (`^x` → beginsWith, etc.); unescape plain literals
+      const { operator: op, value: v } = regexToStringMatch(getRegExStr(keyValue), 'find');
+      if (fieldIsValid(field, op)) {
+        return { field, operator: op, value: v };
       }
     } else if (mdbOperator === '$in' && Array.isArray(keyValue)) {
       if (fieldIsValid(field, 'in')) {
