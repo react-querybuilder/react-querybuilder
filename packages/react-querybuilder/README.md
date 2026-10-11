@@ -101,7 +101,7 @@ formatQuery(query, 'sql');
 
 ## Import
 
-To [import queries](https://react-querybuilder.js.org/docs/utils/import) use `parseSQL`, `parseMongoDB`, `parseJsonLogic`, `parseJSONata`, `parseCEL`, or `parseSpEL` depending on the source.
+To [import queries](https://react-querybuilder.js.org/docs/utils/import) use `parseSQL`, `parseMongoDB`, `parseJsonLogic`, `parseJSONata`, `parseCEL`, `parseSpEL`, `parseCypher`, `parseGQL`, `parseSPARQL`, or `parseGremlin` depending on the source.
 
 ```ts
 // Tip: `parseSQL` will accept either a full `SELECT` statement or a `WHERE` clause by itself.
@@ -133,14 +133,18 @@ console.log(query);
 
 ## Utilities
 
-`formatQuery`, `transformQuery`, and the `parse*` functions can be used without importing from `react` (on the server, for example) like this:
+`formatQuery`, `transformQuery`, `getQueryJsonSchema`, and the `parse*` functions can be used without importing from `react` (on the server, for example) like this:
 
 ```js
 import { formatQuery } from 'react-querybuilder/formatQuery';
+import { getQueryJsonSchema } from 'react-querybuilder/getQueryJsonSchema';
 import { parseCEL } from 'react-querybuilder/parseCEL';
+import { parseCypher, parseGQL } from 'react-querybuilder/parseCypher';
+import { parseGremlin } from 'react-querybuilder/parseGremlin';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';
 import { parseJsonLogic } from 'react-querybuilder/parseJsonLogic';
 import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
+import { parseSPARQL } from 'react-querybuilder/parseSPARQL';
 import { parseSpEL } from 'react-querybuilder/parseSpEL';
 import { parseSQL } from 'react-querybuilder/parseSQL';
 import { transformQuery } from 'react-querybuilder/transformQuery';
