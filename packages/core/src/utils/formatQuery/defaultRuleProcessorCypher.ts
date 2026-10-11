@@ -3,7 +3,7 @@ import { toArray, trimIfString } from '../arrayUtils';
 import { quoteCypherIdentifier, shouldRenderAsNumber } from './utils';
 
 const escapeSingleQuotes = (v: unknown, escapeQuotes?: boolean) =>
-  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll("'", "\\'");
+  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(/(['\\])/g, '\\$1');
 
 /**
  * Default rule processor used by {@link formatQuery} for "cypher" and "gql" formats.

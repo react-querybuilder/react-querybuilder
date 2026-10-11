@@ -3,7 +3,7 @@ import { toArray, trimIfString } from '../arrayUtils';
 import { shouldRenderAsNumber } from './utils';
 
 const escapeDoubleQuotes = (v: unknown, escapeQuotes?: boolean) =>
-  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`);
+  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(/(["\\])/g, '\\$1');
 
 /** Auto-prefix a SPARQL variable name with `?` unless it's already prefixed, a URI, or a prefixed name.
  *

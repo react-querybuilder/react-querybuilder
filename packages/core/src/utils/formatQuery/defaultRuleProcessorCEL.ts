@@ -9,7 +9,7 @@ import { processMatchMode, getSubqueryElementAlias, shouldRenderAsNumber } from 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
 const escapeDoubleQuotes = (v: unknown, escapeQuotes?: boolean) =>
-  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`);
+  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(/(["\\])/g, '\\$1');
 
 /**
  * Default rule processor used by {@link formatQuery} for "cel" format.

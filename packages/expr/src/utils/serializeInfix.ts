@@ -18,12 +18,27 @@ export interface InfixDialect {
   renderParameter?: (parameter: string, opts: ValueProcessorOptions) => string;
 }
 
+/**
+ * Escape style for quoted leaves: `backslash` escapes `\` and quote (`\\`, `\'`); `double`
+ * doubles quote (`''`, SpEL); `quote-only` backslash-escapes quote only (non-executable NL).
+ */
+export type QuoteEscapeStyle = 'backslash' | 'double' | 'quote-only';
+
 /** Quotes a non-numeric leaf value with `quote`, escaping embedded quote chars when asked. */
-export const quoteLeaf = (node: ValueNode, quote: string, opts: ValueProcessorOptions): string => {
+export const quoteLeaf = (
+  node: ValueNode,
+  quote: string,
+  opts: ValueProcessorOptions,
+  style: QuoteEscapeStyle = 'backslash'
+): string => {
   const v = coerceLeafValue(node, opts.parseNumbers);
   if (typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') return `${v}`;
   const s = `${v}`;
-  const escaped = opts.escapeQuotes ? s.replaceAll(quote, `\\${quote}`) : s;
+  const escaped = !opts.escapeQuotes
+    ? s
+    : style === 'double'
+      ? s.replaceAll(quote, `${quote}${quote}`)
+      : (style === 'backslash' ? s.replaceAll('\\', '\\\\') : s).replaceAll(quote, `\\${quote}`);
   return `${quote}${escaped}${quote}`;
 };
 

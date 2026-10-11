@@ -50,7 +50,7 @@ it('handles operator case variations', () => {
 });
 
 it('escapes quotes when appropriate', () => {
-  expect(formatQuery(testQuerySQ, 'spel')).toEqual(`f1 == 'Te\\'st'`);
+  expect(formatQuery(testQuerySQ, 'spel')).toEqual(`f1 == 'Te''st'`);
 });
 
 it('independent combinators', () => {

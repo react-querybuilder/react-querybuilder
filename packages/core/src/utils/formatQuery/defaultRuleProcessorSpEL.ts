@@ -12,7 +12,7 @@ const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('does
 const wrapInNegation = (clause: string, negate: boolean) => (negate ? `!(${clause})` : clause);
 
 const escapeSingleQuotes = (v: unknown, escapeQuotes?: boolean) =>
-  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`'`, `\\'`);
+  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`'`, `''`);
 
 /**
  * Default rule processor used by {@link formatQuery} for "spel" format.

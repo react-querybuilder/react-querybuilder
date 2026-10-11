@@ -10,7 +10,7 @@ const factory = makeStringExprProcessor({
   fallback: defaultRuleProcessorSpEL,
   dialect: {
     renderField: field => field,
-    renderLeaf: (node, opts) => quoteLeaf(node, `'`, opts),
+    renderLeaf: (node, opts) => quoteLeaf(node, `'`, opts, 'double'),
     renderParameter: parameter => parameter,
   },
   compare: { '=': '==', '!=': '!=', '<': '<', '<=': '<=', '>': '>', '>=': '>=' },

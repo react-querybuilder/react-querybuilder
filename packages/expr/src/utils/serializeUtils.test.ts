@@ -56,6 +56,14 @@ describe('serialize util defensive branches', () => {
     expect(quoteLeaf({ kind: 'value', value: 'a', valueType: 'text' }, `'`, {})).toBe(`'a'`);
   });
 
+  it('quoteLeaf escape styles', () => {
+    const node = { kind: 'value', value: String.raw`a\'b`, valueType: 'text' } as const;
+    const o = { escapeQuotes: true };
+    expect(quoteLeaf(node, `'`, o)).toBe(String.raw`'a\\\'b'`);
+    expect(quoteLeaf(node, `'`, o, 'double')).toBe(String.raw`'a\''b'`);
+    expect(quoteLeaf(node, `'`, o, 'quote-only')).toBe(String.raw`'a\\'b'`);
+  });
+
   it('serializeDrizzle coerces numeric value leaves when parseNumbers is set', () => {
     const ctx = { sql: dz.sql, columns: {} as Record<string, unknown> };
     expect(serializeDrizzle({ kind: 'value', value: '5' }, {}, ctx, { parseNumbers: true })).toBe(
