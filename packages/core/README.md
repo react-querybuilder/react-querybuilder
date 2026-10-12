@@ -42,6 +42,7 @@ formatQuery(query, 'sql');
 | SQL (parameterized)                                                             | `"parameterized"`         | `ParameterizedSQL`      | SQL with anonymous (`?`) bind variables     |
 | SQL (named params)                                                              | `"parameterized_named"`   | `ParameterizedNamedSQL` | SQL with named (`:param`) bind variables    |
 | [MongoDB](https://www.mongodb.com/)                                             | `"mongodb_query"`         | `Record<string, any>`   | MongoDB query object                        |
+| MongoDB (string)                                                                | `"mongodb"`               | `string`                | Deprecated; use `"mongodb_query"`           |
 | [CEL](https://cel.dev/)                                                         | `"cel"`                   | `string`                | Common Expression Language                  |
 | [SpEL](https://docs.spring.io/spring-framework/reference/core/expressions.html) | `"spel"`                  | `string`                | Spring Expression Language                  |
 | [JsonLogic](https://jsonlogic.com/)                                             | `"jsonlogic"`             | `JsonLogic`             | JsonLogic object                            |
@@ -49,12 +50,15 @@ formatQuery(query, 'sql');
 | [ElasticSearch](https://www.elastic.co/elasticsearch)                           | `"elasticsearch"`         | `Record<string, any>`   | ElasticSearch query DSL                     |
 | [LDAP](https://ldap.com/)                                                       | `"ldap"`                  | `string`                | LDAP filter string                          |
 | [Cypher](https://neo4j.com/docs/cypher-manual/current/)                         | `"cypher"`                | `string`                | Neo4j Cypher `WHERE` clause                 |
+| [GQL](https://www.iso.org/standard/76120.html)                                  | `"gql"`                   | `string`                | ISO GQL `WHERE` clause                      |
 | [SPARQL](https://www.w3.org/TR/sparql11-query/)                                 | `"sparql"`                | `string`                | SPARQL `FILTER` clause                      |
 | [Gremlin](https://tinkerpop.apache.org/gremlin.html)                            | `"gremlin"`               | `string`                | Apache TinkerPop Gremlin traversal          |
 | Natural language                                                                | `"natural_language"`      | `string`                | Human-readable description                  |
 | [Drizzle](https://orm.drizzle.team/)                                            | `"drizzle"`               | Drizzle `SQL`           | Drizzle ORM `where` clause                  |
 | [Prisma](https://www.prisma.io/)                                                | `"prisma"`                | `Record<string, any>`   | Prisma `where` object                       |
 | [Sequelize](https://sequelize.org/)                                             | `"sequelize"`             | `Record<string, any>`   | Sequelize `where` object                    |
+| [TanStack DB](https://tanstack.com/db)                                          | `"tanstack_db"`           | `function`              | Callback for TanStack DB `.where()`         |
+| Diagnostics                                                                     | `"diagnostics"`           | `DiagnosticsResult`     | Annotated tree, issues, stats               |
 
 See `@react-querybuilder/datetime` and `@react-querybuilder/expr` for additional, enhanced export capabilities.
 
@@ -122,6 +126,22 @@ const transformed = transformQuery(query, {
   propertyMap: { field: 'column' },
   ruleProcessor: rule => ({ ...rule, value: rule.value.trim() }),
 });
+```
+
+## `getQueryJsonSchema`
+
+[Full documentation](https://react-querybuilder.js.org/docs/utils/json-schema)
+
+Generates a JSON Schema describing valid queries for a `fields` config, for LLM structured output, tool input schemas (including MCP `inputSchema`), or validators like Ajv. Check results with the `"diagnostics"` export format, which covers constraints the schema can't express.
+
+```ts
+import { formatQuery, getQueryJsonSchema } from '@react-querybuilder/core';
+// or: import { getQueryJsonSchema } from '@react-querybuilder/core/getQueryJsonSchema';
+
+const schema = getQueryJsonSchema(fields, { strict: true });
+
+// After receiving `query` from the LLM:
+const { diagnostics } = formatQuery(query, { format: 'diagnostics', fields });
 ```
 
 ## TypeScript

@@ -4,6 +4,7 @@ import type {
   DiagnosticsResult,
   DiagnosticsStats,
   FullField,
+  FullOperator,
   RuleGroupDiagnosticsResult,
   RuleGroupICDiagnosticsArray,
   RuleGroupICDiagnosticsResult,
@@ -17,11 +18,13 @@ import type {
 import { toArray } from '../arrayUtils';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid, isValidationResult } from '../isRuleOrGroupValid';
-import { numericRegex } from '../misc';
-import { toFlatOptionArray } from '../optGroupUtils';
+import { lc, numericRegex } from '../misc';
+import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 
 const numericInputTypes = new Set(['number', 'range', 'bigint']);
-const listOperators = new Set(['in', 'notin', 'between', 'notbetween']);
+const betweenOps = new Set(['between', 'notbetween']);
+const inOps = new Set(['in', 'notin']);
+const listOperators = new Set([...betweenOps, ...inOps]);
 
 /** Rule value as list: arrays as-is, comma-split strings for list operators, else single. */
 const getValueList = (rule: RuleType): unknown[] =>
@@ -209,6 +212,8 @@ export const defaultRuleGroupProcessorDiagnostics: RuleGroupProcessor<Diagnostic
       });
     }
 
+    collectStructureDiagnostics(rg, path, diagnostics);
+
     let allChildrenValid = true;
     let ruleIndex = 0;
     const annotatedRules: (
@@ -265,6 +270,18 @@ export const defaultRuleGroupProcessorDiagnostics: RuleGroupProcessor<Diagnostic
         hasFieldsConfig,
         fieldsByName
       );
+
+      const fieldDef = fieldsByName.get(rule.field);
+      if (fieldDef && !rule.muted) {
+        collectFieldConfigDiagnostics(
+          rule,
+          childPath,
+          fieldDef,
+          diagnostics,
+          placeholderOperatorName,
+          placeholderValueName
+        );
+      }
 
       if (!ruleValid) {
         allChildrenValid = false;
@@ -528,4 +545,150 @@ const getFieldValidatorReasons = (
     }
   }
   return undefined;
+};
+
+/**
+ * Checks `rules` array shape: IC groups must alternate rule/group and combinator
+ * strings; standard groups must not contain strings. Diagnostic-only.
+ */
+const collectStructureDiagnostics = (
+  rg: RuleGroupTypeAny,
+  path: number[],
+  diagnostics: DiagnosticEntry[]
+): void => {
+  const id = rg.id ?? '';
+  const push = (message: string) =>
+    diagnostics.push({ id, path, code: 'INVALID_STRUCTURE', message, source: 'structure-check' });
+  const rules = rg.rules as unknown[];
+
+  if (isRuleGroupType(rg)) {
+    const idx = rules.findIndex(r => typeof r === 'string');
+    if (idx > -1) {
+      push(`Group has a combinator string at index ${idx}; only rules and groups are allowed`);
+    }
+    return;
+  }
+
+  // IC: even indexes = rule/group, odd = combinator string, odd length (or empty)
+  for (const [i, r] of rules.entries()) {
+    const isStr = typeof r === 'string';
+    if (i % 2 === 1 && !isStr) {
+      push(`Expected a combinator string at index ${i}`);
+      return;
+    }
+    if (i % 2 === 0 && isStr) {
+      push(`Expected a rule or group at index ${i}, found combinator "${r}"`);
+      return;
+    }
+  }
+  if (rules.length % 2 === 0 && rules.length > 0) {
+    push('Group ends with a combinator string');
+  }
+};
+
+/**
+ * Checks a rule against its field definition: operator membership (only when
+ * `field.operators` is defined), list arity for `between`/`in` operators, `values`
+ * membership for select-like editors, and boolean values for checkbox/switch editors.
+ * Diagnostic-only.
+ */
+const collectFieldConfigDiagnostics = (
+  rule: RuleType,
+  path: number[],
+  fieldDef: FullField,
+  diagnostics: DiagnosticEntry[],
+  placeholderOperatorName: string,
+  placeholderValueName: string | undefined
+): void => {
+  const id = rule.id ?? '';
+  const op = lc(rule.operator);
+
+  const fieldOps = fieldDef.operators
+    ? toFlatOptionArray(toFullOptionList<FullOperator>(fieldDef.operators as unknown[]))
+    : undefined;
+  const opDef = fieldOps?.find(o => o.name === rule.operator);
+
+  // Operator valid for field
+  if (fieldOps && !opDef && rule.operator !== placeholderOperatorName) {
+    diagnostics.push({
+      id,
+      path,
+      code: 'INVALID_OPERATOR',
+      message: `Operator "${rule.operator}" is not valid for field "${rule.field}"`,
+      source: 'field-check',
+    });
+  }
+
+  if (
+    op === 'null' ||
+    op === 'notnull' ||
+    opDef?.arity === 'unary' ||
+    (typeof opDef?.arity === 'number' && opDef.arity < 2) ||
+    (placeholderValueName !== undefined && rule.value === placeholderValueName)
+  ) {
+    return;
+  }
+
+  // List arity
+  const isBetween = betweenOps.has(op);
+  if (isBetween || inOps.has(op)) {
+    const count = toArray(rule.value).length;
+    if (isBetween ? count !== 2 : count === 0) {
+      diagnostics.push({
+        id,
+        path,
+        code: 'INVALID_VALUE_ARITY',
+        message: isBetween
+          ? `Operator "${rule.operator}" requires exactly 2 values; found ${count}`
+          : `Operator "${rule.operator}" requires at least 1 value`,
+        source: 'type-check',
+      });
+    }
+  }
+
+  if (rule.valueSource === 'field') return;
+
+  const vet =
+    typeof fieldDef.valueEditorType === 'function'
+      ? fieldDef.valueEditorType(rule.operator)
+      : fieldDef.valueEditorType;
+
+  // Boolean editors
+  if (vet === 'checkbox' || vet === 'switch') {
+    const v = rule.value;
+    if (typeof v !== 'boolean' && !(typeof v === 'string' && /^(true|false)$/i.test(v.trim()))) {
+      diagnostics.push({
+        id,
+        path,
+        code: 'VALUE_TYPE_MISMATCH',
+        message: `Value "${v}" is not a boolean (valueEditorType "${vet}")`,
+        source: 'type-check',
+      });
+    }
+    return;
+  }
+
+  // `values` membership (mirrors getQueryJsonSchema: any editor but text/textarea)
+  if (fieldDef.values && vet !== 'text' && vet !== 'textarea') {
+    const allowed = new Set(
+      toFlatOptionArray(toFullOptionList(fieldDef.values as unknown[])).map(v => `${v.name}`)
+    );
+    if (allowed.size === 0) return;
+    const list =
+      vet === 'multiselect' && typeof rule.value === 'string'
+        ? toArray(rule.value)
+        : getValueList(rule);
+    const invalid = list.filter(
+      v => v !== null && v !== undefined && v !== '' && !allowed.has(`${v}`)
+    );
+    if (invalid.length > 0) {
+      diagnostics.push({
+        id,
+        path,
+        code: 'VALUE_NOT_IN_OPTIONS',
+        message: `Value(s) ${invalid.map(v => `"${v}"`).join(', ')} not in the "values" list for field "${rule.field}"`,
+        source: 'type-check',
+      });
+    }
+  }
 };

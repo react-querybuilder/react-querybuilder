@@ -1432,4 +1432,219 @@ describe('formatQuery("diagnostics")', () => {
       expect(result.diagnostics.filter(d => d.code === 'UNDEFINED_FIELD')).toHaveLength(0);
     });
   });
+
+  describe('structure checks', () => {
+    const structure = (q: unknown) =>
+      formatQuery(q as DefaultRuleGroupType, 'diagnostics').diagnostics.filter(
+        d => d.source === 'structure-check'
+      );
+    const r = { field: 'f', operator: '=', value: 'v' };
+
+    it('accepts valid IC alternation', () => {
+      expect(structure({ rules: [] })).toEqual([]);
+      expect(structure({ rules: [r, 'and', { rules: [r, 'or', r] }] })).toEqual([]);
+    });
+
+    it('flags missing combinator in IC group', () => {
+      expect(structure({ id: 'g', rules: [r, r] })).toEqual([
+        {
+          id: 'g',
+          path: [],
+          code: 'INVALID_STRUCTURE',
+          message: 'Expected a combinator string at index 1',
+          source: 'structure-check',
+        },
+      ]);
+    });
+
+    it('flags combinator in rule position in IC group', () => {
+      const [d] = structure({ rules: ['and', r] });
+      expect(d.message).toBe('Expected a rule or group at index 0, found combinator "and"');
+      expect(d.id).toBe('');
+    });
+
+    it('flags trailing combinator in IC group', () => {
+      expect(structure({ rules: [r, 'and'] }).map(d => d.message)).toEqual([
+        'Group ends with a combinator string',
+      ]);
+    });
+
+    it('flags nested IC group w/ path', () => {
+      expect(structure({ rules: [r, 'and', { rules: [r, r] }] })[0].path).toEqual([2]);
+    });
+
+    it('flags combinator strings in standard group', () => {
+      expect(structure({ combinator: 'and', rules: [r, 'or', r] }).map(d => d.message)).toEqual([
+        'Group has a combinator string at index 1; only rules and groups are allowed',
+      ]);
+    });
+
+    it('does not affect validity', () => {
+      const result = formatQuery({ rules: [r, r] } as unknown as DefaultRuleGroupTypeIC, {
+        format: 'diagnostics',
+      });
+      expect(result.query.valid).toBe(true);
+    });
+  });
+
+  describe('field config checks', () => {
+    const fields = [
+      { name: 'status', label: 'Status', operators: [{ name: '=', label: '=' }] },
+      {
+        name: 'grouped',
+        label: 'Grouped',
+        operators: [{ label: 'G', options: [{ name: 'in', label: 'in' }] }],
+      },
+      { name: 'age', label: 'Age' },
+      {
+        name: 'color',
+        label: 'Color',
+        valueEditorType: 'select' as const,
+        values: [
+          { label: 'Warm', options: [{ name: 'red', label: 'Red' }] },
+          { label: 'Cool', options: [{ name: 'blue', label: 'Blue' }] },
+        ],
+      },
+      {
+        name: 'tags',
+        label: 'Tags',
+        valueEditorType: 'multiselect' as const,
+        values: [
+          { name: 'a', label: 'A' },
+          { name: 'b', label: 'B' },
+        ],
+      },
+      {
+        name: 'freeText',
+        label: 'Free',
+        valueEditorType: 'text' as const,
+        values: [{ name: 'x', label: 'X' }],
+      },
+      { name: 'emptyValues', label: 'Empty', values: [] },
+      { name: 'active', label: 'Active', valueEditorType: 'checkbox' as const },
+      {
+        name: 'flag',
+        label: 'Flag',
+        valueEditorType: 'checkbox' as const,
+        operators: [
+          { name: 'isOn', label: 'on', arity: 'unary' as const },
+          { name: 'isOff', label: 'off', arity: 1 },
+          { name: 'eq', label: 'eq', arity: 2 },
+        ],
+      },
+      {
+        name: 'dyn',
+        label: 'Dyn',
+        valueEditorType: (op: string) => (op === '=' ? ('switch' as const) : ('text' as const)),
+      },
+    ];
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const codes = (rules: any[], extra: object = {}) =>
+      formatQuery(
+        { combinator: 'and', rules } as DefaultRuleGroupType,
+        { format: 'diagnostics', fields, ...extra } as { format: 'diagnostics' }
+      )
+        .diagnostics.filter(d => d.code !== 'UNREFERENCED_FIELD')
+        .map(d => [d.code, d.message]);
+
+    it('flags operator not in field.operators (incl. optgroups)', () => {
+      expect(codes([{ field: 'status', operator: '!=', value: 'x' }])).toEqual([
+        ['INVALID_OPERATOR', 'Operator "!=" is not valid for field "status"'],
+      ]);
+      expect(codes([{ field: 'status', operator: '=', value: 'x' }])).toEqual([]);
+      expect(codes([{ field: 'grouped', operator: 'in', value: 'x' }])).toEqual([]);
+    });
+
+    it('skips operator check when field has no operators or operator is placeholder', () => {
+      expect(codes([{ field: 'age', operator: 'whatever', value: '1' }])).toEqual([]);
+      expect(
+        codes([{ field: 'status', operator: defaultPlaceholderOperatorName, value: 'x' }])
+      ).toEqual([['PLACEHOLDER_OPERATOR', 'Rule has a placeholder operator']]);
+    });
+
+    it('flags between arity', () => {
+      expect(codes([{ field: 'age', operator: 'between', value: [1] }])).toEqual([
+        ['INVALID_VALUE_ARITY', 'Operator "between" requires exactly 2 values; found 1'],
+      ]);
+      expect(codes([{ field: 'age', operator: 'notBetween', value: '1,2,3' }])).toEqual([
+        ['INVALID_VALUE_ARITY', 'Operator "notBetween" requires exactly 2 values; found 3'],
+      ]);
+      expect(codes([{ field: 'age', operator: 'between', value: '1,2' }])).toEqual([]);
+    });
+
+    it('flags empty in list', () => {
+      expect(codes([{ field: 'age', operator: 'notIn', value: [] }])).toEqual([
+        ['INVALID_VALUE_ARITY', 'Operator "notIn" requires at least 1 value'],
+      ]);
+      expect(codes([{ field: 'age', operator: 'in', value: 'x' }])).toEqual([]);
+    });
+
+    it('skips value checks for unary operators and placeholder values', () => {
+      expect(codes([{ field: 'color', operator: 'null', value: 'zzz' }])).toEqual([]);
+      expect(codes([{ field: 'color', operator: 'notNull', value: 'zzz' }])).toEqual([]);
+      expect(codes([{ field: 'flag', operator: 'isOn', value: 'zzz' }])).toEqual([]);
+      expect(codes([{ field: 'flag', operator: 'isOff', value: 'zzz' }])).toEqual([]);
+      expect(codes([{ field: 'flag', operator: 'eq', value: 'zzz' }])).toHaveLength(1);
+      expect(
+        codes([{ field: 'color', operator: 'between', value: '~' }], { placeholderValueName: '~' })
+      ).toEqual([['PLACEHOLDER_VALUE', 'Rule has a placeholder value']]);
+    });
+
+    it('flags values not in options (incl. optgroups)', () => {
+      expect(codes([{ field: 'color', operator: '=', value: 'green' }])).toEqual([
+        ['VALUE_NOT_IN_OPTIONS', 'Value(s) "green" not in the "values" list for field "color"'],
+      ]);
+      expect(codes([{ field: 'color', operator: '=', value: 'blue' }])).toEqual([]);
+      expect(codes([{ field: 'color', operator: '=', value: '' }])).toEqual([]);
+      expect(codes([{ field: 'color', operator: 'in', value: ['red', 'x', null] }])).toEqual([
+        ['VALUE_NOT_IN_OPTIONS', 'Value(s) "x" not in the "values" list for field "color"'],
+      ]);
+    });
+
+    it('splits multiselect string values', () => {
+      expect(codes([{ field: 'tags', operator: '=', value: 'a,b' }])).toEqual([]);
+      expect(codes([{ field: 'tags', operator: '=', value: 'a,c' }])).toEqual([
+        ['VALUE_NOT_IN_OPTIONS', 'Value(s) "c" not in the "values" list for field "tags"'],
+      ]);
+      expect(codes([{ field: 'tags', operator: '=', value: ['a', 'z'] }])).toHaveLength(1);
+    });
+
+    it('skips options check for text editors, empty values, and field value source', () => {
+      expect(codes([{ field: 'freeText', operator: '=', value: 'nope' }])).toEqual([]);
+      expect(codes([{ field: 'emptyValues', operator: '=', value: 'nope' }])).toEqual([]);
+      expect(
+        codes([{ field: 'color', operator: '=', value: 'status', valueSource: 'field' }])
+      ).toEqual([]);
+    });
+
+    it('flags non-boolean values for checkbox/switch editors', () => {
+      expect(codes([{ field: 'active', operator: '=', value: 'yes' }])).toEqual([
+        ['VALUE_TYPE_MISMATCH', 'Value "yes" is not a boolean (valueEditorType "checkbox")'],
+      ]);
+      expect(codes([{ field: 'active', operator: '=', value: true }])).toEqual([]);
+      expect(codes([{ field: 'active', operator: '=', value: ' FALSE ' }])).toEqual([]);
+      expect(codes([{ field: 'dyn', operator: '=', value: 1 }])).toEqual([
+        ['VALUE_TYPE_MISMATCH', 'Value "1" is not a boolean (valueEditorType "switch")'],
+      ]);
+      expect(codes([{ field: 'dyn', operator: '!=', value: 1 }])).toEqual([]);
+    });
+
+    it('skips muted rules and unknown fields', () => {
+      expect(codes([{ field: 'status', operator: '!=', value: 'x', muted: true }])).toEqual([
+        ['MUTED', 'Rule is muted'],
+      ]);
+      expect(codes([{ field: 'nope', operator: 'between', value: [] }]).map(c => c[0])).toEqual([
+        'UNDEFINED_FIELD',
+      ]);
+    });
+
+    it('does not affect validity', () => {
+      const result = formatQuery(
+        { combinator: 'and', rules: [{ field: 'status', operator: '!=', value: 'x' }] },
+        { format: 'diagnostics', fields }
+      );
+      expect(result.query.valid).toBe(true);
+      expect(result.stats.invalidRules).toBe(0);
+    });
+  });
 });

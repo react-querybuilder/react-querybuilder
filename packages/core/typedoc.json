@@ -2,6 +2,7 @@
   "entryPoints": [
     "src/index.ts",
     "src/utils/formatQuery/index.ts",
+    "src/utils/getQueryJsonSchema.ts",
     "src/utils/parseCEL/index.ts",
     "src/utils/parseCypher/index.ts",
     "src/utils/parseGremlin/index.ts",

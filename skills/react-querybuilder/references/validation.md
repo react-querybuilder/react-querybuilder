@@ -58,7 +58,7 @@ formatQuery(query, { format: 'parameterized', fields, validator: defaultValidato
 
 `formatQuery(query, { format: 'diagnostics', fields, validator })` returns `{ query, diagnostics, stats, fieldSummary }`:
 
-- `diagnostics`: `{ id, path, code, message, source }[]`. Codes: `MUTED`, `PLACEHOLDER_FIELD`, `PLACEHOLDER_OPERATOR`, `PLACEHOLDER_VALUE`, `CUSTOM_VALIDATOR`, `UNDEFINED_FIELD`, `UNREFERENCED_FIELD`, `VALUE_TYPE_MISMATCH`.
+- `diagnostics`: `{ id, path, code, message, source }[]`. Codes: `MUTED`, `PLACEHOLDER_FIELD`, `PLACEHOLDER_OPERATOR`, `PLACEHOLDER_VALUE`, `CUSTOM_VALIDATOR`, `UNDEFINED_FIELD`, `UNREFERENCED_FIELD`, `VALUE_TYPE_MISMATCH`, `INVALID_OPERATOR`, `INVALID_VALUE_ARITY`, `VALUE_NOT_IN_OPTIONS`, `INVALID_STRUCTURE` (last 4 are v8.25+; they and `VALUE_TYPE_MISMATCH` don't affect `valid`).
 - `stats`: rule/group counts, valid/invalid.
 - `UNDEFINED_FIELD` (only with `fields`) marks the rule invalid (`valid: false`, counted in `stats.invalidRules`, invalidates ancestor groups) as of v8.25; before that it was informational. `VALUE_TYPE_MISMATCH` is informational and is skipped for `valueSource: 'field'` rules (v8.25+).
 - Diagnostics never change other formats' output: an unknown field still exports. Check codes yourself.

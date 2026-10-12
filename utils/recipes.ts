@@ -12,7 +12,7 @@ import path from 'node:path';
 import type { FormatConfig } from 'oxfmt';
 import { format } from 'oxfmt';
 import type { ExportFormat, Field, RuleGroupType } from '../packages/core/src';
-import { formatQuery } from '../packages/core/src';
+import { formatQuery, getQueryJsonSchema } from '../packages/core/src';
 
 const root = path.join(import.meta.dirname, '..');
 // Current docs + latest version (served at /docs)
@@ -237,6 +237,21 @@ const genParsers = async () => {
     .join('\n\n');
 };
 
+const genJsonSchema = () =>
+  [
+    '## JSON Schema (`getQueryJsonSchema`)',
+    'JSON Schema for queries matching `fields`, for LLM structured output/tool inputs or Ajv. Loose mode shown for brevity; the default `full` mode also constrains operators and values per field. Check the result with the `diagnostics` format. See [JSON Schema](../utils/json-schema).',
+    fence(
+      'ts',
+      `import { getQueryJsonSchema } from '@react-querybuilder/core';\n\ngetQueryJsonSchema(fields, { mode: 'loose', operators: ['=', 'in'] });`
+    ),
+    fence(
+      'json',
+      show(getQueryJsonSchema(fields, { mode: 'loose', operators: ['=', 'in'] })),
+      'Output'
+    ),
+  ].join('\n\n');
+
 const content = `${header}
 ${genFormats()}
 
@@ -245,6 +260,8 @@ ${genFormats()}
 Parsers return a \`RuleGroupType\` without \`id\`s. Most parsers return list values (\`in\`, \`between\`) as comma-separated strings unless you pass \`{ listsAsArrays: true }\`. Pass \`{ fields }\` to drop unknown fields, and \`{ independentCombinators: true }\` for \`RuleGroupTypeIC\`. Use \`prepareRuleGroup\` before passing the result to a controlled \`<QueryBuilder query>\`.
 
 ${await genParsers()}
+
+${genJsonSchema()}
 `;
 
 // `format()` doesn't read `.oxfmtrc.json` itself

@@ -41,6 +41,16 @@
         "default": "./dist/formatQuery.js"
       }
     },
+    "./getQueryJsonSchema": {
+      "import": {
+        "types": "./dist/getQueryJsonSchema.d.mts",
+        "default": "./dist/getQueryJsonSchema.mjs"
+      },
+      "require": {
+        "types": "./dist/getQueryJsonSchema.d.ts",
+        "default": "./dist/getQueryJsonSchema.js"
+      }
+    },
     "./parseCEL": {
       "import": {
         "types": "./dist/parseCEL.d.mts",
@@ -148,6 +158,7 @@
     "dist",
     "derivations",
     "formatQuery",
+    "getQueryJsonSchema",
     "parseCEL",
     "parseCypher",
     "parseGremlin",

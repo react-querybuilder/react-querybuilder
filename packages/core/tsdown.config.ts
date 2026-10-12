@@ -8,6 +8,7 @@ export default defineConfig(async options => {
   const utilEntryPoints = {
     derivations: 'src/derivations.ts',
     formatQuery: 'src/utils/formatQuery/index.ts',
+    getQueryJsonSchema: 'src/utils/getQueryJsonSchema.ts',
     parseCEL: 'src/utils/parseCEL/index.ts',
     parseCypher: 'src/utils/parseCypher/index.ts',
     parseGremlin: 'src/utils/parseGremlin/index.ts',

@@ -16,6 +16,7 @@ export * from './getMatchModesUtil';
 export * from './getParseNumberMethod';
 export * from './getRuleDefaultValue';
 export * from './getValidationClassNames';
+export * from './getQueryJsonSchema';
 export * from './getValueSourcesUtil';
 export * from './isRuleGroup';
 export * from './isRuleOrGroupValid';

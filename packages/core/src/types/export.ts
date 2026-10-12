@@ -666,7 +666,10 @@ export interface DiagnosticEntry {
    * - `"query-validator"` — the query-level validator
    * - `"field-validator"` — a field-level validator
    * - `"type-check"` — value/type mismatch based on field `inputType`
-   * - `"field-check"` — field existence check against the `fields` config
+   * - `"type-check"` also covers `between`/`in` value arity, `values` membership, and
+   *   boolean values for checkbox/switch editors
+   * - `"field-check"` — field existence and operator validity against the `fields` config
+   * - `"structure-check"` — `rules` array shape (e.g. independent combinator alternation)
    */
   source:
     | 'placeholder'
@@ -674,7 +677,8 @@ export interface DiagnosticEntry {
     | 'query-validator'
     | 'field-validator'
     | 'type-check'
-    | 'field-check';
+    | 'field-check'
+    | 'structure-check';
 }
 
 /**

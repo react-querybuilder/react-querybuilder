@@ -26,6 +26,7 @@ export * from './export';
 export * from './expression';
 export * from './history';
 // export * from './import';
+export * from './jsonSchema';
 export * from './options';
 export * from './queryBuilder';
 export * from './ruleGroups';

@@ -32,6 +32,7 @@ export * from './utils/generateAccessibleDescription';
 export * from './utils/generateID';
 export * from './utils/getMatchModesUtil';
 export * from './utils/getParseNumberMethod';
+export * from './utils/getQueryJsonSchema';
 export * from './utils/getRuleDefaultValue';
 export * from './utils/getValidationClassNames';
 export * from './utils/getValueSourcesUtil';
