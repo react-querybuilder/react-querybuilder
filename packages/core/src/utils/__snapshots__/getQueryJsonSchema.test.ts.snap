@@ -93,3 +93,97 @@ exports[`getQueryJsonSchema > loose mode 1`] = `
   "type": "object",
 }
 `;
+
+exports[`getQueryJsonSchema generates default schema 1`] = `
+{
+  "properties": {
+    "combinator": {
+      "enum": [
+        "and",
+        "or",
+      ],
+      "type": "string",
+    },
+    "not": {
+      "type": "boolean",
+    },
+    "rules": {
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/rule",
+          },
+          {
+            "$ref": "#/$defs/group",
+          },
+        ],
+      },
+      "type": "array",
+    },
+  },
+  "required": [
+    "combinator",
+    "rules",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`getQueryJsonSchema loose mode 1`] = `
+{
+  "properties": {
+    "field": {
+      "enum": [
+        "firstName",
+        "lastName",
+        "age",
+        "dob",
+        "color",
+        "tags",
+        "isMember",
+        "active",
+        "nickname",
+        "alias",
+      ],
+      "type": "string",
+    },
+    "operator": {
+      "enum": [
+        "=",
+        "!=",
+        "<",
+        ">",
+        "<=",
+        ">=",
+        "contains",
+        "beginsWith",
+        "endsWith",
+        "doesNotContain",
+        "doesNotBeginWith",
+        "doesNotEndWith",
+        "null",
+        "notNull",
+        "in",
+        "notIn",
+        "between",
+        "notBetween",
+      ],
+      "type": "string",
+    },
+    "value": {},
+    "valueSource": {
+      "enum": [
+        "value",
+        "field",
+      ],
+      "type": "string",
+    },
+  },
+  "required": [
+    "field",
+    "operator",
+    "value",
+  ],
+  "type": "object",
+}
+`;
