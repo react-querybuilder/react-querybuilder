@@ -324,10 +324,12 @@ export const handleValidateQuery: (args: ValidateQueryArgs) => Promise<ToolResul
         path: [],
       });
     }
-    const { diagnostics } = formatQuery(rg, {
-      format: 'diagnostics',
-      fields: fields as FullField[],
-    });
+    // formatQuery ignores object-map fields; normalize to array (key → name/value)
+    const fieldList: FullField[] = Array.isArray(fields)
+      ? (fields as FullField[])
+      : // oxlint-disable-next-line oxc/no-map-spread
+        Object.entries(fields).map(([name, f]) => ({ ...(f as FullField), name, value: name }));
+    const { diagnostics } = formatQuery(rg, { format: 'diagnostics', fields: fieldList });
     errors.push(...diagnostics.filter(d => !warningCodes.has(d.code)).map(toIssue));
     const warnings = diagnostics.filter(d => warningCodes.has(d.code)).map(toIssue);
     const valid = errors.length === 0;

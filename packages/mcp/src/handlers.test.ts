@@ -266,6 +266,20 @@ describe('handleValidateQuery', () => {
     expect((sc(r).errors as { message: string }[])[0].message).toMatch('Expected RuleGroupTypeIC');
   });
 
+  test('object-map fields', async () => {
+    const r = await handleValidateQuery({
+      query: {
+        combinator: 'and',
+        rules: [
+          { field: 'a', operator: '=', value: 'x' },
+          { field: 'nope', operator: '=', value: 'x' },
+        ],
+      },
+      fields: { a: { label: 'A' } },
+    });
+    expect((sc(r).errors as { code: string }[]).map(e => e.code)).toEqual(['UNDEFINED_FIELD']);
+  });
+
   test('shape errors short-circuit', async () => {
     const r = await handleValidateQuery({ query: { rules: [{}] }, fields });
     expect(sc(r).valid).toBe(false);

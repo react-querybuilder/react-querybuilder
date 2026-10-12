@@ -63,6 +63,8 @@ export const headingText = (md: string): string =>
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[`*_]/g, '')
     .replace(/<[^>]+>/g, '')
+    // Drop stray angle brackets (nested/malformed tags; CodeQL js/incomplete-multi-character-sanitization)
+    .replace(/[<>]/g, '')
     .trim();
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
