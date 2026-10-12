@@ -98,6 +98,8 @@ const config: Config = {
           {
             entryPointStrategy: 'packages',
             entryPoints: ['../packages/*'],
+            // MCP server: CLI package, no public API docs
+            exclude: ['../packages/mcp'],
             out: './api',
             json: typedocJsonPath,
             cleanOutputDir: false,
