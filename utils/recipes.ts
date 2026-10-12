@@ -20,7 +20,6 @@ const [latest] = (await Bun.file(path.join(root, 'website/versions.json')).json(
 const outFiles = ['website/docs', `website/versioned_docs/version-${latest}`].map(d =>
   path.join(root, d, 'tips/recipes.mdx')
 );
-const [currentOutFile] = outFiles;
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First name' },
@@ -238,7 +237,6 @@ const genParsers = async () => {
     .join('\n\n');
 };
 
-// Unreleased: current docs only. Move into `content` once released.
 const genJsonSchema = () =>
   [
     '## JSON Schema (`getQueryJsonSchema`)',
@@ -262,6 +260,8 @@ ${genFormats()}
 Parsers return a \`RuleGroupType\` without \`id\`s. Most parsers return list values (\`in\`, \`between\`) as comma-separated strings unless you pass \`{ listsAsArrays: true }\`. Pass \`{ fields }\` to drop unknown fields, and \`{ independentCombinators: true }\` for \`RuleGroupTypeIC\`. Use \`prepareRuleGroup\` before passing the result to a controlled \`<QueryBuilder query>\`.
 
 ${await genParsers()}
+
+${genJsonSchema()}
 `;
 
 // `format()` doesn't read `.oxfmtrc.json` itself
@@ -273,9 +273,8 @@ const check = process.argv.includes('--check');
 let drift = false;
 
 for (const outFile of outFiles) {
-  const fullContent = outFile === currentOutFile ? `${content}\n${genJsonSchema()}\n` : content;
   // oxlint-disable-next-line no-await-in-loop
-  const next = (await format(outFile, fullContent, fmtConfig)).code;
+  const next = (await format(outFile, content, fmtConfig)).code;
   const file = Bun.file(outFile);
   // oxlint-disable-next-line no-await-in-loop
   const current = (await file.exists()) ? await file.text() : '';
