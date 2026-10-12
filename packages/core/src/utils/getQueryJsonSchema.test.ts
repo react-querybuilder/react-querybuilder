@@ -345,11 +345,23 @@ describe('getQueryJsonSchema', () => {
     });
   });
 
-  it('field source w/ no comparable fields is omitted', () => {
-    const schema = getQueryJsonSchema([
-      { name: 'a', label: 'A', valueSources: ['field'], comparator: () => false, operators: ['='] },
-    ]);
-    expect(schema.$defs?.rule.anyOf).toEqual([]);
+  it('field source w/ no comparable fields is omitted; no branches -> loose rule', () => {
+    const get = (opts?: GetQueryJsonSchemaOptions) =>
+      getQueryJsonSchema(
+        [
+          {
+            name: 'a',
+            label: 'A',
+            valueSources: ['field'],
+            comparator: () => false,
+            operators: ['='],
+          },
+        ],
+        opts
+      );
+    const schema = get();
+    expect(schema.$defs?.rule.anyOf).toBeUndefined();
+    expect(schema.$defs?.rule).toEqual(get({ mode: 'loose' }).$defs?.rule);
   });
 
   it('operator arity, text editor w/ values, time hints', () => {

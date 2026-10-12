@@ -306,6 +306,7 @@ export const getQueryJsonSchema = (
   const ruleSchema = ((): JSONSchema => {
     if (mode === 'loose' || flatFields.length === 0) return looseRule();
     const branches = flatFields.flatMap(f => fieldBranches(f));
+    if (branches.length === 0) return looseRule();
     return branches.length === 1 ? branches[0] : { anyOf: branches };
   })();
 

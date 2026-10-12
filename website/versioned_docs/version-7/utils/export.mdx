@@ -801,7 +801,7 @@ A rule is considered invalid if any of the following are true:
 - The rule fails validation via the `validator` option or a field-level `validator`
 - The `field`, `operator`, or `value` matches its respective placeholder name
 
-The root-level `valid` property is `true` only when the group itself is valid _and_ all descendant rules and groups are valid, making it suitable for gating API calls.
+The root-level `valid` property is `true` only when the group itself is valid _and_ all descendant rules and groups are valid. Some diagnostics (e.g. `INVALID_OPERATOR`) don't affect `valid`, so before executing a query, reject any `diagnostics` you consider actionable and enforce a server-side whitelist of fields and operators.
 
 #### Flat diagnostics array
 
