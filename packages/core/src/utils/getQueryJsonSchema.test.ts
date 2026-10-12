@@ -137,7 +137,18 @@ describe('getQueryJsonSchema', () => {
     const schema = getQueryJsonSchema(fields);
     expect(schema.$ref).toBe('#/$defs/group');
     expect(schema.$schema).toBeUndefined();
-    expect(schema.$defs?.group).toMatchSnapshot();
+    expect(schema.$defs?.group).toEqual({
+      type: 'object',
+      properties: {
+        combinator: { type: 'string', enum: ['and', 'or'] },
+        not: { type: 'boolean' },
+        rules: {
+          type: 'array',
+          items: { anyOf: [{ $ref: '#/$defs/rule' }, { $ref: '#/$defs/group' }] },
+        },
+      },
+      required: ['combinator', 'rules'],
+    });
     expect(schema.$defs?.rule.anyOf?.length).toBeGreaterThan(fields.length);
   });
 
@@ -266,7 +277,52 @@ describe('getQueryJsonSchema', () => {
 
   it('loose mode', () => {
     const schema = getQueryJsonSchema(fields, { mode: 'loose' });
-    expect(schema.$defs?.rule).toMatchSnapshot();
+    expect(schema.$defs?.rule).toEqual({
+      type: 'object',
+      properties: {
+        field: {
+          type: 'string',
+          enum: [
+            'firstName',
+            'lastName',
+            'age',
+            'dob',
+            'color',
+            'tags',
+            'isMember',
+            'active',
+            'nickname',
+            'alias',
+          ],
+        },
+        operator: {
+          type: 'string',
+          enum: [
+            '=',
+            '!=',
+            '<',
+            '>',
+            '<=',
+            '>=',
+            'contains',
+            'beginsWith',
+            'endsWith',
+            'doesNotContain',
+            'doesNotBeginWith',
+            'doesNotEndWith',
+            'null',
+            'notNull',
+            'in',
+            'notIn',
+            'between',
+            'notBetween',
+          ],
+        },
+        value: {},
+        valueSource: { type: 'string', enum: ['value', 'field'] },
+      },
+      required: ['field', 'operator', 'value'],
+    });
     expectValid(schema, {
       combinator: 'and',
       rules: [{ field: 'age', operator: 'in', value: 'x' }],
