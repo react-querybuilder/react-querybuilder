@@ -7,9 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.25.0] - 2026-10-12
+
 ### Added
 
-- [#1112] `parseCypher`, `parseGQL`, `parseGremlin`, and `parseSPARQL` accept `fields` and `getValueSources` options. When `fields` is provided, rules with unknown fields are dropped (and empty groups pruned), matching the other parsers. Field names are matched as emitted (e.g. `n.age` for Cypher, `?age` for SPARQL).
+- [#1114] New `@react-querybuilder/mcp` package: a local (stdio) [Model Context Protocol](https://modelcontextprotocol.io) server that gives coding agents the library's real query tooling and docs matching the installed version. Run it with `npx -y @react-querybuilder/mcp` (requires Node.js 20+). Setup for Claude Code, opencode, Cursor, and VS Code is on the [AI](https://react-querybuilder.js.org/docs/ai) docs page.
+  - **Tools:** `format_query`, `parse_query`, `convert_query` (parse + format in one step, also returning the intermediate query), `validate_query` (checks a query against a `fields` config), `get_query_schema` (`getQueryJsonSchema` output), `search_docs`, and `get_doc` (a page or `#anchor` section as markdown).
+  - **Resources:** `rqb://docs/{slug}` (every docs page) and `rqb://types/{name}` (key type declarations, e.g. `RuleGroupType`, `FormatQueryOptions`, `QueryBuilderProps`).
+  - **Prompts:** `setup_query_builder` and `convert_filter`.
+  - **Programmatic use:** `createServer()` connects to any MCP transport, and the tool handlers (e.g. `handleConvertQuery`) are exported as plain async functions.
+  - **Limits:** ORM formats (`drizzle`, `prisma`, `sequelize`, `tanstack_db`) aren't available, because they need live ORM objects. `fields` input accepts only the JSON-serializable subset of `Field`, so function props like `validator` aren't supported.
 - [#1113] New `getQueryJsonSchema(fields, options?)` utility generates a JSON Schema describing valid queries for a `fields` config, for use as LLM structured-output/tool input schemas, MCP `inputSchema`, or with generic validators like Ajv. It is exported from the root of `@react-querybuilder/core` and `react-querybuilder`, from `@react-querybuilder/core/derivations`, and from a new `/getQueryJsonSchema` subpath in both packages.
   - **Output:** only keywords that mean the same thing in draft-07 and 2020-12. No `$schema` unless `includeSchemaDeclaration: true`.
   - **Full mode** (default) constrains each field's operators and values. Values are typed from `values`, `valueEditorType`, and `inputType`, and `between`/`in` values become lists. When the `"field"` value source is allowed, the value must name a comparable field. **Loose mode** (`mode: "loose"`) only restricts the field and operator names, for large `fields` configs.
@@ -23,14 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `VALUE_NOT_IN_OPTIONS` (`"type-check"`): values not in the field's `values` (skipped when `valueEditorType` is `"text"`/`"textarea"`).
   - `VALUE_TYPE_MISMATCH` also covers non-boolean values for `"checkbox"`/`"switch"` value editors.
   - New checks need `fields` (except `INVALID_STRUCTURE`) and skip muted rules. Value checks skip unary operators and placeholder values.
-- [#1113] New [JSON Schema](https://react-querybuilder.js.org/docs/utils/json-schema) docs page.
-- [#1114] New `@react-querybuilder/mcp` package: a local (stdio) [Model Context Protocol](https://modelcontextprotocol.io) server that gives coding agents the library's real query tooling and docs matching the installed version. Run it with `npx -y @react-querybuilder/mcp` (requires Node.js 20+). Setup for Claude Code, opencode, Cursor, and VS Code is on the [AI](https://react-querybuilder.js.org/docs/ai) docs page.
-  - **Tools:** `format_query`, `parse_query`, `convert_query` (parse + format in one step, also returning the intermediate query), `validate_query` (checks a query against a `fields` config), `get_query_schema` (`getQueryJsonSchema` output), `search_docs`, and `get_doc` (a page or `#anchor` section as markdown).
-  - **Resources:** `rqb://docs/{slug}` (every docs page) and `rqb://types/{name}` (key type declarations, e.g. `RuleGroupType`, `FormatQueryOptions`, `QueryBuilderProps`).
-  - **Prompts:** `setup_query_builder` and `convert_filter`.
-  - **Programmatic use:** `createServer()` connects to any MCP transport, and the tool handlers (e.g. `handleConvertQuery`) are exported as plain async functions.
-  - **Limits:** ORM formats (`drizzle`, `prisma`, `sequelize`, `tanstack_db`) aren't available, because they need live ORM objects. `fields` input accepts only the JSON-serializable subset of `Field`, so function props like `validator` aren't supported.
 - [#1114] The `react-querybuilder` agent skill now tells agents to use the MCP server's tools when it's available.
+- [#1112] `parseCypher`, `parseGQL`, `parseGremlin`, and `parseSPARQL` accept `fields` and `getValueSources` options. When `fields` is provided, rules with unknown fields are dropped (and empty groups pruned), matching the other parsers. Field names are matched as emitted (e.g. `n.age` for Cypher, `?age` for SPARQL).
 
 ### Fixed
 
@@ -2610,7 +2611,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.4...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.25.0...HEAD
+[v8.25.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.4...v8.25.0
 [v8.24.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.3...v8.24.4
 [v8.24.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.2...v8.24.3
 [v8.24.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.1...v8.24.2
