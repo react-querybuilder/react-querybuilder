@@ -23,13 +23,19 @@ The skill is a standard `SKILL.md` directory, so any installer works, or you can
 
 ## MCP server
 
-:::info[Coming soon]
-
-`@react-querybuilder/mcp` is not published yet. The configuration below shows how it will be set up.
-
-:::
-
 `@react-querybuilder/mcp` is a local (stdio) [Model Context Protocol](https://modelcontextprotocol.io) server. Its tools format, parse, convert, and validate queries using the real library code, generate JSON Schemas for queries, and search these docs (pinned to the installed version).
+
+| Tool               | Purpose                                                                                  |
+| ------------------ | ---------------------------------------------------------------------------------------- |
+| `format_query`     | Query object → any non-ORM export format (incl. `natural_language`)                      |
+| `parse_query`      | SQL, CEL, MongoDB, JsonLogic, SpEL, JSONata, Cypher, GQL, Gremlin, SPARQL → query object |
+| `convert_query`    | Parse + format in one step                                                               |
+| `validate_query`   | Check a query against a `fields` config                                                  |
+| `get_query_schema` | [`getQueryJsonSchema`](./utils/json-schema) output                                       |
+| `search_docs`      | Search these docs                                                                        |
+| `get_doc`          | Fetch a docs page/section as markdown                                                    |
+
+It also exposes docs pages (`rqb://docs/{slug}`) and key type declarations (`rqb://types/{name}`) as resources, plus `setup_query_builder` and `convert_filter` prompts. Requires Node.js 20+.
 
 <Tabs>
 <TabItem value="claude" label="Claude Code">

@@ -2,6 +2,17 @@
 // entire run, which the shared DB harnesses need: they're process-wide, so no single test file
 // can own their teardown.
 import { afterAll } from 'bun:test';
+import path from 'node:path';
+
+// `@react-querybuilder/mcp` imports its (gitignored) generated docs index; build it if missing
+const mcpDocsIndex = path.join(
+  import.meta.dirname,
+  '../../packages/mcp/src/generated/docs-index.json'
+);
+if (!(await Bun.file(mcpDocsIndex).exists())) {
+  const { writeDocsIndex } = await import('../build-mcp-docs-index');
+  await writeDocsIndex();
+}
 
 afterAll(async () => {
   // Flag checks first: set only once a harness boots, so runs that never touch a DB skip

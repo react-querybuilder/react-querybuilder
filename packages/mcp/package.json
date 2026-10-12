@@ -1,0 +1,67 @@
+{
+  "name": "@react-querybuilder/mcp",
+  "description": "MCP server for React Query Builder: format, parse, convert, and validate queries; search docs",
+  "version": "8.24.4",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "rqb-mcp": "./dist/cli.mjs"
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/mcp"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/docs/ai",
+  "keywords": [
+    "react-querybuilder",
+    "querybuilder",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "agent",
+    "query",
+    "sql",
+    "mongodb",
+    "jsonlogic",
+    "cel"
+  ],
+  "scripts": {
+    "build": "bun run build:index && bun --bun tsdown",
+    "build:index": "bun ../../utils/build-mcp-docs-index.ts",
+    "typecheck": "../../node_modules/typescript/bin/tsc --noEmit",
+    "typecheck:watch": "../../node_modules/typescript/bin/tsc --noEmit --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.3.1",
+    "@react-querybuilder/core": "8.24.4",
+    "@traqula/parser-sparql-1-2": "catalog:",
+    "chevrotain": "catalog:",
+    "jsonata": "catalog:",
+    "minisearch": "^7.2.0",
+    "spel2js": "catalog:"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.3.1",
+    "typescript": "catalog:"
+  }
+}

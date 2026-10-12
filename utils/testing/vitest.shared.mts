@@ -16,9 +16,12 @@ const config: UserConfig = {
     alias: {
       'react-querybuilder': path.join(root, 'packages/react-querybuilder/src'),
       '@react-querybuilder/core/parseCEL': path.join(coreUtils, 'parseCEL'),
+      '@react-querybuilder/core/parseCypher': path.join(coreUtils, 'parseCypher'),
+      '@react-querybuilder/core/parseGremlin': path.join(coreUtils, 'parseGremlin'),
       '@react-querybuilder/core/parseJSONata': path.join(coreUtils, 'parseJSONata'),
       '@react-querybuilder/core/parseJsonLogic': path.join(coreUtils, 'parseJsonLogic'),
       '@react-querybuilder/core/parseMongoDB': path.join(coreUtils, 'parseMongoDB'),
+      '@react-querybuilder/core/parseSPARQL': path.join(coreUtils, 'parseSPARQL'),
       '@react-querybuilder/core/parseSpEL': path.join(coreUtils, 'parseSpEL'),
       '@react-querybuilder/core/parseSQL': path.join(coreUtils, 'parseSQL'),
       '@react-querybuilder/core': path.join(root, 'packages/core/src'),

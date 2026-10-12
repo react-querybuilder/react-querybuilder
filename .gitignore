@@ -49,6 +49,8 @@ packages/*/transformQuery/package.json
 packages/*/skills/
 # Extracted by utils/skill-snippets.ts
 skills/__tests__/snippets/
+# Built by utils/build-mcp-docs-index.ts
+packages/mcp/src/generated/
 
 # website/api is (re)generated when running `bun web` or `bun website:build`...
 website/api/*
