@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/core",
-  "version": "8.24.4",
+  "version": "8.25.0",
   "type": "commonjs",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
