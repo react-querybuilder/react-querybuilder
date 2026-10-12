@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@react-querybuilder/core": ["../core/src"],
+      "@react-querybuilder/core/*": ["../core/src/utils/*"],
+      "@rqb-utils": ["../core/src/utils"]
+    }
+  },
+  "include": ["./*.ts", "./*.mts", "./src/"]
+}

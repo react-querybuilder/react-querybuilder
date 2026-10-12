@@ -53,13 +53,13 @@
     "typecheck:watch": "../../node_modules/typescript/bin/tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@testing-library/react-native": "^14.0.0",
+    "@testing-library/react-native": "^14.1.0",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "~0.87.1",
-    "react-native-web": "~0.21.3",
+    "react-native-web": "~0.21.4",
     "react-querybuilder": "8.24.4",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",

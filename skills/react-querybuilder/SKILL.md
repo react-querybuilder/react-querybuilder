@@ -18,6 +18,24 @@ This skill targets **react-querybuilder v8** and its companion packages (`@react
 
 Never invent props or options. Verify against the installed `.d.ts`: `QueryBuilderProps` (`react-querybuilder`), `FormatQueryOptions` and `ParserCommonOptions` (`@react-querybuilder/core`).
 
+## MCP server
+
+If the `rqb` MCP server (`@react-querybuilder/mcp`) is available, use its tools instead of hand-writing conversions or guessing output. They run the real library code:
+
+| Tool               | Use for                                                                                 |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| `convert_query`    | One-step conversion (e.g. SQL → MongoDB); also returns the intermediate RQB query       |
+| `format_query`     | RQB query → any `formatQuery` format; `natural_language` to explain a query             |
+| `parse_query`      | SQL/CEL/MongoDB/JsonLogic/SpEL/JSONata/Cypher/GQL/Gremlin/SPARQL → RQB query            |
+| `validate_query`   | Check a query against `fields` (shape, operators, value arity/types)                    |
+| `get_query_schema` | JSON Schema for valid queries (`getQueryJsonSchema`)                                    |
+| `search_docs`      | Search docs matching the server's version; follow up with `get_doc` (page or `#anchor`) |
+
+- Pass `fields` whenever you have them; they make parsing, formatting, and validation more accurate. Only the JSON-serializable subset of `Field` works (no `validator` or other functions).
+- ORM formats (`drizzle`, `prisma`, `sequelize`, `tanstack_db`) aren't available over MCP. See [export-formats](references/export-formats.md).
+- Resources: `rqb://docs/{slug}`, `rqb://types/{name}` (e.g. `RuleGroupType`, `FormatQueryOptions`, `QueryBuilderProps`).
+- Not configured? Suggest adding it (e.g. `claude mcp add rqb -- npx -y @react-querybuilder/mcp`). Setup for other clients: https://react-querybuilder.js.org/docs/ai
+
 ## Decision tree
 
 | Need                                                    | Read                                                                   |

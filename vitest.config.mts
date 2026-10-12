@@ -34,6 +34,7 @@ const projects: Record<string, AnsiBg> = {
   fluent: 'greenBright', // #7fba00
   mantine: 'blueBright', // #339af0
   material: 'blue', // #007fff
+  mcp: 'white', // MCP server
   native: 'cyanBright', // #61dafb
   prime: 'cyan', // #06b6d4
   'react-querybuilder': 'blueBright', // #82a7dd
@@ -63,6 +64,8 @@ const config: UserConfig = defineConfig({
         'packages/core/src/utils/parse{CEL,SQL}/{cel,sql}Parser.ts',
         'packages/core/src/utils/parse{Cypher,Gremlin,SPARQL}/parse{Cypher,Gremlin,SPARQL}.ts',
         'packages/rules-engine/src/components/**',
+        // Stdio bootstrap; covered by cli.test.ts in a child process
+        'packages/mcp/src/cli.ts',
       ],
       thresholds: { branches: 100, functions: 100, lines: 100, statements: 100 },
     },

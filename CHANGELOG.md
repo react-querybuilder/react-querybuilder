@@ -24,6 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `VALUE_TYPE_MISMATCH` also covers non-boolean values for `"checkbox"`/`"switch"` value editors.
   - New checks need `fields` (except `INVALID_STRUCTURE`) and skip muted rules. Value checks skip unary operators and placeholder values.
 - [#1113] New [JSON Schema](https://react-querybuilder.js.org/docs/utils/json-schema) docs page.
+- [#1114] New `@react-querybuilder/mcp` package: a local (stdio) [Model Context Protocol](https://modelcontextprotocol.io) server that gives coding agents the library's real query tooling and docs matching the installed version. Run it with `npx -y @react-querybuilder/mcp` (requires Node.js 20+). Setup for Claude Code, opencode, Cursor, and VS Code is on the [AI](https://react-querybuilder.js.org/docs/ai) docs page.
+  - **Tools:** `format_query`, `parse_query`, `convert_query` (parse + format in one step, also returning the intermediate query), `validate_query` (checks a query against a `fields` config), `get_query_schema` (`getQueryJsonSchema` output), `search_docs`, and `get_doc` (a page or `#anchor` section as markdown).
+  - **Resources:** `rqb://docs/{slug}` (every docs page) and `rqb://types/{name}` (key type declarations, e.g. `RuleGroupType`, `FormatQueryOptions`, `QueryBuilderProps`).
+  - **Prompts:** `setup_query_builder` and `convert_filter`.
+  - **Programmatic use:** `createServer()` connects to any MCP transport, and the tool handlers (e.g. `handleConvertQuery`) are exported as plain async functions.
+  - **Limits:** ORM formats (`drizzle`, `prisma`, `sequelize`, `tanstack_db`) aren't available, because they need live ORM objects. `fields` input accepts only the JSON-serializable subset of `Field`, so function props like `validator` aren't supported.
+- [#1114] The `react-querybuilder` agent skill now tells agents to use the MCP server's tools when it's available.
 
 ### Fixed
 
@@ -2597,6 +2604,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1109]: https://github.com/react-querybuilder/react-querybuilder/issues/1109
 [#1112]: https://github.com/react-querybuilder/react-querybuilder/issues/1112
 [#1113]: https://github.com/react-querybuilder/react-querybuilder/issues/1113
+[#1114]: https://github.com/react-querybuilder/react-querybuilder/issues/1114
 
 <!-- #endregion -->
 

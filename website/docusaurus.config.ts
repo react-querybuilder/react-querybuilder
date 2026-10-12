@@ -98,6 +98,8 @@ const config: Config = {
           {
             entryPointStrategy: 'packages',
             entryPoints: ['../packages/*'],
+            // MCP server: CLI package, no public API docs
+            exclude: ['../packages/mcp'],
             out: './api',
             json: typedocJsonPath,
             cleanOutputDir: false,
@@ -186,7 +188,7 @@ const config: Config = {
                 title: 'MCP server (@react-querybuilder/mcp)',
                 url: 'https://www.npmjs.com/package/@react-querybuilder/mcp',
                 description:
-                  'Coming soon. Stdio MCP server: format/parse/convert/validate queries, docs search.',
+                  'Stdio MCP server (`npx -y @react-querybuilder/mcp`): format/parse/convert/validate queries, JSON Schema, docs search.',
               },
             ],
             depth: 2,
