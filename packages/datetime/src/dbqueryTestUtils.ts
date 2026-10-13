@@ -129,7 +129,7 @@ export const INSERT_MUSICIANS = (platform: SQLPlatform, table: string = 'musicia
     .map(
       musician =>
         `INSERT INTO ${table} (first_name, middle_name, last_name, birthdate, created_at, updated_at)
-VALUES ('${musician.first_name}', '${musician.middle_name}', '${musician.last_name}', ${datePrefix}'${musician.birthdate}', ${now}, ${now})`
+VALUES ('${musician.first_name}', ${musician.middle_name === null ? 'NULL' : `'${musician.middle_name}'`}, '${musician.last_name}', ${datePrefix}'${musician.birthdate}', ${now}, ${now})`
     )
     .join(';\n');
 };
