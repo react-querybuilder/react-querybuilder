@@ -41,7 +41,13 @@ const makeHarness = (
   const pool = memo(async (): Promise<SQL> => {
     globalThis[flag] = true;
     const { SQL } = await import('bun');
-    const db = new SQL({ url: process.env[envVar]!, adapter: 'mysql', max: 4 });
+    const db = new SQL({
+      url: process.env[envVar]!,
+      adapter: 'mysql',
+      max: 4,
+      // MySQL 8.4 `caching_sha2_password` over non-TLS needs RSA key fetch (test containers only)
+      allowPublicKeyRetrieval: true,
+    });
     await db.unsafe('SELECT 1');
     return db;
   });
