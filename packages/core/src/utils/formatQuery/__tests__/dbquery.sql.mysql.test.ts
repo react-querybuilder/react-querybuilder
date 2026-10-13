@@ -269,6 +269,26 @@ for (const t of targets) {
           expect(await run(String.raw`\' or 1=1 or '`, format)).toEqual([]);
         });
       }
+
+      // `\` is LIKE escape char in MySQL; must match literally
+      for (const [operator, value] of [
+        ['contains', '\\'],
+        ['beginsWith', 'a\\'],
+        ['endsWith', 'a\\'],
+      ] as const) {
+        for (const format of ['sql', 'parameterized'] as const) {
+          test(`${operator} w/ backslash (${format})`, async () => {
+            const fq = formatQuery(
+              { combinator: 'and', rules: [{ field: col, operator, value }] },
+              { format, preset: 'mysql' }
+            ) as unknown as string | { sql: string; params: unknown[] };
+            const [where, params] = typeof fq === 'string' ? [fq, []] : [fq.sql, fq.params];
+            expect(
+              await t.query(`SELECT id FROM ${tbl} WHERE ${where} ORDER BY id`, params)
+            ).toEqual([{ id: 4 }]);
+          });
+        }
+      }
     });
   });
 }

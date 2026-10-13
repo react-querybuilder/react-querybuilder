@@ -98,6 +98,10 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   const quoteValue = (v: unknown) =>
     `${wrapValueWith[0]}${quoteChar}${v}${quoteChar}${wrapValueWith[1]}`;
   const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes, preset);
+  // MySQL `LIKE` treats `\` as escape char; double for LIKE (also applies to bound params), then
+  // again for string literal if `escapeQuotes`
+  const escapeLikeValue = (v: unknown) =>
+    escapeValue(preset === 'mysql' && typeof v === 'string' ? v.replaceAll('\\', '\\\\') : v);
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: unknown) =>
     getQuotedFieldName(v as string, { quoteFieldNamesWith, fieldIdentifierSeparator });
@@ -181,19 +185,19 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     case 'doesnotcontain':
       return valueIsField
         ? wrapLikeFragment(wrapFieldName(value), operatorLowerCase, likeOpts)
-        : quoteValue(`%${escapeValue(value)}%`);
+        : quoteValue(`%${escapeLikeValue(value)}%`);
 
     case 'beginswith':
     case 'doesnotbeginwith':
       return valueIsField
         ? wrapLikeFragment(wrapFieldName(value), operatorLowerCase, likeOpts)
-        : quoteValue(`${escapeValue(value)}%`);
+        : quoteValue(`${escapeLikeValue(value)}%`);
 
     case 'endswith':
     case 'doesnotendwith':
       return valueIsField
         ? wrapLikeFragment(wrapFieldName(value), operatorLowerCase, likeOpts)
-        : quoteValue(`%${escapeValue(value)}`);
+        : quoteValue(`%${escapeLikeValue(value)}`);
   }
 
   if (typeof value === 'boolean') {

@@ -122,6 +122,8 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     concatOperator,
     fieldData,
     format,
+    // For MySQL `LIKE` backslash escaping
+    preset: opts?.preset,
   });
 
   const sqlOperator = operatorProcessor(rule, opts);

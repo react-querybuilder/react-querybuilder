@@ -461,8 +461,46 @@ describe('backslashes in string values', () => {
         '`f`' +
         String.raw` = 'a\\'' or 1=1 or ''x' and ` +
         '`f`' +
-        String.raw` like '%b\\\\%')`
+        String.raw` like '%b\\\\\\\\%')`
     );
+  });
+
+  it('escapes backslashes for LIKE then string literal for mysql preset', () => {
+    const q = (operator: string): RuleGroupType => ({
+      combinator: 'and',
+      rules: [{ field: 'f', operator, value: 'a\\' }],
+    });
+    expect(formatQuery(q('contains'), { preset: 'mysql' })).toBe(
+      String.raw`(` + '`f`' + String.raw` like '%a\\\\%')`
+    );
+    expect(formatQuery(q('beginsWith'), { preset: 'mysql' })).toBe(
+      String.raw`(` + '`f`' + String.raw` like 'a\\\\%')`
+    );
+    expect(formatQuery(q('endsWith'), { preset: 'mysql' })).toBe(
+      String.raw`(` + '`f`' + String.raw` like '%a\\\\')`
+    );
+    expect(formatQuery(q('='), { preset: 'mysql' })).toBe(
+      String.raw`(` + '`f`' + String.raw` = 'a\\')`
+    );
+  });
+
+  it('escapes backslashes for LIKE in params for mysql preset', () => {
+    const q = (operator: string): RuleGroupType => ({
+      combinator: 'and',
+      rules: [{ field: 'f', operator, value: 'a\\' }],
+    });
+    const p = (operator: string) =>
+      formatQuery(q(operator), { format: 'parameterized', preset: 'mysql' });
+    expect(p('contains').params).toEqual(['%a\\\\%']);
+    expect(p('beginsWith').params).toEqual(['a\\\\%']);
+    expect(p('endsWith').params).toEqual(['%a\\\\']);
+    expect(p('=').params).toEqual(['a\\']);
+    expect(
+      formatQuery(q('contains'), { format: 'parameterized_named', preset: 'mysql' }).params
+    ).toEqual({ f_1: '%a\\\\%' });
+    expect(
+      formatQuery(q('contains'), { format: 'parameterized', preset: 'postgresql' }).params
+    ).toEqual(['%a\\%']);
   });
 
   it('leaves backslashes alone for other presets', () => {
