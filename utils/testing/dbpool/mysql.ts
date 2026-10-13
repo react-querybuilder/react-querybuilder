@@ -42,7 +42,11 @@ const makeHarness = (
     globalThis[flag] = true;
     const { SQL } = await import('bun');
     const db = new SQL({
-      url: process.env[envVar] ?? (() => { throw new Error(`${envVar} is not set`); })(),
+      url:
+        process.env[envVar] ??
+        (() => {
+          throw new Error(`${envVar} is not set`);
+        })(),
       adapter: 'mysql',
       max: 4,
       // MySQL 8.4 `caching_sha2_password` over non-TLS needs RSA key fetch (test containers only)
