@@ -10,9 +10,19 @@ import {
   wrapLikeFragment,
 } from './utils';
 
-const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
+// MySQL/MariaDB (default `sql_mode`) treat `\` as an escape char in string literals; double it
+// so a trailing backslash can't escape the closing quote
+const escapeStringValueQuotes = (
+  v: unknown,
+  quoteChar: string,
+  escapeQuotes?: boolean,
+  preset?: string
+) =>
   escapeQuotes && typeof v === 'string'
-    ? v.replaceAll(`${quoteChar}`, `${quoteChar}${quoteChar}`)
+    ? (preset === 'mysql' ? v.replaceAll('\\', '\\\\') : v).replaceAll(
+        `${quoteChar}`,
+        `${quoteChar}${quoteChar}`
+      )
     : v;
 
 /**
@@ -87,7 +97,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
 
   const quoteValue = (v: unknown) =>
     `${wrapValueWith[0]}${quoteChar}${v}${quoteChar}${wrapValueWith[1]}`;
-  const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
+  const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes, preset);
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: unknown) =>
     getQuotedFieldName(v as string, { quoteFieldNamesWith, fieldIdentifierSeparator });

@@ -22,7 +22,7 @@ const testCases: Record<string, [RuleGroupType, Record<SQLPreset, string>]> = {
     {
       ansi: `(birthdate > '1957-01-01' and birthdate between '1957-01-01' and '1969-01-01' and birthdate not between '1957-01-01' and '1969-01-01' and birthdate in ('1954-10-03', '1960-06-06') and created_at < '${now}')`,
       mssql: `([birthdate] > cast('1957-01-01' as date) and [birthdate] between cast('1957-01-01' as date) and cast('1969-01-01' as date) and [birthdate] not between cast('1957-01-01' as date) and cast('1969-01-01' as date) and [birthdate] in (cast('1954-10-03' as date), cast('1960-06-06' as date)) and [created_at] < cast('${now}' as datetimeoffset))`,
-      mysql: `(birthdate > cast('1957-01-01' as date) and birthdate between cast('1957-01-01' as date) and cast('1969-01-01' as date) and birthdate not between cast('1957-01-01' as date) and cast('1969-01-01' as date) and birthdate in (cast('1954-10-03' as date), cast('1960-06-06' as date)) and created_at < cast('${now}' as datetime))`,
+      mysql: `(\`birthdate\` > cast('1957-01-01' as date) and \`birthdate\` between cast('1957-01-01' as date) and cast('1969-01-01' as date) and \`birthdate\` not between cast('1957-01-01' as date) and cast('1969-01-01' as date) and \`birthdate\` in (cast('1954-10-03' as date), cast('1960-06-06' as date)) and \`created_at\` < cast('${now}' as datetime))`,
       oracle: `(birthdate > date'1957-01-01' and birthdate between date'1957-01-01' and date'1969-01-01' and birthdate not between date'1957-01-01' and date'1969-01-01' and birthdate in (date'1954-10-03', date'1960-06-06') and created_at < timestamp'${nowOracle}')`,
       postgresql: `("birthdate" > date'1957-01-01' and "birthdate" between date'1957-01-01' and date'1969-01-01' and "birthdate" not between date'1957-01-01' and date'1969-01-01' and "birthdate" in (date'1954-10-03', date'1960-06-06') and "created_at" < timestamp'${now}')`,
       sqlite: `(birthdate > '1957-01-01' and birthdate between '1957-01-01' and '1969-01-01' and birthdate not between '1957-01-01' and '1969-01-01' and birthdate in ('1954-10-03', '1960-06-06') and created_at < '${now}')`,
@@ -40,7 +40,7 @@ const testCases: Record<string, [RuleGroupType, Record<SQLPreset, string>]> = {
     {
       ansi: `(firstName != lastName and firstName like 'Stev%' and birthdate custom_op '')`,
       mssql: `([firstName] != [lastName] and [firstName] like 'Stev%' and [birthdate] custom_op cast('' as date))`,
-      mysql: `(firstName != lastName and firstName like 'Stev%' and birthdate custom_op cast('' as date))`,
+      mysql: `(\`firstName\` != \`lastName\` and \`firstName\` like 'Stev%' and \`birthdate\` custom_op cast('' as date))`,
       oracle: `(firstName != lastName and firstName like 'Stev%' and birthdate custom_op date'')`,
       postgresql: `("firstName" != "lastName" and "firstName" like 'Stev%' and "birthdate" custom_op date'')`,
       sqlite: `(firstName != lastName and firstName like 'Stev%' and birthdate custom_op '')`,

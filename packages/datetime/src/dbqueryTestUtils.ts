@@ -63,7 +63,7 @@ export const musicians: Musician[] = [
   },
 ];
 
-export type SQLPlatform = 'sqlite' | 'postgresql' | 'mssql' | 'oracle';
+export type SQLPlatform = 'sqlite' | 'postgresql' | 'mssql' | 'oracle' | 'mysql';
 
 export const FIND_MUSICIANS_TABLE = (platform: string): string =>
   ({
@@ -98,13 +98,21 @@ export function CREATE_MUSICIANS_TABLE(
     postgresql: 'text',
     mssql: 'varchar(255)',
     oracle: 'varchar2(255)',
+    mysql: 'varchar(255)',
   }[platform];
-  const dateType = { sqlite: 'text', postgresql: 'date', mssql: 'date', oracle: 'date' }[platform];
+  const dateType = {
+    sqlite: 'text',
+    postgresql: 'date',
+    mssql: 'date',
+    oracle: 'date',
+    mysql: 'date',
+  }[platform];
   const timestampType = {
     sqlite: 'text',
     postgresql: 'timestamp with time zone',
     mssql: 'datetime2',
     oracle: 'timestamp',
+    mysql: 'datetime(3)',
   }[platform];
   return `CREATE TABLE ${table} (
     first_name ${textType} NOT NULL,
@@ -122,6 +130,7 @@ export const INSERT_MUSICIANS = (platform: SQLPlatform, table: string = 'musicia
     postgresql: 'current_timestamp',
     mssql: 'sysutcdatetime()',
     oracle: 'systimestamp',
+    mysql: 'utc_timestamp(3)',
   }[platform];
   // Oracle string -> DATE conversion depends on NLS_DATE_FORMAT; use an ANSI date literal
   const datePrefix = platform === 'oracle' ? 'date ' : '';

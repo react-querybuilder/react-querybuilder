@@ -6,6 +6,7 @@ type DbPlatform =
   | 'jsonlogic'
   | 'jsonata'
   | 'mssql'
+  | 'mysql'
   | 'oracle'
   | 'mongodb'
   | 'cel'
@@ -42,6 +43,7 @@ const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
   jsonata: [true, false],
   jsonlogic: [true, false],
   mssql: [1, 0],
+  mysql: [1, 0],
   mongodb: [true, false],
   oracle: [true, false],
   postgres: [true, false],
@@ -64,7 +66,7 @@ export const fields: Field<keyof SuperUser>[] = [
 
 export const superUsers = <DBP extends DbPlatform>(
   dbPlatform: DBP
-): DBP extends 'mssql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[] => {
+): DBP extends 'mssql' | 'mysql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[] => {
   const [isEnhanced, isNotEnhanced] = platformBoolean[dbPlatform];
 
   // Sorted by `madeUpName`
@@ -101,7 +103,7 @@ export const superUsers = <DBP extends DbPlatform>(
       nickname: 'Supes',
       powerUpAge: 0,
     },
-  ] as DBP extends 'mssql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[];
+  ] as DBP extends 'mssql' | 'mysql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[];
 };
 
 export const nicknameMap: Record<string, string[]> = {
@@ -174,7 +176,9 @@ export const augmentedSuperUsers = <DBP extends DbPlatform>(dbPlatform: DBP) =>
       nicknames: [u.nickname, ...nicknameMap[u.madeUpName]],
       earlyPencilers: earlyPencilersMap[u.madeUpName],
     })
-  ) as DBP extends 'mssql' | 'sqlite' ? AugmentedSuperUser<0 | 1>[] : AugmentedSuperUser<boolean>[];
+  ) as DBP extends 'mssql' | 'mysql' | 'sqlite'
+    ? AugmentedSuperUser<0 | 1>[]
+    : AugmentedSuperUser<boolean>[];
 
 const enhancedColumnType: Record<DbPlatform, string> = {
   cel: 'N/A',
@@ -183,6 +187,7 @@ const enhancedColumnType: Record<DbPlatform, string> = {
   jsonlogic: 'N/A',
   mongodb: 'boolean',
   mssql: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
+  mysql: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
   oracle: 'BOOLEAN',
   postgres: 'BOOLEAN',
   sqlite: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
@@ -195,13 +200,19 @@ const textColumnType: Record<DbPlatform, string> = {
   jsonlogic: 'TEXT',
   mongodb: 'string',
   mssql: 'VARCHAR(255)',
+  mysql: 'VARCHAR(255)',
   oracle: 'VARCHAR2(255)',
   postgres: 'TEXT',
   sqlite: 'TEXT',
 };
 
-const unquote = (fieldName: string, unquoted = false) =>
-  unquoted ? fieldName.toLocaleLowerCase() : `"${fieldName}"`;
+// MySQL/MariaDB (default `sql_mode`) treat `"` as a string delimiter; use backticks
+const identQuote = (dbPlatform?: DbPlatform) => (dbPlatform === 'mysql' ? '`' : '"');
+
+const unquote = (fieldName: string, unquoted = false, dbPlatform?: DbPlatform) =>
+  unquoted
+    ? fieldName.toLocaleLowerCase()
+    : `${identQuote(dbPlatform)}${fieldName}${identQuote(dbPlatform)}`;
 
 const defaultTableName = 'superusers';
 const defaultDbCommandOptions = { unquoted: false } as const;
@@ -214,8 +225,8 @@ interface DBCommandOptions {
 }
 
 // Schema-qualified table reference (schema always quoted; table honors `unquoted`).
-const qualify = (schema: string | undefined, tableName: string) =>
-  schema ? `"${schema}".${tableName}` : tableName;
+const qualify = (schema: string | undefined, tableName: string, dbPlatform?: DbPlatform) =>
+  schema ? `${identQuote(dbPlatform)}${schema}${identQuote(dbPlatform)}.${tableName}` : tableName;
 
 export const CREATE_TABLE = (
   dbPlatform: DbPlatform,
@@ -225,16 +236,16 @@ export const CREATE_TABLE = (
     tableName = defaultTableName,
     schema,
   }: DBCommandOptions = defaultDbCommandOptions
-) => `CREATE TABLE ${qualify(schema, tableName ?? defaultTableName)} (
-  ${unquote('firstName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
-  ${unquote('lastName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
-  ${unquote('enhanced', unquoted)} ${enhancedColumnType[dbPlatform]} NOT NULL,
-  ${unquote('madeUpName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
-  ${unquote('nickname', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
-  ${unquote('powerUpAge', unquoted)} INT NULL${
+) => `CREATE TABLE ${qualify(schema, tableName ?? defaultTableName, dbPlatform)} (
+  ${unquote('firstName', unquoted, dbPlatform)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('lastName', unquoted, dbPlatform)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('enhanced', unquoted, dbPlatform)} ${enhancedColumnType[dbPlatform]} NOT NULL,
+  ${unquote('madeUpName', unquoted, dbPlatform)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('nickname', unquoted, dbPlatform)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('powerUpAge', unquoted, dbPlatform)} INT NULL${
     includeNestedArrays
       ? `,
-  ${unquote('nicknames', unquoted)} ${textColumnType[dbPlatform]}[]`
+  ${unquote('nicknames', unquoted, dbPlatform)} ${textColumnType[dbPlatform]}[]`
       : ``
   }
 )`;
@@ -249,7 +260,7 @@ export const CREATE_INDEX = (
   }: DBCommandOptions = defaultDbCommandOptions,
   dbPlatform?: DbPlatform
 ) =>
-  `CREATE UNIQUE INDEX ${dbPlatform === 'oracle' ? qualify(schema, `ndx${tableName}`) : `ndx${tableName}`} ON ${qualify(schema, tableName)} (${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
+  `CREATE UNIQUE INDEX ${dbPlatform === 'oracle' ? qualify(schema, `ndx${tableName}`, dbPlatform) : `ndx${tableName}`} ON ${qualify(schema, tableName, dbPlatform)} (${unquote('firstName', unquoted, dbPlatform)}, ${unquote('lastName', unquoted, dbPlatform)})`;
 
 export const INSERT_INTO = (
   user: AugmentedSuperUser,
@@ -261,16 +272,16 @@ export const INSERT_INTO = (
     schema,
   }: DBCommandOptions = defaultDbCommandOptions
 ) => `
-INSERT INTO ${qualify(schema, tableName ?? defaultTableName)} (
-  ${unquote('firstName', unquoted)},
-  ${unquote('lastName', unquoted)},
-  ${unquote('enhanced', unquoted)},
-  ${unquote('madeUpName', unquoted)},
-  ${unquote('nickname', unquoted)},
-  ${unquote('powerUpAge', unquoted)}${
+INSERT INTO ${qualify(schema, tableName ?? defaultTableName, dbPlatform)} (
+  ${unquote('firstName', unquoted, dbPlatform)},
+  ${unquote('lastName', unquoted, dbPlatform)},
+  ${unquote('enhanced', unquoted, dbPlatform)},
+  ${unquote('madeUpName', unquoted, dbPlatform)},
+  ${unquote('nickname', unquoted, dbPlatform)},
+  ${unquote('powerUpAge', unquoted, dbPlatform)}${
     includeNestedArrays
       ? `,
-  ${unquote('nicknames', unquoted)}`
+  ${unquote('nicknames', unquoted, dbPlatform)}`
       : ``
   }
 ) VALUES (
@@ -287,9 +298,13 @@ INSERT INTO ${qualify(schema, tableName ?? defaultTableName)} (
   }
 )`;
 
-export const sqlBase = (schema?: string, tableName: string = defaultTableName): string =>
-  `SELECT * FROM ${qualify(schema, tableName)} WHERE `;
-export const getSqlOrderBy = (unquoted = false) => ` ORDER BY ${unquote('madeUpName', unquoted)}`;
+export const sqlBase = (
+  schema?: string,
+  tableName: string = defaultTableName,
+  dbPlatform?: DbPlatform
+): string => `SELECT * FROM ${qualify(schema, tableName, dbPlatform)} WHERE `;
+export const getSqlOrderBy = (unquoted = false, dbPlatform?: DbPlatform) =>
+  ` ORDER BY ${unquote('madeUpName', unquoted, dbPlatform)}`;
 
 export const dbSetup = (
   dbPlatform: DbPlatform,

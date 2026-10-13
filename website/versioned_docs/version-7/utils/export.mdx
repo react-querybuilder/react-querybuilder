@@ -1307,8 +1307,14 @@ Boolean values render as `1`/`0` (T-SQL has no `TRUE`/`FALSE` literals).
 </td><td>
 
 ```json
-{ "concatOperator": "CONCAT" }
+{
+  "concatOperator": "CONCAT",
+  "quoteFieldNamesWith": "`",
+  "fieldIdentifierSeparator": "."
+}
 ```
+
+Backslashes in string values are doubled when `escapeQuotes` is on (MySQL/MariaDB treat `\` as an escape character in string literals).
 
 </td></tr>
     <tr><td>

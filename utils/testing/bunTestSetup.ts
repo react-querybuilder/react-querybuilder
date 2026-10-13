@@ -24,6 +24,10 @@ afterAll(async () => {
       import('./dbpool/mssql').then(({ closeSharedMSSQL }) => closeSharedMSSQL()),
     globalThis.__rqbOracleActive &&
       import('./dbpool/oracle').then(({ closeSharedOracle }) => closeSharedOracle()),
+    globalThis.__rqbMySQLActive &&
+      import('./dbpool/mysql').then(({ closeSharedMySQL }) => closeSharedMySQL()),
+    globalThis.__rqbMariaDBActive &&
+      import('./dbpool/mysql').then(({ closeSharedMariaDB }) => closeSharedMariaDB()),
     globalThis.__rqbMongoActive &&
       import('./mongo').then(({ closeSharedMongo }) => closeSharedMongo()),
   ]);

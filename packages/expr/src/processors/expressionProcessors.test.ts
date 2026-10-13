@@ -227,7 +227,7 @@ describe('SQL processor', () => {
     );
     expect(
       formatQuery(q, { format: 'sql', preset: 'mysql', ruleProcessor: expressionRuleProcessorSQL })
-    ).toBe(`(lastName like CONCAT(UPPER(firstName), '%'))`);
+    ).toBe(`(\`lastName\` like CONCAT(UPPER(\`firstName\`), '%'))`);
     const c = group(
       exprRule(
         { field: 'lastName', operator: 'contains' },

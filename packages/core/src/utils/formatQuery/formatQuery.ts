@@ -99,6 +99,8 @@ export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
   },
   mysql: {
     concatOperator: 'CONCAT',
+    quoteFieldNamesWith: '`',
+    fieldIdentifierSeparator: '.',
   },
   postgresql: {
     quoteFieldNamesWith: '"',

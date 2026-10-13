@@ -44,7 +44,7 @@ export const FIND_PRODUCTS_TABLE = (platform: 'sqlite' | 'postgresql'): string =
   })[platform];
 
 export const CREATE_PRODUCTS_TABLE = (
-  platform: 'sqlite' | 'postgresql' | 'mssql' | 'oracle',
+  platform: 'sqlite' | 'postgresql' | 'mssql' | 'oracle' | 'mysql',
   table: string = 'products'
 ): string => {
   const realType = {
@@ -52,12 +52,14 @@ export const CREATE_PRODUCTS_TABLE = (
     postgresql: 'double precision',
     mssql: 'float',
     oracle: 'binary_double',
+    mysql: 'double',
   }[platform];
   const textType = {
     sqlite: 'text',
     postgresql: 'text',
     mssql: 'varchar(255)',
     oracle: 'varchar2(255)',
+    mysql: 'varchar(255)',
   }[platform];
   return `CREATE TABLE ${table} (
     id integer PRIMARY KEY,

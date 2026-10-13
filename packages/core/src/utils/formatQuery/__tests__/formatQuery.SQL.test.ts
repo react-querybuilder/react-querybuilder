@@ -424,7 +424,7 @@ describe('escapes closing quote chars in quoted field names', () => {
     ['ansi', `(a"b] = 'x')`],
     ['sqlite', `(a"b] = 'x')`],
     ['oracle', `(a"b] = 'x')`],
-    ['mysql', `(a"b] = 'x')`],
+    ['mysql', "(`a\"b]` = 'x')"],
     ['mssql', `([a"b]]] = 'x')`],
     ['postgresql', `("a""b]" = 'x')`],
   ] as [SQLPreset, string][])('preset %s', (preset, expected) => {
@@ -434,6 +434,41 @@ describe('escapes closing quote chars in quoted field names', () => {
         { preset }
       )
     ).toBe(expected);
+  });
+
+  it('doubles backticks in field names for mysql preset', () => {
+    expect(
+      formatQuery(
+        { combinator: 'and', rules: [{ field: 'a`b', operator: '=', value: 'x' }] },
+        { preset: 'mysql' }
+      )
+    ).toBe("(`a``b` = 'x')");
+  });
+});
+
+describe('backslashes in string values', () => {
+  const bsQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: '=', value: String.raw`a\' or 1=1 or 'x` },
+      { field: 'f', operator: 'contains', value: String.raw`b\\` },
+    ],
+  };
+
+  it('escapes backslashes for mysql preset', () => {
+    expect(formatQuery(bsQuery, { preset: 'mysql' })).toBe(
+      String.raw`(` +
+        '`f`' +
+        String.raw` = 'a\\'' or 1=1 or ''x' and ` +
+        '`f`' +
+        String.raw` like '%b\\\\%')`
+    );
+  });
+
+  it('leaves backslashes alone for other presets', () => {
+    expect(formatQuery(bsQuery, { preset: 'postgresql' })).toBe(
+      String.raw`("f" = 'a\'' or 1=1 or ''x' and "f" like '%b\\%')`
+    );
   });
 });
 
