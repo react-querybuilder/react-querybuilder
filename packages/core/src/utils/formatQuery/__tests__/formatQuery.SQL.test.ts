@@ -310,7 +310,7 @@ describe('parameterized formats honor fieldIdentifierSeparator', () => {
 
   it('parameterized', () => {
     expect(formatQuery(q, { format: 'parameterized', preset: 'mssql' }).sql).toBe(
-      "([t].[a] = ? and [t].[a] in (?, ?) and [t].[a] between ? and ? and [t].[a] is null and [t].[a] = [u].[b] and [t].[a] like '%' + [u].[b] + '%' and [t].[a] in ([u].[b], [u].[c]) and [t].[a] between [u].[b] and [u].[c])"
+      "([t].[a] = @1 and [t].[a] in (@2, @3) and [t].[a] between @4 and @5 and [t].[a] is null and [t].[a] = [u].[b] and [t].[a] like '%' + [u].[b] + '%' and [t].[a] in ([u].[b], [u].[c]) and [t].[a] between [u].[b] and [u].[c])"
     );
   });
 
@@ -424,7 +424,7 @@ describe('escapes closing quote chars in quoted field names', () => {
     ['ansi', `(a"b] = 'x')`],
     ['sqlite', `(a"b] = 'x')`],
     ['oracle', `(a"b] = 'x')`],
-    ['mysql', `(a"b] = 'x')`],
+    ['mysql', "(`a\"b]` = 'x')"],
     ['mssql', `([a"b]]] = 'x')`],
     ['postgresql', `("a""b]" = 'x')`],
   ] as [SQLPreset, string][])('preset %s', (preset, expected) => {
@@ -434,6 +434,79 @@ describe('escapes closing quote chars in quoted field names', () => {
         { preset }
       )
     ).toBe(expected);
+  });
+
+  it('doubles backticks in field names for mysql preset', () => {
+    expect(
+      formatQuery(
+        { combinator: 'and', rules: [{ field: 'a`b', operator: '=', value: 'x' }] },
+        { preset: 'mysql' }
+      )
+    ).toBe("(`a``b` = 'x')");
+  });
+});
+
+describe('backslashes in string values', () => {
+  const bsQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: '=', value: String.raw`a\' or 1=1 or 'x` },
+      { field: 'f', operator: 'contains', value: String.raw`b\\` },
+    ],
+  };
+
+  it('escapes backslashes for mysql preset', () => {
+    expect(formatQuery(bsQuery, { preset: 'mysql' })).toBe(
+      String.raw`(` +
+        '`f`' +
+        String.raw` = 'a\\'' or 1=1 or ''x' and ` +
+        '`f`' +
+        String.raw` like '%b\\\\\\\\%')`
+    );
+  });
+
+  it('escapes backslashes for LIKE then string literal for mysql preset', () => {
+    const q = (operator: string): RuleGroupType => ({
+      combinator: 'and',
+      rules: [{ field: 'f', operator, value: 'a\\' }],
+    });
+    expect(formatQuery(q('contains'), { preset: 'mysql' })).toBe(
+      String.raw`(` + '`f`' + String.raw` like '%a\\\\%')`
+    );
+    expect(formatQuery(q('beginsWith'), { preset: 'mysql' })).toBe(
+      String.raw`(` + '`f`' + String.raw` like 'a\\\\%')`
+    );
+    expect(formatQuery(q('endsWith'), { preset: 'mysql' })).toBe(
+      String.raw`(` + '`f`' + String.raw` like '%a\\\\')`
+    );
+    expect(formatQuery(q('='), { preset: 'mysql' })).toBe(
+      String.raw`(` + '`f`' + String.raw` = 'a\\')`
+    );
+  });
+
+  it('escapes backslashes for LIKE in params for mysql preset', () => {
+    const q = (operator: string): RuleGroupType => ({
+      combinator: 'and',
+      rules: [{ field: 'f', operator, value: 'a\\' }],
+    });
+    const p = (operator: string) =>
+      formatQuery(q(operator), { format: 'parameterized', preset: 'mysql' });
+    expect(p('contains').params).toEqual(['%a\\\\%']);
+    expect(p('beginsWith').params).toEqual(['a\\\\%']);
+    expect(p('endsWith').params).toEqual(['%a\\\\']);
+    expect(p('=').params).toEqual(['a\\']);
+    expect(
+      formatQuery(q('contains'), { format: 'parameterized_named', preset: 'mysql' }).params
+    ).toEqual({ f_1: '%a\\\\%' });
+    expect(
+      formatQuery(q('contains'), { format: 'parameterized', preset: 'postgresql' }).params
+    ).toEqual(['%a\\%']);
+  });
+
+  it('leaves backslashes alone for other presets', () => {
+    expect(formatQuery(bsQuery, { preset: 'postgresql' })).toBe(
+      String.raw`("f" = 'a\'' or 1=1 or ''x' and "f" like '%b\\%')`
+    );
   });
 });
 
@@ -447,6 +520,43 @@ it('handles quoteValuesWith correctly', () => {
 
 it('handles invalid preset correctly', () => {
   expect(formatQuery(query, { format: 'sql', preset: 'invalid' as SQLPreset })).toBe(sqlString);
+});
+
+describe('dialect-valid preset output', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'a', operator: '=', value: 'x' },
+      { field: 'b', operator: 'in', value: 'x,y' },
+      { field: 'c', operator: 'between', value: '1,2' },
+      { field: 'd', operator: '=', value: true },
+      { field: 'e', operator: '!=', value: false },
+    ],
+  };
+  const expectedParams = ['x', 'x', 'y', '1', '2', true, false];
+
+  it('mssql: numbered @N params, 1/0 booleans', () => {
+    expect(formatQuery(q, { format: 'parameterized', preset: 'mssql' })).toEqual({
+      sql: '([a] = @1 and [b] in (@2, @3) and [c] between @4 and @5 and [d] = @6 and [e] != @7)',
+      params: expectedParams,
+    });
+    expect(formatQuery(q, { preset: 'mssql' })).toBe(
+      "([a] = 'x' and [b] in ('x', 'y') and [c] between '1' and '2' and [d] = 1 and [e] != 0)"
+    );
+  });
+
+  it('oracle: numbered :N params, TRUE/FALSE booleans', () => {
+    expect(formatQuery(q, { format: 'parameterized', preset: 'oracle' })).toEqual({
+      sql: '(a = :1 and b in (:2, :3) and c between :4 and :5 and d = :6 and e != :7)',
+      params: expectedParams,
+    });
+    expect(formatQuery(q, { format: 'parameterized_named', preset: 'oracle' }).sql).toBe(
+      '(a = :a_1 and b in (:b_1, :b_2) and c between :c_1 and :c_2 and d = :d_1 and e != :e_1)'
+    );
+    expect(formatQuery(q, { preset: 'oracle' })).toBe(
+      "(a = 'x' and b in ('x', 'y') and c between '1' and '2' and d = TRUE and e != FALSE)"
+    );
+  });
 });
 
 it('handles custom fallbackExpression correctly', () => {

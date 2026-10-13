@@ -103,6 +103,64 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+  # Runs `formatQuery` output (core, datetime, expr) against real SQL Server, Oracle, MySQL and
+  # MariaDB. The `dbquery.*{mssql,oracle,mysql}*` files self-skip elsewhere (no connection env vars).
+  # Image bump: pick the newest `2022-CUxx-ubuntu-22.04` tag from
+  # https://mcr.microsoft.com/v2/mssql/server/tags/list and the newest `23.x.y-slim-faststart` tag
+  # from https://hub.docker.com/r/gvenzl/oracle-free/tags; newest `8.4.x` (LTS) / `11.4.x` (LTS)
+  # tags from https://hub.docker.com/_/mysql / https://hub.docker.com/_/mariadb; never use floating
+  # tags.
+  # Passwords are throwaway values for ephemeral containers (no secrets -> fork PRs work).
+  DBIntegration:
+    runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: Rqb_Test_1234!
+        ports: ["1433:1433"]
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Rqb_Test_1234!' -Q 'SELECT 1'"
+          --health-interval 10s --health-retries 12
+      oracle:
+        image: gvenzl/oracle-free:23.26.3-slim-faststart
+        env:
+          ORACLE_PASSWORD: rqb_sys
+        ports: ["1521:1521"]
+        options: >-
+          --health-cmd healthcheck.sh
+          --health-interval 10s --health-retries 30
+      mysql:
+        image: mysql:8.4.11
+        env:
+          MYSQL_ROOT_PASSWORD: rqb_root
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -prqb_root"
+          --health-interval 5s --health-retries 30
+      mariadb:
+        image: mariadb:11.4.13
+        env:
+          MARIADB_ROOT_PASSWORD: rqb_root
+        ports: ["3307:3306"]
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 5s --health-retries 30
+    env:
+      RQB_MSSQL_URL: mssql://sa:Rqb_Test_1234!@localhost:1433
+      RQB_ORACLE_ADMIN_URL: oracle://system:rqb_sys@localhost:1521/FREEPDB1
+      # Low-privilege app user, created by the harness on first use
+      RQB_ORACLE_URL: oracle://rqb_app:rqb_app@localhost:1521/FREEPDB1
+      RQB_MYSQL_URL: mysql://root:rqb_root@127.0.0.1:3306
+      RQB_MARIADB_URL: mysql://root:rqb_root@127.0.0.1:3307
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: bun run build:core
+      - run: bun run test:dbintegration
+
   Test_React_18:
     runs-on: ubuntu-latest
     steps:

@@ -9,7 +9,8 @@ import type { SQLSerializerRegistry } from '../types';
  * `min`/`max` emit `LEAST`/`GREATEST` by default (PostgreSQL, MySQL 8+, Oracle, and
  * SQL Server 2022+ / Azure SQL), overridden to the scalar `MIN`/`MAX` for the `sqlite`
  * preset. Older SQL Server (pre-2022) has no row-wise scalar equivalent and falls back to
- * `LEAST`/`GREATEST`.
+ * `LEAST`/`GREATEST`. `mod` emits `%` by default, overridden to `MOD(a, b)` for the `oracle`
+ * preset (Oracle has no `%` operator).
  */
 export const defaultSQLSerializers: SQLSerializerRegistry = {
   add: (_opts, a, b) => `(${a} + ${b})`,
@@ -25,7 +26,10 @@ export const defaultSQLSerializers: SQLSerializerRegistry = {
     sqlite: (_opts, ...args) => `MAX(${args.join(', ')})`,
   },
   abs: (_opts, x) => `ABS(${x})`,
-  mod: (_opts, a, b) => `(${a} % ${b})`,
+  mod: {
+    default: (_opts, a, b) => `(${a} % ${b})`,
+    oracle: (_opts, a, b) => `MOD(${a}, ${b})`,
+  },
   upper: (_opts, x) => `UPPER(${x})`,
   lower: (_opts, x) => `LOWER(${x})`,
 };

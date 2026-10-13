@@ -86,15 +86,21 @@ export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
   sqlite: {
     paramsKeepPrefix: true,
   },
-  oracle: {},
+  oracle: {
+    numberedParams: true,
+    paramPrefix: ':',
+  },
   mssql: {
     concatOperator: '+',
     quoteFieldNamesWith: ['[', ']'],
     fieldIdentifierSeparator: '.',
+    numberedParams: true,
     paramPrefix: '@',
   },
   mysql: {
     concatOperator: 'CONCAT',
+    quoteFieldNamesWith: '`',
+    fieldIdentifierSeparator: '.',
   },
   postgresql: {
     quoteFieldNamesWith: '"',

@@ -192,6 +192,28 @@ The native `getSharedPGlite` is marked `@internal` — only the Drizzle adapter 
 
 `Bun.SQL` is also used for SQLite dbquery tests (`new SQL({ adapter: 'sqlite', filename: ':memory:' })`).
 
+Harnesses live in `utils/testing/dbpool/` (`@rqb-dbpool` → `index.ts`): `memo.ts` (shared `memo`/`reserveSchema`), `pglite.ts`, `mssql.ts`, `oracle.ts`, `mysql.ts`. Drivers load lazily on first use; `bunTestSetup.ts` closes whichever booted.
+
+**SQL Server / Oracle / MySQL / MariaDB (CI-only):** `dbquery.*{mssql,oracle,mysql}*` files use `describe.skipIf(!mssqlEnabled)` / `describe.skipIf(!oracleEnabled)` / `describe.skipIf(!mysqlEnabled)` / `describe.skipIf(!mariadbEnabled)`, so they skip unless env vars are set. They run in the `DBIntegration` job (`bun run test:dbintegration`).
+
+- MSSQL: `RQB_MSSQL_URL=mssql://sa:<pw>@localhost:1433`. One shared `rqb` DB, one schema per suite: `createMSSQLSchema`/`dropMSSQLSchema`, `mssqlQuery(sql, params?)` (array params bind as `@1`, `@2`, ...; object params bind by name).
+- Oracle: `RQB_ORACLE_ADMIN_URL=oracle://system:<pw>@localhost:1521/FREEPDB1` and `RQB_ORACLE_URL=oracle://rqb_app:<pw>@localhost:1521/FREEPDB1` (app user auto-created). One user (= schema) per suite: `createOracleUser`/`dropOracleUser` (pass `reserveSchema(...).toUpperCase()`), `oracleQuery(sql, binds?)`, `oracleExecMany(stmts)` (no `;` batches in Oracle).
+- MySQL/MariaDB: `RQB_MYSQL_URL=mysql://root:<pw>@127.0.0.1:3306`, `RQB_MARIADB_URL=mysql://root:<pw>@127.0.0.1:3307` (`Bun.SQL` mysql adapter, no extra driver). One database (= schema, `utf8mb4_bin`) per suite: `create{MySQL,MariaDB}Schema`/`drop{MySQL,MariaDB}Schema`, `{mysql,mariadb}Query(sql, params?)` (positional `?` only), `{mysql,mariadb}ExecMany(sql)` (no `;` batches). Each `dbquery.*mysql*` file has separate MySQL and MariaDB `describe` blocks; use `dbqueryTestUtils` helpers w/ the `mysql` platform (backtick identifiers).
+- Local Docker:
+
+```bash
+docker run -d -p 1433:1433 -e ACCEPT_EULA=Y -e 'MSSQL_SA_PASSWORD=Rqb_Test_1234!' --platform linux/amd64 mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04
+docker run -d -p 1521:1521 -e ORACLE_PASSWORD=rqb_sys gvenzl/oracle-free:23.26.3-slim-faststart
+docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=rqb_root mysql:8.4.11
+docker run -d -p 3307:3306 -e MARIADB_ROOT_PASSWORD=rqb_root mariadb:11.4.13
+RQB_MSSQL_URL='mssql://sa:Rqb_Test_1234!@localhost:1433' \
+  RQB_ORACLE_ADMIN_URL=oracle://system:rqb_sys@localhost:1521/FREEPDB1 \
+  RQB_ORACLE_URL=oracle://rqb_app:rqb_app@localhost:1521/FREEPDB1 \
+  RQB_MYSQL_URL=mysql://root:rqb_root@127.0.0.1:3306 \
+  RQB_MARIADB_URL=mysql://root:rqb_root@127.0.0.1:3307 \
+  bun run test:dbintegration
+```
+
 ## Generated Files
 
 **Never edit:**
