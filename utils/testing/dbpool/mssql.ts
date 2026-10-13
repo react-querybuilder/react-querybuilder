@@ -59,8 +59,9 @@ export const mssqlQuery = async <T = Record<string, unknown>>(
     if (typeof v === 'bigint') request.input(k, mssql.BigInt, v.toString());
     else request.input(k, v);
   }
-  // Plain array (drop recordset's extra `columns` prop) so `toEqual` compares rows only
-  return [...(await request.query<T>(sql)).recordset];
+  // Plain array (drop recordset's extra `columns` prop) so `toEqual` compares rows only.
+  // No result set (DDL/DML-only batch) -> `recordset` undefined.
+  return [...((await request.query<T>(sql)).recordset ?? [])];
 };
 
 const dropSchemaSQL = (schema: string) => `
