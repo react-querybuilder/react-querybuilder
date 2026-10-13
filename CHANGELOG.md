@@ -9,10 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- `formatQuery` SQL dialect presets now produce SQL the target database accepts. These output changes are bug fixes; the old output failed to run.
+- [#1118] `formatQuery` SQL dialect presets now produce SQL the target database accepts. These output changes are bug fixes; the old output failed to run.
   - `"mssql"` preset: the "parameterized" format emits numbered placeholders (`@1`, `@2`, ...) instead of `?`, which SQL Server can't bind. The "sql" format renders boolean values as `1`/`0` instead of `TRUE`/`FALSE`.
   - `"oracle"` preset: the "parameterized" format emits numbered placeholders (`:1`, `:2`, ...) instead of `?`.
-- `@react-querybuilder/expr`: the `mod` function serializes as `MOD(a, b)` for the `"oracle"` preset, since Oracle has no `%` operator.
+- [#1118] `@react-querybuilder/expr`: the `mod` function serializes as `MOD(a, b)` for the `"oracle"` preset, since Oracle has no `%` operator.
 
 ## [v8.25.0] - 2026-10-12
 
@@ -2613,6 +2613,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1112]: https://github.com/react-querybuilder/react-querybuilder/issues/1112
 [#1113]: https://github.com/react-querybuilder/react-querybuilder/issues/1113
 [#1114]: https://github.com/react-querybuilder/react-querybuilder/issues/1114
+[#1118]: https://github.com/react-querybuilder/react-querybuilder/issues/1118
 
 <!-- #endregion -->
 
