@@ -187,7 +187,8 @@ const enhancedColumnType: Record<DbPlatform, string> = {
   jsonlogic: 'N/A',
   mongodb: 'boolean',
   mssql: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
-  mysql: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
+  // MariaDB rejects `NOT NULL` after inline `CHECK`
+  mysql: 'INT',
   oracle: 'BOOLEAN',
   postgres: 'BOOLEAN',
   sqlite: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
