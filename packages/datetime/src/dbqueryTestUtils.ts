@@ -63,6 +63,8 @@ export const musicians: Musician[] = [
   },
 ];
 
+export type SQLPlatform = 'sqlite' | 'postgresql' | 'mssql' | 'oracle';
+
 export const FIND_MUSICIANS_TABLE = (platform: string): string =>
   ({
     sqlite: `SELECT * FROM sqlite_master WHERE type = 'table' AND name = 'musicians'`,
@@ -72,9 +74,9 @@ export const FIND_MUSICIANS_TABLE = (platform: string): string =>
 export function CREATE_MUSICIANS_TABLE(
   platform: 'jsonlogic' | 'cel' | 'jsonata' | 'spel'
 ): MusicianRecord[];
-export function CREATE_MUSICIANS_TABLE(platform: 'sqlite' | 'postgresql', table?: string): string;
+export function CREATE_MUSICIANS_TABLE(platform: SQLPlatform, table?: string): string;
 export function CREATE_MUSICIANS_TABLE(
-  platform: 'sqlite' | 'postgresql' | 'jsonlogic' | 'cel' | 'jsonata' | 'spel',
+  platform: SQLPlatform | 'jsonlogic' | 'cel' | 'jsonata' | 'spel',
   table: string = 'musicians'
 ): string | MusicianRecord[] {
   if (
@@ -91,28 +93,43 @@ export function CREATE_MUSICIANS_TABLE(
     }));
   }
 
-  const dateType = { sqlite: 'text', postgresql: 'date' }[platform];
-  const timestampType = { sqlite: 'text', postgresql: 'timestamp with time zone' }[platform];
+  const textType = {
+    sqlite: 'text',
+    postgresql: 'text',
+    mssql: 'varchar(255)',
+    oracle: 'varchar2(255)',
+  }[platform];
+  const dateType = { sqlite: 'text', postgresql: 'date', mssql: 'date', oracle: 'date' }[platform];
+  const timestampType = {
+    sqlite: 'text',
+    postgresql: 'timestamp with time zone',
+    mssql: 'datetime2',
+    oracle: 'timestamp',
+  }[platform];
   return `CREATE TABLE ${table} (
-    first_name text NOT NULL,
-    middle_name text,
-    last_name text NOT NULL,
+    first_name ${textType} NOT NULL,
+    middle_name ${textType},
+    last_name ${textType} NOT NULL,
     birthdate ${dateType} NOT NULL,
     created_at ${timestampType} NOT NULL,
     updated_at ${timestampType} NOT NULL,
     PRIMARY KEY (first_name, last_name))`;
 }
 
-export const INSERT_MUSICIANS = (platform: string, table: string = 'musicians'): string => {
+export const INSERT_MUSICIANS = (platform: SQLPlatform, table: string = 'musicians'): string => {
   const now = {
     sqlite: `replace(datetime('now'), ' ', 'T') || 'Z'`,
     postgresql: 'current_timestamp',
+    mssql: 'sysutcdatetime()',
+    oracle: 'systimestamp',
   }[platform];
+  // Oracle string -> DATE conversion depends on NLS_DATE_FORMAT; use an ANSI date literal
+  const datePrefix = platform === 'oracle' ? 'date ' : '';
   return musicians
     .map(
       musician =>
         `INSERT INTO ${table} (first_name, middle_name, last_name, birthdate, created_at, updated_at)
-VALUES ('${musician.first_name}', '${musician.middle_name}', '${musician.last_name}', '${musician.birthdate}', ${now}, ${now})`
+VALUES ('${musician.first_name}', '${musician.middle_name}', '${musician.last_name}', ${datePrefix}'${musician.birthdate}', ${now}, ${now})`
     )
     .join(';\n');
 };

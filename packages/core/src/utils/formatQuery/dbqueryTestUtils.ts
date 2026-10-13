@@ -6,6 +6,7 @@ type DbPlatform =
   | 'jsonlogic'
   | 'jsonata'
   | 'mssql'
+  | 'oracle'
   | 'mongodb'
   | 'cel'
   | 'spel';
@@ -42,6 +43,7 @@ const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
   jsonlogic: [true, false],
   mssql: [1, 0],
   mongodb: [true, false],
+  oracle: [true, false],
   postgres: [true, false],
   sqlite: [1, 0],
 };
@@ -181,6 +183,7 @@ const enhancedColumnType: Record<DbPlatform, string> = {
   jsonlogic: 'N/A',
   mongodb: 'boolean',
   mssql: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
+  oracle: 'BOOLEAN',
   postgres: 'BOOLEAN',
   sqlite: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
 };
@@ -192,6 +195,7 @@ const textColumnType: Record<DbPlatform, string> = {
   jsonlogic: 'TEXT',
   mongodb: 'string',
   mssql: 'VARCHAR(255)',
+  oracle: 'VARCHAR2(255)',
   postgres: 'TEXT',
   sqlite: 'TEXT',
 };
@@ -235,12 +239,17 @@ export const CREATE_TABLE = (
   }
 )`;
 
-export const CREATE_INDEX = ({
-  unquoted = false,
-  tableName = defaultTableName,
-  schema,
-}: DBCommandOptions = defaultDbCommandOptions) =>
-  `CREATE UNIQUE INDEX ndx${tableName} ON ${qualify(schema, tableName)} (${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
+// Oracle: index lives in the creating user's schema unless qualified; qualify it so it lands
+// (w/ quota) in the table's schema. PostgreSQL/MSSQL reject/ignore qualified index names.
+export const CREATE_INDEX = (
+  {
+    unquoted = false,
+    tableName = defaultTableName,
+    schema,
+  }: DBCommandOptions = defaultDbCommandOptions,
+  dbPlatform?: DbPlatform
+) =>
+  `CREATE UNIQUE INDEX ${dbPlatform === 'oracle' ? qualify(schema, `ndx${tableName}`) : `ndx${tableName}`} ON ${qualify(schema, tableName)} (${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
 
 export const INSERT_INTO = (
   user: AugmentedSuperUser,
@@ -288,7 +297,7 @@ export const dbSetup = (
 ): string =>
   [
     CREATE_TABLE(dbPlatform, opts),
-    CREATE_INDEX(opts),
+    CREATE_INDEX(opts, dbPlatform),
     ...augmentedSuperUsers(dbPlatform).map(user => INSERT_INTO(user, dbPlatform, opts)),
   ].join(';');
 

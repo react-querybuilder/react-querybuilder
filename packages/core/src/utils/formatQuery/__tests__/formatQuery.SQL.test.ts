@@ -310,7 +310,7 @@ describe('parameterized formats honor fieldIdentifierSeparator', () => {
 
   it('parameterized', () => {
     expect(formatQuery(q, { format: 'parameterized', preset: 'mssql' }).sql).toBe(
-      "([t].[a] = ? and [t].[a] in (?, ?) and [t].[a] between ? and ? and [t].[a] is null and [t].[a] = [u].[b] and [t].[a] like '%' + [u].[b] + '%' and [t].[a] in ([u].[b], [u].[c]) and [t].[a] between [u].[b] and [u].[c])"
+      "([t].[a] = @1 and [t].[a] in (@2, @3) and [t].[a] between @4 and @5 and [t].[a] is null and [t].[a] = [u].[b] and [t].[a] like '%' + [u].[b] + '%' and [t].[a] in ([u].[b], [u].[c]) and [t].[a] between [u].[b] and [u].[c])"
     );
   });
 
@@ -447,6 +447,43 @@ it('handles quoteValuesWith correctly', () => {
 
 it('handles invalid preset correctly', () => {
   expect(formatQuery(query, { format: 'sql', preset: 'invalid' as SQLPreset })).toBe(sqlString);
+});
+
+describe('dialect-valid preset output', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'a', operator: '=', value: 'x' },
+      { field: 'b', operator: 'in', value: 'x,y' },
+      { field: 'c', operator: 'between', value: '1,2' },
+      { field: 'd', operator: '=', value: true },
+      { field: 'e', operator: '!=', value: false },
+    ],
+  };
+  const expectedParams = ['x', 'x', 'y', '1', '2', true, false];
+
+  it('mssql: numbered @N params, 1/0 booleans', () => {
+    expect(formatQuery(q, { format: 'parameterized', preset: 'mssql' })).toEqual({
+      sql: '([a] = @1 and [b] in (@2, @3) and [c] between @4 and @5 and [d] = @6 and [e] != @7)',
+      params: expectedParams,
+    });
+    expect(formatQuery(q, { preset: 'mssql' })).toBe(
+      "([a] = 'x' and [b] in ('x', 'y') and [c] between '1' and '2' and [d] = 1 and [e] != 0)"
+    );
+  });
+
+  it('oracle: numbered :N params, TRUE/FALSE booleans', () => {
+    expect(formatQuery(q, { format: 'parameterized', preset: 'oracle' })).toEqual({
+      sql: '(a = :1 and b in (:2, :3) and c between :4 and :5 and d = :6 and e != :7)',
+      params: expectedParams,
+    });
+    expect(formatQuery(q, { format: 'parameterized_named', preset: 'oracle' }).sql).toBe(
+      '(a = :a_1 and b in (:b_1, :b_2) and c between :c_1 and :c_2 and d = :d_1 and e != :e_1)'
+    );
+    expect(formatQuery(q, { preset: 'oracle' })).toBe(
+      "(a = 'x' and b in ('x', 'y') and c between '1' and '2' and d = TRUE and e != FALSE)"
+    );
+  });
 });
 
 it('handles custom fallbackExpression correctly', () => {

@@ -1,12 +1,15 @@
-import { SQL } from 'bun';
-import { PGlite } from '@electric-sql/pglite';
-import { PGLiteSocketServer } from '@electric-sql/pglite-socket';
+import type { SQL } from 'bun';
+import type { PGlite } from '@electric-sql/pglite';
+import type { PGLiteSocketServer } from '@electric-sql/pglite-socket';
 import type { PrismaPGlite } from 'pglite-prisma-adapter';
+import { memo, teardown } from './memo';
 
 // Shared PGlite instance. `bun test` runs all files in one process w/ shared module registry,
 // so the WASM instance boots once for every postgres test file. Isolation via distinct
 // schema-qualified namespaces (see `reserveSchema`), not session state, so order-independent.
-// NOTE: intentionally NOT re-exported from index.ts (keeps React/DOM deps out of dbquery tests).
+// Heavy deps imported lazily inside memos so importing `@rqb-dbpool` for another DB doesn't
+// load the PGlite WASM.
+// NOTE: intentionally NOT re-exported from utils/testing/index.ts (keeps DB deps out of DOM tests).
 
 declare global {
   // Set once boot starts. Lets the `bun test` preload skip teardown (and skip importing this
@@ -14,33 +17,16 @@ declare global {
   var __rqbPGliteActive: boolean | undefined;
 }
 
-// Memoize async init, but forget rejections so later callers retry instead of inheriting a
-// stale failure (e.g. transient port error) for the rest of the run.
-const memo = <T>(init: () => Promise<T>) => {
-  let p: Promise<T> | undefined;
-  return {
-    get: (): Promise<T> =>
-      (p ??= init().catch(e => {
-        p = undefined;
-        throw e;
-      })),
-    // Settled value (if any) for teardown; clears cache. Never throws.
-    take: async (): Promise<T | undefined> => {
-      const cur = p;
-      p = undefined;
-      return cur?.catch(() => undefined);
-    },
-  };
-};
-
 const pglite = memo(async () => {
   globalThis.__rqbPGliteActive = true;
+  const { PGlite } = await import('@electric-sql/pglite');
   const db = new PGlite();
   await db.query('SELECT 1'); // force WASM init/ready
   return db;
 });
 
-const server = memo(async () => {
+const server = memo(async (): Promise<PGLiteSocketServer> => {
+  const { PGLiteSocketServer } = await import('@electric-sql/pglite-socket');
   // port 0 -> ephemeral; read back via getServerConn() after start()
   const s = new PGLiteSocketServer({ db: await pglite.get(), host: '127.0.0.1', port: 0 });
   await s.start();
@@ -48,6 +34,7 @@ const server = memo(async () => {
 });
 
 const sqlClient = memo(async () => {
+  const { SQL } = await import('bun');
   const conn = (await server.get()).getServerConn(); // "host:port"
   // max:1 required, not tuning: socket server multiplexes all connections onto one PGlite
   // backend session, so a larger pool collides on prepared statement names.
@@ -79,16 +66,6 @@ export const getSharedPrismaAdapter = async (schema: string): Promise<PrismaPGli
   return factory;
 };
 
-const labelRE = /^[a-z0-9_]+$/;
-let schemaCounter = 0;
-
-// Reserve a globally-unique schema name (does not create it). Module-scope calls guarantee
-// uniqueness across files independent of execution order. Label restricted -> safe to quote.
-export const reserveSchema = (label: string = 'ctx'): string => {
-  if (!labelRE.test(label)) throw new Error(`Invalid schema label: ${label}`);
-  return `rqb_${label}_${++schemaCounter}`;
-};
-
 export const createSchema = async (schema: string): Promise<PGlite> => {
   const db = await pglite.get();
   await db.exec(`DROP SCHEMA IF EXISTS "${schema}" CASCADE; CREATE SCHEMA "${schema}";`);
@@ -102,23 +79,22 @@ export const dropSchema = async (schema: string): Promise<void> => {
 
 // Shut down client -> socket server -> PGlite. Every stage attempted even if an earlier one
 // fails; errors aggregated so a teardown failure can't mask the others. No-op if never booted.
-export const closeSharedPGlite = async (): Promise<void> => {
-  const errors: unknown[] = [];
-  const attempt = async (fn: () => Promise<unknown>) => {
-    try {
-      await fn();
-    } catch (e) {
-      errors.push(e);
-    }
-  };
-  await attempt(async () => (await sqlClient.take())?.close());
-  await attempt(async () => (await server.take())?.stop());
-  await attempt(async () => (await pglite.take())?.close());
-  globalThis.__rqbPGliteActive = undefined;
-  // Regression guard: some pglite versions (e.g. 0.5.5) left `process.exitCode = 99` after boot (Emscripten
-  // initdb exit), failing the run despite zero test failures. See electric-sql/pglite#975.
-  if (process.exitCode === 99) {
-    errors.push(new Error('PGlite left process.exitCode = 99 (electric-sql/pglite#975)'));
-  }
-  if (errors.length > 0) throw new AggregateError(errors, 'PGlite teardown failed');
-};
+export const closeSharedPGlite = (): Promise<void> =>
+  teardown(
+    'PGlite',
+    [
+      async () => (await sqlClient.take())?.close(),
+      async () => (await server.take())?.stop(),
+      async () => (await pglite.take())?.close(),
+      async () => {
+        globalThis.__rqbPGliteActive = undefined;
+      },
+    ],
+    // Regression guard: some pglite versions (e.g. 0.5.5) left `process.exitCode = 99` after
+    // boot (Emscripten initdb exit), failing the run despite zero test failures.
+    // See electric-sql/pglite#975.
+    () =>
+      process.exitCode === 99
+        ? [new Error('PGlite left process.exitCode = 99 (electric-sql/pglite#975)')]
+        : []
+  );

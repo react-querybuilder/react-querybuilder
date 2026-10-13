@@ -26,7 +26,7 @@ const config: UserConfig = {
       '@react-querybuilder/core/parseSQL': path.join(coreUtils, 'parseSQL'),
       '@react-querybuilder/core': path.join(root, 'packages/core/src'),
       '@rqb-testing': import.meta.dirname,
-      '@rqb-dbpool': path.join(import.meta.dirname, 'pglite'),
+      '@rqb-dbpool': path.join(import.meta.dirname, 'dbpool'),
       '@rqb-dbmongo': path.join(import.meta.dirname, 'mongo'),
       '@rqb-dbquerytestutils': path.join(coreUtils, 'formatQuery/dbqueryTestUtils'),
     },

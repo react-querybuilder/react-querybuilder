@@ -44,20 +44,32 @@ export const FIND_PRODUCTS_TABLE = (platform: 'sqlite' | 'postgresql'): string =
   })[platform];
 
 export const CREATE_PRODUCTS_TABLE = (
-  platform: 'sqlite' | 'postgresql',
+  platform: 'sqlite' | 'postgresql' | 'mssql' | 'oracle',
   table: string = 'products'
 ): string => {
-  const realType = platform === 'sqlite' ? 'real' : 'double precision';
+  const realType = {
+    sqlite: 'real',
+    postgresql: 'double precision',
+    mssql: 'float',
+    oracle: 'binary_double',
+  }[platform];
+  const textType = {
+    sqlite: 'text',
+    postgresql: 'text',
+    mssql: 'varchar(255)',
+    oracle: 'varchar2(255)',
+  }[platform];
   return `CREATE TABLE ${table} (
     id integer PRIMARY KEY,
-    name text NOT NULL,
+    name ${textType} NOT NULL,
     price ${realType} NOT NULL,
     qty integer NOT NULL,
     discount ${realType} NOT NULL,
     rating ${realType})`;
 };
 
-// Platform-independent: numeric literals + quoted strings + NULL work in both dialects.
+// Platform-independent: numeric literals + quoted strings + NULL work in every dialect.
+// `;`-separated (Oracle callers must split and run one statement at a time).
 export const INSERT_PRODUCTS = (table: string = 'products'): string =>
   products
     .map(

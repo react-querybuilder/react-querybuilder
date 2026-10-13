@@ -1277,7 +1277,7 @@ If `preset` is from `sqlDialectPresets`, it only applies if `format` is undefine
 </td><td>
 
 ```json
-{}
+{ "numberedParams": true, "paramPrefix": ":" }
 ```
 
 </td></tr>
@@ -1292,9 +1292,12 @@ If `preset` is from `sqlDialectPresets`, it only applies if `format` is undefine
   "quoteFieldNamesWith": ["[", "]"],
   "concatOperator": "+",
   "fieldIdentifierSeparator": ".",
+  "numberedParams": true,
   "paramPrefix": "@"
 }
 ```
+
+Boolean values render as `1`/`0` (T-SQL has no `TRUE`/`FALSE` literals).
 
 </td></tr>
     <tr><td>

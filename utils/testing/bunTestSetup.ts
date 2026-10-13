@@ -16,10 +16,14 @@ if (!(await Bun.file(mcpDocsIndex).exists())) {
 
 afterAll(async () => {
   // Flag checks first: set only once a harness boots, so runs that never touch a DB skip
-  // resolving the (heavy) harness modules entirely. Both attempted even if one fails.
+  // resolving the (heavy) harness modules entirely. All attempted even if one fails.
   const results = await Promise.allSettled([
     globalThis.__rqbPGliteActive &&
-      import('./pglite').then(({ closeSharedPGlite }) => closeSharedPGlite()),
+      import('./dbpool/pglite').then(({ closeSharedPGlite }) => closeSharedPGlite()),
+    globalThis.__rqbMSSQLActive &&
+      import('./dbpool/mssql').then(({ closeSharedMSSQL }) => closeSharedMSSQL()),
+    globalThis.__rqbOracleActive &&
+      import('./dbpool/oracle').then(({ closeSharedOracle }) => closeSharedOracle()),
     globalThis.__rqbMongoActive &&
       import('./mongo').then(({ closeSharedMongo }) => closeSharedMongo()),
   ]);

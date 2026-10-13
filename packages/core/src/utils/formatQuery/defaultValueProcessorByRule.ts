@@ -32,6 +32,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     concatOperator = '||',
     fieldIdentifierSeparator,
     paramPrefix,
+    preset,
     wrapValueWith = ['', ''] as [string, string],
     translations,
   } = {}
@@ -186,7 +187,8 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   }
 
   if (typeof value === 'boolean') {
-    return value ? 'TRUE' : 'FALSE';
+    // T-SQL has no boolean literals; `bit` columns compare to 1/0
+    return preset === 'mssql' ? (value ? '1' : '0') : value ? 'TRUE' : 'FALSE';
   }
 
   return valueIsField

@@ -27,4 +27,9 @@ describe('defaultSQLSerializers', () => {
     expect(call('min', 'sqlite', 'a', 'b')).toBe('MIN(a, b)');
     expect(call('max', 'sqlite', 'a', 'b')).toBe('MAX(a, b)');
   });
+
+  it('emits % by default and MOD() for the oracle preset', () => {
+    expect(call('mod', 'mssql', 'a', 'b')).toBe('(a % b)');
+    expect(call('mod', 'oracle', 'a', 'b')).toBe('MOD(a, b)');
+  });
 });
