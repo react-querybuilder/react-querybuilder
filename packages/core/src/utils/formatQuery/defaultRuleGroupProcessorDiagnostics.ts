@@ -20,6 +20,9 @@ import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid, isValidationResult } from '../isRuleOrGroupValid';
 import { lc, numericRegex } from '../misc';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
+import type { FormatCapabilities } from './formatCapabilities';
+import { formatCapabilities, getUnsupportedRuleFeature } from './formatCapabilities';
+import { negateRule } from './negation';
 
 const numericInputTypes = new Set(['number', 'range', 'bigint']);
 const betweenOps = new Set(['between', 'notbetween']);
@@ -162,7 +165,12 @@ export const defaultRuleGroupProcessorDiagnostics: RuleGroupProcessor<Diagnostic
     placeholderValueName,
     validateRule,
     validationMap,
+    diagnosticsTargetFormat,
   } = options;
+
+  const targetCaps = diagnosticsTargetFormat
+    ? formatCapabilities[lc(diagnosticsTargetFormat)]
+    : undefined;
 
   const diagnostics: DiagnosticEntry[] = [];
   const stats: DiagnosticsStats = {
@@ -184,9 +192,12 @@ export const defaultRuleGroupProcessorDiagnostics: RuleGroupProcessor<Diagnostic
 
   const processRuleGroup = (
     rg: RuleGroupTypeAny,
-    path: number[]
+    path: number[],
+    parentNegated = false
   ): RuleGroupDiagnosticsResult | RuleGroupICDiagnosticsResult => {
     stats.totalGroups++;
+    // Odd number of `not` ancestors (incl. self) => De Morgan push-down negates rules
+    const negated = parentNegated !== !!rg.not;
     const level = path.length;
     const groupValidationEntry = validationMap[rg.id ?? ''];
     const groupSelfValid = isRuleOrGroupValid(rg, groupValidationEntry);
@@ -235,7 +246,7 @@ export const defaultRuleGroupProcessorDiagnostics: RuleGroupProcessor<Diagnostic
 
       // Sub-groups
       if (isRuleGroup(rule)) {
-        const annotatedGroup = processRuleGroup(rule, childPath);
+        const annotatedGroup = processRuleGroup(rule, childPath, negated);
         if (!annotatedGroup.valid) {
           allChildrenValid = false;
         }
@@ -270,6 +281,17 @@ export const defaultRuleGroupProcessorDiagnostics: RuleGroupProcessor<Diagnostic
         hasFieldsConfig,
         fieldsByName
       );
+
+      if (targetCaps && diagnosticsTargetFormat && !rule.muted) {
+        collectFormatDiagnostics(
+          rule,
+          childPath,
+          targetCaps,
+          diagnosticsTargetFormat,
+          negated && !targetCaps.nativeNot,
+          diagnostics
+        );
+      }
 
       const fieldDef = fieldsByName.get(rule.field);
       if (fieldDef && !rule.muted) {
@@ -510,6 +532,49 @@ const collectRuleDiagnostics = (
       }
     }
   }
+};
+
+/**
+ * Reports rule features unsupported by the target format as `"format-check"` warnings.
+ * When `negated`, the rule is checked as it would be after De Morgan push-down.
+ */
+const collectFormatDiagnostics = (
+  rule: RuleType,
+  path: number[],
+  caps: FormatCapabilities,
+  format: string,
+  negated: boolean,
+  diagnostics: DiagnosticEntry[]
+): void => {
+  const checked = negated ? negateRule(rule) : rule;
+  const feature = checked
+    ? getUnsupportedRuleFeature(checked, caps)
+    : rule.match?.mode
+      ? 'matchMode'
+      : 'operator';
+  if (!feature) return;
+  const r = checked ?? rule;
+  const codes = {
+    matchMode: ['UNSUPPORTED_MATCH_MODE_FOR_FORMAT', `Match mode "${r.match?.mode}"`],
+    valueSource: ['UNSUPPORTED_VALUE_SOURCE_FOR_FORMAT', `Value source "${r.valueSource}"`],
+    operator: ['UNSUPPORTED_OPERATOR_FOR_FORMAT', `Operator "${r.operator}"`],
+  } as const;
+  const [code, desc] = codes[feature];
+  const orig = feature === 'matchMode' ? rule.match?.mode : rule.operator;
+  const note =
+    !negated || feature === 'valueSource'
+      ? ''
+      : checked
+        ? ` (negation of "${orig}")`
+        : ' (cannot be negated)';
+  diagnostics.push({
+    id: rule.id ?? '',
+    path,
+    code,
+    message: `${desc}${note} is not supported by format "${format}"`,
+    source: 'format-check',
+    severity: 'warning',
+  });
 };
 
 /**

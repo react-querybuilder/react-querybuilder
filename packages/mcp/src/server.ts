@@ -46,7 +46,7 @@ const descriptions = {
     `Formats: ${exportFormats.join(', ')}. String outputs: sql, mongodb (JSON string), cel, spel, ` +
     `jsonata, ldap, cypher, gql, sparql, gremlin, natural_language, json, json_without_ids. ` +
     `Object outputs: parameterized/parameterized_named ({ sql, params }), mongodb_query, ` +
-    `jsonlogic, elasticsearch, diagnostics. Use "natural_language" to explain a query in plain ` +
+    `jsonlogic, elasticsearch, qdrant (vector DB metadata filter), diagnostics. Use "natural_language" to explain a query in plain ` +
     `English. Pass options.fields for field-aware output (e.g. parseNumbers by inputType). ` +
     `ORM formats (drizzle, prisma, sequelize, tanstack_db) need live ORM objects and are not ` +
     `supported here.`,
@@ -65,7 +65,8 @@ const descriptions = {
     `Validate an RQB query against a fields config: shape, IC alternation (rule, combinator, ` +
     `rule...), unknown fields, operator allowed for field, value arity (between/in), value type ` +
     `vs inputType, values-list membership, placeholders. Returns { valid, errors[], ` +
-    `warnings[] }. Run this on any query you generate before using it in app code.`,
+    `warnings[] }. Pass targetFormat (e.g. "qdrant") to warn about rules that format can't ` +
+    `express. Run this on any query you generate before using it in app code.`,
   get_query_schema:
     `Generate a JSON Schema describing valid RQB queries for a fields config (wraps ` +
     `getQueryJsonSchema). Use it for LLM structured output / tool input schemas or Ajv ` +

@@ -161,6 +161,30 @@ formatQuery(query, 'elasticsearch');
 }
 ```
 
+### `qdrant`
+
+Experimental. Qdrant `Filter` for vector search metadata filtering. String ops other than `contains` (full-text `match.text`) are skipped.
+
+```ts
+import { formatQuery } from '@react-querybuilder/core';
+
+formatQuery(query, 'qdrant');
+```
+
+```json title="Output"
+{
+  "must": [
+    { "key": "age", "range": { "gte": 18, "lte": 65 } },
+    {
+      "should": [
+        { "key": "lastName", "match": { "any": ["Vai", "Vaughan"] } },
+        { "key": "isMusician", "match": { "value": true } }
+      ]
+    }
+  ]
+}
+```
+
 ### `jsonlogic`
 
 ```ts

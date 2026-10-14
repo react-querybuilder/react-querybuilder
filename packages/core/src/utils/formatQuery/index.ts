@@ -59,6 +59,7 @@ export * from './defaultRuleGroupProcessorMongoDBQuery';
 export * from './defaultRuleGroupProcessorNL';
 export * from './defaultRuleGroupProcessorParameterized';
 export * from './defaultRuleGroupProcessorPrisma';
+export * from './defaultRuleGroupProcessorQdrant';
 export * from './defaultRuleGroupProcessorSequelize';
 export * from './defaultRuleGroupProcessorSPARQL';
 export * from './defaultRuleGroupProcessorSpEL';
@@ -76,12 +77,15 @@ export * from './defaultRuleProcessorMongoDBQuery';
 export * from './defaultRuleProcessorNL';
 export * from './defaultRuleProcessorParameterized';
 export * from './defaultRuleProcessorPrisma';
+export * from './defaultRuleProcessorQdrant';
 export * from './defaultRuleProcessorSequelize';
 export * from './defaultRuleProcessorSPARQL';
 export * from './defaultRuleProcessorSQL';
 export * from './defaultRuleProcessorTanStackDB';
 export * from './defaultValueProcessorNL';
+export * from './formatCapabilities';
 export * from './formatQuery';
+export * from './negation';
 export * from './utils';
 export {
   defaultRuleProcessorCEL,

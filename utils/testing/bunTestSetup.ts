@@ -28,6 +28,8 @@ afterAll(async () => {
       import('./dbpool/mysql').then(({ closeSharedMySQL }) => closeSharedMySQL()),
     globalThis.__rqbMariaDBActive &&
       import('./dbpool/mysql').then(({ closeSharedMariaDB }) => closeSharedMariaDB()),
+    globalThis.__rqbQdrantActive &&
+      import('./dbpool/qdrant').then(({ closeSharedQdrant }) => closeSharedQdrant()),
     globalThis.__rqbMongoActive &&
       import('./mongo').then(({ closeSharedMongo }) => closeSharedMongo()),
   ]);

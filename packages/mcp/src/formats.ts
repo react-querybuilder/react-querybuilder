@@ -38,6 +38,7 @@ const exportFormatMap: Record<McpExportFormat, true> = {
   gql: true,
   sparql: true,
   gremlin: true,
+  qdrant: true,
   natural_language: true,
   json: true,
   json_without_ids: true,

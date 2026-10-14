@@ -28,6 +28,7 @@ function formatQuery(
 - Spring Expression Language (SpEL)
 - JsonLogic
 - ElasticSearch
+- Qdrant (vector database metadata filter)
 - JSONata
 - LDAP
 - Natural language
@@ -506,6 +507,53 @@ Output (JSON object):
 { "bool": { "must": [{ "term": { "firstName": "Steve" } }, { "term": { "lastName": "Vai" } }] } }
 ```
 
+### Qdrant
+
+:::caution[Experimental]
+
+Support for vector database formats is experimental.
+
+:::
+
+Generate [Qdrant](https://qdrant.tech/documentation/concepts/filtering/) `Filter` objects for metadata filtering in vector searches (e.g. RAG pipelines):
+
+```ts
+formatQuery(query, 'qdrant');
+```
+
+Output (JSON object):
+
+```json
+{
+  "must": [
+    { "key": "firstName", "match": { "value": "Steve" } },
+    { "key": "lastName", "match": { "value": "Vai" } }
+  ]
+}
+```
+
+Pass the result as the `filter` param of a search/query/scroll request. An empty object (`{}`) is returned when no rules can be expressed; omit the `filter` param in that case.
+
+Rules Qdrant can't express are skipped. Inspect `formatCapabilities.qdrant` at runtime, or run the ["diagnostics" format](#diagnostics) with `diagnosticsTargetFormat: 'qdrant'` to list skipped rules as warnings.
+
+| Operator(s)                                | Output                                                                    |
+| ------------------------------------------ | ------------------------------------------------------------------------- |
+| `=` / `!=`                                 | `match.value` (`must_not` for `!=`); floats use `range: { gte, lte }`     |
+| `<` `<=` `>` `>=` / `between` `notBetween` | `range` (numbers) or `datetime_range` (RFC 3339, `date`/`datetime-local`) |
+| `in` / `notIn`                             | `match.any` / `match.except` (all strings or all integers), else `should` |
+| `null` / `notNull`                         | `is_null` / `must_not` `is_null`                                          |
+| `contains` / `doesNotContain`              | `match.text` (requires full-text index; token-based, **not** substring)   |
+| begins/ends with (+ negations)             | skipped                                                                   |
+| `valueSource: "field"`                     | skipped                                                                   |
+| match modes `some` / `none`                | `nested` / `must_not` `nested` (arrays of objects only); others skipped   |
+| groups                                     | `and` → `must`, `or` → `should`, `not` → `must_not`                       |
+
+Notes:
+
+- Field names are emitted verbatim as `key` (Qdrant supports `a.b` and `a[].b` paths). No escaping is applied, so whitelist field names.
+- `bigint` values are converted to `number` (precision loss beyond `Number.MAX_SAFE_INTEGER`).
+- Fields with `valueEditorType` `"checkbox"`/`"switch"` emit boolean values.
+
 ### JSONata
 
 Generate [JSONata](https://jsonata.org/) filters using "jsonata" format. Use [`parseNumbers` option](#parse-numbers) for numeric values since JSONata doesn't auto-cast strings to numbers:
@@ -829,6 +877,18 @@ All diagnostics except `INVALID_STRUCTURE` and the placeholder, muted, and valid
 `diagnostics` covers what a [JSON Schema from `getQueryJsonSchema`](./json-schema) can't express, so use it to check LLM-generated queries.
 
 :::
+
+#### Target format check
+
+Set `diagnosticsTargetFormat` to a format with a `formatCapabilities` entry (currently `"qdrant"`) to report rules that format would skip. These entries have `source: "format-check"` and `severity: "warning"`, and never affect `valid` or `stats`.
+
+| Code                                  | Description                                  |
+| ------------------------------------- | -------------------------------------------- |
+| `UNSUPPORTED_OPERATOR_FOR_FORMAT`     | Operator can't be expressed in the target    |
+| `UNSUPPORTED_VALUE_SOURCE_FOR_FORMAT` | `valueSource: "field"` unsupported by target |
+| `UNSUPPORTED_MATCH_MODE_FOR_FORMAT`   | Match mode unsupported by target             |
+
+For targets without native group negation, rules under an odd number of `not` groups are checked after De Morgan push-down (e.g. `beginsWith` → `doesNotBeginWith`), and the message notes the original operator.
 
 #### Stats and field summary
 

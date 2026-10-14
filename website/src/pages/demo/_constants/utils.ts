@@ -176,6 +176,7 @@ const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOption
     case 'parameterized_named':
     case 'jsonlogic':
     case 'elasticsearch':
+    case 'qdrant':
     case 'prisma':
       return stringify(formatQueryResult);
   }

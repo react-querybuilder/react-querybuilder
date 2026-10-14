@@ -54,6 +54,7 @@
     "test": "bun generate-prisma-client; bun run test:bun && bun run test:coverage",
     "test:bun": "bun test --randomize ./packages/{core,datetime,expr,mcp,rules-engine} ./utils/conformance ./utils/recipes.test.ts ./skills",
     "test:dbintegration": "bun test --randomize dbquery.sql.mssql dbquery.sql.oracle dbquery.sql.mysql dbquery.mssql dbquery.oracle dbquery.mysql",
+    "test:dbintegration:vector": "bun test --randomize dbquery.qdrant",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:antd": "vitest run packages/antd --coverage --coverage.include 'packages/antd/src'",

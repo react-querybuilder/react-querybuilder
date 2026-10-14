@@ -1438,6 +1438,8 @@ export class QueryManager<
     options: 'elasticsearch' | (FormatQueryOptions & { format: 'elasticsearch' })
     // oxlint-disable-next-line typescript/no-explicit-any
   ): Record<string, any>;
+  /** Generates a Qdrant `Filter` object from the current query. */
+  format(options: 'qdrant' | (FormatQueryOptions & { format: 'qdrant' })): Record<string, unknown>;
   /** Generates a MongoDB query object from the current query. */
   format(
     options: 'mongodb_query' | (FormatQueryOptions & { format: 'mongodb_query' })

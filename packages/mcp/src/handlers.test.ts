@@ -240,6 +240,25 @@ describe('handleValidateQuery', () => {
     expect(text(r)).toMatch('Warnings:\n- Field "age"');
   });
 
+  test('targetFormat warnings', async () => {
+    const r = await handleValidateQuery({
+      query: {
+        combinator: 'and',
+        rules: [
+          {
+            field: (query.rules[0] as { field: string }).field,
+            operator: 'beginsWith',
+            value: 'x',
+          },
+        ],
+      },
+      fields,
+      targetFormat: 'qdrant',
+    });
+    expect(sc(r).valid).toBe(true);
+    expect(text(r)).toMatch('is not supported by format "qdrant"');
+  });
+
   test('errors', async () => {
     const r = await handleValidateQuery({
       query: {

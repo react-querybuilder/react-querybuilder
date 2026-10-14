@@ -214,6 +214,15 @@ RQB_MSSQL_URL='mssql://sa:Rqb_Test_1234!@localhost:1433' \
   bun run test:dbintegration
 ```
 
+**Vector DBs (CI-only, `DBIntegrationVector` job, `bun run test:dbintegration:vector`):** `dbquery.qdrant*` files use `describe.skipIf(!qdrantEnabled)`. Harnesses use `fetch` only (no vendor SDKs).
+
+- Qdrant: `RQB_QDRANT_URL=http://localhost:6333`. One collection per suite (`reserveSchema`): `createQdrantCollection`/`dropQdrantCollection`, `qdrantInsert(name, payloads)` (sequential int ids, dummy 2-dim vectors), `qdrantFilter(name, filter)` → payloads via `scroll` (`{}` omits `filter`). Unordered; compare sorted ids. Filter `dbTests` through `formatCapabilities` (unsupported → assert `format-check` diagnostic).
+
+```bash
+docker run -d -p 6333:6333 qdrant/qdrant:v1.15.4
+RQB_QDRANT_URL=http://localhost:6333 bun run test:dbintegration:vector
+```
+
 ## Generated Files
 
 **Never edit:**

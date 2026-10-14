@@ -43,6 +43,7 @@ import {
 import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGroupProcessorPrisma';
+import { defaultRuleGroupProcessorQdrant } from './defaultRuleGroupProcessorQdrant';
 import { defaultRuleGroupProcessorSequelize } from './defaultRuleGroupProcessorSequelize';
 import { defaultRuleGroupProcessorSPARQL } from './defaultRuleGroupProcessorSPARQL';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
@@ -61,6 +62,7 @@ import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQ
 import { defaultOperatorProcessorNL, defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorPrisma } from './defaultRuleProcessorPrisma';
+import { defaultRuleProcessorQdrant } from './defaultRuleProcessorQdrant';
 import { defaultRuleProcessorSequelize } from './defaultRuleProcessorSequelize';
 import { defaultRuleProcessorSPARQL } from './defaultRuleProcessorSPARQL';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
@@ -141,6 +143,7 @@ const defaultRuleProcessors = {
   gql: defaultRuleProcessorCypher,
   sparql: defaultRuleProcessorSPARQL,
   gremlin: defaultRuleProcessorGremlin,
+  qdrant: defaultRuleProcessorQdrant,
   diagnostics: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
@@ -169,6 +172,7 @@ const defaultOperatorProcessors = {
   gql: defaultOperatorProcessor,
   sparql: defaultOperatorProcessor,
   gremlin: defaultOperatorProcessor,
+  qdrant: defaultOperatorProcessor,
   diagnostics: defaultOperatorProcessor,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
@@ -195,6 +199,7 @@ type MostFormatQueryOptions = SetOptional<
   | 'placeholderValueName'
   | 'parseNumbers'
   | 'getParameters'
+  | 'diagnosticsTargetFormat'
 >;
 
 const defaultFormatQueryOptions = {
@@ -227,6 +232,7 @@ const valueProcessorCanActAsRuleProcessor = new Set<ExportFormat>([
   'mongodb_query',
   'mongodb',
   'prisma',
+  'qdrant',
   'sequelize',
   'spel',
   'tanstack_db',
@@ -297,6 +303,19 @@ function formatQuery(
   options: 'elasticsearch' | (FormatQueryOptions & { format: 'elasticsearch' })
   // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any>;
+/**
+ * Generates a [Qdrant](https://qdrant.tech/documentation/concepts/filtering/) `Filter`
+ * object from an RQB query object. Returns `{}` when empty/invalid (omit the `filter`
+ * param in that case).
+ *
+ * NOTE: Support for the Qdrant format is experimental.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'qdrant' | (FormatQueryOptions & { format: 'qdrant' })
+): Record<string, unknown>;
 /**
  * Generates a MongoDB query object from an RQB query object.
  *
@@ -521,7 +540,7 @@ function formatQuery(
                     ? prismaFallback
                     : format === 'jsonlogic'
                       ? false
-                      : format === 'elasticsearch'
+                      : format === 'elasticsearch' || format === 'qdrant'
                         ? {}
                         : format === 'drizzle' || format === 'sequelize' || format === 'tanstack_db'
                           ? undefined
@@ -664,6 +683,9 @@ function formatQuery(
 
     case 'gremlin':
       return defaultRuleGroupProcessorGremlin(ruleGroup, finalOptions);
+
+    case 'qdrant':
+      return defaultRuleGroupProcessorQdrant(ruleGroup, finalOptions);
 
     case 'diagnostics':
       return defaultRuleGroupProcessorDiagnostics(ruleGroup, finalOptions);

@@ -67,6 +67,10 @@ const formats = {
   mongodb_query: { lang: 'json' },
   mongodb: { lang: 'json', note: '**Deprecated**; use `mongodb_query`.' },
   elasticsearch: { lang: 'json', note: 'Experimental.' },
+  qdrant: {
+    lang: 'json',
+    note: 'Experimental. Qdrant `Filter` for vector search metadata filtering. String ops other than `contains` (full-text `match.text`) are skipped.',
+  },
   jsonlogic: { lang: 'json' },
   cel: { lang: 'text' },
   spel: { lang: 'text' },

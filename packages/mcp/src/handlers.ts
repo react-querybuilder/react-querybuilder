@@ -1,5 +1,6 @@
 import type {
   DiagnosticEntry,
+  ExportFormat,
   FormatQueryOptions,
   FullField,
   GetQueryJsonSchemaOptions,
@@ -69,6 +70,8 @@ export interface ValidateQueryArgs {
   query: unknown;
   fields: FieldsInput;
   queryType?: 'standard' | 'ic';
+  /** Report rules this export format can't express (`format-check` warnings). */
+  targetFormat?: ExportFormat;
 }
 
 export interface GetQuerySchemaArgs {
@@ -300,6 +303,7 @@ export const handleConvertQuery: (args: ConvertQueryArgs) => Promise<ToolResult>
 
 /** Diagnostic codes reported as warnings (not validity failures). */
 const warningCodes = new Set(['MUTED', 'UNREFERENCED_FIELD']);
+const isWarning = (d: DiagnosticEntry) => d.severity === 'warning' || warningCodes.has(d.code);
 
 const toIssue = (d: DiagnosticEntry): ValidationIssue => ({
   code: d.code,
@@ -308,7 +312,7 @@ const toIssue = (d: DiagnosticEntry): ValidationIssue => ({
 });
 
 export const handleValidateQuery: (args: ValidateQueryArgs) => Promise<ToolResult> = safe(
-  ({ query: queryInput, fields, queryType }: ValidateQueryArgs) => {
+  ({ query: queryInput, fields, queryType, targetFormat }: ValidateQueryArgs) => {
     const query = parseQueryInput(queryInput);
     const shapeErrors = checkShape(query);
     if (shapeErrors.length > 0) {
@@ -329,9 +333,13 @@ export const handleValidateQuery: (args: ValidateQueryArgs) => Promise<ToolResul
       ? (fields as FullField[])
       : // oxlint-disable-next-line oxc/no-map-spread
         Object.entries(fields).map(([name, f]) => ({ ...(f as FullField), name, value: name }));
-    const { diagnostics } = formatQuery(rg, { format: 'diagnostics', fields: fieldList });
-    errors.push(...diagnostics.filter(d => !warningCodes.has(d.code)).map(toIssue));
-    const warnings = diagnostics.filter(d => warningCodes.has(d.code)).map(toIssue);
+    const { diagnostics } = formatQuery(rg, {
+      format: 'diagnostics',
+      fields: fieldList,
+      diagnosticsTargetFormat: targetFormat,
+    });
+    errors.push(...diagnostics.filter(d => !isWarning(d)).map(toIssue));
+    const warnings = diagnostics.filter(isWarning).map(toIssue);
     const valid = errors.length === 0;
     const summary = valid
       ? `Valid.${warnings.length > 0 ? `\nWarnings:\n${warnings.map(w => `- ${w.message}`).join('\n')}` : ''}`

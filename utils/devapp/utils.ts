@@ -57,6 +57,7 @@ export const getFormatQueryString = (
     options.format === 'parameterized_named' ||
     options.format === 'jsonlogic' ||
     options.format === 'elasticsearch' ||
+    options.format === 'qdrant' ||
     options.format === 'mongodb_query'
   ) {
     return JSON.stringify(formatQueryResult, bigIntJsonStringifyReplacer, 2);

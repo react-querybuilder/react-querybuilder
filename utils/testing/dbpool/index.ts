@@ -5,3 +5,4 @@ export * from './mssql';
 export * from './mysql';
 export * from './oracle';
 export * from './pglite';
+export * from './qdrant';

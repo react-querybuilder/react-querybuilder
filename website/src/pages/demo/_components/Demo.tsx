@@ -863,6 +863,11 @@ export default function Demo({
                     attributes: getExportTabAttributes('elasticsearch'),
                   },
                   {
+                    value: 'qdrant',
+                    label: 'Qdrant',
+                    attributes: getExportTabAttributes('qdrant'),
+                  },
+                  {
                     value: 'prisma',
                     label: 'Prisma ORM',
                     attributes: getExportTabAttributes('prisma'),
@@ -1011,6 +1016,13 @@ export default function Demo({
                 <TabItem value="elasticsearch">
                   <div className={styles.exportOptions}>
                     <ExportInfoLinks format="elasticsearch" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="qdrant">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="qdrant" />
                     {parseNumbersOption}
                   </div>
                   {exportPresentation}

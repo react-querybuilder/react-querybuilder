@@ -166,6 +166,12 @@ export const validateQueryInputSchema: Schema = {
       description:
         'Expected query type: "standard" (`RuleGroupType`) or "ic" (`RuleGroupTypeIC`). Omit to accept either.',
     },
+    targetFormat: {
+      type: 'string',
+      enum: [...exportFormats, ...ormFormats],
+      description:
+        'Export format the query will be sent to. Rules it cannot express (e.g. vector DB formats like "qdrant") are reported as warnings.',
+    },
   },
   required: ['query', 'fields'],
   additionalProperties: false,

@@ -298,6 +298,7 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
   ['ldap', 'LDAP', 'https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol', 'ldap'],
   ['prisma', 'Prisma ORM', 'https://www.prisma.io/', 'prisma-orm'],
   ['elasticsearch', 'ElasticSearch', 'https://www.elastic.co/', 'elasticsearch'],
+  ['qdrant', 'Qdrant', 'https://qdrant.tech/', 'qdrant'],
   ['cypher', 'Cypher', 'https://neo4j.com/docs/cypher-manual/', 'cypher'],
   ['gql', 'GQL', 'https://www.iso.org/standard/76120.html', 'cypher'],
   ['sparql', 'SPARQL', 'https://www.w3.org/TR/sparql11-query/', 'sparql'],

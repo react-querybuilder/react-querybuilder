@@ -84,6 +84,12 @@ const formats = {
     returns: 'object',
     notes: 'Experimental. Query DSL `bool` query.',
   },
+  qdrant: {
+    target: 'Qdrant (vector DB)',
+    returns: 'object',
+    notes:
+      'Experimental. `Filter` for RAG metadata filtering; `{}` = omit `filter`. Unsupported rules skipped (see `formatCapabilities`).',
+  },
   jsonlogic: { target: 'JsonLogic', returns: 'object', notes: '' },
   cel: { target: 'CEL', returns: 'string', notes: '' },
   spel: { target: 'Spring SpEL', returns: 'string', notes: '' },
@@ -111,7 +117,7 @@ const formats = {
     target: 'Debugging/validation',
     returns: '`{ query, diagnostics, stats, fieldSummary }`',
     notes:
-      'Annotated tree + flat entries `{ id, path, code, message, source }`. Pass `fields` for field/type checks.',
+      "Annotated tree + flat entries `{ id, path, code, message, source, severity? }`. Pass `fields` for field/type checks; `diagnosticsTargetFormat` to warn about rules a format can't express.",
   },
 } satisfies Record<ExportFormat, FormatMeta>;
 
