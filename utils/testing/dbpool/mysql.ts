@@ -59,7 +59,7 @@ const makeHarness = (
   const query = async <T = Record<string, unknown>>(
     sql: string,
     params: unknown[] = []
-  ): Promise<T[]> => [...((await (await pool.get()).unsafe(sql, params)) as T[])];
+  ): Promise<T[]> => [...(await (await pool.get()).unsafe(sql, params))];
 
   const execMany = async (sql: string | string[]): Promise<void> => {
     for (const stmt of typeof sql === 'string' ? sql.split(';') : sql) {
