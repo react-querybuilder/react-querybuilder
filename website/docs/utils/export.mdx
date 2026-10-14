@@ -539,7 +539,7 @@ Rules Qdrant can't express are skipped. Inspect `formatCapabilities.qdrant` at r
 | Operator(s)                                | Output                                                                    |
 | ------------------------------------------ | ------------------------------------------------------------------------- |
 | `=` / `!=`                                 | `match.value` (`must_not` for `!=`); floats use `range: { gte, lte }`     |
-| `<` `<=` `>` `>=` / `between` `notBetween` | `range` (numbers, or RFC 3339 strings for `date`/`datetime-local`) |
+| `<` `<=` `>` `>=` / `between` `notBetween` | `range` (numbers, or RFC 3339 strings for `date`/`datetime-local`)        |
 | `in` / `notIn`                             | `match.any` / `match.except` (all strings or all integers), else `should` |
 | `null` / `notNull`                         | `is_null` / `must_not` `is_null`                                          |
 | `contains` / `doesNotContain`              | `match.text` (requires full-text index; token-based, **not** substring)   |
