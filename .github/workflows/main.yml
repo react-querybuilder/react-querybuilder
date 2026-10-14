@@ -158,7 +158,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --frozen-lockfile
-      - run: bun run build:core
       - run: bun run test:dbintegration
 
   DBIntegrationVector:
@@ -174,7 +173,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --frozen-lockfile
-      - run: bun run build:core
       - name: Wait for Qdrant
         run: timeout 60 bash -c 'until curl -sf "$RQB_QDRANT_URL/readyz"; do sleep 2; done'
       - run: bun run test:dbintegration:vector
