@@ -105,7 +105,7 @@ describe.skipIf(!qdrantEnabled)('Qdrant', () => {
       expect(names(result)).toEqual(['Spider-Man', 'Superman']);
     });
 
-    test('datetime_range (RFC 3339)', async () => {
+    test('datetime range (RFC 3339)', async () => {
       const dated = reserveSchema('qdrant_dates');
       await createQdrantCollection(dated);
       try {

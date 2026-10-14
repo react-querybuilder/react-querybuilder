@@ -205,28 +205,28 @@ describe('operators', () => {
     it.each<[RuleType, unknown]>([
       [
         { field: 'd', operator: '=', value: '2024-01-02' },
-        { key: 'd', datetime_range: { gte: '2024-01-02T00:00:00Z', lte: '2024-01-02T00:00:00Z' } },
+        { key: 'd', range: { gte: '2024-01-02T00:00:00Z', lte: '2024-01-02T00:00:00Z' } },
       ],
       [{ field: 'd', operator: '=', value: 'nope' }, undefined],
       [
         { field: 'dt', operator: '>', value: '2024-01-02T03:04' },
-        { key: 'dt', datetime_range: { gt: '2024-01-02T03:04:00Z' } },
+        { key: 'dt', range: { gt: '2024-01-02T03:04:00Z' } },
       ],
       [{ field: 'dt', operator: '<', value: 'nope' }, undefined],
       [
         { field: 'd', operator: 'between', value: ['2024-12-31', '2024-01-01'] },
-        { key: 'd', datetime_range: { gte: '2024-01-01T00:00:00Z', lte: '2024-12-31T00:00:00Z' } },
+        { key: 'd', range: { gte: '2024-01-01T00:00:00Z', lte: '2024-12-31T00:00:00Z' } },
       ],
       [
         { field: 'd', operator: 'between', value: ['2024-01-01', '2024-12-31'] },
-        { key: 'd', datetime_range: { gte: '2024-01-01T00:00:00Z', lte: '2024-12-31T00:00:00Z' } },
+        { key: 'd', range: { gte: '2024-01-01T00:00:00Z', lte: '2024-12-31T00:00:00Z' } },
       ],
       [
         { field: 'd', operator: 'notBetween', value: ['2024-01-01', '2024-12-31'] },
         {
           should: [
-            { key: 'd', datetime_range: { lt: '2024-01-01T00:00:00Z' } },
-            { key: 'd', datetime_range: { gt: '2024-12-31T00:00:00Z' } },
+            { key: 'd', range: { lt: '2024-01-01T00:00:00Z' } },
+            { key: 'd', range: { gt: '2024-12-31T00:00:00Z' } },
           ],
         },
       ],
@@ -235,10 +235,7 @@ describe('operators', () => {
         { field: 'd', operator: 'in', value: ['2024-01-01'] },
         {
           should: [
-            {
-              key: 'd',
-              datetime_range: { gte: '2024-01-01T00:00:00Z', lte: '2024-01-01T00:00:00Z' },
-            },
+            { key: 'd', range: { gte: '2024-01-01T00:00:00Z', lte: '2024-01-01T00:00:00Z' } },
           ],
         },
       ],
@@ -430,10 +427,7 @@ it('RAG snapshot', () => {
     must: [
       { key: 'tenant', match: { value: 'acme' } },
       { key: 'doc_type', match: { any: ['pdf', 'html'] } },
-      {
-        key: 'published',
-        datetime_range: { gte: '2024-01-01T00:00:00Z', lte: '2024-12-31T00:00:00Z' },
-      },
+      { key: 'published', range: { gte: '2024-01-01T00:00:00Z', lte: '2024-12-31T00:00:00Z' } },
       {
         should: [
           { key: 'lang', match: { value: 'en' } },

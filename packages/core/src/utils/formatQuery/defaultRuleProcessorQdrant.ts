@@ -67,7 +67,7 @@ export const defaultRuleProcessorQdrant: RuleProcessor = (
   const eq = (v: unknown): QdrantCondition | false => {
     if (isDate) {
       const d = toRFC3339(v);
-      return d ? { key, datetime_range: { gte: d, lte: d } } : false;
+      return d ? { key, range: { gte: d, lte: d } } : false;
     }
     const s = toScalar(v);
     if (s === undefined) return false;
@@ -90,9 +90,7 @@ export const defaultRuleProcessorQdrant: RuleProcessor = (
     case '>':
     case '>=': {
       const v = isDate ? toRFC3339(value) : coerceNumber(value);
-      return v === undefined
-        ? false
-        : { key, [isDate ? 'datetime_range' : 'range']: { [rangeOps[op]]: v } };
+      return v === undefined ? false : { key, range: { [rangeOps[op]]: v } };
     }
 
     case 'in':
@@ -116,7 +114,6 @@ export const defaultRuleProcessorQdrant: RuleProcessor = (
     case 'notbetween': {
       const list = toArray(value);
       if (list.length < 2) return false;
-      const rk = isDate ? 'datetime_range' : 'range';
       let [a, b] = isDate
         ? [toRFC3339(list[0]), toRFC3339(list[1])]
         : [coerceNumber(list[0]), coerceNumber(list[1])];
@@ -125,11 +122,11 @@ export const defaultRuleProcessorQdrant: RuleProcessor = (
         [a, b] = [b, a];
       }
       return op === 'between'
-        ? { key, [rk]: { gte: a, lte: b } }
+        ? { key, range: { gte: a, lte: b } }
         : {
             should: [
-              { key, [rk]: { lt: a } },
-              { key, [rk]: { gt: b } },
+              { key, range: { lt: a } },
+              { key, range: { gt: b } },
             ],
           };
     }
