@@ -173,9 +173,13 @@ describe('formatCapabilities', () => {
         expect(isSkipped(format, rule)).toBe(!caps.operators.has(op.toLowerCase() as never));
       });
 
-      it('valueSource field consistent', () => {
-        const rule: RuleType = { field: 'f', operator: '=', value: 'g', valueSource: 'field' };
-        expect(isSkipped(format, rule)).toBe(!caps.fieldValueSource);
+      it.each(defaultOperators.map(o => o.name))('valueSource field %s consistent', op => {
+        const lcOp = op.toLowerCase() as never;
+        const value = ['between', 'notBetween'].includes(op) ? 'g,h' : 'g';
+        const rule: RuleType = { field: 'f', operator: op, value, valueSource: 'field' };
+        const fvs = caps.fieldValueSource;
+        const fvsOk = typeof fvs === 'boolean' ? fvs : fvs.has(lcOp);
+        expect(isSkipped(format, rule)).toBe(!fvsOk || !caps.operators.has(lcOp));
       });
 
       it.each(['all', 'some', 'none', 'atLeast', 'atMost', 'exactly'] as const)(

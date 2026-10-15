@@ -12,8 +12,8 @@ import { processMatchMode } from './utils';
 export interface FormatCapabilities {
   /** Lowercased operator names the format can express. */
   operators: ReadonlySet<Lowercase<DefaultOperatorName>>;
-  /** Supports `valueSource: 'field'`. */
-  fieldValueSource: boolean;
+  /** Supports `valueSource: 'field'`. Set = only for those (lowercased) operators. */
+  fieldValueSource: boolean | ReadonlySet<Lowercase<DefaultOperatorName>>;
   /** Supported (lowercased, post-coercion) match modes. Empty = none. */
   matchModes: ReadonlySet<Lowercase<MatchMode>>;
   /** Native group negation. `false` = De Morgan push-down via {@link negateRuleGroup}. */
@@ -109,8 +109,17 @@ export const formatCapabilities: Partial<Record<ExportFormat, FormatCapabilities
       'endswith',
       'doesnotendwith',
     ]),
-    // Comparison ops and `between`/`notBetween` only (see `defaultRuleProcessorMilvus`)
-    fieldValueSource: true,
+    // See `defaultRuleProcessorMilvus`
+    fieldValueSource: new Set<Lowercase<DefaultOperatorName>>([
+      '=',
+      '!=',
+      '<',
+      '<=',
+      '>',
+      '>=',
+      'between',
+      'notbetween',
+    ]),
     matchModes: new Set(),
     nativeNot: true,
   },
@@ -159,8 +168,10 @@ export const getUnsupportedRuleFeature = (
     const mode = mm ? mm.mode : (lc(rule.match.mode) as Lowercase<MatchMode>);
     return caps.matchModes.has(mode) ? null : 'matchMode';
   }
-  if (rule.valueSource === 'field' && !caps.fieldValueSource) return 'valueSource';
-  return caps.operators.has(lc(rule.operator) as Lowercase<DefaultOperatorName>)
-    ? null
-    : 'operator';
+  const op = lc(rule.operator) as Lowercase<DefaultOperatorName>;
+  const fvs = caps.fieldValueSource;
+  if (rule.valueSource === 'field' && (typeof fvs === 'boolean' ? !fvs : !fvs.has(op))) {
+    return 'valueSource';
+  }
+  return caps.operators.has(op) ? null : 'operator';
 };
