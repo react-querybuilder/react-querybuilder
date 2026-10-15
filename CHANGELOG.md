@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Experimental vector DB export formats for `formatQuery` (and `QueryManager#format`): "pinecone", "chroma", "qdrant", and "weaviate" (metadata filter objects; `{}` when empty/invalid, so omit the filter param) and "milvus" (boolean filter expression string). Each has a `defaultRuleProcessor*`/`defaultRuleGroupProcessor*` pair. Milvus field-to-field comparisons are limited to comparison and `between` operators.
+- New `formatCapabilities` map and `getUnsupportedRuleFeature` helper describe which operators, value sources, and match modes each vector format supports.
+- "diagnostics" format: new `diagnosticsTargetFormat` option reports rules the target format can't express as `"format-check"` entries. New optional `severity` (`"error"`/`"warning"`) on diagnostic entries; warnings never affect validity.
+- `@react-querybuilder/datetime`: date/time rule processors for the Pinecone, Chroma, Qdrant, Weaviate, and Milvus formats, plus a new `getEpochMs` util.
+- `@react-querybuilder/mcp`: `format_query` supports the vector formats, and `validate_query` accepts a `targetFormat` argument to warn about rules that format can't express.
+
 ### Fixed
 
 - [#1118] `formatQuery` SQL dialect presets now produce SQL the target database accepts. These output changes are bug fixes; the old output failed to run.
