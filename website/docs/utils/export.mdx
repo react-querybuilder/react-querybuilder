@@ -517,7 +517,7 @@ Support for vector database formats is experimental.
 
 The "pinecone", "chroma", "qdrant", "weaviate", and "milvus" formats generate metadata filters for vector searches (e.g. RAG pipelines). Rules a format can't express are skipped. Inspect `formatCapabilities[format]` at runtime (e.g. to limit `operators` per target), or run the ["diagnostics" format](#diagnostics) with `diagnosticsTargetFormat` to list skipped rules as warnings.
 
-<!-- GENERATED:vector:start -->
+{/* GENERATED:vector:start */}
 
 | Feature                | [Pinecone](#pinecone) | [Chroma](#chroma) | [Qdrant](#qdrant) | [Weaviate](#weaviate) | [Milvus](#milvus) |
 | ---------------------- | --------------------- | ----------------- | ----------------- | --------------------- | ----------------- |
@@ -543,7 +543,7 @@ The "pinecone", "chroma", "qdrant", "weaviate", and "milvus" formats generate me
 | Match modes            | –                     | –                 | some, none        | –                     | –                 |
 | `not` groups           | De Morgan             | De Morgan         | native            | native                | native            |
 
-<!-- GENERATED:vector:end -->
+{/* GENERATED:vector:end */}
 
 Common behavior:
 
@@ -552,7 +552,7 @@ Common behavior:
 - Field names aren't escaped. Object formats emit them as plain keys/values (inert data), and "milvus" emits them verbatim. Whitelist field names either way.
 - `bigint` values are converted to `number` (precision loss beyond `Number.MAX_SAFE_INTEGER`), except in "milvus" which emits them as-is.
 - Fields with `valueEditorType` `"checkbox"`/`"switch"` emit boolean values.
-- Dates: "qdrant" and "weaviate" emit RFC 3339 strings for `date`/`datetime-local` fields. "pinecone", "chroma", and "milvus" have no date type; store dates as epoch milliseconds and use the `datetimeRuleProcessor<Format>` processors from [`@react-querybuilder/datetime`](./datetime), which convert date values (including relative dates) to epoch ms.
+- Dates: "qdrant" and "weaviate" emit RFC 3339 strings for `date`/`datetime-local` fields. "pinecone", "chroma", and "milvus" have no date type; store dates as epoch milliseconds and use the `datetimeRuleProcessor<Format>` processors from [`@react-querybuilder/datetime`](../datetime), which convert date values (including relative dates) to epoch ms.
 
 #### Pinecone
 
