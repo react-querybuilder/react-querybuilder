@@ -71,7 +71,23 @@ const formats = {
     lang: 'json',
     note: 'Experimental. Qdrant `Filter` for vector search metadata filtering. String ops other than `contains` (full-text `match.text`) are skipped.',
   },
+  pinecone: {
+    lang: 'json',
+    note: 'Experimental. Pinecone metadata filter. String ops skipped; `not` groups via De Morgan.',
+  },
+  chroma: {
+    lang: 'json',
+    note: 'Experimental. Chroma `where` filter. String ops and `null`/`notNull` skipped; `not` groups via De Morgan.',
+  },
+  weaviate: {
+    lang: 'json',
+    note: 'Experimental. Weaviate `where` filter (GraphQL/REST shape). String ops use `Like`.',
+  },
   jsonlogic: { lang: 'json' },
+  milvus: {
+    lang: 'text',
+    note: 'Experimental. Milvus boolean filter expression. Field names are not escaped.',
+  },
   cel: { lang: 'text' },
   spel: { lang: 'text' },
   jsonata: { opts: pn, lang: 'text' },

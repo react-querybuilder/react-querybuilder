@@ -1,3 +1,4 @@
+import type { ValueProcessorOptions } from '../../types';
 import { lc } from '../misc';
 import { shouldRenderAsNumber } from './utils';
 
@@ -62,3 +63,19 @@ export const coerceBoolean = (value: unknown): boolean | undefined =>
     : typeof value === 'string' && /^\s*(true|false)\s*$/i.test(value)
       ? lc(value.trim()) === 'true'
       : undefined;
+
+/**
+ * Whether the field uses a checkbox/switch editor for `operator`.
+ *
+ * @internal
+ */
+export const isBooleanEditor = (
+  fieldData: ValueProcessorOptions['fieldData'],
+  operator: string
+): boolean => {
+  const vet =
+    typeof fieldData?.valueEditorType === 'function'
+      ? fieldData.valueEditorType(operator)
+      : fieldData?.valueEditorType;
+  return vet === 'checkbox' || vet === 'switch';
+};

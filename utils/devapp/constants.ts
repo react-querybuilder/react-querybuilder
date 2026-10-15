@@ -377,5 +377,9 @@ export const formatMap: [ExportFormat, string, HttpsURL][] = [
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/'],
   ['jsonata', 'JSONata', 'https://jsonata.org/'],
   ['elasticsearch', 'ElasticSearch', 'https://www.elastic.co/'],
+  ['pinecone', 'Pinecone', 'https://www.pinecone.io/'],
+  ['chroma', 'Chroma', 'https://www.trychroma.com/'],
   ['qdrant', 'Qdrant', 'https://qdrant.tech/'],
+  ['weaviate', 'Weaviate', 'https://weaviate.io/'],
+  ['milvus', 'Milvus', 'https://milvus.io/'],
 ];

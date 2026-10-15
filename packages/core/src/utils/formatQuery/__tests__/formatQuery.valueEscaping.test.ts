@@ -16,13 +16,14 @@ const sq = String.raw`\' OR 1=1 //`;
 const dq = String.raw`\" OR 1=1 //`;
 
 describe('string value escaping', () => {
-  it.each<['cypher' | 'gql' | 'gremlin' | 'cel' | 'sparql' | 'spel', string, string]>([
+  it.each<['cypher' | 'gql' | 'gremlin' | 'cel' | 'sparql' | 'spel' | 'milvus', string, string]>([
     ['cypher', sq, String.raw`f = '\\\' OR 1=1 //'`],
     ['gql', sq, String.raw`f = '\\\' OR 1=1 //'`],
     ['gremlin', sq, String.raw`.has('f', '\\\' OR 1=1 //')`],
     ['cel', dq, String.raw`f == "\\\" OR 1=1 //"`],
     ['sparql', dq, String.raw`?f = "\\\" OR 1=1 //"`],
     ['spel', sq, String.raw`f == '\'' OR 1=1 //'`],
+    ['milvus', dq, String.raw`f == "\\\" OR 1=1 //"`],
   ])('%s', (format, value, expected) => {
     const result = formatQuery(q(value), format);
     expect(result).toContain(expected);

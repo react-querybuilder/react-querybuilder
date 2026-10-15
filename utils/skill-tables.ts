@@ -90,6 +90,27 @@ const formats = {
     notes:
       'Experimental. `Filter` for RAG metadata filtering; `{}` = omit `filter`. Unsupported rules skipped (see `formatCapabilities`).',
   },
+  pinecone: {
+    target: 'Pinecone (vector DB)',
+    returns: 'object',
+    notes: 'Experimental. Metadata filter; `{}` = omit `filter`. `not` via De Morgan.',
+  },
+  chroma: {
+    target: 'Chroma (vector DB)',
+    returns: 'object',
+    notes: 'Experimental. `where` filter; `{}` = omit `where`. `not` via De Morgan.',
+  },
+  weaviate: {
+    target: 'Weaviate (vector DB)',
+    returns: 'object',
+    notes:
+      'Experimental. `where` filter; `{}` = omit `where`. Needs Weaviate 1.33+ for `Not`/`ContainsNone`.',
+  },
+  milvus: {
+    target: 'Milvus (vector DB)',
+    returns: 'string',
+    notes: 'Experimental. Boolean filter expr; `""` = omit `filter`. Field names not escaped.',
+  },
   jsonlogic: { target: 'JsonLogic', returns: 'object', notes: '' },
   cel: { target: 'CEL', returns: 'string', notes: '' },
   spel: { target: 'Spring SpEL', returns: 'string', notes: '' },

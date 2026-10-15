@@ -44,9 +44,9 @@ const descriptions = {
     `Convert a React Query Builder (RQB) query object to another format with the library's own ` +
     `formatQuery (v${v}). Prefer this over hand-writing SQL/Mongo/etc. from an RQB query. ` +
     `Formats: ${exportFormats.join(', ')}. String outputs: sql, mongodb (JSON string), cel, spel, ` +
-    `jsonata, ldap, cypher, gql, sparql, gremlin, natural_language, json, json_without_ids. ` +
+    `jsonata, ldap, cypher, gql, sparql, gremlin, milvus (vector DB filter expr), natural_language, json, json_without_ids. ` +
     `Object outputs: parameterized/parameterized_named ({ sql, params }), mongodb_query, ` +
-    `jsonlogic, elasticsearch, qdrant (vector DB metadata filter), diagnostics. Use "natural_language" to explain a query in plain ` +
+    `jsonlogic, elasticsearch, pinecone/chroma/qdrant/weaviate (vector DB metadata filters), diagnostics. Use "natural_language" to explain a query in plain ` +
     `English. Pass options.fields for field-aware output (e.g. parseNumbers by inputType). ` +
     `ORM formats (drizzle, prisma, sequelize, tanstack_db) need live ORM objects and are not ` +
     `supported here.`,

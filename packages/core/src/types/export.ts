@@ -40,7 +40,11 @@ export type ExportFormat =
   | 'gql'
   | 'sparql'
   | 'gremlin'
+  | 'pinecone'
+  | 'chroma'
   | 'qdrant'
+  | 'weaviate'
+  | 'milvus'
   | 'diagnostics';
 
 /**
@@ -55,7 +59,10 @@ export type ExportObjectFormats =
   | 'elasticsearch'
   | 'jsonata'
   | 'mongodb_query'
+  | 'pinecone'
+  | 'chroma'
   | 'qdrant'
+  | 'weaviate'
   | 'diagnostics';
 
 /**
@@ -444,7 +451,11 @@ export type ValueProcessor = ValueProcessorLegacy;
  * | `cypher`                 | {@link defaultRuleProcessorCypher}        |
  * | `sparql`                 | {@link defaultRuleProcessorSPARQL}        |
  * | `gremlin`                | {@link defaultRuleProcessorGremlin}       |
+ * | `pinecone`               | {@link defaultRuleProcessorPinecone}      |
+ * | `chroma`                 | {@link defaultRuleProcessorChroma}        |
  * | `qdrant`                 | {@link defaultRuleProcessorQdrant}        |
+ * | `weaviate`               | {@link defaultRuleProcessorWeaviate}      |
+ * | `milvus`                 | {@link defaultRuleProcessorMilvus}        |
  *
  * @group Export
  */
@@ -486,7 +497,11 @@ export type RuleProcessor = (
  * | `cypher`                 | {@link defaultRuleGroupProcessorCypher}        |
  * | `sparql`                 | {@link defaultRuleGroupProcessorSPARQL}        |
  * | `gremlin`                | {@link defaultRuleGroupProcessorGremlin}       |
+ * | `pinecone`               | {@link defaultRuleGroupProcessorPinecone}      |
+ * | `chroma`                 | {@link defaultRuleGroupProcessorChroma}        |
  * | `qdrant`                 | {@link defaultRuleGroupProcessorQdrant}        |
+ * | `weaviate`               | {@link defaultRuleGroupProcessorWeaviate}      |
+ * | `milvus`                 | {@link defaultRuleGroupProcessorMilvus}        |
  * | `diagnostics`            | {@link defaultRuleGroupProcessorDiagnostics}   |
  *
  * @group Export

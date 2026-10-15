@@ -28,7 +28,7 @@ function formatQuery(
 - Spring Expression Language (SpEL)
 - JsonLogic
 - ElasticSearch
-- Qdrant (vector database metadata filter)
+- Vector database metadata filters (Pinecone, Chroma, Qdrant, Weaviate, Milvus)
 - JSONata
 - LDAP
 - Natural language
@@ -507,13 +507,92 @@ Output (JSON object):
 { "bool": { "must": [{ "term": { "firstName": "Steve" } }, { "term": { "lastName": "Vai" } }] } }
 ```
 
-### Qdrant
+### Vector databases
 
 :::caution[Experimental]
 
 Support for vector database formats is experimental.
 
 :::
+
+The "pinecone", "chroma", "qdrant", "weaviate", and "milvus" formats generate metadata filters for vector searches (e.g. RAG pipelines). Rules a format can't express are skipped. Inspect `formatCapabilities[format]` at runtime (e.g. to limit `operators` per target), or run the ["diagnostics" format](#diagnostics) with `diagnosticsTargetFormat` to list skipped rules as warnings.
+
+<!-- GENERATED:vector:start -->
+
+| Feature                | [Pinecone](#pinecone) | [Chroma](#chroma) | [Qdrant](#qdrant) | [Weaviate](#weaviate) | [Milvus](#milvus) |
+| ---------------------- | --------------------- | ----------------- | ----------------- | --------------------- | ----------------- |
+| `=`                    | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `!=`                   | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `<`                    | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `>`                    | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `<=`                   | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `>=`                   | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `contains`             | –                     | –                 | ✓                 | ✓                     | ✓                 |
+| `beginsWith`           | –                     | –                 | –                 | ✓                     | ✓                 |
+| `endsWith`             | –                     | –                 | –                 | ✓                     | ✓                 |
+| `doesNotContain`       | –                     | –                 | ✓                 | ✓                     | ✓                 |
+| `doesNotBeginWith`     | –                     | –                 | –                 | ✓                     | ✓                 |
+| `doesNotEndWith`       | –                     | –                 | –                 | ✓                     | ✓                 |
+| `null`                 | ✓                     | –                 | ✓                 | ✓                     | ✓                 |
+| `notNull`              | ✓                     | –                 | ✓                 | ✓                     | ✓                 |
+| `in`                   | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `notIn`                | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `between`              | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `notBetween`           | ✓                     | ✓                 | ✓                 | ✓                     | ✓                 |
+| `valueSource: "field"` | –                     | –                 | –                 | –                     | ✓                 |
+| Match modes            | –                     | –                 | some, none        | –                     | –                 |
+| `not` groups           | De Morgan             | De Morgan         | native            | native                | native            |
+
+<!-- GENERATED:vector:end -->
+
+Common behavior:
+
+- Object formats return `{}` when no rules can be expressed (or the query is invalid); omit the filter param in that case. "milvus" returns `""`.
+- "pinecone" and "chroma" have no group-level negation, so `not` groups are rewritten with De Morgan's laws (e.g. `NOT (a = 1 AND b > 2)` → `a != 1 OR b <= 2`). Records missing a field may match differently than with a true `NOT`.
+- Field names aren't escaped. Object formats emit them as plain keys/values (inert data), and "milvus" emits them verbatim. Whitelist field names either way.
+- `bigint` values are converted to `number` (precision loss beyond `Number.MAX_SAFE_INTEGER`), except in "milvus" which emits them as-is.
+- Fields with `valueEditorType` `"checkbox"`/`"switch"` emit boolean values.
+- Dates: "qdrant" and "weaviate" emit RFC 3339 strings for `date`/`datetime-local` fields. "pinecone", "chroma", and "milvus" have no date type; store dates as epoch milliseconds and use the `datetimeRuleProcessor<Format>` processors from [`@react-querybuilder/datetime`](./datetime), which convert date values (including relative dates) to epoch ms.
+
+#### Pinecone
+
+Generate [Pinecone](https://docs.pinecone.io/guides/search/filter-by-metadata) metadata filters:
+
+```ts
+formatQuery(query, 'pinecone');
+```
+
+Output (JSON object):
+
+```json
+{ "$and": [{ "firstName": { "$eq": "Steve" } }, { "lastName": { "$eq": "Vai" } }] }
+```
+
+- Pass the result as the `filter` param of a query.
+- `null`/`notNull` → `$exists: false`/`$exists: true`.
+- Range operators (incl. `between`) require numeric values; others are skipped. `in`/`notIn` accept strings and numbers only.
+- String operators, `valueSource: "field"`, and match modes are skipped.
+
+#### Chroma
+
+Generate [Chroma](https://docs.trychroma.com/docs/querying-collections/metadata-filtering) `where` filters:
+
+```ts
+formatQuery(query, 'chroma');
+```
+
+Output (JSON object):
+
+```json
+{ "$and": [{ "firstName": { "$eq": "Steve" } }, { "lastName": { "$eq": "Vai" } }] }
+```
+
+- Pass the result as the `where` param. Chroma rejects `where: {}`, so omit the param when the result is empty.
+- Each object holds one field and one operator, so `between` becomes `$and` of `$gte`/`$lte`. Single-child groups are unwrapped.
+- `in`/`notIn` values must share one type (string, integer, float, or boolean); mixed lists are skipped.
+- `null`/`notNull` are skipped (Chroma has no `$exists`). String operators are skipped; full-text `where_document` filters are out of scope.
+
+#### Qdrant
 
 Generate [Qdrant](https://qdrant.tech/documentation/concepts/filtering/) `Filter` objects for metadata filtering in vector searches (e.g. RAG pipelines):
 
@@ -553,6 +632,69 @@ Notes:
 - Field names are emitted verbatim as `key` (Qdrant supports `a.b` and `a[].b` paths). No escaping is applied, so whitelist field names.
 - `bigint` values are converted to `number` (precision loss beyond `Number.MAX_SAFE_INTEGER`).
 - Fields with `valueEditorType` `"checkbox"`/`"switch"` emit boolean values.
+
+#### Weaviate
+
+Generate [Weaviate](https://docs.weaviate.io/weaviate/api/graphql/filters) `where` filters (GraphQL/REST shape):
+
+```ts
+formatQuery(query, 'weaviate');
+```
+
+Output (JSON object):
+
+```json
+{
+  "operator": "And",
+  "operands": [
+    { "operator": "Equal", "path": ["firstName"], "valueText": "Steve" },
+    { "operator": "Equal", "path": ["lastName"], "valueText": "Vai" }
+  ]
+}
+```
+
+| Operator(s)                            | Output                                                                       |
+| -------------------------------------- | ---------------------------------------------------------------------------- |
+| `=` `!=` `<` `<=` `>` `>=`             | `Equal`, `NotEqual`, `LessThan`, …                                           |
+| `contains` / `beginsWith` / `endsWith` | `Like` with `*v*` / `v*` / `*v`; negations wrap `Like` in `Not`              |
+| `in` / `notIn`                         | `ContainsAny` / `ContainsNone` (array under the singular value key)          |
+| `between` / `notBetween`               | `And`(`GreaterThanEqual`, `LessThanEqual`) / `Or`(`LessThan`, `GreaterThan`) |
+| `null` / `notNull`                     | `IsNull` with `valueBoolean: true` / `false`                                 |
+| groups                                 | `And` / `Or` / `Not`; single-operand groups unwrapped                        |
+
+- The value key comes from the field: `date`/`datetime-local` → `valueDate` (RFC 3339), checkbox/switch → `valueBoolean`, numbers (`number`/`range`/`bigint` input types or `parseNumbers`) → `valueInt`/`valueNumber`, otherwise `valueText`.
+- `path` is `[field]`. Set `fieldIdentifierSeparator` to split cross-reference paths (e.g. `"inPublication.Publication.name"` with `"."` → `["inPublication", "Publication", "name"]`).
+- `*` and `?` in `Like` values are wildcards. Weaviate has no escape syntax, so they pass through unchanged.
+- `IsNull` requires `invertedIndexConfig.indexNullState: true` on the collection.
+- `Not` and `ContainsNone` require Weaviate v1.33 or later.
+- For GraphQL queries, serialize the object as a GraphQL input literal (unquoted keys, `operator` values as enums).
+
+#### Milvus
+
+Generate [Milvus](https://milvus.io/docs/boolean.md) boolean filter expressions:
+
+```ts
+formatQuery(query, 'milvus');
+```
+
+Output:
+
+```text
+firstName == "Steve" and lastName == "Vai"
+```
+
+- Pass the result as the `filter`/`expr` param. An empty string means no filter.
+- Strings are double-quoted with `\` and `"` escaped. String operators use `like` with `%`, `_`, and `\` in values escaped; negations use `not (...)`.
+- `null`/`notNull` emit `is null`/`is not null`, which require Milvus 2.5 or later. On older versions, omit those operators.
+- `valueSource: "field"` is supported for comparison operators and `between`/`notBetween` (e.g. `a > b`). Milvus doesn't support field-to-field comparisons on JSON or ARRAY fields.
+- Field names are emitted verbatim, including JSON paths like `meta["k"]`. Whitelist them.
+
+#### pgvector and LanceDB
+
+These don't need a dedicated format:
+
+- [pgvector](https://github.com/pgvector/pgvector): use "parameterized" with `preset: 'postgresql'` and add the vector ordering yourself, e.g. `SELECT * FROM docs WHERE ${sql} ORDER BY embedding <-> $${params.length + 1} LIMIT 10`.
+- [LanceDB](https://lancedb.com/): pass "sql" output (DataFusion SQL) to `.where()`. Quote field names that need it with `quoteFieldNamesWith: '"'`.
 
 ### JSONata
 
@@ -880,7 +1022,7 @@ All diagnostics except `INVALID_STRUCTURE` and the placeholder, muted, and valid
 
 #### Target format check
 
-Set `diagnosticsTargetFormat` to a format with a `formatCapabilities` entry (currently `"qdrant"`) to report rules that format would skip. These entries have `source: "format-check"` and `severity: "warning"`, and never affect `valid` or `stats`.
+Set `diagnosticsTargetFormat` to a format with a `formatCapabilities` entry (currently `"pinecone"`, `"chroma"`, `"qdrant"`, `"weaviate"`, and `"milvus"`) to report rules that format would skip. These entries have `source: "format-check"` and `severity: "warning"`, and never affect `valid` or `stats`.
 
 | Code                                  | Description                                  |
 | ------------------------------------- | -------------------------------------------- |
@@ -1170,7 +1312,7 @@ Other formats escape field names where the target language has an escape mechani
 - "elasticsearch": field names inside Painless scripts (`doc['…']`) are escaped.
 - "mongodb_query"/"mongodb": field names inside `$where` JavaScript use bracket notation when they aren't plain identifiers (`this["first name"]`). Object keys and `$field` references are emitted as-is (a leading `$` or embedded `.` keeps its MongoDB meaning).
 
-"cel", "spel", "sparql", "ldap", and "jsonata" have no identifier escape syntax, so field names are emitted verbatim. Validate them against a whitelist.
+"cel", "spel", "sparql", "ldap", "jsonata", and "milvus" have no identifier escape syntax, so field names are emitted verbatim. Validate them against a whitelist. The "pinecone", "chroma", "qdrant", and "weaviate" formats emit field names as plain object keys/values, which can't break out of the output structure, but should still be whitelisted.
 
 :::
 
@@ -1429,6 +1571,11 @@ formatQuery(query, { format: 'sql', preset: 'mssql' });
 | `'jsonata'`             | `'(1 = 1)'`                   |
 | `'jsonlogic'`           | `false`                       |
 | `'elasticsearch'`       | `{}`                          |
+| `'pinecone'`            | `{}`                          |
+| `'chroma'`              | `{}`                          |
+| `'qdrant'`              | `{}`                          |
+| `'weaviate'`            | `{}`                          |
+| `'milvus'`              | `''`                          |
 | `'drizzle'`             | `undefined`                   |
 | `'prisma'`              | `{}`                          |
 | `'sequelize'`           | `{}`                          |

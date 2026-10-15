@@ -149,7 +149,7 @@ describe('formatCapabilities', () => {
     in: ['a', 'b'],
     notin: ['a', 'b'],
   };
-  const objectFormats = new Set<ExportFormat>(['qdrant']);
+  const objectFormats = new Set<ExportFormat>(['pinecone', 'chroma', 'qdrant', 'weaviate']);
   const isSkipped = (format: ExportFormat, rule: RuleType) => {
     const out = formatQuery({ combinator: 'and', rules: [rule] }, {
       format,

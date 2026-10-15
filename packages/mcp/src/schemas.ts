@@ -170,7 +170,7 @@ export const validateQueryInputSchema: Schema = {
       type: 'string',
       enum: [...exportFormats, ...ormFormats],
       description:
-        'Export format the query will be sent to. Rules it cannot express (e.g. vector DB formats like "qdrant") are reported as warnings.',
+        'Export format the query will be sent to. Rules it cannot express (e.g. vector DB formats like "pinecone", "chroma", "qdrant", "weaviate", "milvus") are reported as warnings.',
     },
   },
   required: ['query', 'fields'],

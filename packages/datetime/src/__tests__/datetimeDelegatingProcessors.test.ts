@@ -1,14 +1,19 @@
 import type { FullField, RuleGroupType } from '@react-querybuilder/core';
 import { formatQuery } from '@react-querybuilder/core';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorChroma } from '../getDatetimeRuleProcessorChroma';
 import { getDatetimeRuleProcessorElasticSearch } from '../getDatetimeRuleProcessorElasticSearch';
 import { getDatetimeRuleProcessorGremlin } from '../getDatetimeRuleProcessorGremlin';
 import { getDatetimeRuleProcessorLDAP } from '../getDatetimeRuleProcessorLDAP';
+import { getDatetimeRuleProcessorMilvus } from '../getDatetimeRuleProcessorMilvus';
 import { getDatetimeRuleProcessorMongoDB } from '../getDatetimeRuleProcessorMongoDB';
 import { getDatetimeRuleProcessorParameterized } from '../getDatetimeRuleProcessorParameterized';
+import { getDatetimeRuleProcessorPinecone } from '../getDatetimeRuleProcessorPinecone';
 import { getDatetimeRuleProcessorPrisma } from '../getDatetimeRuleProcessorPrisma';
 import { getDatetimeRuleProcessorQdrant } from '../getDatetimeRuleProcessorQdrant';
 import { getDatetimeRuleProcessorSpEL } from '../getDatetimeRuleProcessorSpEL';
+import { getDatetimeRuleProcessorWeaviate } from '../getDatetimeRuleProcessorWeaviate';
+import { getEpochMs } from '../getEpochMs';
 import type { IsDateField } from '../types';
 
 // `birthdate` is a date-only field, so materialized values are timezone-independent
@@ -57,6 +62,14 @@ const stringFormats = [
   ['gremlin', getDatetimeRuleProcessorGremlin],
   ['elasticsearch', getDatetimeRuleProcessorElasticSearch],
   ['qdrant', getDatetimeRuleProcessorQdrant],
+  ['weaviate', getDatetimeRuleProcessorWeaviate],
+] as const;
+
+// Vector DBs w/o a date type: values → epoch ms numbers
+const epochFormats = [
+  ['pinecone', getDatetimeRuleProcessorPinecone],
+  ['chroma', getDatetimeRuleProcessorChroma],
+  ['milvus', getDatetimeRuleProcessorMilvus],
 ] as const;
 
 for (const [libName, apiFns] of dateLibraryFunctions) {
@@ -74,6 +87,71 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         test('falls back to the default processor for non-date and field-source rules', () => {
           expect(formatQuery(fallbackQuery, { format, fields, ruleProcessor })).toEqual(
             formatQuery(fallbackQuery, { format, fields })
+          );
+        });
+      });
+    }
+
+    for (const [format, getProcessor] of epochFormats) {
+      describe(format, () => {
+        const ruleProcessor = getProcessor(apiFns);
+        const ms = (v: string) => apiFns.toDate(v).getTime();
+        const epochQuery: RuleGroupType = {
+          ...orderedAbsoluteQuery,
+          rules: orderedAbsoluteQuery.rules.map(r =>
+            'value' in r
+              ? Object.assign({}, r, {
+                  value: Array.isArray(r.value) ? r.value.map(ms) : ms(r.value),
+                })
+              : r
+          ),
+        };
+
+        test('materializes to epoch ms and delegates', () => {
+          expect(formatQuery(validQuery, { format, fields, ruleProcessor })).toEqual(
+            formatQuery(epochQuery, { format, fields })
+          );
+        });
+
+        test('comma-separated list values', () => {
+          expect(
+            formatQuery(
+              {
+                combinator: 'and',
+                rules: [{ field: 'birthdate', operator: 'in', value: '1954-10-03,1960-06-06' }],
+              },
+              { format, fields, ruleProcessor }
+            )
+          ).toEqual(
+            formatQuery(
+              {
+                combinator: 'and',
+                rules: [
+                  {
+                    field: 'birthdate',
+                    operator: 'in',
+                    value: [ms('1954-10-03'), ms('1960-06-06')],
+                  },
+                ],
+              },
+              { format, fields }
+            )
+          );
+        });
+
+        test('falls back to the default processor for non-date and field-source rules', () => {
+          expect(formatQuery(fallbackQuery, { format, fields, ruleProcessor })).toEqual(
+            formatQuery(fallbackQuery, { format, fields })
+          );
+        });
+
+        test('unparseable values pass through', () => {
+          const q: RuleGroupType = {
+            combinator: 'and',
+            rules: [{ field: 'birthdate', operator: '=', value: 'nope' }],
+          };
+          expect(formatQuery(q, { format, fields, ruleProcessor })).toEqual(
+            formatQuery(q, { format, fields })
           );
         });
       });
@@ -216,5 +294,15 @@ describe('qdrant', () => {
         context: { isDateField: true },
       })
     ).toEqual({ must: [{ key: 'firstName', range: { gt: '1957-01-01T00:00:00Z' } }] });
+  });
+});
+
+describe('getEpochMs', () => {
+  const apiFns = dateLibraryFunctions.find(([name]) => name === 'date-fns')![1];
+  test('dates, strings, invalid', () => {
+    expect(getEpochMs(apiFns, new Date(0))).toBe(0);
+    expect(getEpochMs(apiFns, '1970-01-01T00:00:00Z')).toBe(0);
+    expect(getEpochMs(apiFns, 'nope')).toBeUndefined();
+    expect(getEpochMs(apiFns, 5)).toBeUndefined();
   });
 });

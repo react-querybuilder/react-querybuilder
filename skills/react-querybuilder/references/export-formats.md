@@ -31,6 +31,10 @@ formatQuery(query, { format: 'sql', fields, parseNumbers: true }); // options ob
 | MongoDB (string)       | `mongodb`             | string                                        | **Deprecated**; use `mongodb_query`.                                                                                                                                                       |
 | Elasticsearch          | `elasticsearch`       | object                                        | Experimental. Query DSL `bool` query.                                                                                                                                                      |
 | Qdrant (vector DB)     | `qdrant`              | object                                        | Experimental. `Filter` for RAG metadata filtering; `{}` = omit `filter`. Unsupported rules skipped (see `formatCapabilities`).                                                             |
+| Pinecone (vector DB)   | `pinecone`            | object                                        | Experimental. Metadata filter; `{}` = omit `filter`. `not` via De Morgan.                                                                                                                  |
+| Chroma (vector DB)     | `chroma`              | object                                        | Experimental. `where` filter; `{}` = omit `where`. `not` via De Morgan.                                                                                                                    |
+| Weaviate (vector DB)   | `weaviate`            | object                                        | Experimental. `where` filter; `{}` = omit `where`. Needs Weaviate 1.33+ for `Not`/`ContainsNone`.                                                                                          |
+| Milvus (vector DB)     | `milvus`              | string                                        | Experimental. Boolean filter expr; `""` = omit `filter`. Field names not escaped.                                                                                                          |
 | JsonLogic              | `jsonlogic`           | object                                        |                                                                                                                                                                                            |
 | CEL                    | `cel`                 | string                                        |                                                                                                                                                                                            |
 | Spring SpEL            | `spel`                | string                                        |                                                                                                                                                                                            |
@@ -66,7 +70,8 @@ await db.query(`SELECT * FROM users WHERE ${sql}`, params);
 - `gremlin`: property keys escaped inside `'…'`.
 - `elasticsearch`: field names escaped inside Painless scripts (`doc['…']`).
 - `mongodb_query`/`mongodb`: `$where` JS uses bracket notation for non-identifiers (`this["first name"]`). Object keys and `$field` refs are emitted as-is.
-- `cel`, `spel`, `sparql`, `ldap`, `jsonata`: no escape syntax; field names emitted verbatim. Whitelist them.
+- `cel`, `spel`, `sparql`, `ldap`, `jsonata`, `milvus`: no escape syntax; field names emitted verbatim. Whitelist them.
+- `pinecone`, `chroma`, `qdrant`, `weaviate`: field names are plain object keys/values (inert data), but still whitelist them.
 
 ## ORMs
 
@@ -141,7 +146,15 @@ Defaults exist per format: `defaultRuleProcessorSQL`, `defaultRuleProcessorParam
 
 ## Field-to-field (`valueSource: 'field'`)
 
-The rule's `value` is another field name. Supported by most formats. **Not** supported by `prisma` and `ldap` (rule dropped). `elasticsearch` supports it only via scripts with string values.
+The rule's `value` is another field name. Supported by most formats. **Not** supported by `prisma`, `ldap`, `pinecone`, `chroma`, `qdrant`, `weaviate` (rule dropped); `milvus` supports it for comparison ops and `between` only. `elasticsearch` supports it only via scripts with string values.
+
+## RAG metadata filters (vector DBs)
+
+- Formats: `pinecone`, `chroma`, `qdrant`, `weaviate` (objects; `{}` = no filter, omit the param), `milvus` (string; `""` = no filter). All experimental.
+- Unsupported operators/value sources/match modes are skipped. Check up front with `formatCapabilities[format]`, or pass `diagnosticsTargetFormat` to the `diagnostics` format for `format-check` warnings (MCP `validate_query`: `targetFormat`).
+- `not` groups: native for `qdrant`/`weaviate`/`milvus`; De Morgan push-down for `pinecone`/`chroma` (missing-field semantics may differ).
+- Dates: `qdrant`/`weaviate` emit RFC 3339 for `date`/`datetime-local` fields; `pinecone`/`chroma`/`milvus` have no date type, so use the `datetimeRuleProcessor<Format>` processors (epoch ms).
+- pgvector: `parameterized` w/ `preset: 'postgresql'`. LanceDB: `sql` (DataFusion).
 
 ## Dates, expressions
 

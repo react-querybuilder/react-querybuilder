@@ -27,6 +27,7 @@ import { getParseNumberMethod } from '../getParseNumberMethod';
 import { lc } from '../misc';
 import { getOption, toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
+import { defaultRuleGroupProcessorChroma } from './defaultRuleGroupProcessorChroma';
 import { defaultRuleGroupProcessorCypher } from './defaultRuleGroupProcessorCypher';
 import { defaultRuleGroupProcessorDiagnostics } from './defaultRuleGroupProcessorDiagnostics';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
@@ -35,6 +36,7 @@ import { defaultRuleGroupProcessorGremlin } from './defaultRuleGroupProcessorGre
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
 import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
 import { defaultRuleGroupProcessorLDAP } from './defaultRuleGroupProcessorLDAP';
+import { defaultRuleGroupProcessorMilvus } from './defaultRuleGroupProcessorMilvus';
 import { defaultRuleGroupProcessorMongoDB } from './defaultRuleGroupProcessorMongoDB';
 import {
   defaultRuleGroupProcessorMongoDBQuery,
@@ -42,6 +44,7 @@ import {
 } from './defaultRuleGroupProcessorMongoDBQuery';
 import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
+import { defaultRuleGroupProcessorPinecone } from './defaultRuleGroupProcessorPinecone';
 import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGroupProcessorPrisma';
 import { defaultRuleGroupProcessorQdrant } from './defaultRuleGroupProcessorQdrant';
 import { defaultRuleGroupProcessorSequelize } from './defaultRuleGroupProcessorSequelize';
@@ -49,7 +52,9 @@ import { defaultRuleGroupProcessorSPARQL } from './defaultRuleGroupProcessorSPAR
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultRuleGroupProcessorTanStackDB } from './defaultRuleGroupProcessorTanStackDB';
+import { defaultRuleGroupProcessorWeaviate } from './defaultRuleGroupProcessorWeaviate';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
+import { defaultRuleProcessorChroma } from './defaultRuleProcessorChroma';
 import { defaultRuleProcessorCypher } from './defaultRuleProcessorCypher';
 import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
@@ -57,10 +62,12 @@ import { defaultRuleProcessorGremlin } from './defaultRuleProcessorGremlin';
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorLDAP } from './defaultRuleProcessorLDAP';
+import { defaultRuleProcessorMilvus } from './defaultRuleProcessorMilvus';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
 import { defaultOperatorProcessorNL, defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
+import { defaultRuleProcessorPinecone } from './defaultRuleProcessorPinecone';
 import { defaultRuleProcessorPrisma } from './defaultRuleProcessorPrisma';
 import { defaultRuleProcessorQdrant } from './defaultRuleProcessorQdrant';
 import { defaultRuleProcessorSequelize } from './defaultRuleProcessorSequelize';
@@ -68,6 +75,7 @@ import { defaultRuleProcessorSPARQL } from './defaultRuleProcessorSPARQL';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultRuleProcessorTanStackDB } from './defaultRuleProcessorTanStackDB';
+import { defaultRuleProcessorWeaviate } from './defaultRuleProcessorWeaviate';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import {
@@ -143,7 +151,11 @@ const defaultRuleProcessors = {
   gql: defaultRuleProcessorCypher,
   sparql: defaultRuleProcessorSPARQL,
   gremlin: defaultRuleProcessorGremlin,
+  pinecone: defaultRuleProcessorPinecone,
+  chroma: defaultRuleProcessorChroma,
   qdrant: defaultRuleProcessorQdrant,
+  weaviate: defaultRuleProcessorWeaviate,
+  milvus: defaultRuleProcessorMilvus,
   diagnostics: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
@@ -172,13 +184,18 @@ const defaultOperatorProcessors = {
   gql: defaultOperatorProcessor,
   sparql: defaultOperatorProcessor,
   gremlin: defaultOperatorProcessor,
+  pinecone: defaultOperatorProcessor,
+  chroma: defaultOperatorProcessor,
   qdrant: defaultOperatorProcessor,
+  weaviate: defaultOperatorProcessor,
+  milvus: defaultOperatorProcessor,
   diagnostics: defaultOperatorProcessor,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
 const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
   cel: '1 == 1',
   ldap: '',
+  milvus: '',
   mongodb: '"$and":[{"$expr":true}]',
   natural_language: '1 is 1',
   sparql: '1 = 1',
@@ -231,8 +248,12 @@ const valueProcessorCanActAsRuleProcessor = new Set<ExportFormat>([
   'ldap',
   'mongodb_query',
   'mongodb',
+  'pinecone',
+  'chroma',
   'prisma',
   'qdrant',
+  'weaviate',
+  'milvus',
   'sequelize',
   'spel',
   'tanstack_db',
@@ -316,6 +337,54 @@ function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'qdrant' | (FormatQueryOptions & { format: 'qdrant' })
 ): Record<string, unknown>;
+/**
+ * Generates a [Pinecone](https://docs.pinecone.io/guides/search/filter-by-metadata) metadata filter object from an RQB query object.
+ * Returns `{}` when empty/invalid (omit the `filter` param in that case).
+ *
+ * NOTE: Support for the Pinecone format is experimental.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'pinecone' | (FormatQueryOptions & { format: 'pinecone' })
+): Record<string, unknown>;
+/**
+ * Generates a [Chroma](https://docs.trychroma.com/docs/querying-collections/metadata-filtering) `where` filter object from an RQB query
+ * object. Returns `{}` when empty/invalid (omit the `where` param in that case).
+ *
+ * NOTE: Support for the Chroma format is experimental.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'chroma' | (FormatQueryOptions & { format: 'chroma' })
+): Record<string, unknown>;
+/**
+ * Generates a [Weaviate](https://docs.weaviate.io/weaviate/api/graphql/filters) `where` filter object from an RQB query
+ * object. Returns `{}` when empty/invalid (omit the `where` argument in that case).
+ *
+ * NOTE: Support for the Weaviate format is experimental.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'weaviate' | (FormatQueryOptions & { format: 'weaviate' })
+): Record<string, unknown>;
+/**
+ * Generates a [Milvus](https://milvus.io/docs/boolean.md) boolean filter expression from an RQB query
+ * object. Returns `""` when empty/invalid (omit the `filter` param in that case).
+ *
+ * NOTE: Support for the Milvus format is experimental.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'milvus' | (FormatQueryOptions & { format: 'milvus' })
+): string;
 /**
  * Generates a MongoDB query object from an RQB query object.
  *
@@ -540,7 +609,11 @@ function formatQuery(
                     ? prismaFallback
                     : format === 'jsonlogic'
                       ? false
-                      : format === 'elasticsearch' || format === 'qdrant'
+                      : format === 'elasticsearch' ||
+                          format === 'pinecone' ||
+                          format === 'chroma' ||
+                          format === 'qdrant' ||
+                          format === 'weaviate'
                         ? {}
                         : format === 'drizzle' || format === 'sequelize' || format === 'tanstack_db'
                           ? undefined
@@ -684,8 +757,20 @@ function formatQuery(
     case 'gremlin':
       return defaultRuleGroupProcessorGremlin(ruleGroup, finalOptions);
 
+    case 'pinecone':
+      return defaultRuleGroupProcessorPinecone(ruleGroup, finalOptions);
+
+    case 'chroma':
+      return defaultRuleGroupProcessorChroma(ruleGroup, finalOptions);
+
     case 'qdrant':
       return defaultRuleGroupProcessorQdrant(ruleGroup, finalOptions);
+
+    case 'weaviate':
+      return defaultRuleGroupProcessorWeaviate(ruleGroup, finalOptions);
+
+    case 'milvus':
+      return defaultRuleGroupProcessorMilvus(ruleGroup, finalOptions);
 
     case 'diagnostics':
       return defaultRuleGroupProcessorDiagnostics(ruleGroup, finalOptions);
