@@ -7,6 +7,7 @@ import { getDatetimeRuleProcessorLDAP } from '../getDatetimeRuleProcessorLDAP';
 import { getDatetimeRuleProcessorMongoDB } from '../getDatetimeRuleProcessorMongoDB';
 import { getDatetimeRuleProcessorParameterized } from '../getDatetimeRuleProcessorParameterized';
 import { getDatetimeRuleProcessorPrisma } from '../getDatetimeRuleProcessorPrisma';
+import { getDatetimeRuleProcessorQdrant } from '../getDatetimeRuleProcessorQdrant';
 import { getDatetimeRuleProcessorSpEL } from '../getDatetimeRuleProcessorSpEL';
 import type { IsDateField } from '../types';
 
@@ -55,6 +56,7 @@ const stringFormats = [
   ['ldap', getDatetimeRuleProcessorLDAP],
   ['gremlin', getDatetimeRuleProcessorGremlin],
   ['elasticsearch', getDatetimeRuleProcessorElasticSearch],
+  ['qdrant', getDatetimeRuleProcessorQdrant],
 ] as const;
 
 for (const [libName, apiFns] of dateLibraryFunctions) {
@@ -179,5 +181,40 @@ describe('mongodb (deprecated string format)', () => {
       }
     );
     expect(out).toBe('');
+  });
+});
+
+describe('qdrant', () => {
+  const apiFns = dateLibraryFunctions.find(([name]) => name === 'date-fns')![1];
+  const ruleProcessor = getDatetimeRuleProcessorQdrant(apiFns);
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'firstName', operator: '>', value: '1957-01-01' }],
+  };
+
+  test('forces RFC 3339 range for date fields w/o date inputType', () => {
+    expect(
+      formatQuery(query, { format: 'qdrant', ruleProcessor, context: { isDateField: true } })
+    ).toEqual({ must: [{ key: 'firstName', range: { gt: '1957-01-01T00:00:00Z' } }] });
+  });
+
+  test('direct call w/o fieldData', () => {
+    expect(
+      ruleProcessor(
+        { field: 'f', operator: '>', value: '1957-01-01' },
+        { context: { isDateField: true } }
+      )
+    ).toEqual({ key: 'f', range: { gt: '1957-01-01T00:00:00Z' } });
+  });
+
+  test('preserves date inputType', () => {
+    expect(
+      formatQuery(query, {
+        format: 'qdrant',
+        ruleProcessor,
+        fields: [{ name: 'firstName', label: 'First Name', inputType: 'date' }],
+        context: { isDateField: true },
+      })
+    ).toEqual({ must: [{ key: 'firstName', range: { gt: '1957-01-01T00:00:00Z' } }] });
   });
 });

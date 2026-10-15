@@ -18,6 +18,7 @@ import { getDatetimeRuleProcessorMongoDBQuery } from './getDatetimeRuleProcessor
 import { getDatetimeRuleProcessorNL } from './getDatetimeRuleProcessorNL';
 import { getDatetimeRuleProcessorParameterized } from './getDatetimeRuleProcessorParameterized';
 import { getDatetimeRuleProcessorPrisma } from './getDatetimeRuleProcessorPrisma';
+import { getDatetimeRuleProcessorQdrant } from './getDatetimeRuleProcessorQdrant';
 import { getDatetimeRuleProcessorSequelize } from './getDatetimeRuleProcessorSequelize';
 import { getDatetimeRuleProcessorSPARQL } from './getDatetimeRuleProcessorSPARQL';
 import { getDatetimeRuleProcessorSpEL } from './getDatetimeRuleProcessorSpEL';
@@ -153,6 +154,12 @@ export const datetimeRuleProcessorDrizzle: RuleProcessor =
  */
 export const datetimeRuleProcessorElasticSearch: RuleProcessor =
   getDatetimeRuleProcessorElasticSearch(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "qdrant" format
+ */
+export const datetimeRuleProcessorQdrant: RuleProcessor =
+  getDatetimeRuleProcessorQdrant(rqbDateTimeLibraryAPI);
 
 /**
  * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "tanstack_db" format using Day.js

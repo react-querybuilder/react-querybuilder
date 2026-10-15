@@ -12,6 +12,7 @@ export * from './getDatetimeRuleProcessorMongoDBQuery';
 export * from './getDatetimeRuleProcessorNL';
 export * from './getDatetimeRuleProcessorParameterized';
 export * from './getDatetimeRuleProcessorPrisma';
+export * from './getDatetimeRuleProcessorQdrant';
 export * from './getDatetimeRuleProcessorSequelize';
 export * from './getDatetimeRuleProcessorSPARQL';
 export * from './getDatetimeRuleProcessorSpEL';

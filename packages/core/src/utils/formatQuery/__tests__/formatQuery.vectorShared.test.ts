@@ -3,7 +3,7 @@ import type { ExportFormat, FormatQueryOptions, RuleGroupType, RuleType } from '
 import { formatCapabilities, getUnsupportedRuleFeature } from '../formatCapabilities';
 import { formatQuery } from '../formatQuery';
 import { negateOperator, negateRule, negateRuleGroup } from '../negation';
-import { coerceBoolean, coerceNumber, isDateInputType, toRFC3339 } from '../utils';
+import { coerceBoolean, coerceNumber, isDateInputType, toRFC3339 } from '../vectorValueUtils';
 
 describe('negateOperator', () => {
   it.each([

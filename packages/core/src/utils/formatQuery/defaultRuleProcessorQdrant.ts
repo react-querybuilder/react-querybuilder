@@ -4,7 +4,8 @@ import { isRuleGroup } from '../isRuleGroup';
 import { lc } from '../misc';
 import { defaultRuleGroupProcessorQdrant } from './defaultRuleGroupProcessorQdrant';
 import { formatCapabilities, getUnsupportedRuleFeature } from './formatCapabilities';
-import { coerceBoolean, coerceNumber, isDateInputType, processMatchMode, toRFC3339 } from './utils';
+import { processMatchMode } from './utils';
+import { coerceBoolean, coerceNumber, isDateInputType, toRFC3339 } from './vectorValueUtils';
 
 type QdrantCondition = Record<string, unknown>;
 type QdrantScalar = string | number | boolean;
