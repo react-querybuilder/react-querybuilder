@@ -337,6 +337,26 @@ describe('diagnostics format-check', () => {
     expect(formatChecks(ic, { diagnosticsTargetFormat: 'qdrant' }).map(d => d.id)).toEqual(['i0']);
   });
 
+  it('skips muted match-mode value groups', () => {
+    const muted: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        {
+          id: 'm',
+          field: 'arr',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'and',
+            muted: true,
+            rules: [{ id: 'n0', field: 'a', operator: 'beginsWith', value: 'x' }],
+          },
+        },
+      ],
+    };
+    expect(formatChecks(muted, { diagnosticsTargetFormat: 'qdrant' })).toEqual([]);
+  });
+
   describe('De Morgan (nativeNot: false)', () => {
     const fake = 'cel' as ExportFormat;
     beforeAll(() => {

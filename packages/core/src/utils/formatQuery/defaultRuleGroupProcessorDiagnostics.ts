@@ -599,6 +599,7 @@ const collectNestedFormatDiagnostics = (
   parentNegated: boolean,
   diagnostics: DiagnosticEntry[]
 ): void => {
+  if (rg.muted) return;
   const negated = parentNegated !== !!rg.not;
   for (const [i, rule] of rg.rules.entries()) {
     if (typeof rule === 'string' || rule.muted) continue;
