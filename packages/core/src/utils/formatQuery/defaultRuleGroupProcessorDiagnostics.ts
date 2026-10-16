@@ -291,6 +291,16 @@ export const defaultRuleGroupProcessorDiagnostics: RuleGroupProcessor<Diagnostic
           negated && !targetCaps.nativeNot,
           diagnostics
         );
+        if (rule.match?.mode && isRuleGroup(rule.value)) {
+          collectNestedFormatDiagnostics(
+            rule.value,
+            childPath,
+            targetCaps,
+            diagnosticsTargetFormat,
+            negated,
+            diagnostics
+          );
+        }
       }
 
       const fieldDef = fieldsByName.get(rule.field);
@@ -575,6 +585,40 @@ const collectFormatDiagnostics = (
     source: 'format-check',
     severity: 'warning',
   });
+};
+
+/**
+ * Format-check-only walk of a match-mode rule's `value` group (no stats/validity/field checks,
+ * since nested fields are subfields of the parent array field).
+ */
+const collectNestedFormatDiagnostics = (
+  rg: RuleGroupTypeAny,
+  path: number[],
+  caps: FormatCapabilities,
+  format: string,
+  parentNegated: boolean,
+  diagnostics: DiagnosticEntry[]
+): void => {
+  const negated = parentNegated !== !!rg.not;
+  for (const [i, rule] of rg.rules.entries()) {
+    if (typeof rule === 'string' || rule.muted) continue;
+    const childPath = [...path, i];
+    if (isRuleGroup(rule)) {
+      collectNestedFormatDiagnostics(rule, childPath, caps, format, negated, diagnostics);
+      continue;
+    }
+    collectFormatDiagnostics(
+      rule,
+      childPath,
+      caps,
+      format,
+      negated && !caps.nativeNot,
+      diagnostics
+    );
+    if (rule.match?.mode && isRuleGroup(rule.value)) {
+      collectNestedFormatDiagnostics(rule.value, childPath, caps, format, negated, diagnostics);
+    }
+  }
 };
 
 /**

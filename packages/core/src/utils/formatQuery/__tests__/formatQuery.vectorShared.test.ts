@@ -283,6 +283,60 @@ describe('diagnostics format-check', () => {
     expect(result.query).toEqual(baseline.query);
   });
 
+  it('traverses match-mode value groups', () => {
+    const nested: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        {
+          id: 'm',
+          field: 'arr',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'and',
+            rules: [
+              { id: 'n0', field: 'a', operator: 'beginsWith', value: 'x' },
+              { id: 'n1', field: 'a', operator: 'beginsWith', value: 'x', muted: true },
+              {
+                combinator: 'and',
+                rules: [{ id: 'n2', field: 'b', operator: '=', value: 'c', valueSource: 'field' }],
+              },
+              {
+                id: 'n3',
+                field: 'c',
+                operator: '=',
+                match: { mode: 'none' },
+                value: {
+                  combinator: 'and',
+                  rules: [{ id: 'n4', field: 'd', operator: 'endsWith', value: 'x' }],
+                },
+              },
+            ],
+          },
+        },
+      ],
+    };
+    expect(
+      formatChecks(nested, { diagnosticsTargetFormat: 'qdrant' }).map(d => [d.id, d.path, d.code])
+    ).toEqual([
+      ['n0', [0, 0], 'UNSUPPORTED_OPERATOR_FOR_FORMAT'],
+      ['n2', [0, 2, 0], 'UNSUPPORTED_VALUE_SOURCE_FOR_FORMAT'],
+      ['n4', [0, 3, 0], 'UNSUPPORTED_OPERATOR_FOR_FORMAT'],
+    ]);
+    const ic = {
+      rules: [
+        {
+          id: 'm',
+          field: 'arr',
+          operator: '=',
+          match: { mode: 'some' },
+          value: { rules: [{ id: 'i0', field: 'a', operator: 'beginsWith', value: 'x' }, 'and'] },
+        },
+      ],
+    } as unknown as RuleGroupType;
+    expect(formatChecks(ic, { diagnosticsTargetFormat: 'qdrant' }).map(d => d.id)).toEqual(['i0']);
+  });
+
   describe('De Morgan (nativeNot: false)', () => {
     const fake = 'cel' as ExportFormat;
     beforeAll(() => {
