@@ -17,8 +17,8 @@ const rangeOps = { '<': 'lt', '<=': 'lte', '>': 'gt', '>=': 'gte' } as const;
  * filter condition, or `false` if the rule can't be expressed (see
  * {@link formatCapabilities}).
  *
- * - `contains`/`doesNotContain` use `match.text`, which requires a full-text payload index
- *   and matches tokens, not substrings.
+ * - `contains`/`doesNotContain` use `match.text`, which matches tokens, not substrings
+ *   (unindexed fields use the `word` tokenizer + lowercasing; a full-text index controls this).
  * - Range operators always coerce values to numbers (or RFC 3339 datetimes for `date`/
  *   `datetime-local` input types); non-coercible values are skipped.
  * - Float equality is emitted as `range: { gte: v, lte: v }` (`match.value` only accepts

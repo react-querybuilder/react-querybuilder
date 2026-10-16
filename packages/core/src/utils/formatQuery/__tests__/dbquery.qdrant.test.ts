@@ -7,7 +7,7 @@ import {
   qdrantInsert,
   reserveSchema,
 } from '@rqb-dbpool';
-import type { DefaultRuleGroupType, RuleGroupType } from '../../../types';
+import type { DefaultRuleGroupType, MatchMode, RuleGroupType } from '../../../types';
 import { isRuleGroup } from '../../isRuleGroup';
 import type { AugmentedSuperUser, SuperUser } from '../dbqueryTestUtils';
 import {
@@ -31,8 +31,31 @@ const isFullySupported = (rg: RuleGroupType): boolean =>
     isRuleGroup(r) ? isFullySupported(r) : getUnsupportedRuleFeature(r, caps) === null
   );
 
+// Emulates unindexed `match.text` (current Qdrant): `word` tokenizer + lowercase; all query
+// tokens must appear in field tokens. Not substring matching.
+const tokens = (s: string) =>
+  s
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean);
+const textMatch = (field: string, q: string) => {
+  const ft = new Set(tokens(field));
+  return tokens(q).every(t => ft.has(t));
+};
+
 // Per-DB expected-result overrides (missing-field/null semantics). Source for docs caveats.
-const expectedOverrides: Record<string, (u: SuperUser) => boolean> = {};
+const expectedOverrides: Record<string, (u: SuperUser) => boolean> = {
+  contains: u => textMatch(u.firstName, 'ete') && textMatch(u.lastName, 'ark'),
+  doesNotContain: u => !textMatch(u.madeUpName, 'r'),
+};
+
+// Token-semantics expectations for `genObjectsMatchQuery` (`lastName` contains 'S').
+const objectsMatchOverrides: Partial<
+  Record<MatchMode, (u: AugmentedSuperUser<boolean>) => boolean>
+> = {
+  some: u => u.earlyPencilers.some(p => textMatch(p.lastName, 'S')),
+  none: u => !u.earlyPencilers.some(p => textMatch(p.lastName, 'S')),
+};
 
 describe.skipIf(!qdrantEnabled)('Qdrant', () => {
   beforeAll(async () => {
@@ -74,7 +97,13 @@ describe.skipIf(!qdrantEnabled)('Qdrant', () => {
       if (!isFullySupported(query)) continue;
       test(name, async () => {
         const result = await qdrantFilter<SuperUser>(collection, formatQuery(query, 'qdrant'));
-        expect(names(result)).toEqual(names(users.filter(fn)));
+        const mode =
+          mm.mode === 'atMost' && mm.threshold === 0
+            ? 'none'
+            : mm.mode === 'atLeast' && mm.threshold === 1
+              ? 'some'
+              : mm.mode;
+        expect(names(result)).toEqual(names(users.filter(objectsMatchOverrides[mode] ?? fn)));
       });
     }
   });
@@ -96,7 +125,7 @@ describe.skipIf(!qdrantEnabled)('Qdrant', () => {
             combinator: 'or',
             rules: [
               { field: 'firstName', operator: '=', value: 'Peter' },
-              { field: 'nickname', operator: 'contains', value: 'Supe' },
+              { field: 'nickname', operator: 'contains', value: 'supes' },
             ],
           },
         ],
