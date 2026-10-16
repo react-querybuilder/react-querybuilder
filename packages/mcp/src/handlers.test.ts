@@ -245,11 +245,7 @@ describe('handleValidateQuery', () => {
       query: {
         combinator: 'and',
         rules: [
-          {
-            field: (query.rules[0] as { field: string }).field,
-            operator: 'beginsWith',
-            value: 'x',
-          },
+          { field: (query.rules[0] as { field: string }).field, operator: 'endsWith', value: 'x' },
         ],
       },
       fields,
