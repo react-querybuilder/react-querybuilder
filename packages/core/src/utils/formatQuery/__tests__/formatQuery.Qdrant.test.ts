@@ -265,6 +265,34 @@ describe('operators', () => {
         ],
       });
     });
+    it('IC subquery', () => {
+      const subIC = {
+        rules: [
+          { field: 'name', operator: '=', value: 'x' },
+          'and',
+          { field: 'n', operator: '=', value: 1 },
+        ],
+      } as unknown as RuleGroupType;
+      expect(one({ field: 'arr', operator: '=', value: subIC, match: { mode: 'some' } })).toEqual({
+        nested: {
+          key: 'arr',
+          filter: {
+            must: [
+              { key: 'name', match: { value: 'x' } },
+              { key: 'n', match: { value: 1 } },
+            ],
+          },
+        },
+      });
+    });
+    it('direct call w/ partial options', () => {
+      const rule: RuleType = { field: 'arr', operator: '=', value: sub, match: { mode: 'some' } };
+      const expected = {
+        nested: { key: 'arr', filter: { must: [{ key: 'name', match: { value: 'x' } }] } },
+      };
+      expect(defaultRuleProcessorQdrant(rule)).toEqual(expected);
+      expect(defaultRuleProcessorQdrant(rule, { parseNumbers: true })).toEqual(expected);
+    });
     it.each<[string, RuleType]>([
       ['all', { field: 'arr', operator: '=', value: sub, match: { mode: 'all' } }],
       [

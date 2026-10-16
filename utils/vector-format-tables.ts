@@ -41,7 +41,21 @@ export const vectorFormatTable = (): string => {
         caps.map(c => (c.operators.has(name.toLowerCase() as never) ? yes : no))
       )
     ),
-    ['`valueSource: "field"`', ...caps.map(c => (c.fieldValueSource ? yes : no))],
+    [
+      '`valueSource: "field"`',
+      ...caps.map(({ fieldValueSource: fvs }) =>
+        typeof fvs === 'boolean'
+          ? fvs
+            ? yes
+            : no
+          : fvs.size > 0
+            ? `Only ${defaultOperators
+                .filter(o => fvs.has(o.name.toLowerCase() as never))
+                .map(o => `\`${o.name}\``)
+                .join(', ')}`
+            : no
+      ),
+    ],
     ['Match modes', ...caps.map(c => (c.matchModes.size > 0 ? [...c.matchModes].join(', ') : no))],
     ['`not` groups', ...caps.map(c => (c.nativeNot ? 'native' : 'De Morgan'))],
   ];

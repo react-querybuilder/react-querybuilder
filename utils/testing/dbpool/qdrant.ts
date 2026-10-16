@@ -37,7 +37,10 @@ const qdrantFetch = async <T = unknown>(
 const enc = encodeURIComponent;
 
 export const createQdrantCollection = async (name: string): Promise<void> => {
-  await dropQdrantCollection(name);
+  // 404 if missing; rethrow anything else
+  await dropQdrantCollection(name).catch((e: unknown) => {
+    if (!(e instanceof Error && e.message.includes('→ 404'))) throw e;
+  });
   await qdrantFetch('PUT', `/collections/${enc(name)}`, {
     vectors: { size: 2, distance: 'Dot' },
   });

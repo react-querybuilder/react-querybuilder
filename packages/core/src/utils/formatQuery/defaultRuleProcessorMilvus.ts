@@ -78,7 +78,7 @@ export const defaultRuleProcessorMilvus: RuleProcessor = (rule, options = {}): s
 
     case 'in':
     case 'notin': {
-      if (isField) return '';
+      // `valueSource: "field"` gated by `formatCapabilities`
       const list = toArray(value).map(v => literal(v));
       if (list.length === 0 || list.some(v => v === undefined)) return '';
       return `${field} ${op === 'in' ? 'in' : 'not in'} [${list.join(', ')}]`;
@@ -109,7 +109,7 @@ export const defaultRuleProcessorMilvus: RuleProcessor = (rule, options = {}): s
     case 'doesnotcontain':
     case 'doesnotbeginwith':
     case 'doesnotendwith': {
-      if (isField || typeof value !== 'string' || !value) return '';
+      if (typeof value !== 'string' || !value) return '';
       const base = negatedLikeOps[op] ?? op;
       const like = `${field} like ${quote(likePatterns[base](escapeLike(value)))}`;
       return base === op ? like : `not (${like})`;

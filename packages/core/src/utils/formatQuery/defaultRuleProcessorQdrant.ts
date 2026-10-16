@@ -44,8 +44,17 @@ export const defaultRuleProcessorQdrant: RuleProcessor = (
   if (matchEval) {
     const sub = value as RuleGroupType;
     // `nested` keys are relative to array elements; element-level (empty field) rules unsupported
-    if (sub.rules.some(r => !isRuleGroup(r) && !r.field)) return false;
-    const filter = defaultRuleGroupProcessorQdrant(sub, options as FormatQueryFinalOptions);
+    if (sub.rules.some(r => typeof r !== 'string' && !isRuleGroup(r) && !r.field)) return false;
+    // Defaults for direct calls w/ partial options (formatQuery supplies all of these)
+    const subOptions = {
+      fields: [],
+      validationMap: {},
+      validateRule: () => [undefined, undefined] as const,
+      getParseNumberBoolean: () => (typeof parseNumbers === 'boolean' ? parseNumbers : undefined),
+      ruleProcessor: defaultRuleProcessorQdrant,
+      ...options,
+    } as FormatQueryFinalOptions;
+    const filter = defaultRuleGroupProcessorQdrant(sub, subOptions);
     if (Object.keys(filter).length === 0) return false;
     const nested = { nested: { key, filter } };
     return matchEval.mode === 'some' ? nested : { must_not: [nested] };
