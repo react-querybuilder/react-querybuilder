@@ -166,7 +166,7 @@ jobs:
     services:
       qdrant:
         # Image has no curl/wget; readiness polled from the runner below
-        image: qdrant/qdrant:v1.15.4
+        image: qdrant/qdrant:v1.19.2
         ports: ["6333:6333"]
       chroma:
         image: chromadb/chroma:1.5.9

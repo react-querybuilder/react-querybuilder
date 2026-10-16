@@ -223,7 +223,7 @@ RQB_MSSQL_URL='mssql://sa:Rqb_Test_1234!@localhost:1433' \
 - Pinecone (opt-in, **not** in CI; Pinecone Local is EOL): `RQB_PINECONE_URL=https://<index-host>` (existing dimension-2 index) + `RQB_PINECONE_API_KEY`. Namespace per suite: `pineconeNamespace(reserveSchema(...))`, `pineconeInsert` (polls stats until visible), `pineconeFilter`.
 
 ```bash
-docker run -d -p 6333:6333 qdrant/qdrant:v1.15.4
+docker run -d -p 6333:6333 qdrant/qdrant:v1.19.2
 docker run -d -p 8000:8000 chromadb/chroma:1.5.9
 docker run -d -p 8080:8080 -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true -e DEFAULT_VECTORIZER_MODULE=none -e PERSISTENCE_DATA_PATH=/var/lib/weaviate -e CLUSTER_HOSTNAME=node1 cr.weaviate.io/semitechnologies/weaviate:1.40.1
 # Milvus: see `DBIntegrationVector` in .github/workflows/main.yml (needs embedEtcd.yaml)
