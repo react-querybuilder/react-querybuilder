@@ -528,10 +528,10 @@ The "pinecone", "chroma", "qdrant", "weaviate", and "milvus" formats generate me
 | `<=`                   | ✓                     | ✓                 | ✓                 | ✓                     | ✓                                                             |
 | `>=`                   | ✓                     | ✓                 | ✓                 | ✓                     | ✓                                                             |
 | `contains`             | –                     | –                 | ✓                 | ✓                     | ✓                                                             |
-| `beginsWith`           | –                     | –                 | –                 | ✓                     | ✓                                                             |
+| `beginsWith`           | –                     | –                 | ✓                 | ✓                     | ✓                                                             |
 | `endsWith`             | –                     | –                 | –                 | ✓                     | ✓                                                             |
 | `doesNotContain`       | –                     | –                 | ✓                 | ✓                     | ✓                                                             |
-| `doesNotBeginWith`     | –                     | –                 | –                 | ✓                     | ✓                                                             |
+| `doesNotBeginWith`     | –                     | –                 | ✓                 | ✓                     | ✓                                                             |
 | `doesNotEndWith`       | –                     | –                 | –                 | ✓                     | ✓                                                             |
 | `null`                 | ✓                     | –                 | ✓                 | ✓                     | ✓                                                             |
 | `notNull`              | ✓                     | –                 | ✓                 | ✓                     | ✓                                                             |
@@ -622,7 +622,8 @@ Rules Qdrant can't express are skipped. Inspect `formatCapabilities.qdrant` at r
 | `in` / `notIn`                             | `match.any` / `match.except` (all strings or all integers), else `should` |
 | `null` / `notNull`                         | `is_null` / `must_not` `is_null`                                          |
 | `contains` / `doesNotContain`              | `match.text` (requires full-text index; token-based, **not** substring)   |
-| begins/ends with (+ negations)             | skipped                                                                   |
+| `beginsWith` / `doesNotBeginWith`          | `match.prefix` (Qdrant v1.19+; case-sensitive, untokenized, keywords)     |
+| `endsWith` / `doesNotEndWith`              | skipped                                                                   |
 | `valueSource: "field"`                     | skipped                                                                   |
 | match modes `some` / `none`                | `nested` / `must_not` `nested` (arrays of objects only); others skipped   |
 | groups                                     | `and` → `must`, `or` → `should`, `not` → `must_not`                       |

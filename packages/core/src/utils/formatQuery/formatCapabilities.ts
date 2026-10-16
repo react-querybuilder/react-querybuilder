@@ -139,6 +139,8 @@ export const formatCapabilities: Partial<Record<ExportFormat, FormatCapabilities
       'notnull',
       'contains',
       'doesnotcontain',
+      'beginswith',
+      'doesnotbeginwith',
     ]),
     fieldValueSource: false,
     matchModes: new Set<Lowercase<MatchMode>>(['some', 'none']),

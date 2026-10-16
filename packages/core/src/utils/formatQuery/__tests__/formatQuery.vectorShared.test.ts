@@ -200,7 +200,7 @@ describe('formatCapabilities', () => {
   it('getUnsupportedRuleFeature', () => {
     const caps = formatCapabilities.qdrant!;
     expect(getUnsupportedRuleFeature({ field: 'f', operator: '=', value: 1 }, caps)).toBeNull();
-    expect(getUnsupportedRuleFeature({ field: 'f', operator: 'beginsWith', value: 1 }, caps)).toBe(
+    expect(getUnsupportedRuleFeature({ field: 'f', operator: 'endsWith', value: 1 }, caps)).toBe(
       'operator'
     );
     expect(
@@ -233,11 +233,11 @@ describe('diagnostics format-check', () => {
   const query: RuleGroupType = {
     combinator: 'and',
     rules: [
-      { id: 'r0', field: 'f', operator: 'beginsWith', value: 'x' },
+      { id: 'r0', field: 'f', operator: 'endsWith', value: 'x' },
       { id: 'r1', field: 'f', operator: '=', value: 'g', valueSource: 'field' },
       { id: 'r2', field: 'f', operator: '=', value: sub, match: { mode: 'all' } },
       { id: 'r3', field: 'f', operator: '=', value: 'x' },
-      { id: 'r4', field: 'f', operator: 'beginsWith', value: 'x', muted: true },
+      { id: 'r4', field: 'f', operator: 'endsWith', value: 'x', muted: true },
     ],
   };
   const formatChecks = (q: RuleGroupType, opts: FormatQueryOptions = {}) =>
@@ -257,7 +257,7 @@ describe('diagnostics format-check', () => {
         id: 'r0',
         path: [0],
         code: 'UNSUPPORTED_OPERATOR_FOR_FORMAT',
-        message: 'Operator "beginsWith" is not supported by format "qdrant"',
+        message: 'Operator "endsWith" is not supported by format "qdrant"',
         source: 'format-check',
         severity: 'warning',
       },
@@ -295,8 +295,8 @@ describe('diagnostics format-check', () => {
           value: {
             combinator: 'and',
             rules: [
-              { id: 'n0', field: 'a', operator: 'beginsWith', value: 'x' },
-              { id: 'n1', field: 'a', operator: 'beginsWith', value: 'x', muted: true },
+              { id: 'n0', field: 'a', operator: 'endsWith', value: 'x' },
+              { id: 'n1', field: 'a', operator: 'endsWith', value: 'x', muted: true },
               {
                 combinator: 'and',
                 rules: [{ id: 'n2', field: 'b', operator: '=', value: 'c', valueSource: 'field' }],
@@ -330,7 +330,7 @@ describe('diagnostics format-check', () => {
           field: 'arr',
           operator: '=',
           match: { mode: 'some' },
-          value: { rules: [{ id: 'i0', field: 'a', operator: 'beginsWith', value: 'x' }, 'and'] },
+          value: { rules: [{ id: 'i0', field: 'a', operator: 'endsWith', value: 'x' }, 'and'] },
         },
       ],
     } as unknown as RuleGroupType;
@@ -349,7 +349,7 @@ describe('diagnostics format-check', () => {
           value: {
             combinator: 'and',
             muted: true,
-            rules: [{ id: 'n0', field: 'a', operator: 'beginsWith', value: 'x' }],
+            rules: [{ id: 'n0', field: 'a', operator: 'endsWith', value: 'x' }],
           },
         },
       ],
@@ -375,7 +375,7 @@ describe('diagnostics format-check', () => {
             not: true,
             rules: [
               { field: 'f', operator: 'doesNotContain', value: 'x' }, // → contains: OK
-              { field: 'f', operator: 'beginsWith', value: 'x' }, // → doesNotBeginWith: unsupported
+              { field: 'f', operator: 'endsWith', value: 'x' }, // → doesNotEndWith: unsupported
               { field: 'f', operator: 'foo', value: 'x' }, // not negatable
               { field: 'f', operator: '=', value: sub, match: { mode: 'none' } }, // → some: OK
               { field: 'f', operator: '=', value: sub, match: { mode: 'all' } }, // not negatable
@@ -386,7 +386,7 @@ describe('diagnostics format-check', () => {
       };
       expect(formatChecks(negQuery, { diagnosticsTargetFormat: fake }).map(d => d.message)).toEqual(
         [
-          'Operator "doesNotBeginWith" (negation of "beginsWith") is not supported by format "cel"',
+          'Operator "doesNotEndWith" (negation of "endsWith") is not supported by format "cel"',
           'Operator "foo" (cannot be negated) is not supported by format "cel"',
           'Match mode "all" (cannot be negated) is not supported by format "cel"',
         ]

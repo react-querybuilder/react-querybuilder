@@ -19,6 +19,8 @@ const rangeOps = { '<': 'lt', '<=': 'lte', '>': 'gt', '>=': 'gte' } as const;
  *
  * - `contains`/`doesNotContain` use `match.text`, which matches tokens, not substrings
  *   (unindexed fields use the `word` tokenizer + lowercasing; a full-text index controls this).
+ * - `beginsWith`/`doesNotBeginWith` use `match.prefix` (Qdrant v1.19+; case-sensitive, untokenized,
+ *   keyword values only; keyword index w/ `prefix: true` accelerates it).
  * - Range operators always coerce values to numbers (or RFC 3339 datetimes for `date`/
  *   `datetime-local` input types); non-coercible values are skipped.
  * - Float equality is emitted as `range: { gte: v, lte: v }` (`match.value` only accepts
@@ -152,6 +154,13 @@ export const defaultRuleProcessorQdrant: RuleProcessor = (
       if (typeof value !== 'string' || !value) return false;
       const c = { key, match: { text: value } };
       return op === 'contains' ? c : { must_not: [c] };
+    }
+
+    case 'beginswith':
+    case 'doesnotbeginwith': {
+      if (typeof value !== 'string' || !value) return false;
+      const c = { key, match: { prefix: value } };
+      return op === 'beginswith' ? c : { must_not: [c] };
     }
   }
 

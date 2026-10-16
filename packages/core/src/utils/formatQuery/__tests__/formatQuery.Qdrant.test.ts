@@ -135,8 +135,18 @@ describe('operators', () => {
       { must_not: [{ key: 'f', match: { text: 'a' } }] },
     ],
     ['contains empty', { field: 'f', operator: 'contains', value: '' }, undefined],
-    ['beginsWith', { field: 'f', operator: 'beginsWith', value: 'a' }, undefined],
-    ['doesNotBeginWith', { field: 'f', operator: 'doesNotBeginWith', value: 'a' }, undefined],
+    [
+      'beginsWith',
+      { field: 'f', operator: 'beginsWith', value: 'a b' },
+      { key: 'f', match: { prefix: 'a b' } },
+    ],
+    [
+      'doesNotBeginWith',
+      { field: 'f', operator: 'doesNotBeginWith', value: 'a' },
+      { must_not: [{ key: 'f', match: { prefix: 'a' } }] },
+    ],
+    ['beginsWith empty', { field: 'f', operator: 'beginsWith', value: '' }, undefined],
+    ['beginsWith non-string', { field: 'f', operator: 'beginsWith', value: 1 }, undefined],
     ['endsWith', { field: 'f', operator: 'endsWith', value: 'a' }, undefined],
     ['doesNotEndWith', { field: 'f', operator: 'doesNotEndWith', value: 'a' }, undefined],
     ['unknown op', { field: 'f', operator: 'foo', value: 'a' }, undefined],
@@ -343,7 +353,7 @@ describe('groups', () => {
       must: [ca, { should: [cb] }],
     });
     expect(formatQuery(q([]), 'qdrant')).toEqual({});
-    expect(formatQuery(q([{ field: 'a', operator: 'beginsWith', value: 'x' }]), 'qdrant')).toEqual(
+    expect(formatQuery(q([{ field: 'a', operator: 'endsWith', value: 'x' }]), 'qdrant')).toEqual(
       {}
     );
   });
