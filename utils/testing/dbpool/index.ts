@@ -5,3 +5,8 @@ export * from './mssql';
 export * from './mysql';
 export * from './oracle';
 export * from './pglite';
+export * from './chroma';
+export * from './milvus';
+export * from './pinecone';
+export * from './qdrant';
+export * from './weaviate';

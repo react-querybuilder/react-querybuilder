@@ -109,6 +109,34 @@ describe('mongodb_query $where', () => {
   });
 });
 
+// Vector formats: no escaping (documented; whitelist field names)
+describe('vector formats', () => {
+  const field = 'x == 1 or true or y';
+  const rules: RuleGroupType['rules'] = [{ field, operator: '=', value: 'v' }];
+
+  it('object formats keep hostile field names as inert keys/values', () => {
+    expect(formatQuery(q(rules), 'qdrant')).toEqual({
+      must: [{ key: field, match: { value: 'v' } }],
+    });
+    expect(formatQuery(q(rules), 'pinecone')).toEqual({ [field]: { $eq: 'v' } });
+    expect(formatQuery(q(rules), 'chroma')).toEqual({ [field]: { $eq: 'v' } });
+    expect(formatQuery(q(rules), 'weaviate')).toEqual({
+      operator: 'Equal',
+      path: [field],
+      valueText: 'v',
+    });
+  });
+
+  it('milvus emits field names verbatim', () => {
+    expect(
+      formatQuery(
+        q([...rules, { field: 'a', operator: '>', value: field, valueSource: 'field' }]),
+        'milvus'
+      )
+    ).toBe(`${field} == "v" and a > ${field}`);
+  });
+});
+
 // Hostile field names must not break out of quoted contexts: after stripping well-formed
 // quoted literals/identifiers, no payload fragment (`true`) may remain
 describe('cross-format hostile field names', () => {

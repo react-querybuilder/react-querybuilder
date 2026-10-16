@@ -863,6 +863,31 @@ export default function Demo({
                     attributes: getExportTabAttributes('elasticsearch'),
                   },
                   {
+                    value: 'pinecone',
+                    label: 'Pinecone',
+                    attributes: getExportTabAttributes('pinecone'),
+                  },
+                  {
+                    value: 'chroma',
+                    label: 'Chroma',
+                    attributes: getExportTabAttributes('chroma'),
+                  },
+                  {
+                    value: 'qdrant',
+                    label: 'Qdrant',
+                    attributes: getExportTabAttributes('qdrant'),
+                  },
+                  {
+                    value: 'weaviate',
+                    label: 'Weaviate',
+                    attributes: getExportTabAttributes('weaviate'),
+                  },
+                  {
+                    value: 'milvus',
+                    label: 'Milvus',
+                    attributes: getExportTabAttributes('milvus'),
+                  },
+                  {
                     value: 'prisma',
                     label: 'Prisma ORM',
                     attributes: getExportTabAttributes('prisma'),
@@ -1011,6 +1036,41 @@ export default function Demo({
                 <TabItem value="elasticsearch">
                   <div className={styles.exportOptions}>
                     <ExportInfoLinks format="elasticsearch" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="pinecone">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="pinecone" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="chroma">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="chroma" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="qdrant">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="qdrant" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="weaviate">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="weaviate" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="milvus">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="milvus" />
                     {parseNumbersOption}
                   </div>
                   {exportPresentation}

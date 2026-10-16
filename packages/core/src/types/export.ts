@@ -40,6 +40,11 @@ export type ExportFormat =
   | 'gql'
   | 'sparql'
   | 'gremlin'
+  | 'pinecone'
+  | 'chroma'
+  | 'qdrant'
+  | 'weaviate'
+  | 'milvus'
   | 'diagnostics';
 
 /**
@@ -54,6 +59,10 @@ export type ExportObjectFormats =
   | 'elasticsearch'
   | 'jsonata'
   | 'mongodb_query'
+  | 'pinecone'
+  | 'chroma'
+  | 'qdrant'
+  | 'weaviate'
   | 'diagnostics';
 
 /**
@@ -296,6 +305,12 @@ export interface FormatQueryOptions {
    * Translatable strings used by the "natural_language" format.
    */
   translations?: Partial<Record<NLTranslationKey, string>>;
+  /**
+   * For the "diagnostics" format only. When set to a format with an entry in
+   * {@link formatCapabilities}, rules the target format can't express are reported
+   * as `"format-check"` warnings (they don't affect validity). Ignored by other formats.
+   */
+  diagnosticsTargetFormat?: ExportFormat;
   // oxlint-disable-next-line typescript/no-explicit-any
   context?: Record<string, any>;
 }
@@ -362,9 +377,11 @@ export interface FormatQueryFinalOptions extends Required<
     | 'ruleGroupProcessor'
     | 'parseNumbers'
     | 'getParameters'
+    | 'diagnosticsTargetFormat'
   >
 > {
   getParameters?: FormatQueryOptions['getParameters'];
+  diagnosticsTargetFormat?: ExportFormat;
   fields: FullOptionList<FullField>;
   getParseNumberBoolean: (inputType?: InputType | null) => boolean | undefined;
   parseNumbers?: ParseNumbersPropConfig | undefined;
@@ -434,6 +451,11 @@ export type ValueProcessor = ValueProcessorLegacy;
  * | `cypher`                 | {@link defaultRuleProcessorCypher}        |
  * | `sparql`                 | {@link defaultRuleProcessorSPARQL}        |
  * | `gremlin`                | {@link defaultRuleProcessorGremlin}       |
+ * | `pinecone`               | {@link defaultRuleProcessorPinecone}      |
+ * | `chroma`                 | {@link defaultRuleProcessorChroma}        |
+ * | `qdrant`                 | {@link defaultRuleProcessorQdrant}        |
+ * | `weaviate`               | {@link defaultRuleProcessorWeaviate}      |
+ * | `milvus`                 | {@link defaultRuleProcessorMilvus}        |
  *
  * @group Export
  */
@@ -475,6 +497,11 @@ export type RuleProcessor = (
  * | `cypher`                 | {@link defaultRuleGroupProcessorCypher}        |
  * | `sparql`                 | {@link defaultRuleGroupProcessorSPARQL}        |
  * | `gremlin`                | {@link defaultRuleGroupProcessorGremlin}       |
+ * | `pinecone`               | {@link defaultRuleGroupProcessorPinecone}      |
+ * | `chroma`                 | {@link defaultRuleGroupProcessorChroma}        |
+ * | `qdrant`                 | {@link defaultRuleGroupProcessorQdrant}        |
+ * | `weaviate`               | {@link defaultRuleGroupProcessorWeaviate}      |
+ * | `milvus`                 | {@link defaultRuleGroupProcessorMilvus}        |
  * | `diagnostics`            | {@link defaultRuleGroupProcessorDiagnostics}   |
  *
  * @group Export
@@ -670,6 +697,8 @@ export interface DiagnosticEntry {
    *   boolean values for checkbox/switch editors
    * - `"field-check"` — field existence and operator validity against the `fields` config
    * - `"structure-check"` — `rules` array shape (e.g. independent combinator alternation)
+   * - `"format-check"` — operator/value source/match mode unsupported by the
+   *   `diagnosticsTargetFormat` (always `severity: "warning"`)
    */
   source:
     | 'placeholder'
@@ -678,7 +707,12 @@ export interface DiagnosticEntry {
     | 'field-validator'
     | 'type-check'
     | 'field-check'
-    | 'structure-check';
+    | 'structure-check'
+    | 'format-check';
+  /**
+   * Severity. Absent means `"error"` (legacy). `"warning"` entries never affect validity.
+   */
+  severity?: 'error' | 'warning';
 }
 
 /**

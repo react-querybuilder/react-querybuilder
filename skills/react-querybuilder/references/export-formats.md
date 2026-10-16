@@ -16,31 +16,36 @@ formatQuery(query, { format: 'sql', fields, parseNumbers: true }); // options ob
 
 <!-- GENERATED:start -->
 
-| Target                 | `format`              | Returns                                       | Notes                                                                                                                |
-| ---------------------- | --------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Persist/transport      | `json`                | string                                        | Pretty JSON incl. ids. Not validated.                                                                                |
-| Persist/transport      | `json_without_ids`    | string                                        | Compact JSON, no `id`/`path`. Not validated.                                                                         |
-| SQL (inline values)    | `sql`                 | string                                        | `WHERE` clause body. **Not for untrusted input**; prefer parameterized.                                              |
-| SQL (bind params)      | `parameterized`       | `{ sql, params: unknown[] }`                  | `?` placeholders, or `$1`… with `numberedParams`/`preset: 'postgresql'`.                                             |
-| SQL (named params)     | `parameterized_named` | `{ sql, params: Record<string, unknown> }`    | `:field_1` placeholders; keys lack prefix unless `paramsKeepPrefix`.                                                 |
-| Prisma                 | `prisma`              | object                                        | Pass as `where`. No `valueSource: 'field'`.                                                                          |
-| Drizzle                | `drizzle`             | `(columns, operators) => SQL \| undefined`    | Pass as relational `where`, or call with `(table, getOperators())`.                                                  |
-| Sequelize              | `sequelize`           | object \| `undefined`                         | Requires `context: { sequelizeOperators: Op }`; field-to-field also needs `sequelizeCol: col` (+ `sequelizeFn: fn`). |
-| TanStack DB            | `tanstack_db`         | `refs => expression` \| `undefined`           | Requires `context: { tanStackDbOperators }` (whole `@tanstack/db` module or picked ops).                             |
-| MongoDB                | `mongodb_query`       | object                                        | Recommended Mongo format.                                                                                            |
-| MongoDB (string)       | `mongodb`             | string                                        | **Deprecated**; use `mongodb_query`.                                                                                 |
-| Elasticsearch          | `elasticsearch`       | object                                        | Experimental. Query DSL `bool` query.                                                                                |
-| JsonLogic              | `jsonlogic`           | object                                        |                                                                                                                      |
-| CEL                    | `cel`                 | string                                        |                                                                                                                      |
-| Spring SpEL            | `spel`                | string                                        |                                                                                                                      |
-| JSONata                | `jsonata`             | string                                        | Use `parseNumbers` for numeric comparisons.                                                                          |
-| LDAP                   | `ldap`                | string                                        | No `valueSource: 'field'`.                                                                                           |
-| Cypher (Neo4j)         | `cypher`              | string                                        | `WHERE` expression.                                                                                                  |
-| GQL (ISO graph)        | `gql`                 | string                                        | Same output as `cypher`.                                                                                             |
-| SPARQL                 | `sparql`              | string                                        | `FILTER` expression.                                                                                                 |
-| Gremlin                | `gremlin`             | string                                        | `.has()` chain / `__.and()`/`__.or()` steps.                                                                         |
-| Human-readable display | `natural_language`    | string                                        | **Display only**, never parse it back. Configurable via `translations`, `operatorMap`, `wordOrder`.                  |
-| Debugging/validation   | `diagnostics`         | `{ query, diagnostics, stats, fieldSummary }` | Annotated tree + flat entries `{ id, path, code, message, source }`. Pass `fields` for field/type checks.            |
+| Target                 | `format`              | Returns                                       | Notes                                                                                                                                                                                      |
+| ---------------------- | --------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Persist/transport      | `json`                | string                                        | Pretty JSON incl. ids. Not validated.                                                                                                                                                      |
+| Persist/transport      | `json_without_ids`    | string                                        | Compact JSON, no `id`/`path`. Not validated.                                                                                                                                               |
+| SQL (inline values)    | `sql`                 | string                                        | `WHERE` clause body. **Not for untrusted input**; prefer parameterized.                                                                                                                    |
+| SQL (bind params)      | `parameterized`       | `{ sql, params: unknown[] }`                  | `?` placeholders, or `$1`… with `numberedParams`/`preset: 'postgresql'`.                                                                                                                   |
+| SQL (named params)     | `parameterized_named` | `{ sql, params: Record<string, unknown> }`    | `:field_1` placeholders; keys lack prefix unless `paramsKeepPrefix`.                                                                                                                       |
+| Prisma                 | `prisma`              | object                                        | Pass as `where`. No `valueSource: 'field'`.                                                                                                                                                |
+| Drizzle                | `drizzle`             | `(columns, operators) => SQL \| undefined`    | Pass as relational `where`, or call with `(table, getOperators())`.                                                                                                                        |
+| Sequelize              | `sequelize`           | object \| `undefined`                         | Requires `context: { sequelizeOperators: Op }`; field-to-field also needs `sequelizeCol: col` (+ `sequelizeFn: fn`).                                                                       |
+| TanStack DB            | `tanstack_db`         | `refs => expression` \| `undefined`           | Requires `context: { tanStackDbOperators }` (whole `@tanstack/db` module or picked ops).                                                                                                   |
+| MongoDB                | `mongodb_query`       | object                                        | Recommended Mongo format.                                                                                                                                                                  |
+| MongoDB (string)       | `mongodb`             | string                                        | **Deprecated**; use `mongodb_query`.                                                                                                                                                       |
+| Elasticsearch          | `elasticsearch`       | object                                        | Experimental. Query DSL `bool` query.                                                                                                                                                      |
+| Qdrant (vector DB)     | `qdrant`              | object                                        | Experimental. `Filter` for RAG metadata filtering; `{}` = omit `filter`. Unsupported rules skipped (see `formatCapabilities`).                                                             |
+| Pinecone (vector DB)   | `pinecone`            | object                                        | Experimental. Metadata filter; `{}` = omit `filter`. `not` via De Morgan.                                                                                                                  |
+| Chroma (vector DB)     | `chroma`              | object                                        | Experimental. `where` filter; `{}` = omit `where`. `not` via De Morgan.                                                                                                                    |
+| Weaviate (vector DB)   | `weaviate`            | object                                        | Experimental. `where` filter; `{}` = omit `where`. Needs Weaviate 1.33+ for `Not`/`ContainsNone`.                                                                                          |
+| Milvus (vector DB)     | `milvus`              | string                                        | Experimental. Boolean filter expr; `""` = omit `filter`. Field names not escaped.                                                                                                          |
+| JsonLogic              | `jsonlogic`           | object                                        |                                                                                                                                                                                            |
+| CEL                    | `cel`                 | string                                        |                                                                                                                                                                                            |
+| Spring SpEL            | `spel`                | string                                        |                                                                                                                                                                                            |
+| JSONata                | `jsonata`             | string                                        | Use `parseNumbers` for numeric comparisons.                                                                                                                                                |
+| LDAP                   | `ldap`                | string                                        | No `valueSource: 'field'`.                                                                                                                                                                 |
+| Cypher (Neo4j)         | `cypher`              | string                                        | `WHERE` expression.                                                                                                                                                                        |
+| GQL (ISO graph)        | `gql`                 | string                                        | Same output as `cypher`.                                                                                                                                                                   |
+| SPARQL                 | `sparql`              | string                                        | `FILTER` expression.                                                                                                                                                                       |
+| Gremlin                | `gremlin`             | string                                        | `.has()` chain / `__.and()`/`__.or()` steps.                                                                                                                                               |
+| Human-readable display | `natural_language`    | string                                        | **Display only**, never parse it back. Configurable via `translations`, `operatorMap`, `wordOrder`.                                                                                        |
+| Debugging/validation   | `diagnostics`         | `{ query, diagnostics, stats, fieldSummary }` | Annotated tree + flat entries `{ id, path, code, message, source, severity? }`. Pass `fields` for field/type checks; `diagnosticsTargetFormat` to warn about rules a format can't express. |
 
 <!-- GENERATED:end -->
 
@@ -65,7 +70,8 @@ await db.query(`SELECT * FROM users WHERE ${sql}`, params);
 - `gremlin`: property keys escaped inside `'…'`.
 - `elasticsearch`: field names escaped inside Painless scripts (`doc['…']`).
 - `mongodb_query`/`mongodb`: `$where` JS uses bracket notation for non-identifiers (`this["first name"]`). Object keys and `$field` refs are emitted as-is.
-- `cel`, `spel`, `sparql`, `ldap`, `jsonata`: no escape syntax; field names emitted verbatim. Whitelist them.
+- `cel`, `spel`, `sparql`, `ldap`, `jsonata`, `milvus`: no escape syntax; field names emitted verbatim. Whitelist them.
+- `pinecone`, `chroma`, `qdrant`, `weaviate`: field names are plain object keys/values (inert data), but still whitelist them.
 
 ## ORMs
 
@@ -140,7 +146,15 @@ Defaults exist per format: `defaultRuleProcessorSQL`, `defaultRuleProcessorParam
 
 ## Field-to-field (`valueSource: 'field'`)
 
-The rule's `value` is another field name. Supported by most formats. **Not** supported by `prisma` and `ldap` (rule dropped). `elasticsearch` supports it only via scripts with string values.
+The rule's `value` is another field name. Supported by most formats. **Not** supported by `prisma`, `ldap`, `pinecone`, `chroma`, `qdrant`, `weaviate` (rule dropped); `milvus` supports it for comparison ops and `between` only. `elasticsearch` supports it only via scripts with string values.
+
+## RAG metadata filters (vector DBs)
+
+- Formats: `pinecone`, `chroma`, `qdrant`, `weaviate` (objects; `{}` = no filter, omit the param), `milvus` (string; `""` = no filter). All experimental.
+- Unsupported operators/value sources/match modes are skipped. Check up front with `formatCapabilities[format]`, or pass `diagnosticsTargetFormat` to the `diagnostics` format for `format-check` warnings (MCP `validate_query`: `targetFormat`).
+- `not` groups: native for `qdrant`/`weaviate`/`milvus`; De Morgan push-down for `pinecone`/`chroma` (missing-field semantics may differ).
+- Dates: `qdrant`/`weaviate` emit RFC 3339 for `date`/`datetime-local` fields; `pinecone`/`chroma`/`milvus` have no date type, so use the `datetimeRuleProcessor<Format>` processors (epoch ms).
+- pgvector: `parameterized` w/ `preset: 'postgresql'`. LanceDB: `sql` (DataFusion).
 
 ## Dates, expressions
 

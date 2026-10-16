@@ -1438,6 +1438,20 @@ export class QueryManager<
     options: 'elasticsearch' | (FormatQueryOptions & { format: 'elasticsearch' })
     // oxlint-disable-next-line typescript/no-explicit-any
   ): Record<string, any>;
+  /** Generates a Pinecone metadata filter object from the current query. */
+  format(
+    options: 'pinecone' | (FormatQueryOptions & { format: 'pinecone' })
+  ): Record<string, unknown>;
+  /** Generates a Chroma `where` filter object from the current query. */
+  format(options: 'chroma' | (FormatQueryOptions & { format: 'chroma' })): Record<string, unknown>;
+  /** Generates a Weaviate `where` filter object from the current query. */
+  format(
+    options: 'weaviate' | (FormatQueryOptions & { format: 'weaviate' })
+  ): Record<string, unknown>;
+  /** Generates a Milvus boolean filter expression from the current query. */
+  format(options: 'milvus' | (FormatQueryOptions & { format: 'milvus' })): string;
+  /** Generates a Qdrant `Filter` object from the current query. */
+  format(options: 'qdrant' | (FormatQueryOptions & { format: 'qdrant' })): Record<string, unknown>;
   /** Generates a MongoDB query object from the current query. */
   format(
     options: 'mongodb_query' | (FormatQueryOptions & { format: 'mongodb_query' })

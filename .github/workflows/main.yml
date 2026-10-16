@@ -161,6 +161,54 @@ jobs:
       - run: bun run build:core
       - run: bun run test:dbintegration
 
+  DBIntegrationVector:
+    runs-on: ubuntu-latest
+    services:
+      qdrant:
+        # Image has no curl/wget; readiness polled from the runner below
+        image: qdrant/qdrant:v1.19.2
+        ports: ["6333:6333"]
+      chroma:
+        image: chromadb/chroma:1.5.9
+        ports: ["8000:8000"]
+      weaviate:
+        image: cr.weaviate.io/semitechnologies/weaviate:1.40.1
+        ports: ["8080:8080"]
+        env:
+          AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+          PERSISTENCE_DATA_PATH: /var/lib/weaviate
+          DEFAULT_VECTORIZER_MODULE: none
+          CLUSTER_HOSTNAME: node1
+    env:
+      RQB_QDRANT_URL: http://localhost:6333
+      RQB_CHROMA_URL: http://localhost:8000
+      RQB_WEAVIATE_URL: http://localhost:8080
+      RQB_MILVUS_URL: http://localhost:19530
+      # Pinecone: opt-in only (real account; Pinecone Local is EOL) — RQB_PINECONE_URL/_API_KEY
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: bun run build:core
+      # Services can't set the start command; standalone w/ embedded etcd + local storage
+      - name: Start Milvus
+        run: |
+          printf 'listen-client-urls: http://0.0.0.0:2379\nadvertise-client-urls: http://0.0.0.0:2379\nquota-backend-bytes: 4294967296\nauto-compaction-mode: revision\nauto-compaction-retention: "1000"\n' > "$RUNNER_TEMP/embedEtcd.yaml"
+          docker run -d --name milvus --security-opt seccomp:unconfined \
+            -e ETCD_USE_EMBED=true -e ETCD_DATA_DIR=/var/lib/milvus/etcd \
+            -e ETCD_CONFIG_PATH=/milvus/configs/embedEtcd.yaml -e COMMON_STORAGETYPE=local \
+            -e DEPLOY_MODE=STANDALONE \
+            -v "$RUNNER_TEMP/embedEtcd.yaml:/milvus/configs/embedEtcd.yaml:ro" \
+            -p 19530:19530 -p 9091:9091 \
+            milvusdb/milvus:v3.0.3 milvus run standalone
+      - name: Wait for vector DBs
+        run: |
+          timeout 60 bash -c 'until curl -sf "$RQB_QDRANT_URL/readyz"; do sleep 2; done'
+          timeout 60 bash -c 'until curl -sf "$RQB_CHROMA_URL/api/v2/heartbeat"; do sleep 2; done'
+          timeout 60 bash -c 'until curl -sf "$RQB_WEAVIATE_URL/v1/.well-known/ready"; do sleep 2; done'
+          timeout 180 bash -c 'until curl -sf http://localhost:9091/healthz; do sleep 3; done' || { docker logs milvus; exit 1; }
+      - run: bun run test:dbintegration:vector
+
   Test_React_18:
     runs-on: ubuntu-latest
     steps:

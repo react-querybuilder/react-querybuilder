@@ -7,17 +7,21 @@
 import type { RuleProcessor, ValueProcessorByRule } from '@react-querybuilder/core';
 import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations';
 import { getDatetimeRuleProcessorCEL } from './getDatetimeRuleProcessorCEL';
+import { getDatetimeRuleProcessorChroma } from './getDatetimeRuleProcessorChroma';
 import { getDatetimeRuleProcessorCypher } from './getDatetimeRuleProcessorCypher';
 import { getDatetimeRuleProcessorDrizzle } from './getDatetimeRuleProcessorDrizzle';
 import { getDatetimeRuleProcessorElasticSearch } from './getDatetimeRuleProcessorElasticSearch';
 import { getDatetimeRuleProcessorGremlin } from './getDatetimeRuleProcessorGremlin';
 import { getDatetimeRuleProcessorJSONata } from './getDatetimeRuleProcessorJSONata';
 import { getDatetimeRuleProcessorLDAP } from './getDatetimeRuleProcessorLDAP';
+import { getDatetimeRuleProcessorMilvus } from './getDatetimeRuleProcessorMilvus';
 import { getDatetimeRuleProcessorMongoDB } from './getDatetimeRuleProcessorMongoDB';
 import { getDatetimeRuleProcessorMongoDBQuery } from './getDatetimeRuleProcessorMongoDBQuery';
 import { getDatetimeRuleProcessorNL } from './getDatetimeRuleProcessorNL';
 import { getDatetimeRuleProcessorParameterized } from './getDatetimeRuleProcessorParameterized';
+import { getDatetimeRuleProcessorPinecone } from './getDatetimeRuleProcessorPinecone';
 import { getDatetimeRuleProcessorPrisma } from './getDatetimeRuleProcessorPrisma';
+import { getDatetimeRuleProcessorQdrant } from './getDatetimeRuleProcessorQdrant';
 import { getDatetimeRuleProcessorSequelize } from './getDatetimeRuleProcessorSequelize';
 import { getDatetimeRuleProcessorSPARQL } from './getDatetimeRuleProcessorSPARQL';
 import { getDatetimeRuleProcessorSpEL } from './getDatetimeRuleProcessorSpEL';
@@ -30,6 +34,7 @@ import {
   getDatetimeValueProcessorPostgreSQL,
 } from './getDatetimeRuleProcessorSQL';
 import { getDatetimeRuleProcessorTanStackDB } from './getDatetimeRuleProcessorTanStackDB';
+import { getDatetimeRuleProcessorWeaviate } from './getDatetimeRuleProcessorWeaviate';
 import { rqbDateTimeLibraryAPI } from './rqbDateTimeLibraryAPI.luxon';
 import type { RQBJsonLogicDateTimeOperations } from './types';
 
@@ -153,6 +158,36 @@ export const datetimeRuleProcessorDrizzle: RuleProcessor =
  */
 export const datetimeRuleProcessorElasticSearch: RuleProcessor =
   getDatetimeRuleProcessorElasticSearch(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "qdrant" format
+ */
+export const datetimeRuleProcessorQdrant: RuleProcessor =
+  getDatetimeRuleProcessorQdrant(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "pinecone" format
+ */
+export const datetimeRuleProcessorPinecone: RuleProcessor =
+  getDatetimeRuleProcessorPinecone(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "chroma" format
+ */
+export const datetimeRuleProcessorChroma: RuleProcessor =
+  getDatetimeRuleProcessorChroma(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "weaviate" format
+ */
+export const datetimeRuleProcessorWeaviate: RuleProcessor =
+  getDatetimeRuleProcessorWeaviate(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "milvus" format
+ */
+export const datetimeRuleProcessorMilvus: RuleProcessor =
+  getDatetimeRuleProcessorMilvus(rqbDateTimeLibraryAPI);
 
 /**
  * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "tanstack_db" format

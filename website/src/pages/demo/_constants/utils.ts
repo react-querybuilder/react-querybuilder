@@ -12,6 +12,11 @@ import {
   datetimeRuleProcessorDrizzle,
   datetimeRuleProcessorElasticSearch,
   datetimeRuleProcessorGremlin,
+  datetimeRuleProcessorPinecone,
+  datetimeRuleProcessorChroma,
+  datetimeRuleProcessorQdrant,
+  datetimeRuleProcessorWeaviate,
+  datetimeRuleProcessorMilvus,
   datetimeRuleProcessorJSONata,
   datetimeRuleProcessorLDAP,
   datetimeRuleProcessorMongoDB,
@@ -176,6 +181,10 @@ const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOption
     case 'parameterized_named':
     case 'jsonlogic':
     case 'elasticsearch':
+    case 'pinecone':
+    case 'chroma':
+    case 'qdrant':
+    case 'weaviate':
     case 'prisma':
       return stringify(formatQueryResult);
   }
@@ -203,6 +212,11 @@ export const datetimeRuleProcessorMap: Partial<Record<ExportFormat, RuleProcesso
   gql: datetimeRuleProcessorCypher,
   sparql: datetimeRuleProcessorSPARQL,
   gremlin: datetimeRuleProcessorGremlin,
+  pinecone: datetimeRuleProcessorPinecone,
+  chroma: datetimeRuleProcessorChroma,
+  qdrant: datetimeRuleProcessorQdrant,
+  weaviate: datetimeRuleProcessorWeaviate,
+  milvus: datetimeRuleProcessorMilvus,
 };
 
 // Ready-made expression processors (built-in functions). Only the formats expr

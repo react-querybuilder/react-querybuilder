@@ -28,6 +28,16 @@ afterAll(async () => {
       import('./dbpool/mysql').then(({ closeSharedMySQL }) => closeSharedMySQL()),
     globalThis.__rqbMariaDBActive &&
       import('./dbpool/mysql').then(({ closeSharedMariaDB }) => closeSharedMariaDB()),
+    globalThis.__rqbQdrantActive &&
+      import('./dbpool/qdrant').then(({ closeSharedQdrant }) => closeSharedQdrant()),
+    globalThis.__rqbChromaActive &&
+      import('./dbpool/chroma').then(({ closeSharedChroma }) => closeSharedChroma()),
+    globalThis.__rqbWeaviateActive &&
+      import('./dbpool/weaviate').then(({ closeSharedWeaviate }) => closeSharedWeaviate()),
+    globalThis.__rqbMilvusActive &&
+      import('./dbpool/milvus').then(({ closeSharedMilvus }) => closeSharedMilvus()),
+    globalThis.__rqbPineconeActive &&
+      import('./dbpool/pinecone').then(({ closeSharedPinecone }) => closeSharedPinecone()),
     globalThis.__rqbMongoActive &&
       import('./mongo').then(({ closeSharedMongo }) => closeSharedMongo()),
   ]);

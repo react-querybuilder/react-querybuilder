@@ -214,6 +214,24 @@ RQB_MSSQL_URL='mssql://sa:Rqb_Test_1234!@localhost:1433' \
   bun run test:dbintegration
 ```
 
+**Vector DBs (CI-only, `DBIntegrationVector` job, `bun run test:dbintegration:vector`):** `dbquery.{qdrant,chroma,weaviate,milvus,pinecone}*` files use `describe.skipIf(!<db>Enabled)`. Harnesses use `fetch` only (no vendor SDKs). Non-Qdrant suites share `vectorDbCommonTests` (`vectorDbqueryTestUtils.ts`): `dbTests` filtered through `formatCapabilities` (unsupported → `format-check` diagnostic), empty filter, RAG query.
+
+- Qdrant: `RQB_QDRANT_URL=http://localhost:6333`. One collection per suite (`reserveSchema`): `createQdrantCollection`/`dropQdrantCollection`, `qdrantInsert(name, payloads)` (sequential int ids, dummy 2-dim vectors), `qdrantFilter(name, filter)` → payloads via `scroll` (`{}` omits `filter`). Unordered; compare sorted ids. Filter `dbTests` through `formatCapabilities` (unsupported → assert `format-check` diagnostic).
+- Chroma: `RQB_CHROMA_URL=http://localhost:8000`. REST v2, `default_tenant`/`default_database`. `createChromaCollection`/`dropChromaCollection`, `chromaInsert(name, metadatas)` (`null`/object values omitted), `chromaFilter(name, where)` (`{}` omits `where`; Chroma rejects `{}`).
+- Weaviate: `RQB_WEAVIATE_URL=http://localhost:8080` (anon access, no vectorizer). Class per suite: `weaviateClassName(reserveSchema(...))` (capitalized), `createWeaviateClass(name, props)` (`indexNullState: true`, `field` tokenization), `weaviateInsert`, `weaviateFilter(name, where)` via GraphQL `Get` (core-internal `toGraphQLLiteral`).
+- Milvus: `RQB_MILVUS_URL=http://localhost:19530` (standalone, embedded etcd). `createMilvusCollection(name, fields)` (explicit scalar schema, dummy `vec`, AUTOINDEX, `Strong` consistency), `milvusInsert`, `milvusFilter(name, expr)` (`''` = all). Errors come back in-body w/ HTTP 200.
+- Pinecone (opt-in, **not** in CI; Pinecone Local is EOL): `RQB_PINECONE_URL=https://<index-host>` (existing dimension-2 index) + `RQB_PINECONE_API_KEY`. Namespace per suite: `pineconeNamespace(reserveSchema(...))`, `pineconeInsert` (polls stats until visible), `pineconeFilter`.
+
+```bash
+docker run -d -p 6333:6333 qdrant/qdrant:v1.19.2
+docker run -d -p 8000:8000 chromadb/chroma:1.5.9
+docker run -d -p 8080:8080 -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true -e DEFAULT_VECTORIZER_MODULE=none -e PERSISTENCE_DATA_PATH=/var/lib/weaviate -e CLUSTER_HOSTNAME=node1 cr.weaviate.io/semitechnologies/weaviate:1.40.1
+# Milvus: see `DBIntegrationVector` in .github/workflows/main.yml (needs embedEtcd.yaml)
+RQB_QDRANT_URL=http://localhost:6333 RQB_CHROMA_URL=http://localhost:8000 \
+  RQB_WEAVIATE_URL=http://localhost:8080 RQB_MILVUS_URL=http://localhost:19530 \
+  bun run test:dbintegration:vector
+```
+
 ## Generated Files
 
 **Never edit:**
