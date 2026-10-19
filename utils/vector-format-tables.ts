@@ -1,5 +1,5 @@
 /**
- * Generates the vector DB operator support table in `website/docs/utils/export.mdx` (and the
+ * Generates the vector DB operator support table in `website/content/docs/next/utils/export.mdx` (and the
  * v7 copy) from `formatCapabilities` (between `{/* GENERATED:vector:start *\/}`/
  * `{/* GENERATED:vector:end *\/}`).
  *
@@ -15,8 +15,8 @@ import { formatCapabilities } from '../packages/core/src/utils/formatQuery/forma
 
 const root = path.join(import.meta.dirname, '..');
 const files = [
-  'website/docs/utils/export.mdx',
-  'website/versioned_docs/version-7/utils/export.mdx',
+  'website/content/docs/next/utils/export.mdx',
+  'website/content/docs/utils/export.mdx',
 ];
 const START = '{/* GENERATED:vector:start */}';
 const END = '{/* GENERATED:vector:end */}';

@@ -2,7 +2,7 @@
 
 /**
  * Builds `packages/mcp/src/generated/docs-index.json` for `@react-querybuilder/mcp`:
- * cleaned docs markdown (from `website/docs`), chunked by `##` heading, plus key type
+ * cleaned docs markdown (from `website/content/docs/next`), chunked by `##` heading, plus key type
  * declarations (from source). Usage: `bun utils/build-mcp-docs-index.ts`
  */
 import path from 'node:path';
@@ -10,11 +10,11 @@ import { version } from '../lerna.json' with { type: 'json' };
 import type { DocsIndex, DocsPage, DocsSection } from '../packages/mcp/src/types';
 
 const root = path.join(import.meta.dirname, '..');
-const docsDir = path.join(root, 'website/docs');
+const docsDir = path.join(root, 'website/content/docs/next');
 const outFile = path.join(root, 'packages/mcp/src/generated/docs-index.json');
 const siteUrl = 'https://react-querybuilder.js.org';
 
-// Relative to `website/docs`
+// Relative to `website/content/docs/next`
 const excludedDocs = [/^api\//, /^changelog\.mdx?$/, /(^|\/)_/];
 
 /** Type declarations exposed as `rqb://types/{name}` resources. */

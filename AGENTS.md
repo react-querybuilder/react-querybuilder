@@ -244,7 +244,7 @@ RQB_QDRANT_URL=http://localhost:6333 RQB_CHROMA_URL=http://localhost:8000 \
 
 - `bun generate-parsers` - Regenerate CEL and SQL parsers
 - `bun generate-examples` - Regenerate example projects
-- `bun update-mantine-css` - Sync `website/src/pages/demo/_styles/rqb-mantine.css` from `node_modules/@mantine/core/styles.css`; run after updating any `@mantine/*` dependencies
+- `bun update-mantine-css` - Sync `website/src/demo/styles/rqb-mantine.css` from `node_modules/@mantine/core/styles.css`; run after updating any `@mantine/*` dependencies
 
 ## Performance
 

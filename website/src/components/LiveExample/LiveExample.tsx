@@ -1,4 +1,4 @@
-import CodeBlock from '@theme/CodeBlock';
+import { CodeBlock } from '@site/src/compat';
 import * as React from 'react';
 import type { CompileOptions, LiveFile, SucraseTransform } from './runtime';
 import { buildSrcDoc, CompileError } from './runtime';

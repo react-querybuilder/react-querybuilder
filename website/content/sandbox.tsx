@@ -1,0 +1,95 @@
+/* oxlint-disable prefer-global-this */
+export const frontmatter = { pageType: 'custom' };
+
+import { BrowserOnly } from '@site/src/compat';
+import { Layout } from '@site/src/compat';
+import { loading } from '@site/src/demo/utils';
+import queryString from 'query-string';
+import { useState } from 'react';
+
+const ghPathMain = 'react-querybuilder/react-querybuilder/tree/main/examples/_template';
+const ghPathChakra2 = 'react-querybuilder/react-querybuilder-chakra2/tree/main/example';
+
+type Platform = 'StackBlitz' | 'CodeSandbox' | 'Expo Snack';
+
+// Snack loads App.tsx from GitHub raw; deps resolved to SDK-compatible versions.
+// Snack doesn't auto-install peer deps: react-redux (peer of native), redux (peer of
+// react-redux), @types/react (TS App.tsx). Unversioned so Snack picks latest/SDK-compatible.
+// @react-querybuilder/core: editor type acquisition doesn't follow transitive deps, and RQB
+// re-exports core types (`export * from '@react-querybuilder/core'`).
+const snackDependencies = [
+  '@react-querybuilder/native',
+  'react-querybuilder',
+  '@react-querybuilder/core',
+  'react-redux',
+  'redux',
+  '@types/react',
+];
+
+const getSnackLink = (template: string) => {
+  const files = {
+    'App.tsx': {
+      type: 'CODE',
+      url: `https://raw.githubusercontent.com/react-querybuilder/react-querybuilder/main/examples/${template}/App.tsx`,
+    },
+  };
+  const params = new URLSearchParams({
+    name: 'React Query Builder Expo Example',
+    dependencies: snackDependencies.join(','),
+    files: JSON.stringify(files),
+  });
+  return `https://snack.expo.dev/?${params}`;
+};
+
+const getFinalLink = (platform: Platform, template: string) => {
+  if (platform === 'Expo Snack') return getSnackLink(template);
+  let ghPath = template === 'chakra2' ? ghPathChakra2 : ghPathMain;
+  ghPath = ghPath.replace('_template', template);
+  const fileName = template === 'basic' ? 'App.js' : 'App.tsx';
+  return platform === 'StackBlitz'
+    ? `https://stackblitz.com/github/${ghPath}?file=src/${fileName}`
+    : `https://codesandbox.io/s/github/${ghPath}?file=/src/${fileName}`;
+};
+
+function SandboxRedirectTimer() {
+  const query = queryString.parse(window.location.search);
+  const qsTemplate = query.template ?? query.t ?? 'basic-ts';
+  const template = Array.isArray(qsTemplate) ? qsTemplate[0]! : qsTemplate;
+  const qsPlatform = query.platform ?? query.p ?? 'csb';
+  const platformPrelim = Array.isArray(qsPlatform) ? qsPlatform[0]! : qsPlatform;
+  const platformLC = platformPrelim.toLocaleLowerCase();
+  const platform: Platform =
+    template === 'native-expo'
+      ? 'Expo Snack'
+      : ['sb', 'stackblitz'].includes(platformLC)
+        ? 'StackBlitz'
+        : 'CodeSandbox';
+  const finalLink = getFinalLink(platform, template);
+
+  const [_timerIsSet] = useState(() => {
+    setTimeout(() => window.location.replace(finalLink), 500);
+    return true;
+  });
+
+  return (
+    <Layout>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: 'var(--ifm-global-spacing)',
+        }}>
+        Redirecting to{'\u00A0'}
+        <a href={finalLink}>
+          {template} example on {platform}
+        </a>
+        ...
+      </div>
+    </Layout>
+  );
+}
+
+export default function SandboxRedirect() {
+  return <BrowserOnly fallback={loading}>{() => <SandboxRedirectTimer />}</BrowserOnly>;
+}

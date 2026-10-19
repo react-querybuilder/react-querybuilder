@@ -13,12 +13,9 @@
     "jsx": "preserve",
     "moduleResolution": "bundler",
     "module": "esnext",
-    "types": ["node", "@docusaurus/module-type-aliases", "@docusaurus/theme-classic"],
+    "types": ["node"],
     "paths": {
       "@site/*": ["./*"],
-      "@docusaurus/theme-common/lib/internal": [
-        "../node_modules/@docusaurus/theme-common/lib/internal"
-      ],
       "@react-querybuilder/antd": ["../packages/antd/src"],
       "@react-querybuilder/bootstrap": ["../packages/bootstrap/src"],
       "@react-querybuilder/bulma": ["../packages/bulma/src"],
@@ -43,6 +40,6 @@
       "spel2js": ["../packages/core/src/utils/parseSpEL/spel2js.d.ts"]
     }
   },
-  "include": ["src/"],
+  "include": ["src/", "theme/", "sidebars/", "content/**/*.tsx", "rspress.config.ts", "versions.ts", "redirects.ts"],
   "exclude": ["../packages/**/*.*"]
 }

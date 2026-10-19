@@ -1,0 +1,205 @@
+---
+title: JSON Schema
+description: Generate a JSON Schema for valid queries, for LLM structured output, tool inputs, and validators
+---
+
+import TSAdmonition from '../_ts_admonition.mdx';
+
+<TSAdmonition />
+## `getQueryJsonSchema`
+
+```ts
+function getQueryJsonSchema(
+  fields: FlexibleOptionListProp<FullField> | BaseOptionMap<FullField>,
+  options?: GetQueryJsonSchemaOptions
+): JSONSchema;
+```
+
+`getQueryJsonSchema` generates a JSON Schema that describes valid queries for a `fields` config. You can use it for:
+
+- LLM structured output (OpenAI `response_format`, the AI SDK's `generateObject`, etc.)
+- LLM tool input schemas (Anthropic `input_schema`, MCP `inputSchema`)
+- Validating query objects with a generic JSON Schema validator like [Ajv](https://ajv.js.org/)
+
+It's available from `@react-querybuilder/core` and `react-querybuilder`, or from the `/getQueryJsonSchema` subpath of either package.
+
+```ts
+import type { Field } from '@react-querybuilder/core';
+import { getQueryJsonSchema } from '@react-querybuilder/core';
+// or: import { getQueryJsonSchema } from '@react-querybuilder/core/getQueryJsonSchema';
+
+const fields: Field[] = [
+  { name: 'firstName', label: 'First name', operators: ['=', 'beginsWith'] },
+  { name: 'age', label: 'Age', inputType: 'number' },
+  {
+    name: 'color',
+    label: 'Color',
+    valueEditorType: 'select',
+    values: [
+      { name: 'red', label: 'Red' },
+      { name: 'blue', label: 'Blue' },
+    ],
+  },
+];
+
+const schema = getQueryJsonSchema(fields, { strict: true });
+```
+
+### Schema shape
+
+By default, the schema describes a `RuleGroupType` (set `queryType: 'ic'` for `RuleGroupTypeIC`). Groups and rules are defined in `$defs` and reference each other recursively:
+
+```json
+{
+  "$defs": {
+    "group": {
+      "type": "object",
+      "properties": {
+        "combinator": { "type": "string", "enum": ["and", "or"] },
+        "rules": {
+          "type": "array",
+          "items": { "anyOf": [{ "$ref": "#/$defs/rule" }, { "$ref": "#/$defs/group" }] }
+        },
+        "not": { "type": "boolean" }
+      },
+      "required": ["combinator", "rules"]
+    },
+    "rule": { "anyOf": ["...one branch per field and operator class..."] }
+  },
+  "$ref": "#/$defs/group"
+}
+```
+
+In the default `'full'` mode, each field's rule schema is split into branches by operator class (unary, binary, `between`, `in`). Each branch restricts `field` to the field's name and `operator` to the matching operators (`field.operators`, falling back to the `operators` option). The `value` type comes from the field:
+
+| Field config                                      | `value` schema                                      |
+| ------------------------------------------------- | --------------------------------------------------- |
+| `values` (any editor except `text`/`textarea`)    | `enum` of value names (option groups flattened)     |
+| `valueEditorType: 'multiselect'`                  | Array of the above                                  |
+| `valueEditorType: 'checkbox'` or `'switch'`       | `boolean`                                           |
+| `inputType: 'number'`                             | `number`                                            |
+| `inputType: 'date'`, `'datetime-local'`, etc.     | `string`, with the expected format in `description` |
+| `between`/`notBetween` operators                  | Array of exactly 2 items (`minItems`/`maxItems`)    |
+| `in`/`notIn` operators                            | Array of items                                      |
+| `null`/`notNull` (and other unary operators)      | Ignored (optional)                                  |
+| `valueSource: 'field'` (when allowed for a field) | `enum` of comparable field names (see `comparator`) |
+| Anything else                                     | `string`                                            |
+
+Field `label`s are added as `description`s.
+
+### Options
+
+| Option                     | Type                 | Default              | Description                                                                                                                                            |
+| -------------------------- | -------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `queryType`                | `'standard' \| 'ic'` | `'standard'`         | `RuleGroupType` or `RuleGroupTypeIC`                                                                                                                   |
+| `mode`                     | `'full' \| 'loose'`  | `'full'`             | `'loose'` only restricts `field` and `operator` names. Use it when the full schema gets too big (roughly 50+ fields).                                  |
+| `strict`                   | `boolean`            | `false`              | Provider compatibility: `additionalProperties: false` everywhere, all properties required (optional ones become nullable), and the root is an object.  |
+| `maxDepth`                 | `'ref' \| number`    | `'ref'`              | `'ref'` uses recursive `$ref`s. A number inlines that many levels of nested groups with no `$ref`/`$defs`, for consumers that don't support recursion. |
+| `includeIds`               | `boolean`            | `false`              | Include `id` and `path` properties. Off by default so LLMs don't invent ids.                                                                           |
+| `allowFieldValueSource`    | `boolean`            | Derived from fields  | `true` allows `valueSource: 'field'` for every field, `false` for none. By default, each field's `valueSources` decide.                                |
+| `includeNot`               | `boolean`            | `true`               | Include `not` on groups                                                                                                                                |
+| `combinators`              | `OptionList`         | `defaultCombinators` | Allowed combinators                                                                                                                                    |
+| `operators`                | `OptionList`         | `defaultOperators`   | Operators for fields without their own `operators`                                                                                                     |
+| `descriptions`             | `boolean`            | `true`               | Add field `label`s as `description`s                                                                                                                   |
+| `listsAsArrays`            | `boolean`            | `true`               | List values (`between`, `in`, multiselect) as arrays. `false` expects comma-separated strings. Should match `formatQuery`'s `listsAsArrays`.           |
+| `includeSchemaDeclaration` | `boolean`            | `false`              | Add `"$schema"` (draft-07). Off by default because some providers reject it.                                                                           |
+
+### Compatibility
+
+The schema only uses keywords that mean the same thing in JSON Schema draft-07 and 2020-12: `type`, `properties`, `required`, `enum`, `anyOf`, `items` (single schema), `minItems`/`maxItems`, `additionalProperties`, `description`, `$ref`, and `$defs`. It never uses `oneOf`, `allOf`, `not`, `const`, `format`, `pattern`, or tuple keywords, since provider support for those is inconsistent.
+
+| Consumer                  | Notes                                                       |
+| ------------------------- | ----------------------------------------------------------- |
+| OpenAI structured outputs | Requires `strict: true`. Recursion via `$ref` is supported. |
+| Anthropic tools           | `$ref`/`$defs` supported. Root must be an object.           |
+| Gemini                    | Use a numeric `maxDepth` if `$ref` is rejected.             |
+| AI SDK `jsonSchema()`     | Passed through to the provider                              |
+| MCP `inputSchema`         | Root must be an object, so use `strict` or `maxDepth`.      |
+| Ajv (draft-07 and 2020)   | All modes                                                   |
+
+:::tip
+
+When in doubt, use `strict: true`. It works with every consumer above.
+
+:::
+
+### Usage with LLMs
+
+These examples are illustrative. Check each provider's current docs for details.
+
+**AI SDK**
+
+```ts
+import { generateObject, jsonSchema } from 'ai';
+import { getQueryJsonSchema } from '@react-querybuilder/core';
+
+const { object: query } = await generateObject({
+  model,
+  schema: jsonSchema<RuleGroupType>(getQueryJsonSchema(fields, { strict: true })),
+  prompt: 'Musicians over 30 named Steve',
+});
+```
+
+**OpenAI (structured outputs)**
+
+```ts
+const response = await openai.chat.completions.create({
+  model,
+  messages,
+  response_format: {
+    type: 'json_schema',
+    json_schema: {
+      name: 'query',
+      strict: true,
+      schema: getQueryJsonSchema(fields, { strict: true }),
+    },
+  },
+});
+```
+
+**Anthropic (tool input)**
+
+```ts
+const message = await anthropic.messages.create({
+  model,
+  max_tokens: 1024,
+  messages,
+  tools: [
+    {
+      name: 'set_filter',
+      description: 'Set the query builder filter',
+      input_schema: getQueryJsonSchema(fields, { strict: true }),
+    },
+  ],
+});
+```
+
+In strict mode, optional properties like `not` and `valueSource` are nullable instead of omitted, so the output may contain `null`s. Formatting functions treat those the same as missing properties.
+
+### Validate the result with `diagnostics`
+
+The schema is necessary but not sufficient. Some constraints can't be expressed with the compatible keyword subset:
+
+- Independent combinator alternation (rule/group, combinator, rule/group, ...). The IC schema only allows rules, groups, and combinator strings in any order.
+- With `listsAsArrays: false`, the number of comma-separated values for `between`/`in`.
+- In `'loose'` mode, which operators and values are valid for each field.
+
+Always check LLM output (and any other untrusted query) with the [`diagnostics` export format](./export#diagnostics) before using it:
+
+```ts
+import { formatQuery } from '@react-querybuilder/core';
+
+const { diagnostics } = formatQuery(query, { format: 'diagnostics', fields });
+const problems = diagnostics.filter(d => d.code !== 'UNREFERENCED_FIELD');
+if (problems.length > 0) {
+  // Reject, or send `problems` back to the LLM to fix
+}
+```
+
+When `fields` is provided, `diagnostics` reports unknown fields (`UNDEFINED_FIELD`), operators not in `field.operators` (`INVALID_OPERATOR`), wrong `between`/`in` value counts (`INVALID_VALUE_ARITY`), values missing from `field.values` (`VALUE_NOT_IN_OPTIONS`), and values that don't match the field's type (`VALUE_TYPE_MISMATCH`). It reports broken IC alternation (`INVALID_STRUCTURE`) with or without `fields`.
+
+:::warning
+
+A schema-valid query is not automatically safe to run. See [Quote field names](./export#quote-field-names) and always whitelist fields, operators, and combinators on the server.
+
+:::

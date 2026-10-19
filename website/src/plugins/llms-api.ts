@@ -1,13 +1,13 @@
 /**
- * Docusaurus plugin: writes `llms-api.txt` (condensed API index, one line per export) from the
+ * Rspress plugin: writes `llms-api.txt` (condensed API index, one line per export) from the
  * TypeDoc JSON emitted alongside the markdown API docs (`json` option of
  * `docusaurus-plugin-typedoc` in `docusaurus.config.ts`).
  *
- * Runs in Node (Docusaurus), so `node:fs` instead of Bun APIs.
+ * Runs in Node (Rspress), so `node:fs` instead of Bun APIs.
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { PluginModule } from '@docusaurus/types';
+import type { RspressPlugin } from '@rspress/core';
 
 interface CommentPart {
   kind: string;
@@ -131,25 +131,22 @@ export const renderLlmsApi = (project: Reflection, siteUrl: string): string => {
 export interface LlmsApiPluginOptions {
   /** TypeDoc JSON path (relative to site dir). */
   jsonPath: string;
+  siteUrl: string;
 }
 
 /** Plugin factory, e.g. `plugins: [llmsApiPlugin({ jsonPath })]`. */
-export const llmsApiPlugin =
-  (options: LlmsApiPluginOptions): PluginModule =>
-  context => ({
-    name: 'rqb-llms-api',
-    async postBuild({ outDir }) {
-      const jsonPath = path.resolve(context.siteDir, options.jsonPath);
-      let project: Reflection;
-      try {
-        project = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
-      } catch (err) {
-        console.warn(`[rqb-llms-api] could not read ${jsonPath}; skipping llms-api.txt`, err);
-        return;
-      }
-      await fs.writeFile(
-        path.join(outDir, 'llms-api.txt'),
-        renderLlmsApi(project, context.siteConfig.url)
-      );
-    },
-  });
+export const llmsApiPlugin = (options: LlmsApiPluginOptions): RspressPlugin => ({
+  name: 'rqb-llms-api',
+  async afterBuild(config) {
+    const outDir = path.resolve(config.outDir ?? 'build');
+    const jsonPath = path.resolve(options.jsonPath);
+    let project: Reflection;
+    try {
+      project = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
+    } catch (err) {
+      console.warn(`[rqb-llms-api] could not read ${jsonPath}; skipping llms-api.txt`, err);
+      return;
+    }
+    await fs.writeFile(path.join(outDir, 'llms-api.txt'), renderLlmsApi(project, options.siteUrl));
+  },
+});

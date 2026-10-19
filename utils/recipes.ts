@@ -16,8 +16,7 @@ import { formatQuery, getQueryJsonSchema } from '../packages/core/src';
 
 const root = path.join(import.meta.dirname, '..');
 // Current docs + latest version (served at /docs)
-const [latest] = (await Bun.file(path.join(root, 'website/versions.json')).json()) as string[];
-const outFiles = ['website/docs', `website/versioned_docs/version-${latest}`].map(d =>
+const outFiles = ['website/content/docs/next', 'website/content/docs'].map(d =>
   path.join(root, d, 'tips/recipes.mdx')
 );
 

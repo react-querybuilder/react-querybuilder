@@ -1,4 +1,4 @@
-// Fails if `website/docs/tips/recipes.mdx` is stale vs. current core output.
+// Fails if `website/content/docs/next/tips/recipes.mdx` is stale vs. current core output.
 import { expect, test } from 'bun:test';
 import path from 'node:path';
 

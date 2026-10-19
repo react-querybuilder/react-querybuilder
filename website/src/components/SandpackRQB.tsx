@@ -30,8 +30,8 @@
  * examples never pay for it and SSR never touches it.
  */
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
-import { useColorMode } from '@docusaurus/theme-common';
+import { BrowserOnly } from '@site/src/compat';
+import { useColorMode } from '@site/src/compat';
 import * as React from 'react';
 import type { LiveFile } from './LiveExample/runtime';
 // Value import: the runtime module is side-effect free, so this is SSR-safe (Sucrase stays lazy).

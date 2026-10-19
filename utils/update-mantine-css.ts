@@ -1,5 +1,5 @@
 /**
- * Updates website/src/pages/demo/_styles/rqb-mantine.css with the latest
+ * Updates website/src/demo/styles/rqb-mantine.css with the latest
  * content from node_modules/@mantine/core/styles.css.
  *
  * Usage: bun utils/update-mantine-css.ts
@@ -10,7 +10,7 @@ import { resolve } from 'node:path';
 const ROOT = resolve(import.meta.dir, '..');
 const STYLES_SRC = resolve(ROOT, 'node_modules/@mantine/core/styles.css');
 const MANTINE_PKG = resolve(ROOT, 'node_modules/@mantine/core/package.json');
-const TARGET = resolve(ROOT, 'website/src/pages/demo/_styles/rqb-mantine.css');
+const TARGET = resolve(ROOT, 'website/src/demo/styles/rqb-mantine.css');
 
 // Max lines the CSS reset block is allowed to be before we bail out.
 const RESET_MAX_LINES = 50;
@@ -19,7 +19,7 @@ const SANITY_THRESHOLD = 0.2;
 
 function warn(msg: string) {
   if (process.env.CI) {
-    console.error(`::warning file=website/src/pages/demo/_styles/rqb-mantine.css::${msg}`);
+    console.error(`::warning file=website/src/demo/styles/rqb-mantine.css::${msg}`);
   } else {
     console.error(`\x1b[33mWARNING:\x1b[0m ${msg}`);
   }
