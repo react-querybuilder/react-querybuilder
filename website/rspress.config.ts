@@ -25,7 +25,6 @@ const pkgRoot = path.resolve(import.meta.dirname, '../packages');
 // TypeDoc JSON (emitted w/ API markdown) → `llms-api.txt`
 const typedocJsonPath = path.resolve(import.meta.dirname, 'content/api/.typedoc.json');
 
-const allVersions = !!process.env.RQB_ALL_VERSIONS;
 const llmsEnabled = !!process.env.CI || !!process.env.RQB_LLMS;
 const typedocEnabled = !process.env.RQB_TYPEDOC_DONE;
 
@@ -44,14 +43,8 @@ export default defineConfig({
   logo: '/img/react-querybuilder.svg',
   logoText: 'React Query Builder',
   globalStyles: path.join(import.meta.dirname, 'src/css/custom.css'),
-  route: {
-    cleanUrls: true,
-    exclude: ['**/_*', ...(allVersions ? [] : ['docs/3/**', 'docs/4/**', 'docs/5/**'])],
-  },
-  markdown: {
-    link: { checkDeadLinks: allVersions },
-    remarkPlugins: [remarkPluginImport],
-  },
+  route: { cleanUrls: true },
+  markdown: { remarkPlugins: [remarkPluginImport] },
   llms: llmsEnabled
     ? {
         // TODO(rspress): `llmsTxt` callback for section order/exclusions + optional links
@@ -108,9 +101,9 @@ export default defineConfig({
       // so node_modules (incl. react-refresh runtime) got instrumented → runtime errors in dev
       bundlerChain: (chain, { CHAIN_ID }) => {
         if (!chain.plugins.has(CHAIN_ID.PLUGIN.REACT_FAST_REFRESH)) return;
-        chain.plugin(CHAIN_ID.PLUGIN.REACT_FAST_REFRESH).tap(([opts = {}]) => [
-          { ...opts, exclude: [/[\\/]node_modules[\\/]/] },
-        ]);
+        chain
+          .plugin(CHAIN_ID.PLUGIN.REACT_FAST_REFRESH)
+          .tap(([opts = {}]) => [{ ...opts, exclude: [/[\\/]node_modules[\\/]/] }]);
       },
       postcss: (_, { addPlugins }) => {
         addPlugins([
