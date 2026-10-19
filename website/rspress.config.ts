@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { pluginNodePolyfill } from '@rsbuild/plugin-node-polyfill';
 import { pluginSass } from '@rsbuild/plugin-sass';
@@ -28,25 +29,11 @@ const allVersions = !!process.env.RQB_ALL_VERSIONS;
 const llmsEnabled = !!process.env.CI || !!process.env.RQB_LLMS;
 const typedocEnabled = !process.env.RQB_TYPEDOC_DONE;
 
-const apiPackages = [
-  'react-querybuilder',
-  'core',
-  'antd',
-  'bootstrap',
-  'bulma',
-  'chakra',
-  'datetime',
-  'dnd',
-  'drizzle',
-  'expr',
-  'fluent',
-  'mantine',
-  'material',
-  'native',
-  'prime',
-  'rules-engine',
-  'tremor',
-]; // TODO(rspress): derive from `packages/*` minus `mcp`
+// All `packages/*` except MCP server (CLI, no public API)
+const apiPackages = fs
+  .readdirSync(pkgRoot, { withFileTypes: true })
+  .filter(d => d.isDirectory() && d.name !== 'mcp')
+  .map(d => d.name);
 
 export default defineConfig({
   root: path.join(import.meta.dirname, 'content'),
@@ -157,13 +144,20 @@ export default defineConfig({
       ? pluginTypeDoc({
           entryPoints: apiPackages.map(p => path.join(pkgRoot, p)),
           outDir: 'api',
-          // TODO(rspress): verify option hook name/shape vs installed plugin version
           setup: app => {
+            // Plugin forces flat `kind` router; `member` = Docusaurus layout (`/api/<pkg>/<kind>/<name>`)
+            app.options.setValue('router', 'member');
             app.options.setValue('entryPointStrategy', 'packages');
+            // Plugin only writes markdown output; emit JSON too (for `llms-api.txt`)
+            const convert = app.convert.bind(app);
+            app.convert = async () => {
+              const project = await convert();
+              if (project) await app.generateJson(project, typedocJsonPath);
+              return project;
+            };
             app.options.setValue('readme', 'none');
             app.options.setValue('includeVersion', true);
             app.options.setValue('name', 'React Query Builder API');
-            app.options.setValue('json', typedocJsonPath);
             app.options.setValue('enumMembersFormat', 'table');
             app.options.setValue('parametersFormat', 'table');
             app.options.setValue('propertiesFormat', 'list');
