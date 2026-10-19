@@ -1,4 +1,4 @@
-import { Details } from '@site/src/compat';
+import { Callout } from '@rspress/core/theme';
 import { fields } from '@site/src/demo/constants/fields';
 import type { ReactNode } from 'react';
 import { Fragment } from 'react';
@@ -55,7 +55,9 @@ export default function ImportTab({
         </button>
       </div>
       {!!error && <pre>{error}</pre>}
-      <Details summary="Available fields">{fieldList}</Details>
+      <Callout type="details" title="Available fields">
+        {fieldList}
+      </Callout>
     </>
   );
 }

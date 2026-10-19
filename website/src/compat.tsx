@@ -67,15 +67,3 @@ export const TabItem = ({
   children?: React.ReactNode;
   [k: string]: unknown;
 }) => <Tab label={label ?? value}>{children}</Tab>;
-
-/** `@theme/Details` */
-export const Details = ({
-  summary,
-  children,
-  ...rest
-}: React.DetailsHTMLAttributes<HTMLDetailsElement> & { summary?: React.ReactNode }) => (
-  <details {...rest}>
-    {summary && <summary>{summary}</summary>}
-    {children}
-  </details>
-);

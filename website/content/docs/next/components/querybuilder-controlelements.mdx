@@ -99,8 +99,7 @@ For example, this:
 
 Adds a sub-group to the current group. Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `addGroupAction`</summary>
+:::details Props for addGroupAction
 
 Per the `ActionProps` interface:
 
@@ -119,14 +118,13 @@ Per the `ActionProps` interface:
 | `path`          | `Path`                                         | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                       | Query [schema](../typescript#miscellaneous)                  |
 
-</details>
+:::
 
 ### `addRuleAction`
 
 Adds a rule to the current group. Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `addRuleAction`</summary>
+:::details Props for addRuleAction
 
 Per the `ActionProps` interface:
 
@@ -145,14 +143,13 @@ Per the `ActionProps` interface:
 | `path`          | `Path`                                         | [Path](../tips/path) of this rule                            |
 | `schema`        | `Schema`                                       | Query [schema](../typescript#miscellaneous)                  |
 
-</details>
+:::
 
 ### `cloneGroupAction`
 
 Clones the current group. Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `cloneGroupAction`</summary>
+:::details Props for cloneGroupAction
 
 Per the `ActionProps` interface:
 
@@ -171,14 +168,13 @@ Per the `ActionProps` interface:
 | `path`          | `Path`                                   | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
-</details>
+:::
 
 ### `cloneRuleAction`
 
 Clones the current rule. Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `cloneRuleAction`</summary>
+:::details Props for cloneRuleAction
 
 Per the `ActionProps` interface:
 
@@ -196,14 +192,13 @@ Per the `ActionProps` interface:
 | `path`          | `Path`                                   | [Path](../tips/path) of this rule                            |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
-</details>
+:::
 
 ### `combinatorSelector`
 
 Selects the `combinator` property for the current group or the current independent combinator value. Defaults to [`ValueSelector`](./valueselector).
 
-<details>
-<summary>Props for `combinatorSelector`</summary>
+:::details Props for combinatorSelector
 
 Per the `CombinatorSelectorProps` interface:
 
@@ -222,14 +217,13 @@ Per the `CombinatorSelectorProps` interface:
 | `path`           | `Path`                                   | [Path](../tips/path) of this group                                   |
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                          |
 
-</details>
+:::
 
 ### `dragHandle`
 
 Provides a draggable handle for reordering rules and groups. Defaults to [`DragHandle`](./draghandle). Only rendered when [drag-and-drop is enabled](./querybuilder#enabledraganddrop). This component must use `React.forwardRef`.
 
-<details>
-<summary>Props for `dragHandle`</summary>
+:::details Props for dragHandle
 
 Receives the forwarded `ref` and the following props per the `DragHandleProps` interface:
 
@@ -247,14 +241,13 @@ Receives the forwarded `ref` and the following props per the `DragHandleProps` i
 | `ruleOrGroup`          | <code>RuleGroupTypeAny \| RuleType</code> | This group or rule, depending on the parent component                                                                                                                         |
 | `dragHandleAttributes` | `HTMLAttributes<HTMLElement>`             | Props (e.g. ARIA attributes and drag event listeners) supplied by the active [drag-and-drop adapter](../dnd); spread these onto the element that receives the forwarded `ref` |
 
-</details>
+:::
 
 ### `fieldSelector`
 
 Selects the `field` property for the current rule. Defaults to [`ValueSelector`](./valueselector).
 
-<details>
-<summary>Props for `fieldSelector`</summary>
+:::details Props for fieldSelector
 
 Per the `FieldSelectorProps` interface:
 
@@ -274,14 +267,13 @@ Per the `FieldSelectorProps` interface:
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                        |
 | `rule`           | `RuleType`                               | This rule                                                          |
 
-</details>
+:::
 
 ### `inlineCombinator`
 
 Wraps the [`combinatorSelector`](#combinatorselector) component for inline display. Defaults to [`InlineCombinator`](./inlinecombinator).
 
-<details>
-<summary>Props for `inlineCombinator`</summary>
+:::details Props for inlineCombinator
 
 Per the `InlineCombinatorProps` interface, which extends `CombinatorSelectorProps`:
 
@@ -289,14 +281,13 @@ Per the `InlineCombinatorProps` interface, which extends `CombinatorSelectorProp
 | ----------- | ------------------------------------------ | ------------------------------------------ |
 | `component` | `Schema['controls']['combinatorSelector']` | Same as the `combinatorSelector` component |
 
-</details>
+:::
 
 ### `lockGroupAction`
 
 Locks the current group (sets the `disabled` property to `true`). Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `lockGroupAction`</summary>
+:::details Props for lockGroupAction
 
 Per the `ActionProps` interface:
 
@@ -316,14 +307,13 @@ Per the `ActionProps` interface:
 | `path`                | `Path`                                   | [Path](../tips/path) of this group                                                                                     |
 | `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                            |
 
-</details>
+:::
 
 ### `lockRuleAction`
 
 Locks the current rule (sets the `disabled` property to `true`). Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `lockRuleAction`</summary>
+:::details Props for lockRuleAction
 
 Per the `ActionProps` interface:
 
@@ -342,14 +332,13 @@ Per the `ActionProps` interface:
 | `path`                | `Path`                                   | [Path](../tips/path) of this rule                                                                                    |
 | `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                          |
 
-</details>
+:::
 
 ### `matchModeEditor`
 
 Manages the `match` property for the current rule, including the `mode` and `threshold` (see [Subqueries](../tips/subqueries)). Defaults to [`MatchModeEditor`](./matchmodeeditor).
 
-<details>
-<summary>Props for `matchModeEditor`</summary>
+:::details Props for matchModeEditor
 
 Per the `MatchModeEditorProps` interface:
 
@@ -373,14 +362,13 @@ Per the `MatchModeEditorProps` interface:
 | `path`                   | `Path`                                          | [Path](../tips/path) of this rule                            |
 | `schema`                 | `Schema`                                        | Query [schema](../typescript#miscellaneous)                  |
 
-</details>
+:::
 
 ### `muteGroupAction`
 
 Mutes the current group (sets the `muted` property to `true`). Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `muteGroupAction`</summary>
+:::details Props for muteGroupAction
 
 Per the `ActionProps` interface:
 
@@ -399,14 +387,13 @@ Per the `ActionProps` interface:
 | `path`          | `Path`                                   | [Path](../tips/path) of this group                                                                             |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                    |
 
-</details>
+:::
 
 ### `muteRuleAction`
 
 Mutes the current rule (sets the `muted` property to `true`). Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `muteRuleAction`</summary>
+:::details Props for muteRuleAction
 
 Per the `ActionProps` interface:
 
@@ -424,14 +411,13 @@ Per the `ActionProps` interface:
 | `path`          | `Path`                                   | [Path](../tips/path) of this rule                                                                            |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                  |
 
-</details>
+:::
 
 ### `notToggle`
 
 Toggles the `not` property of the current group between `true` and `false`. Defaults to [`NotToggle`](./nottoggle).
 
-<details>
-<summary>Props for `notToggle`</summary>
+:::details Props for notToggle
 
 Per the `NotToggleProps` interface:
 
@@ -450,14 +436,13 @@ Per the `NotToggleProps` interface:
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 | `ruleGroup`      | `RuleGroupTypeAny`                       | This group                                                   |
 
-</details>
+:::
 
 ### `operatorSelector`
 
 Selects the `operator` property for the current rule. Defaults to [`ValueSelector`](./valueselector).
 
-<details>
-<summary>Props for `operatorSelector`</summary>
+:::details Props for operatorSelector
 
 Per the `OperatorSelectorProps` interface:
 
@@ -478,14 +463,13 @@ Per the `OperatorSelectorProps` interface:
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                      |
 | `rule`           | `RuleType`                               | This rule                                                        |
 
-</details>
+:::
 
 ### `removeGroupAction`
 
 Removes the current group from its parent group's `rules` array. Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `removeGroupAction`</summary>
+:::details Props for removeGroupAction
 
 Per the `ActionProps` interface:
 
@@ -504,14 +488,13 @@ Per the `ActionProps` interface:
 | `path`          | `Path`                                   | [Path](../tips/path) of this group                           |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
-</details>
+:::
 
 ### `removeRuleAction`
 
 Removes the current rule from its parent group's `rules` array. Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `removeRuleAction`</summary>
+:::details Props for removeRuleAction
 
 Per the `ActionProps` interface:
 
@@ -529,14 +512,13 @@ Per the `ActionProps` interface:
 | `path`          | `Path`                                   | [Path](../tips/path) of this rule                            |
 | `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
 
-</details>
+:::
 
 ### `rule`
 
 Rule layout component. Defaults to [`Rule`](./rule).
 
-<details>
-<summary>Props for `rule`</summary>
+:::details Props for rule
 
 Per the `RuleProps` interface:
 
@@ -554,7 +536,7 @@ Per the `RuleProps` interface:
 | `shiftDownDisabled` | `boolean`      | Whether shifting the rule down is disallowed                 |
 | `parentDisabled`    | `boolean`      | Whether the parent group of this rule is disabled            |
 
-</details>
+:::
 
 :::tip
 
@@ -566,8 +548,7 @@ When using a custom `Rule` component with [drag-and-drop enabled](./querybuilder
 
 Rule group layout component. Defaults to [`RuleGroup`](./rulegroup).
 
-<details>
-<summary>Props for `ruleGroup`</summary>
+:::details Props for ruleGroup
 
 Per the `RuleGroupProps` interface:
 
@@ -585,7 +566,7 @@ Per the `RuleGroupProps` interface:
 | `shiftDownDisabled` | `boolean`          | Whether shifting the group down is disallowed                |
 | `parentDisabled`    | `boolean`          | Whether the parent group of this group is disabled           |
 
-</details>
+:::
 
 :::tip
 
@@ -605,8 +586,7 @@ Rule group header elements. Defaults to [`RuleGroupHeaderComponents`](./rulegrou
 
 Shifts the current rule/group up or down in the query hierarchy. Defaults to [`ShiftActions`](./shiftactions).
 
-<details>
-<summary>Props for `shiftActions`</summary>
+:::details Props for shiftActions
 
 Per the `ShiftActionsProps` interface:
 
@@ -627,7 +607,7 @@ Per the `ShiftActionsProps` interface:
 | `shiftUpDisabled`   | `boolean`                                       | Whether shifting the rule/group up is disallowed                                                              |
 | `shiftDownDisabled` | `boolean`                                       | Whether shifting the rule/group down is disallowed                                                            |
 
-</details>
+:::
 
 ### `undoRedoActions`
 
@@ -637,8 +617,7 @@ Unlike every other control element, this one defaults to `null`—undo/redo requ
 
 A custom component provided here is responsible for calling `useQueryBuilderHistory(props.schema.qbId)` itself, since rendering that hook is also what opts a query builder in to history recording.
 
-<details>
-<summary>Props for `undoRedoActions`</summary>
+:::details Props for undoRedoActions
 
 Per the `UndoRedoActionsProps` interface:
 
@@ -656,14 +635,13 @@ Per the `UndoRedoActionsProps` interface:
 | `path`        | `Path`                                   | [Path](../tips/path) of the group (always `[]`)                                 |
 | `schema`      | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                     |
 
-</details>
+:::
 
 ### `ungroupAction`
 
 Replaces the current group with its own rules in the parent group. Only rendered on non-root groups when [`showUngroupButtons`](./querybuilder#showungroupbuttons) is `true`. Defaults to [`ActionElement`](./actionelement).
 
-<details>
-<summary>Props for `ungroupAction`</summary>
+:::details Props for ungroupAction
 
 Per the `ActionProps` interface:
 
@@ -680,14 +658,13 @@ Per the `ActionProps` interface:
 | `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
 | `disabled`      | `boolean`                                | Whether this group is disabled/locked                        |
 
-</details>
+:::
 
 ### `valueEditor`
 
 Updates the `value` property for the current rule. Defaults to [`ValueEditor`](./valueeditor).
 
-<details>
-<summary>Props for `valueEditor`</summary>
+:::details Props for valueEditor
 
 Per the `ValueEditorProps` interface:
 
@@ -715,7 +692,7 @@ Per the `ValueEditorProps` interface:
 | `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                             |
 | `rule`           | `RuleType`                               | This rule                                                               |
 
-</details>
+:::
 
 ### `valueSelector`
 
@@ -749,8 +726,7 @@ For example, this:
 
 Selects the `valueSource` property for the current rule. Defaults to [`ValueSelector`](./valueselector).
 
-<details>
-<summary>Props for `valueSourceSelector`</summary>
+:::details Props for valueSourceSelector
 
 Per the `ValueSourceSelectorProps` interface:
 
@@ -771,4 +747,4 @@ Per the `ValueSourceSelectorProps` interface:
 | `schema`         | `Schema`                                         | Query [schema](../typescript#miscellaneous)                       |
 | `rule`           | `RuleType`                                       | This rule                                                         |
 
-</details>
+:::

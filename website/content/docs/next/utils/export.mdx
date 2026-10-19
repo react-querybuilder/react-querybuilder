@@ -3,7 +3,7 @@ title: Export
 description: Convert query builder objects to SQL, etc.
 ---
 
-import { PackageManagerTabs } from '@rspress/core/theme';
+import { Callout, PackageManagerTabs } from '@rspress/core/theme';
 
 import TSAdmonition from '../_ts_admonition.mdx';
 
@@ -64,8 +64,7 @@ const query: RuleGroupType = {
 
 For best results, use [default combinators and operators](./misc#defaults) or map custom ones to defaults with [`transformQuery`](./misc#transformquery).
 
-<details>
-<summary>More information...</summary>
+<Callout type="details" title="More information...">
 
 `formatQuery` accepts `RuleGroupTypeAny` queries but only guarantees correct processing of `DefaultRuleGroupTypeAny` queries.
 
@@ -94,7 +93,7 @@ const newQuery = transformQuery(query, { operatorMap: { 'b/w': 'between' } });
 
 The `newQuery` is ready for `formatQuery`, including special "between" operator handling.
 
-</details>
+</Callout>
 
 :::
 
@@ -262,9 +261,7 @@ const query = db.select().from(table).where(augmentedWhere);
 
 :::
 
-<details>
-
-<summary>`@react-querybuilder/drizzle` _(deprecated)_</summary>
+:::details @react-querybuilder/drizzle (deprecated)
 
 The [`@react-querybuilder/drizzle`](https://npmjs.com/package/@react-querybuilder/drizzle) package previously provided `generateDrizzleRuleGroupProcessor` and `generateDrizzleRuleProcessor` for integration with Drizzle's [query builder API](https://orm.drizzle.team/docs/select). This package is now deprecated.
 
@@ -323,7 +320,7 @@ console.log(query.all());
 // [{ firstName: 'Steve', lastName: 'Vai' }]
 ```
 
-</details>
+:::
 
 #### Sequelize
 

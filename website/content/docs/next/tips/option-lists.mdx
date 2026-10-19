@@ -189,7 +189,7 @@ const MyComponent(props: ValueSelectorProps) => {
 }
 ```
 
-<details summary= "Examples">
+:::details Examples
 
 #### `Option[]` example
 
@@ -231,7 +231,7 @@ toOptions([
 ];
 ```
 
-</details>
+:::
 
 ### `toFlatOptionArray`
 
@@ -249,7 +249,7 @@ function isOptionGroupArray(arr: any): boolean;
 
 A type guard that distinguishes between the two array types in `OptionList`. When this returns `true`, the array is `OptionGroup[]`, meaning actual options are nested within each group's `options` property.
 
-<details summary= "Examples">
+:::details Examples
 
 ```ts
 isOptionGroupArray([
@@ -265,7 +265,7 @@ isOptionGroupArray([
 // => true
 ```
 
-</details>
+:::
 
 ### `uniqOptList`
 

@@ -376,8 +376,7 @@ export const ValueEditorAutocompleteAsync = (props: ValueEditorProps) => {
   </Tab>
 </Tabs>
 
-<details>
-  <summary>Mock loader setup</summary>
+:::details Mock loader setup
 
 This code can be used to mock an API call for the compatibility examples above.
 
@@ -402,7 +401,7 @@ const loadOptionList = async (value: string | undefined): Promise<string[]> => {
 const getCacheKey = ({ value }: ValueEditorProps) => value;
 ```
 
-</details>
+:::
 
 ## Error handling
 

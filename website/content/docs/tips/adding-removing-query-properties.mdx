@@ -28,8 +28,7 @@ const ruleProcessor: RuleProcessor = (r, { fieldData }): RuleType & { inputType?
 const result = transformQuery(query, { ruleProcessor });
 ```
 
-<details>
-<summary>Manual recursion</summary>
+:::details Manual recursion
 
 This example (taken directly from [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)) shows how to use manual recursion to achieve the same result as the `transformQuery` example above.
 
@@ -59,7 +58,7 @@ const processGroup = (rg: RuleGroupType): RuleGroupType => ({
 const result = processGroup(query);
 ```
 
-</details>
+:::
 
 ## Removing properties
 

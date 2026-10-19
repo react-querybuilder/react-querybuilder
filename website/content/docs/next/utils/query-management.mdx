@@ -27,11 +27,11 @@ For a stateful, chainable wrapper around these methods that holds the query for 
 
 Adds a rule or group (and an independent combinator if necessary to keep the query valid) to the group at the specified `path` or with the given `id`.
 
-<details summary="AddOptions">
+:::details AddOptions
 
 %importcode /packages/core/src/utils/queryTools.ts#blockName=AddOptions
 
-</details>
+:::
 
 ### `remove`
 
@@ -59,11 +59,11 @@ update(query, ['valueSource', 'value'], ['field', 'otherField'], rulePath);
 
 Regardless of the order in which properties are listed, `field`, `operator`, and `valueSource` are applied before `value`. This ensures an explicitly-provided `value` is never reset by a change to one of those properties (e.g. updating `field` normally resets `value`).
 
-<details summary="UpdateOptions">
+:::details UpdateOptions
 
 %importcode /packages/core/src/utils/queryTools.ts#blockName=UpdateOptions
 
-</details>
+:::
 
 ### `move`
 
@@ -71,11 +71,11 @@ Regardless of the order in which properties are listed, `field`, `operator`, and
 
 Moves (or clones with a new `id`) a rule or group at the specified `path` or with the given `id` to a new location in the query tree. Using `"up"` or `"down"` as the `newPath` will "shift" the rule or group higher or lower, respectively.
 
-<details summary="MoveOptions">
+:::details MoveOptions
 
 %importcode /packages/core/src/utils/queryTools.ts#blockName=MoveOptions
 
-</details>
+:::
 
 ### `insert`
 
@@ -83,11 +83,11 @@ Moves (or clones with a new `id`) a rule or group at the specified `path` or wit
 
 Inserts a rule or group (and an independent combinator if necessary to keep the query valid) at the specified `path`.
 
-<details summary="InsertOptions">
+:::details InsertOptions
 
 %importcode /packages/core/src/utils/queryTools.ts#blockName=InsertOptions
 
-</details>
+:::
 
 ### `ungroup`
 
@@ -95,11 +95,11 @@ Inserts a rule or group (and an independent combinator if necessary to keep the 
 
 Replaces the group at the specified `path` or with the given `id` with its own rules in the parent group. The group's `combinator`, `not`, `id`, `muted`, and `disabled` properties are discarded; its rules keep their `id`s. In an independent combinators query, the promoted rules keep their combinators, preserving the parent's alternation. An empty group is simply removed, along with the adjacent independent combinator if one exists.
 
-<details summary="UngroupOptions">
+:::details UngroupOptions
 
 %importcode /packages/core/src/utils/queryTools.ts#blockName=UngroupOptions
 
-</details>
+:::
 
 ### `group`
 
@@ -107,11 +107,11 @@ Replaces the group at the specified `path` or with the given `id` with its own r
 
 Creates a new group at the target `path` (based on the specified `path` or given `id`) containing the existing rule/group at that path and the rule/group at the source path (or with the source `id`), in that order, in its `rules` array.
 
-<details summary="GroupOptions">
+:::details GroupOptions
 
 %importcode /packages/core/src/utils/queryTools.ts#blockName=GroupOptions
 
-</details>
+:::
 
 ### Aborted operations
 
@@ -127,11 +127,11 @@ const newQuery = remove(query, 'some-id', {
 });
 ```
 
-<details summary="AbortOptions">
+:::details AbortOptions
 
 %importcode /packages/core/src/utils/queryTools.ts#blockName=AbortOptions
 
-</details>
+:::
 
 `reason` is one of:
 
@@ -212,11 +212,11 @@ q.getQuery(); // RuleGroupType
 
 Without a `query`, an empty group is created using the configured `combinators` and `addRuleToNewGroups` options. With one, every rule and group is assigned an `id` if it doesn't already have one. Pass a `RuleGroupTypeIC` to manage a query with independent combinators.
 
-<details summary="QueryManagerOptions">
+:::details QueryManagerOptions
 
 %importcode /packages/core/src/utils/QueryManager.ts#blockName=QueryManagerOptions
 
-</details>
+:::
 
 The constructor also accepts the [guard options](#guards) `respectDisabled` (defaulting to **`true`** here, matching the `QueryBuilder` component), `queryDisabled`, and `maxLevels`, plus `resetOnFieldChange` (default `true`) and `resetOnOperatorChange` (default `false`), which mirror the props of the same names.
 

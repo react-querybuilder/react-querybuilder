@@ -2,12 +2,13 @@
 title: Migrating to v7 or v8
 ---
 
+import { Callout } from '@rspress/core/theme';
+
 :::info[Regarding version 8]
 
 Version 8 has no breaking changes from version 7, **except** for `@react-querybuilder/chakra`. If you're not using the Chakra UI package, you can upgrade from v7 to v8 without any code changes.
 
-<details>
-<summary>More information</summary>
+<Callout type="details" title="More information">
 
 - `@react-querybuilder/chakra@7` supports Chakra UI v2
 - `@react-querybuilder/chakra@8` supports Chakra UI v3
@@ -15,7 +16,7 @@ Version 8 has no breaking changes from version 7, **except** for `@react-querybu
 - Version 8 would have been a patch release if not for Chakra UI's breaking changes
 - We maintain consistent version numbers across all packages, requiring the major version bump
 
-</details>
+</Callout>
 
 :::
 
@@ -278,9 +279,7 @@ Three new methods simplify query management from custom components:
 
 Enable Redux DevTools for the custom context by setting `globalThis.__RQB_DEVTOOLS__ = true` before imports. Examples:
 
-<details>
-
-<summary>Vite</summary>
+:::details Vite
 
 ```ts
 import { defineConfig } from 'vite';
@@ -292,11 +291,9 @@ export default defineConfig({
 });
 ```
 
-</details>
+:::
 
-<details>
-
-<summary>Next.js</summary>
+:::details Next.js
 
 For App Router:
 
@@ -343,13 +340,9 @@ export default function Document() {
 }
 ```
 
-</details>
+:::
 
-<details>
-
-<summary>
-  <code>/debug</code> import <em>(deprecated)</em>
-</summary>
+:::details /debug import (deprecated)
 
 The `/debug` entry point may be removed in a future major version.
 
@@ -357,7 +350,7 @@ The `/debug` entry point may be removed in a future major version.
 import from `"react-querybuilder/debug"`;
 ```
 
-</details>
+:::
 
 ### New `insert` utility
 

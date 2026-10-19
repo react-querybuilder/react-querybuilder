@@ -22,8 +22,8 @@ import {
   expressionParserSQL,
 } from '@react-querybuilder/expr';
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
+import { Callout } from '@rspress/core/theme';
 import { CodeBlock } from '@site/src/compat';
-import { Details } from '@site/src/compat';
 import { TabItem } from '@site/src/compat';
 import { Tabs } from '@site/src/compat';
 import {
@@ -295,10 +295,6 @@ const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
     </>
   );
 };
-
-const dependenciesSummary = <summary>Dependencies</summary>;
-const stylesSummary = <summary>Styles</summary>;
-const otherFilesSummary = <summary>Other files</summary>;
 
 export default function Demo({
   variant = 'default',
@@ -787,7 +783,7 @@ export default function Demo({
               { value: 'theme', label: 'Theme builder' },
             ]}>
             <TabItem value="code" label="Code">
-              <Details summary={dependenciesSummary}>
+              <Callout type="details" title="Dependencies">
                 <Tabs>
                   <TabItem value="npm" label="npm">
                     <CodeBlock language="shell">npm install {packageNames.join(' ')}</CodeBlock>
@@ -802,23 +798,23 @@ export default function Demo({
                     <CodeBlock language="shell">pnpm add {packageNames.join(' ')}</CodeBlock>
                   </TabItem>
                 </Tabs>
-              </Details>
+              </Callout>
               <CodeBlock language="tsx" title="App.tsx">
                 {codeStringState}
               </CodeBlock>
-              <Details summary={stylesSummary}>
+              <Callout type="details" title="Styles">
                 <CodeBlock language="css" title="styles.css">
                   {extraStylesState}
                 </CodeBlock>
-              </Details>
-              <Details summary={otherFilesSummary}>
+              </Callout>
+              <Callout type="details" title="Other files">
                 <CodeBlock language="ts" title="fields.ts">
                   {fieldsTsStringState}
                 </CodeBlock>
                 <CodeBlock language="ts" title="musicalInstruments.ts">
                   {musicalInstrumentsTsStringState}
                 </CodeBlock>
-              </Details>
+              </Callout>
             </TabItem>
             <TabItem value="export" label="Export">
               <Tabs
