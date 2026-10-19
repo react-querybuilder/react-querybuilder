@@ -164,7 +164,7 @@ export const cleanMdx = async (src: string, filePath: string): Promise<string> =
       out.push(await readCodeImport(code[1]));
       continue;
     }
-    // Admonitions: `:::tip[Title]` → bold label; closing `:::` dropped
+    // Admonitions: `:::tip Title` (or legacy `:::tip[Title]`) → bold label; closing `:::` dropped
     const adm = /^:::(\w+)(?:\[(.*)\])?\s*(.*)$/.exec(trimmed);
     if (adm) {
       const label = adm[2] || adm[3] || adm[1].charAt(0).toUpperCase() + adm[1].slice(1);

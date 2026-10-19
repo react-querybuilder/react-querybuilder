@@ -75,7 +75,7 @@ const App = () => (
 
 The dnd-kit adapter uses `PointerSensor` and `KeyboardSensor` by default, with a 5px activation distance to prevent accidental drags. Drag-handle ARIA attributes and sensor event listeners are passed to the [drag handle](./components/draghandle) as JSX props through a `dragHandleAttributes` object, so accessibility attributes are applied automatically.
 
-:::info[Custom drag handles]
+:::info Custom drag handles
 
 The default `DragHandle` component spreads `dragHandleAttributes` for you. If you supply a [custom `dragHandle` component](./components/querybuilder-controlelements#draghandle), it must spread `dragHandleAttributes` onto the element that receives the forwarded `ref`, otherwise the handle will not respond to drag interactions:
 
@@ -121,7 +121,7 @@ const App = () => (
 );
 ```
 
-:::tip[Legacy API]
+:::tip Legacy API
 
 For backward compatibility, you can still pass the raw `react-dnd` exports directly. They will be automatically wrapped in an adapter:
 
