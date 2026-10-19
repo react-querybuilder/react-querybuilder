@@ -1,13 +1,13 @@
 .demoNav,
 .demoNavPackageLinks {
   display: flex;
-  gap: var(--ifm-global-spacing);
+  gap: var(--rqb-spacing);
 }
 
 .demoNavPermalink,
 .demoNavStyleLinks {
   display: flex;
-  gap: calc(var(--ifm-global-spacing) / 4);
+  gap: calc(var(--rqb-spacing) / 4);
 }
 .demoNavPermalinkCopy:hover {
   cursor: pointer;

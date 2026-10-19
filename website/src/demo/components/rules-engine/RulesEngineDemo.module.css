@@ -27,8 +27,8 @@
 }
 
 .builder {
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: var(--ifm-global-radius);
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: var(--rp-radius);
   padding: 1rem;
 }
 
@@ -53,6 +53,6 @@
 }
 
 .error {
-  color: var(--ifm-color-danger);
-  font-family: var(--ifm-font-family-monospace);
+  color: var(--rp-container-danger-border);
+  font-family: var(--rp-font-family-mono);
 }

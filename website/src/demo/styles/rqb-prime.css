@@ -2,7 +2,7 @@
 
 @source "../../../../node_modules/primereact/**/*.{js,ts,jsx,tsx}";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 .p-inputtext,
 .p-dropdown {

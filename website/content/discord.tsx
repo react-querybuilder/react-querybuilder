@@ -17,7 +17,7 @@ export default function DiscordRedirect() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: 'var(--ifm-global-spacing)',
+          margin: 'var(--rqb-spacing)',
         }}>
         Redirecting to{'\u00A0'}
         <a href={discordLink}>React Query Builder Discord server</a>...

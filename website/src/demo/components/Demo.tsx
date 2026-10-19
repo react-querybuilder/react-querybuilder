@@ -738,14 +738,14 @@ export default function Demo({
           </div>
         </div>
         <div>
-          <code style={{ fontSize: '8pt', marginBottom: 'var(--ifm-global-spacing)' }}>
+          <code style={{ fontSize: '8pt', marginBottom: 'var(--rqb-spacing)' }}>
             react-querybuilder@{rqbVersion}
           </code>
         </div>
       </div>
       <div className={styles.demoResponsiveContent}>
         <div
-          style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
+          style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--rqb-spacing)' }}>
           <div id={qbWrapperId} className={qbWrapperClassName}>
             <QueryWrapper key={queryWrapperKey} useDateTimePackage={options.useDateTimePackage}>
               <DateTimeWrapper enabled={options.useDateTimePackage}>

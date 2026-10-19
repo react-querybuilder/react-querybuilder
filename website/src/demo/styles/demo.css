@@ -1,5 +1,5 @@
 .svg-font-color svg > path {
-  fill: var(--ifm-font-color-base);
+  fill: var(--rp-c-text-1);
 }
 
 .donut-hole {
@@ -47,15 +47,11 @@ li.tabs__item {
 }
 
 /* Styles for when "Use validation" option is selected (dark theme variations) */
-html[data-theme='dark']
-  .validateQuery
-  .queryBuilder
-  .rule.queryBuilder-invalid
-  .rule-value::placeholder {
+html.dark .validateQuery .queryBuilder .rule.queryBuilder-invalid .rule-value::placeholder {
   color: color-mix(in srgb, rebeccapurple, white 30%);
 }
 
-.tabs-container .tabs-container li {
+.rp-tabs .rp-tabs .rp-tabs__label__item {
   font-size: smaller;
-  padding: var(--ifm-badge-padding-vertical) var(--ifm-badge-padding-horizontal);
+  padding: 0.25rem 0.5rem;
 }

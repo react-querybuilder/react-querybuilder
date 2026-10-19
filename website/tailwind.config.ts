@@ -7,7 +7,7 @@ export default {
     '../node_modules/@tremor/**/*.{js,ts,jsx,tsx}',
     '../packages/tremor/**/*.{mjs,js,ts,jsx,tsx}',
   ],
-  darkMode: ['class', '[data-theme="dark"]'], // hooks into docusaurus' dark mode settings
+  darkMode: 'class', // Rspress toggles `html.dark`
   theme: {
     extend: {
       colors: {

@@ -43,13 +43,13 @@ export default function ImportTab({
         style={{
           display: 'flex',
           justifyContent: 'flex-start',
-          gap: 'var(--ifm-global-spacing)',
-          margin: 'var(--ifm-global-spacing) 0',
+          gap: 'var(--rqb-spacing)',
+          margin: 'var(--rqb-spacing) 0',
         }}>
         <button
           type="button"
           className="button"
-          style={{ backgroundColor: 'var(--ifm-color-primary-dark)' }}
+          style={{ backgroundColor: 'var(--rp-c-brand-dark)' }}
           onClick={() => loadQueryFromCode()}>
           {heading}
         </button>

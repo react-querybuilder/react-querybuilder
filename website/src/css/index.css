@@ -141,7 +141,7 @@
   }
 }
 
-html[data-theme='dark'] {
+html.dark {
   & .homepage-showcase {
     & .custom-styling {
       & .queryBuilder {
