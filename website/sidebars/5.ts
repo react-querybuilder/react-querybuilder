@@ -11,11 +11,11 @@ export default [
     collapsible: true,
     items: [
       {
-        text: '<QueryBuilder />',
+        text: '&lt;QueryBuilder /&gt;',
         link: '/docs/5/api/querybuilder',
       },
       {
-        text: '<ValueEditor />',
+        text: '&lt;ValueEditor /&gt;',
         link: '/docs/5/api/valueeditor',
       },
       {
