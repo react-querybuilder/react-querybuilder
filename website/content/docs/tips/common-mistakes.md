@@ -2,6 +2,7 @@
 title: Common mistakes
 description: How to resolve some frequently-reported issues
 outline: false
+pageType: doc-wide
 ---
 
 ## Custom component as closure

@@ -2,6 +2,7 @@
 title: Custom bind variables
 description: Altering the SQL for certain RDBMS's
 outline: false
+pageType: doc-wide
 ---
 
 :::tip

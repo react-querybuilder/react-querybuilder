@@ -42,7 +42,7 @@ export default [
   },
   {
     text: 'Tips & tricks',
-    link: '/docs/5/category/tips-tricks',
+    link: '/docs/5/category/tips--tricks',
     collapsible: true,
     items: [
       {

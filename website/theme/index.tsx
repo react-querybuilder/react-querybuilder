@@ -1,5 +1,8 @@
-import { useLocation, useNavigate } from '@rspress/core/runtime';
-import { Layout as BaseLayout } from '@rspress/core/theme-original';
+import { useLocation, useNavigate, usePageData, useSidebar } from '@rspress/core/runtime';
+import {
+  Layout as BaseLayout,
+  Overview as BaseOverview,
+} from '@rspress/core/theme-original';
 import { Search as AlgoliaSearch } from '@rspress/plugin-algolia/runtime';
 import * as React from 'react';
 import { discordLink } from '../src/constants';
@@ -121,6 +124,40 @@ const Layout = () => (
   />
 );
 
+type SbItem = { text?: string; link?: string; items?: SbItem[] };
+const stripHtml = (p: string) => p.replace(/(\.html|\/index)$/, '').replace(/\/$/, '');
+const findGroup = (items: SbItem[], route: string): SbItem | undefined => {
+  for (const it of items) {
+    if (it.items && it.link && stripHtml(it.link) === route) return it;
+    const found = it.items && findGroup(it.items, route);
+    if (found) return found;
+  }
+};
+
+/**
+ * Built-in overview only lists children under the overview page's own URL prefix; category pages
+ * (`/docs/category/x`) link elsewhere (`/docs/utils/*`) → empty. Build groups from the sidebar
+ * group linking to this page instead (≈ Docusaurus generated-index).
+ */
+const Overview = (props: React.ComponentProps<typeof BaseOverview>) => {
+  const sidebar = useSidebar() as SbItem[];
+  const { page, siteData } = usePageData();
+  const groups = React.useMemo(() => {
+    const group = findGroup(sidebar, stripHtml(page.routePath));
+    if (!group?.items) return;
+    const toc = (link = '') =>
+      siteData.pages.find(p => stripHtml(p.routePath) === stripHtml(link))?.toc ?? [];
+    const item = (it: SbItem) => ({
+      text: it.text ?? '',
+      link: it.link ?? it.items?.[0]?.link ?? '',
+      headers: it.items ? [] : toc(it.link).filter(h => h.depth === 2),
+      items: it.items?.map(c => ({ text: c.text ?? '', link: c.link ?? '' })),
+    });
+    return [{ name: '', items: group.items.map(item) }];
+  }, [sidebar, page.routePath, siteData.pages]);
+  return <BaseOverview {...props} groups={props.groups ?? groups} />;
+};
+
 const Search = () => (
   <AlgoliaSearch
     docSearchProps={{
@@ -132,4 +169,4 @@ const Search = () => (
 );
 
 export * from '@rspress/core/theme-original';
-export { Layout, Search };
+export { Layout, Overview, Search };

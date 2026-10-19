@@ -127,7 +127,7 @@ export default [
   },
   {
     text: 'Tips & tricks',
-    link: '/docs/category/tips-tricks',
+    link: '/docs/category/tips--tricks',
     collapsible: true,
     items: [
       {

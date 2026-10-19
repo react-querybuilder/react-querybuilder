@@ -1,6 +1,7 @@
 ---
 title: Buildless
 outline: false
+pageType: doc-wide
 ---
 
 Use React Query Builder directly in the browser without a build step via ESM imports. For JSX parsing in `script` tags, include Babel.

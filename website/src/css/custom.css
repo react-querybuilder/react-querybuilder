@@ -141,3 +141,10 @@ html[data-theme='dark'] .header-discord-link:before {
     grid-column-start: 2;
   }
 }
+
+/* Undo Rspress preflight (border-width 0, margin/padding 0, font inherit) on form controls in
+   query builders → browser defaults, as in Docusaurus. Low specificity (0,0,1) so RQB/UI-lib
+   class-based styles still win. */
+:where(.queryBuilder) :is(button, input, select, textarea) {
+  all: revert;
+}
