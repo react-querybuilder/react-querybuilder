@@ -1,13 +1,15 @@
 .demoNav,
 .demoNavPackageLinks {
   display: flex;
-  gap: var(--rqb-spacing);
+  align-items: center;
+  gap: var(--site-spacing);
 }
 
 .demoNavPermalink,
 .demoNavStyleLinks {
   display: flex;
-  gap: calc(var(--rqb-spacing) / 4);
+  align-items: center;
+  gap: calc(var(--site-spacing) / 4);
 }
 .demoNavPermalinkCopy:hover {
   cursor: pointer;
@@ -33,6 +35,7 @@
 
 @media screen and (min-width: 1400px) {
   .demoNav {
+    align-items: flex-start;
     flex-direction: column;
     justify-content: flex-start;
   }

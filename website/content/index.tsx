@@ -202,7 +202,7 @@ const LandingPage = () => {
               <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
             </div>
             <div style={{ gap: '1rem' }}>
-              <div>
+              <div className="controlsCssReset">
                 <span style={{ fontStyle: 'italic' }}>Convert to ⇒ </span>
                 <select
                   value={exportFormat}

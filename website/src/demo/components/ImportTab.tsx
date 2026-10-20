@@ -43,8 +43,8 @@ export default function ImportTab({
         style={{
           display: 'flex',
           justifyContent: 'flex-start',
-          gap: 'var(--rqb-spacing)',
-          margin: 'var(--rqb-spacing) 0',
+          gap: 'var(--site-spacing)',
+          margin: 'var(--site-spacing) 0',
         }}>
         <button
           type="button"

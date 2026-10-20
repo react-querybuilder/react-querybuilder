@@ -103,7 +103,9 @@ export const ThemeBuilder = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', columnGap: '1rem' }}>
+    <div
+      className="controlsCssReset"
+      style={{ display: 'flex', flexDirection: 'row', columnGap: '1rem' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 1fr', columnGap: '1rem' }}>
         {varOrder.map(v => (
           <VarInput

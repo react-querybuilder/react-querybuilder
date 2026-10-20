@@ -98,6 +98,7 @@ export default function Nav({ variant, compressedState }: NavProps) {
         <select
           name={slId}
           id={slId}
+          className="rqb-version-dropdown"
           value={variant}
           onChange={e => goToStyle(e.target.value as StyleName)}>
           {styleNameArray.map(s => (

@@ -78,7 +78,7 @@ function SandboxRedirectTimer() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: 'var(--rqb-spacing)',
+          margin: 'var(--site-spacing)',
         }}>
         Redirecting to{'\u00A0'}
         <a href={finalLink}>

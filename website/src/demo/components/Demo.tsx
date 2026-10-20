@@ -726,26 +726,26 @@ export default function Demo({
         </div>
         <div className={styles.demoOptionCommands}>
           <div
+            className="controlsCssReset"
             title={`Enable all features except "${optionsMetadata.disabled.label}", "${optionsMetadata.independentCombinators.label}", and "${optionsMetadata.suppressStandardClassnames.label}"`}>
             <button type="button" onClick={() => setOptions({ type: 'all' })}>
               Select all
             </button>
           </div>
-          <div title="Reset the options above to their default values">
+          <div className="controlsCssReset" title="Reset the options above to their default values">
             <button type="button" onClick={() => setOptions({ type: 'reset' })}>
               Reset to defaults
             </button>
           </div>
         </div>
         <div>
-          <code style={{ fontSize: '8pt', marginBottom: 'var(--rqb-spacing)' }}>
+          <code style={{ fontSize: '8pt', marginBottom: 'var(--site-spacing)' }}>
             react-querybuilder@{rqbVersion}
           </code>
         </div>
       </div>
       <div className={styles.demoResponsiveContent}>
-        <div
-          style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--rqb-spacing)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--site-spacing)' }}>
           <div id={qbWrapperId} className={qbWrapperClassName}>
             <QueryWrapper key={queryWrapperKey} useDateTimePackage={options.useDateTimePackage}>
               <DateTimeWrapper enabled={options.useDateTimePackage}>

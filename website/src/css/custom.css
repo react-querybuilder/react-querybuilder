@@ -23,9 +23,9 @@
   --rp-code-line-highlight-color: rgba(0, 0, 0, 0.1);
 
   /* Site tokens (Infima replacements) */
-  --rqb-spacing: 1rem;
-  --rqb-leading: 1.25rem;
-  --rqb-footer-bg: #3c649f;
+  --site-spacing: 1rem;
+  --site-leading: 1.25rem;
+  --site-footer-bg: #3c649f;
 }
 
 html.dark {
@@ -34,7 +34,7 @@ html.dark {
 
 .queryBuilderEmbed,
 .sandpackrqb {
-  margin-bottom: var(--rqb-leading);
+  margin-bottom: var(--site-leading);
 }
 
 .queryBuilder-branches.red-branch-lines {
@@ -86,6 +86,7 @@ html.dark {
 /* Undo Rspress preflight (border-width 0, margin/padding 0, font inherit) on form controls in
    query builders → browser defaults, as in Docusaurus. Low specificity (0,0,1) so RQB/UI-lib
    class-based styles still win. */
+:where(.controlsCssReset) :is(button, input, select, textarea),
 :where(.queryBuilder) :is(button, input, select, textarea),
 :where(.rulesEngineBuilder) :is(button, input, select, textarea) {
   all: revert;
@@ -130,9 +131,9 @@ html.dark {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--rqb-spacing);
+  gap: var(--site-spacing);
   padding: 2rem var(--rp-nav-padding-x, 1.5rem);
-  background-color: var(--rqb-footer-bg);
+  background-color: var(--site-footer-bg);
   color: #ebedf0;
   font-size: 14px;
   text-align: center;
@@ -179,5 +180,5 @@ html.dark {
 }
 
 html.dark .rqb-footer {
-  background-color: color-mix(in srgb, var(--rqb-footer-bg), black 40%);
+  background-color: color-mix(in srgb, var(--site-footer-bg), black 40%);
 }
