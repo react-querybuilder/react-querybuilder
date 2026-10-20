@@ -702,12 +702,12 @@ export default function Demo({
             <span>{infoChar}</span>
           </Link>
         </h3>
-        <div>
+        <div className={styles.demoSidebar}>
           {optionsInfo.map(({ checked, label, link, setter, title }) => (
             <div key={label} className={styles.demoOption}>
               <label>
                 <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
-                {` ${label}`}
+                {label}
               </label>
               {link ? (
                 <Link

@@ -5,6 +5,13 @@
   padding: var(--site-spacing);
 }
 
+.demoSidebar {
+  color: var(--rp-c-text-2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
 .demoSidebarHeader {
   display: flex;
   justify-content: space-between;
@@ -12,8 +19,13 @@
 }
 
 .demoOption {
+  font-size: 14px;
   display: flex;
   justify-content: space-between;
+}
+
+.demoOption > label > input {
+  margin-right: 0.5rem;
 }
 
 .demoOptionCommands {
