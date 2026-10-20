@@ -18,7 +18,6 @@ import { getExportDisplayLanguage, getFormatQueryString } from '@site/src/demo/c
 import { CustomStylesQB } from '@site/src/demo/CustomStylesQB';
 import '@site/src/css/index.css';
 import * as rtl from '@site/src/demo/rtl';
-import clsx from 'clsx';
 import { forwardRef, StrictMode, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import type {
@@ -173,15 +172,15 @@ const LandingPage = () => {
 
   return (
     <Layout description="The Query Builder Component for React">
-      <header className={clsx('hero hero--primary', styles.heroBanner)}>
+      <header className={styles.heroBanner}>
         <div className="container">
-          <h1 className="hero__title">{siteConfig.title}</h1>
-          <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <h1 className={styles.heroTitle}>{siteConfig.title}</h1>
+          <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
           <div className={styles.buttons}>
-            <Link className="button button--secondary button--lg" to="/docs/intro">
+            <Link className={styles.button} to="/docs/intro">
               Get started
             </Link>
-            <Link className="button button--secondary button--lg" href="/demo">
+            <Link className={styles.button} href="/demo">
               Try it out
             </Link>
           </div>

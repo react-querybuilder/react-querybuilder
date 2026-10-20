@@ -26,10 +26,12 @@
   --site-spacing: 1rem;
   --site-leading: 1.25rem;
   --site-footer-bg: #3c649f;
+  --site-hero-text-color: #fff;
 }
 
 html.dark {
   --rp-code-line-highlight-color: rgb(69 69 69);
+  --site-hero-text-color: #000;
 }
 
 .queryBuilderEmbed,

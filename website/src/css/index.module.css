@@ -4,6 +4,7 @@
  */
 
 .heroBanner {
+  background-color: var(--rp-c-brand);
   padding: 4rem 0;
   text-align: center;
   position: relative;
@@ -16,11 +17,45 @@
   }
 }
 
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--site-hero-text-color);
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  color: var(--site-hero-text-color);
+  margin-bottom: 2rem;
+}
+
 .buttons {
   display: flex;
   align-items: center;
   justify-content: center;
   column-gap: 1rem;
+}
+
+.button {
+  text-decoration: none;
+  font-weight: bold;
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.08, 0.52, 0.52, 1);
+  background-color: var(--rp-c-gray-light-4);
+  border: var(--rp-border-width) solid var(--ifm-button-border-color);
+  border-radius: var(--rp-radius-small);
+  color: #121212;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: var(--rp-radius-small) calc(var(--rp-radius-small) * 4);
+  text-align: center;
+  -webkit-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .main {
@@ -54,6 +89,16 @@
   justify-self: stretch;
   align-items: stretch;
   justify-items: stretch;
+}
+
+.featureContainer a {
+  color: var(--rp-c-link);
+}
+
+.featureContainer h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 .featureContainer > *:nth-child(1) {
