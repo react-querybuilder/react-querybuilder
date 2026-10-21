@@ -125,51 +125,37 @@ const transformNode = (node: Code, isSync: boolean, converters: Converter[]) => 
 };
 
 const isMdxEsmLiteral = (node: Node): node is Literal => node.type === 'mdxjsEsm';
+type ThemeImport = 'Tabs' | 'TabItem';
+const themeImports: ThemeImport[] = ['Tabs', 'TabItem'];
 // TODO legacy approximation, good-enough for now but not 100% accurate
-const isTabsImport = (node: Node): boolean =>
-  isMdxEsmLiteral(node) && node.value.includes('@theme/Tabs');
+const hasThemeImport = (node: Node, name: ThemeImport): boolean =>
+  isMdxEsmLiteral(node) && new RegExp(`['"]@theme/${name}['"]`).test(node.value);
 
 const isParent = (node: Node): node is Parent => Array.isArray((node as Parent).children);
 const isNpm2Yarn = (node: Node): node is Code =>
   node.type === 'code' && (node as Code).meta === 'npm2yarn';
 
-function createImportNode() {
+function createImportNode(names: ThemeImport[]) {
   return {
     type: 'mdxjsEsm',
-    value: "import Tabs from '@theme/Tabs'\nimport TabItem from '@theme/TabItem'",
+    value: names.map(name => `import ${name} from '@theme/${name}'`).join('\n'),
     data: {
       estree: {
         type: 'Program',
-        body: [
-          {
-            type: 'ImportDeclaration',
-            specifiers: [
-              {
-                type: 'ImportDefaultSpecifier',
-                local: { type: 'Identifier', name: 'Tabs' },
-              },
-            ],
-            source: {
-              type: 'Literal',
-              value: '@theme/Tabs',
-              raw: "'@theme/Tabs'",
+        body: names.map(name => ({
+          type: 'ImportDeclaration',
+          specifiers: [
+            {
+              type: 'ImportDefaultSpecifier',
+              local: { type: 'Identifier', name },
             },
+          ],
+          source: {
+            type: 'Literal',
+            value: `@theme/${name}`,
+            raw: `'@theme/${name}'`,
           },
-          {
-            type: 'ImportDeclaration',
-            specifiers: [
-              {
-                type: 'ImportDefaultSpecifier',
-                local: { type: 'Identifier', name: 'TabItem' },
-              },
-            ],
-            source: {
-              type: 'Literal',
-              value: '@theme/TabItem',
-              raw: "'@theme/TabItem'",
-            },
-          },
-        ],
+        })),
         sourceType: 'module',
       },
     },
@@ -182,11 +168,11 @@ const plugin: Plugin<[PluginOptions?]> = (options = {}): Transformer => {
     const { visit } = await import('unist-util-visit');
 
     let transformed = false;
-    let alreadyImported = false;
+    const imported = new Set<ThemeImport>();
 
     visit(root, (node: Node) => {
-      if (isTabsImport(node)) {
-        alreadyImported = true;
+      for (const name of themeImports) {
+        if (hasThemeImport(node, name)) imported.add(name);
       }
 
       if (isParent(node)) {
@@ -205,8 +191,9 @@ const plugin: Plugin<[PluginOptions?]> = (options = {}): Transformer => {
       }
     });
 
-    if (transformed && !alreadyImported) {
-      (root as Parent).children.unshift(createImportNode());
+    const missing = themeImports.filter(name => !imported.has(name));
+    if (transformed && missing.length > 0) {
+      (root as Parent).children.unshift(createImportNode(missing));
     }
   };
 };
