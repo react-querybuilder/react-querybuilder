@@ -11,8 +11,16 @@ interface ImportModalProps {
   notes: ReactNode;
 }
 
+const DefaultValue = ({ value }: { value: string }) => (
+  <i style={{ color: 'gray', fontSize: 'smaller' }}>({value})</i>
+);
+
 const fieldList = (
   <div className="markdown">
+    <p>
+      Default input types and value editor types — used when not explicitly specified — are listed
+      in parentheses.
+    </p>
     <table>
       <thead>
         <tr>
@@ -29,8 +37,8 @@ const fieldList = (
               <code>{f.name}</code>
             </td>
             <td>{f.label}</td>
-            <td>{f.inputType}</td>
-            <td>{f.valueEditorType as string}</td>
+            <td>{f.inputType ?? <DefaultValue value="text" />}</td>
+            <td>{(f.valueEditorType as string) ?? <DefaultValue value="text" />}</td>
           </tr>
         ))}
       </tbody>
