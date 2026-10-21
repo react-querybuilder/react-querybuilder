@@ -6,7 +6,7 @@ import npmToYarn from 'npm-to-yarn';
 import type { Transformer, Plugin } from 'unified';
 import type { Node, Parent } from 'unist';
 
-type KnownConverter = 'yarn' | 'pnpm' | 'bun' | 'deno';
+type KnownConverter = 'bun' | 'pnpm' | 'yarn';
 
 type CustomConverter = [name: string, cb: (npmCode: string) => string];
 
@@ -177,7 +177,7 @@ function createImportNode() {
 }
 
 const plugin: Plugin<[PluginOptions?]> = (options = {}): Transformer => {
-  const { sync = false, converters = ['pnpm', 'bun', 'yarn', 'deno'] } = options;
+  const { sync = false, converters = ['pnpm', 'bun', 'yarn'] } = options;
   return async root => {
     const { visit } = await import('unist-util-visit');
 
