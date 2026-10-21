@@ -1,7 +1,7 @@
 /**
  * Rspress plugin: writes `llms-api.txt` (condensed API index, one line per export) from the
- * TypeDoc JSON emitted alongside the markdown API docs (`json` option of
- * `docusaurus-plugin-typedoc` in `docusaurus.config.ts`).
+ * TypeDoc JSON emitted alongside the markdown API docs (`pluginTypeDoc` `setup` in
+ * `rspress.config.ts`).
  *
  * Runs in Node (Rspress), so `node:fs` instead of Bun APIs.
  */

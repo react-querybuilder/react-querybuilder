@@ -285,7 +285,7 @@ describe('getExpressionParserSpEL custom registries', () => {
     });
   });
 
-  // Mirrors the combined registry example in `website/docs/expr.mdx` (the "SpEL" import section).
+  // Mirrors the combined registry example in `website/content/docs/next/expr.mdx` (the "SpEL" import section).
   describe('documented custom registry example', () => {
     const getExpression = getExpressionParserSpEL(
       {

@@ -4,12 +4,6 @@ import {
   dropTargetForElements,
   monitorForElements,
 } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
-import { Link } from '@site/src/compat';
-import { useLocation } from '@site/src/compat';
-// TODO: Find out why this is necessary
-// TODO(rspress): local types
-type TabsProps = Record<string, unknown>;
-type TabItemProps = Record<string, unknown>;
 import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
@@ -23,6 +17,8 @@ import {
 } from '@react-querybuilder/expr';
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
 import { Callout } from '@rspress/core/theme';
+import { Link } from '@site/src/compat';
+import { useLocation } from '@site/src/compat';
 import { CodeBlock } from '@site/src/compat';
 import { TabItem } from '@site/src/compat';
 import { Tabs } from '@site/src/compat';

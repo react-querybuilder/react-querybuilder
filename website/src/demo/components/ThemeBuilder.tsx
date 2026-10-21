@@ -55,7 +55,7 @@ const VarInput = ({
   setter: (s: string) => void;
 }) => (
   <>
-    <label style={{ whiteSpace: 'nowrap' }} htmlFor={varName}>
+    <label style={{ whiteSpace: 'nowrap', fontSize: '14px' }} htmlFor={varName}>
       <code>{varName}</code>
     </label>
     <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -103,10 +103,10 @@ export const ThemeBuilder = () => {
   };
 
   return (
-    <div
-      className="controlsCssReset"
-      style={{ display: 'flex', flexDirection: 'row', columnGap: '1rem' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 1fr', columnGap: '1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', columnGap: '1rem' }}>
+      <div
+        className="controlsCssReset"
+        style={{ display: 'grid', gridTemplateColumns: '0.5fr 1fr', columnGap: '1rem' }}>
         {varOrder.map(v => (
           <VarInput
             key={v}

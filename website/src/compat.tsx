@@ -15,6 +15,7 @@ export const BrowserOnly = ({
 }: {
   children: () => React.ReactNode;
   fallback?: React.ReactNode;
+  // oxlint-disable-next-line unicorn/prefer-global-this
 }) => <NoSSR>{typeof window === 'undefined' ? fallback : children()}</NoSSR>;
 
 /** `@docusaurus/theme-common` `useColorMode` (read-only) */
@@ -49,14 +50,83 @@ export const CodeBlock = ({
   language,
   title,
 }: {
-  children: string;
+  children: string | string[];
   language?: string;
   title?: string;
   [k: string]: unknown;
-}) => <CodeBlockRuntime lang={language ?? 'text'} title={title} code={children} />;
+}) => (
+  <CodeBlockRuntime
+    lang={language ?? 'text'}
+    title={title}
+    code={Array.isArray(children) ? children.join('') : children}
+  />
+);
 
-/** `@theme/Tabs` + `@theme/TabItem` */
-export const Tabs = RspressTabs;
+const noopSubscribe = () => () => {};
+
+interface DocusaurusTabValue {
+  value: string;
+  label?: React.ReactNode;
+  /** Docusaurus tab `<li>` attrs; only event handlers used (fired on tab change) */
+  attributes?: Record<string, unknown>;
+}
+
+/** `@theme/Tabs` + `@theme/TabItem` (`queryString` → URL param sync; `values[].attributes`) */
+export const Tabs = ({
+  queryString,
+  values,
+  defaultValue,
+  onChange,
+  children,
+  ...rest
+}: Omit<React.ComponentProps<typeof RspressTabs>, 'values'> & {
+  queryString?: string;
+  values?: DocusaurusTabValue[];
+}) => {
+  const tabValues = React.useMemo(
+    () =>
+      values ??
+      React.Children.toArray(children)
+        .filter(React.isValidElement<{ value?: string; label?: React.ReactNode }>)
+        .map(c => ({ value: String(c.props.value), label: c.props.label ?? c.props.value })),
+    [children, values]
+  );
+  // URL param at first client render (null during SSR/hydration); `key` remounts uncontrolled
+  // Rspress `Tabs` w/ new default
+  const urlRef = React.useRef<string | null>(undefined);
+  const urlValue = React.useSyncExternalStore(
+    noopSubscribe,
+    () => {
+      if (urlRef.current === undefined) {
+        urlRef.current = queryString ? new URLSearchParams(location.search).get(queryString) : null;
+      }
+      return urlRef.current;
+    },
+    () => null
+  );
+
+  const handleChange = (i: number) => {
+    const onSelect = values?.[i]?.attributes?.onMouseUp;
+    if (typeof onSelect === 'function') onSelect();
+    if (queryString && tabValues[i]) {
+      const url = new URL(location.href);
+      url.searchParams.set(queryString, tabValues[i].value);
+      history.replaceState(history.state, '', url);
+    }
+    onChange?.(i);
+  };
+
+  return (
+    <RspressTabs
+      key={urlValue ?? ''}
+      {...rest}
+      values={tabValues.map(({ value, label }) => ({ value, label: label ?? value }))}
+      defaultValue={urlValue ?? defaultValue}
+      onChange={handleChange}>
+      {children}
+    </RspressTabs>
+  );
+};
 export const TabItem = ({
   label,
   value,

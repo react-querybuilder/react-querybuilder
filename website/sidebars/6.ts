@@ -1,4 +1,4 @@
-import type { SidebarItem } from '@rspress/core';
+import type { Sidebar } from '@rspress/core';
 
 export default [
   {
@@ -141,4 +141,4 @@ export default [
     text: 'Migrating to v6',
     link: '/docs/6/migrate',
   },
-] satisfies SidebarItem[];
+] satisfies Sidebar[string];

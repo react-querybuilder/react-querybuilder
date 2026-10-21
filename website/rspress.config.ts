@@ -17,7 +17,9 @@ import sidebar7 from './sidebars/7';
 import sidebarNext from './sidebars/next';
 import { discordLink } from './src/constants';
 import { llmsApiPlugin } from './src/plugins/llms-api';
+import { llmsFullTxtPlugin, renderLlmsTxt } from './src/plugins/llms-txt';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
+import { getWorkspaceAliases } from './workspaceAliases';
 
 const siteUrl = 'https://react-querybuilder.js.org';
 const repo = 'https://github.com/react-querybuilder/react-querybuilder';
@@ -33,6 +35,8 @@ const apiPackages = fs
   .readdirSync(pkgRoot, { withFileTypes: true })
   .filter(d => d.isDirectory() && d.name !== 'mcp')
   .map(d => d.name);
+const srcSideEffectEntries =
+  /[\\/]packages[\\/]react-querybuilder[\\/]src[\\/](async|history)[\\/]index\.ts$/;
 
 export default defineConfig({
   root: path.join(import.meta.dirname, 'content'),
@@ -45,15 +49,11 @@ export default defineConfig({
   globalStyles: path.join(import.meta.dirname, 'src/css/custom.css'),
   route: { cleanUrls: true },
   markdown: { remarkPlugins: [remarkPluginImport] },
-  llms: llmsEnabled
-    ? {
-        // TODO(rspress): `llmsTxt` callback for section order/exclusions + optional links
-      }
-    : false,
+  llms: llmsEnabled ? { llmsTxt: renderLlmsTxt } : false,
   themeConfig: {
     darkMode: true,
     lastUpdated: true,
-    editLink: { docRepoBaseUrl: `${repo}/edit/main/website/content`, text: 'Edit this page' },
+    editLink: { docRepoBaseUrl: `${repo}/edit/main/website/content` },
     socialLinks: [
       { icon: 'github', mode: 'link', content: repo },
       { icon: 'discord', mode: 'link', content: discordLink },
@@ -80,7 +80,7 @@ export default defineConfig({
     resolve: {
       alias: {
         '@site': import.meta.dirname,
-        // TODO(rspress): mirror tsconfig `paths` so workspace `src` is used (confirm vs `dist`)
+        ...getWorkspaceAliases(pkgRoot, apiPackages),
       },
     },
     html: {
@@ -97,6 +97,9 @@ export default defineConfig({
       ],
     },
     tools: {
+      // pkg `sideEffects` only whitelists `dist/{async,history}.*`; aliased src entries inject
+      // Redux slices at module scope, so keep them from being tree-shaken
+      rspack: { module: { rules: [{ test: srcSideEffectEntries, sideEffects: true }] } },
       // Rspress widens fast-refresh `include` to all JS/MDX; Rsbuild 2.2 JS rule has no `exclude`,
       // so node_modules (incl. react-refresh runtime) got instrumented → runtime errors in dev
       bundlerChain: (chain, { CHAIN_ID }) => {
@@ -181,5 +184,6 @@ export default defineConfig({
         })
       : null,
     llmsEnabled ? llmsApiPlugin({ jsonPath: typedocJsonPath, siteUrl }) : null,
+    llmsEnabled ? llmsFullTxtPlugin() : null,
   ].filter(p => p !== null),
 });

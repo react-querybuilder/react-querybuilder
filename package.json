@@ -142,7 +142,6 @@
     "web": "bun run --sequential --filter website start",
     "web:skiptypedoc": "RQB_TYPEDOC_DONE=true bun run --sequential --filter website start",
     "website:build": "bun run generate-shadcn-registry && bun run --sequential --filter website build",
-    "website:build:full": "bun run generate-shadcn-registry && RQB_ALL_VERSIONS=true bun run --sequential --filter website build",
     "website:build:llms": "bun run generate-shadcn-registry && bun run --sequential --filter website build:llms",
     "website:serve": "bun run --sequential --filter website serve"
   },

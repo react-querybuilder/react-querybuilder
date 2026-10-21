@@ -16,7 +16,7 @@ React Query Builder monorepo contains:
 - **Main package**: `react-querybuilder` - React components and hooks
 - **UI integrations**: Ant Design, Bootstrap, Bulma, Chakra UI, Fluent UI, Mantine, MUI, Tremor
 - **Extensions**: Drag-and-drop (`@react-querybuilder/dnd`), date/time processing (`@react-querybuilder/datetime`), React Native (`@react-querybuilder/native`), expression-related features (`@react-querybuilder/expr`)
-- **Documentation**: Docusaurus website
+- **Documentation**: Rspress website (`website/`; docs in `website/content/docs/`: `next/` = current, root = latest release, `{6,5,4,3}/` = older)
 
 ## Development Workflow
 
@@ -48,6 +48,8 @@ bun run build
 
 - `bun web` - Serve documentation website locally
 - `bun web:skiptypedoc` - Skip TypeDoc generation for faster startup
+- `bun website:build` - Production build (`website/build`); `bun website:build:llms` also emits `llms*.txt` (CI-only by default)
+- Website resolves workspace packages from `src` (`website/workspaceAliases.ts`); CSS still from `dist`
 
 ### Build
 

@@ -1,4 +1,4 @@
-import type { SidebarItem } from '@rspress/core';
+import type { Sidebar } from '@rspress/core';
 
 export default [
   {
@@ -248,4 +248,4 @@ export default [
     text: 'Changelog',
     link: '/docs/next/changelog',
   },
-] satisfies SidebarItem[];
+] satisfies Sidebar[string];

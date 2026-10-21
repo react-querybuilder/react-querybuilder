@@ -3,7 +3,7 @@
 ### Preparation
 
 1. Update [CHANGELOG.md](CHANGELOG.md) with changes per [Keep a Changelog format](https://keepachangelog.com/).
-2. Update documentation in [`website/docs`](website/docs) (and the latest version in [`website/versioned_docs`](website/versioned_docs) if not releasing a new major version).
+2. Update documentation in [`website/content/docs/next`](website/content/docs/next) (and the latest version in [`website/content/docs`](website/content/docs) if not releasing a new major version).
 
 ### Publish to npm
 

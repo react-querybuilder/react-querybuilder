@@ -1,6 +1,5 @@
 {
   // This file is not used in compilation. It is here just for a nice editor experience.
-  // "extends": "@docusaurus/tsconfig",
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "lib": ["DOM", "ESNext"],
@@ -40,6 +39,16 @@
       "spel2js": ["../packages/core/src/utils/parseSpEL/spel2js.d.ts"]
     }
   },
-  "include": ["src/", "theme/", "sidebars/", "content/**/*.tsx", "rspress.config.ts", "versions.ts", "redirects.ts"],
+  "include": [
+    "src/",
+    "theme/",
+    "sidebars/",
+    "content/**/*.tsx",
+    "rspress.config.ts",
+    "versions.ts",
+    "redirects.ts",
+    "workspaceAliases.ts",
+    "env.d.ts"
+  ],
   "exclude": ["../packages/**/*.*"]
 }

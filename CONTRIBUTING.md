@@ -48,7 +48,7 @@ Each package has its own `start:*`, `build:*`, and `typecheck:*` scripts, as wel
 
 To locally serve the documentation website, run `bun web`. (To skip regeneration of the TypeDoc API docs, run `bun web:skiptypedoc`.)
 
-The website demo uses the static build of each package and therefore does not support HMR except for the website code itself. To update the website after making changes to one of the packages, run the package's `build:*` script. The change will be detected and the website will be reloaded automatically.
+The website resolves each package's source code directly, so changes to package code are reflected live. Stylesheets are still loaded from each package's build output, so run the package's `build:*` script after changing SCSS.
 
 ## Proposing changes
 
@@ -57,7 +57,7 @@ Before submitting a pull request, please do the following:
 - Discuss the change you wish to make by creating a [new issue][new-issue], creating a [discussion topic][new-discussion], or chatting with us on [Discord][discord].
 - Run `bun check:all` to make sure CI will run successfully.
 - If adding a new feature, add corresponding tests (we maintain 100% coverage).
-- If changing behavior or adding a feature, update the documentation. You may need to update both the [current (aka "next") docs](./website/docs/) and the latest [versioned docs](./website/versioned_docs/).
+- If changing behavior or adding a feature, update the documentation. You may need to update both the [current (aka "next") docs](./website/content/docs/next/) and the [latest release docs](./website/content/docs/).
 - If your editor doesn't automatically format code with [oxfmt][oxfmt] when saving changes, run `bun fmt`.
 - When addressing a bug, refer to an existing GitHub issue or provide a reproducible example. Any interactive demo or minimal repository is fine, including [CodeSandbox][codesandbox] or [StackBlitz][stackblitz]. You can use the [CI base][example-ci], the [basic example][example-basic-ts] ([JS version][example-basic]), or any of the other [examples](./examples/) as a starter template.
 

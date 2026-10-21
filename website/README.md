@@ -1,6 +1,6 @@
 # Website
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+This website is built using [Rspress](https://rspress.rs/), a static site generator based on Rsbuild.
 
 **All commands below should be run in the repo root directory** (this directory's parent, i.e. `../` from here).
 
@@ -12,7 +12,7 @@ bun install
 
 ### Local Development
 
-First build the packages.
+First build the packages (the website imports package source directly, but CSS comes from each package's build output).
 
 ```sh
 bun run build
@@ -30,7 +30,7 @@ If the API docs have already been generated, you can skip that step of the build
 bun web:skiptypedoc
 ```
 
-This command starts a local development server and opens up a browser window. Most changes to the website code are reflected live without having to restart the server, but any changes to the packages would require a rebuild of any updated packages and a restart of the website server.
+This command starts a local development server and opens up a browser window. Most changes to website and package code are reflected live without having to restart the server. Changes to package stylesheets require rebuilding the updated package.
 
 ### Build
 
@@ -38,7 +38,7 @@ This command starts a local development server and opens up a browser window. Mo
 bun website:build
 ```
 
-This command generates static content into the `build` directory and can be served using any static content hosting service.
+This command generates static content into the `build` directory and can be served using any static content hosting service. `bun website:build:llms` also generates `llms.txt`, `llms-full.txt`, and `llms-api.txt` (always generated in CI).
 
 ### Deployment
 

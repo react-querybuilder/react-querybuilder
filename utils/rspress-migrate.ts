@@ -109,7 +109,7 @@ for (const [ver, items] of Object.entries(sidebarSrc)) {
   const conv = await convert(ver, items);
   await Bun.write(
     p(`sidebars/${ver}.ts`),
-    `import type { SidebarItem } from '@rspress/core';\n\nexport default ${JSON.stringify(conv, null, 2)} satisfies SidebarItem[];\n`
+    `import type { Sidebar } from '@rspress/core';\n\nexport default ${JSON.stringify(conv, null, 2)} satisfies Sidebar[string];\n`
   );
 }
 for (const o of overviewPages)
