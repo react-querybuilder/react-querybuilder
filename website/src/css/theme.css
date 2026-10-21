@@ -83,16 +83,6 @@ table {
   border-radius: calc(var(--ifm-button-border-radius) * 2);
 }
 
-.hero {
-  background: #9bbbeb;
-  background: linear-gradient(
-    135deg,
-    rgba(155, 187, 235, 1) 0%,
-    rgba(131, 167, 221, 1) 50%,
-    rgba(116, 153, 214, 1) 100%
-  );
-}
-
 .hero__title {
   font-weight: bold;
 }
