@@ -1,6 +1,5 @@
 import Details from '@theme/Details';
 import type { ReactNode } from 'react';
-import { Fragment } from 'react';
 import { fields } from '../_constants/fields';
 
 interface ImportModalProps {
@@ -13,13 +12,29 @@ interface ImportModalProps {
 }
 
 const fieldList = (
-  <div>
-    {fields.map((f, i) => (
-      <Fragment key={f.name}>
-        {i > 0 ? ', ' : ''}
-        <code key={f.name}>{f.name}</code>
-      </Fragment>
-    ))}
+  <div className="markdown">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Label</th>
+          <th>Input Type</th>
+          <th>Value Editor Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {fields.map(f => (
+          <tr key={f.name}>
+            <td>
+              <code>{f.name}</code>
+            </td>
+            <td>{f.label}</td>
+            <td>{f.inputType}</td>
+            <td>{f.valueEditorType as string}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </div>
 );
 
@@ -34,7 +49,12 @@ export default function ImportTab({
   return (
     <>
       <textarea
-        style={{ height: 160, minWidth: 690, width: '100%' }}
+        style={{
+          height: 160,
+          minWidth: 690,
+          width: '100%',
+          padding: 'calc(var(--ifm-global-spacing) / 4)',
+        }}
         spellCheck={false}
         value={code}
         onChange={e => setCode(e.target.value)}></textarea>

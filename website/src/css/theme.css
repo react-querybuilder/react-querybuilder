@@ -1,0 +1,265 @@
+/* Rspress/VitePress-like default theme overrides */
+
+:root {
+  --ifm-global-spacing: 2rem;
+  --ifm-font-family-base:
+    'InterVariable', 'Inter var', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --ifm-font-family-monospace: Menlo, Monaco, Consolas, 'Courier New', monospace;
+  --ifm-font-size-base: 100%;
+  --ifm-line-height-base: 1.75;
+  --ifm-paragraph-margin-bottom: 1.25rem;
+  --ifm-heading-margin-bottom: 1.25rem;
+  --ifm-heading-font-weight: 600;
+  --ifm-list-item-margin: 0.5rem;
+
+  --ifm-code-padding-vertical: 3px;
+  --ifm-code-padding-horizontal: 6px;
+  --ifm-code-border-radius: 0.5rem;
+  --ifm-global-radius: 1rem;
+
+  --ifm-navbar-height: 4rem;
+  --ifm-navbar-padding-vertical: 0.5rem;
+  --ifm-navbar-padding-horizontal: 1rem;
+
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-font-color-base: #242424;
+  --ifm-font-color-secondary: rgba(0, 0, 0, 0.7);
+  --rqb-divider: rgba(0, 0, 0, 0.12);
+  --rqb-bg-soft: #f8f8f9;
+  --rqb-bg-mute: #f1f1f1;
+  --rqb-code-inline: #476582;
+  --rqb-code-inline-bg: rgba(153, 161, 179, 0.06);
+  --rqb-code-inline-border: rgba(0, 0, 0, 0.035);
+
+  --ifm-toc-border-color: var(--rqb-divider);
+  --ifm-hr-border-color: var(--rqb-divider);
+  --ifm-table-border-color: var(--rqb-divider);
+  --ifm-table-cell-padding: 0.75rem 1rem;
+  --ifm-table-head-background: var(--rqb-bg-soft);
+  --ifm-table-stripe-background: transparent;
+
+  --ifm-menu-link-padding-vertical: 6px;
+  --ifm-menu-link-padding-horizontal: 12px;
+  --ifm-menu-color: var(--ifm-font-color-secondary);
+  --ifm-menu-color-active: var(--ifm-color-primary-darker);
+  --ifm-menu-color-background-hover: var(--rqb-bg-mute);
+  --ifm-menu-color-background-active: color-mix(in srgb, var(--ifm-color-primary) 16%, transparent);
+
+  --ifm-alert-border-left-width: 2px;
+  --ifm-alert-padding-vertical: 1.25rem;
+  --ifm-alert-padding-horizontal: 1.5rem;
+
+  --ifm-tabs-padding-vertical: 0.5rem;
+}
+
+html[data-theme='dark'] {
+  --ifm-background-color: #121212;
+  --ifm-background-surface-color: #121212;
+  --ifm-navbar-background-color: #121212;
+  --ifm-font-color-base: rgba(255, 255, 245, 0.93);
+  --ifm-font-color-secondary: rgba(255, 255, 245, 0.65);
+  --rqb-divider: rgba(84, 84, 84, 0.48);
+  --rqb-bg-soft: #191919;
+  --rqb-bg-mute: #343a46;
+  --rqb-code-inline: #c9def1;
+  --rqb-code-inline-bg: rgba(255, 255, 255, 0.06);
+  --rqb-code-inline-border: rgba(255, 255, 255, 0.04);
+  --ifm-menu-color-active: var(--ifm-color-primary-light);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+table {
+  display: table;
+}
+
+.button {
+  border-radius: calc(var(--ifm-button-border-radius) * 2);
+}
+
+.hero {
+  background: #9bbbeb;
+  background: linear-gradient(
+    135deg,
+    rgba(155, 187, 235, 1) 0%,
+    rgba(131, 167, 221, 1) 50%,
+    rgba(116, 153, 214, 1) 100%
+  );
+}
+
+.hero__title {
+  font-weight: bold;
+}
+
+/* Navbar */
+.navbar {
+  box-shadow: none;
+  border-bottom: 1px solid var(--rqb-divider);
+}
+
+.navbar__link {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Sidebar */
+.menu {
+  font-weight: 400;
+}
+
+.menu__link,
+.menu__caret {
+  font-size: 0.875rem;
+  line-height: 24px;
+}
+
+.menu__list-item:not(:first-child) {
+  margin-top: 2px;
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  font-weight: 600;
+}
+
+/* TOC */
+.table-of-contents {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Markdown content */
+.markdown {
+  --ifm-h1-font-size: 2rem;
+  --ifm-h2-font-size: 1.75rem;
+  --ifm-h3-font-size: 1.5rem;
+  --ifm-h4-font-size: 1.25rem;
+  --ifm-h5-font-size: 1.125rem;
+  --ifm-h6-font-size: 1rem;
+}
+
+.markdown h1:first-child {
+  --ifm-h1-font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.markdown > h2 {
+  margin-top: 3rem;
+}
+
+.markdown > h3 {
+  margin-top: 2rem;
+}
+
+.markdown > h4 {
+  margin-top: 1.5rem;
+}
+
+.markdown code:not(pre code) {
+  color: var(--rqb-code-inline);
+  background-color: var(--rqb-code-inline-bg);
+  border: 1px solid var(--rqb-code-inline-border);
+  vertical-align: baseline;
+}
+
+.markdown a code {
+  color: inherit;
+}
+
+.markdown a {
+  font-weight: 500;
+}
+
+.markdown hr {
+  margin: 3rem 0;
+}
+
+/* Tables */
+.markdown table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--rqb-divider);
+  border-radius: var(--ifm-global-radius);
+  overflow: hidden;
+}
+
+.markdown table th,
+.markdown table td {
+  border: none;
+  border-bottom: 1px solid var(--rqb-divider);
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.markdown table tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown table tbody tr:hover {
+  background-color: var(--rqb-bg-soft);
+}
+
+/* Code blocks */
+.theme-code-block {
+  border: 1px solid var(--rqb-divider);
+  box-shadow: none;
+  --ifm-pre-padding: 1rem;
+}
+
+/* Admonitions */
+.alert {
+  margin: 1.5rem 0;
+  --ifm-h5-font-size: 1rem;
+  font-size: 0.875rem;
+}
+
+.theme-doc-version-badge {
+  margin-bottom: calc(var(--ifm-global-spacing) / 2);
+}
+
+/* Pagination / cards */
+.pagination-nav__link,
+.card {
+  border-color: var(--rqb-divider);
+  box-shadow: none;
+}
+
+.tabs {
+  display: block;
+}
+
+.tabs__item {
+  border-bottom-width: 2px;
+  font-size: 0.875rem;
+}
+
+.menu__caret:before {
+  background: var(--ifm-menu-link-sublist-icon) 50% / 1.25rem 1.25rem;
+}
+
+[class*='tab-item-pkg-mgr-'] {
+  padding-left: 2.25rem;
+  background-repeat: no-repeat;
+  background-position: 0.75rem 50%;
+  background-size: 1.1rem 1.1rem;
+}
+.tab-item-pkg-mgr-npm {
+  background-image: url('/img/pkg-mgr-icons/npm.svg');
+}
+.tab-item-pkg-mgr-yarn {
+  background-image: url('/img/pkg-mgr-icons/yarn.svg');
+}
+.tab-item-pkg-mgr-pnpm {
+  background-image: url('/img/pkg-mgr-icons/pnpm.svg');
+}
+.tab-item-pkg-mgr-bun {
+  background-image: url('/img/pkg-mgr-icons/bun.svg');
+}
+.tab-item-pkg-mgr-deno {
+  background-image: url('/img/pkg-mgr-icons/deno.svg');
+}
