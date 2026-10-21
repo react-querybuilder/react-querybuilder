@@ -127,7 +127,7 @@ table {
 
 /* Markdown content */
 .markdown {
-  --ifm-h1-font-size: 2rem;
+  --ifm-h1-font-size: 2.5rem;
   --ifm-h2-font-size: 1.75rem;
   --ifm-h3-font-size: 1.5rem;
   --ifm-h4-font-size: 1.25rem;
@@ -136,7 +136,7 @@ table {
 }
 
 .markdown h1:first-child {
-  --ifm-h1-font-size: 2rem;
+  --ifm-h1-font-size: 2.5rem;
   margin-bottom: 2rem;
 }
 
