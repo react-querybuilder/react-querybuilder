@@ -4,7 +4,14 @@ import type { Simplify } from '../../types/typeUtils';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  isRegexOperator,
+  isValidValue,
+  processMatchMode,
+  regexFallbackRule,
+  sanitizeRegexFlags,
+  shouldRenderAsNumber,
+} from './utils';
 
 type OpTypes = Simplify<typeof _OpTypes>;
 type ColType = typeof _colType;
@@ -33,6 +40,11 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
 
   // Match modes are not supported in this format
   if (processMatchMode(rule)) return undefined;
+
+  // Regex w/ field value source not supported; fall back to `contains`-style
+  if (isRegexOperator(rule.operator) && rule.valueSource === 'field') {
+    return defaultRuleProcessorSequelize(regexFallbackRule(rule), opts);
+  }
 
   const { field, operator, value, valueSource } = rule;
   const valueIsField = valueSource === 'field';
@@ -132,6 +144,17 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
       return {
         [field]: { [Op.notLike]: valueIsField ? fn!('CONCAT', '%', col!(value)) : `%${value}` },
       };
+
+    case 'matches':
+    case 'doesnotmatch': {
+      const i = !!sanitizeRegexFlags(rule.regexFlags, 'i');
+      const not = operatorLC === 'doesnotmatch';
+      return {
+        [field]: {
+          [not ? (i ? Op.notIRegexp : Op.notRegexp) : i ? Op.iRegexp : Op.regexp]: `${value}`,
+        },
+      };
+    }
 
     case 'null':
       return { [field]: { [Op.is]: null } };

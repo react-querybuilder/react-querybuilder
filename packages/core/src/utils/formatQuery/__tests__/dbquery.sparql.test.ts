@@ -119,6 +119,36 @@ describe('SPARQL (Grafeo)', () => {
     );
   });
 
+  test('matches', async () => {
+    await expectSPARQL(
+      {
+        combinator: 'and',
+        rules: [{ field: 'madeUpName', operator: 'matches', value: 'an\\b|^S' }],
+      },
+      superUsersWithAge.filter(u => /an\b|^S/.test(u.madeUpName))
+    );
+  });
+
+  test('matches (case-insensitive)', async () => {
+    await expectSPARQL(
+      {
+        combinator: 'and',
+        rules: [{ field: 'madeUpName', operator: 'matches', value: 'BAT', regexFlags: 'i' }],
+      },
+      superUsersWithAge.filter(u => /bat/i.test(u.madeUpName))
+    );
+  });
+
+  test('doesNotMatch', async () => {
+    await expectSPARQL(
+      {
+        combinator: 'and',
+        rules: [{ field: 'madeUpName', operator: 'doesNotMatch', value: 'man$' }],
+      },
+      superUsersWithAge.filter(u => !u.madeUpName.endsWith('man'))
+    );
+  });
+
   test('doesNotContain', async () => {
     await expectSPARQL(
       {

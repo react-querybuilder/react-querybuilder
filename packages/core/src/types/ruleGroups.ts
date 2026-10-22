@@ -35,6 +35,11 @@ export interface RuleType<
   valueSource?: ValueSource;
   match?: MatchConfig;
   /**
+   * Regular expression flags for `matches`/`doesNotMatch` rules (e.g. `"i"`, `"im"`). The `g`
+   * and `y` flags are ignored. Flag support varies by export format.
+   */
+  regexFlags?: string;
+  /**
    * When present, the rule's left-hand side is this expression. The `field`
    * property continues to drive operator selection and validation.
    */
@@ -146,7 +151,9 @@ export type DefaultOperatorName =
   | 'in'
   | 'notIn'
   | 'between'
-  | 'notBetween';
+  | 'notBetween'
+  | 'matches'
+  | 'doesNotMatch';
 
 /**
  * A {@link FullCombinator} definition with a {@link DefaultCombinatorName} `name` property.

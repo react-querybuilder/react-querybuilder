@@ -7,6 +7,7 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types';
+import { formatQuery } from '../formatQuery';
 import { toFullOption } from '../optGroupUtils';
 import { parseSQL } from './parseSQL';
 import { isWildcardsOnly } from './utils';
@@ -482,7 +483,7 @@ describe('options', () => {
     });
 
     it('identifies wildcards', () => {
-      expect(isWildcardsOnly({ type: 'RegexpPredicate' })).toBe(false);
+      expect(isWildcardsOnly({ type: 'SoundsLikePredicate' })).toBe(false);
       expect(isWildcardsOnly({ type: 'String', value: '""' })).toBe(false);
       expect(isWildcardsOnly({ type: 'String', value: '"_"' })).toBe(false);
       expect(isWildcardsOnly({ type: 'String', value: '"%"' })).toBe(true);
@@ -746,5 +747,69 @@ describe('parenthetical groups', () => {
 describe('errors', () => {
   it('throws on bad SQL', () => {
     expect(() => parseSQL(`SELECT blah blah blah`)).toThrow();
+  });
+});
+
+describe('regex', () => {
+  const pr = { parseRegex: true } as const;
+  it.each([
+    [`f REGEXP 'a'`, { field: 'f', operator: 'matches', value: 'a' }],
+    [`f RLIKE 'a'`, { field: 'f', operator: 'matches', value: 'a' }],
+    [`f NOT REGEXP 'a'`, { field: 'f', operator: 'doesNotMatch', value: 'a' }],
+    [`f ~ 'a''b'`, { field: 'f', operator: 'matches', value: `a'b` }],
+    [`f ~* 'a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'i' }],
+    [`f !~ 'a'`, { field: 'f', operator: 'doesNotMatch', value: 'a' }],
+    [`f !~* 'a'`, { field: 'f', operator: 'doesNotMatch', value: 'a', regexFlags: 'i' }],
+    [`REGEXP_LIKE(f, 'a')`, { field: 'f', operator: 'matches', value: 'a' }],
+    [
+      `regexp_like(f, 'a', 'nmixc')`,
+      { field: 'f', operator: 'matches', value: 'a', regexFlags: 'ms' },
+    ],
+    [`regexp_like(f, 'a', 'ci')`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'i' }],
+    [
+      `NOT REGEXP_LIKE(f, 'a', 'i')`,
+      { field: 'f', operator: 'doesNotMatch', value: 'a', regexFlags: 'i' },
+    ],
+    [`NOT (REGEXP_LIKE(f, 'a'))`, { field: 'f', operator: 'doesNotMatch', value: 'a' }],
+  ] as const)('%s', (sql, rule) => {
+    expect(parseSQL(sql, pr)).toEqual(wrapRule(rule as DefaultRuleType));
+  });
+
+  it.each([
+    `f REGEXP g`,
+    `'a' ~ f`,
+    `regexp_like(f, g)`,
+    `regexp_like(f, 'a', g)`,
+    `other_fn(f, 'a')`,
+    `NOT other_fn(f, 'a')`,
+  ])('ignores %s', sql => {
+    expect(parseSQL(sql, pr)).toEqual(wrapRule());
+  });
+
+  it('ignores regex unless enabled', () => {
+    expect(parseSQL(`f ~ 'a'`)).toEqual(wrapRule());
+    expect(parseSQL(`f ~ 'a'`, { parseRegex: false })).toEqual(wrapRule());
+    expect(parseSQL(`regexp_like(f, 'a')`)).toEqual(wrapRule());
+    // Enabled via field operators
+    expect(
+      parseSQL(`f ~ 'a' and g ~ 'b'`, {
+        fields: [
+          { name: 'f', label: 'F', operators: [{ name: 'matches', label: 'matches' }] },
+          { name: 'g', label: 'G' },
+        ],
+      })
+    ).toEqual(wrapRule({ field: 'f', operator: 'matches', value: 'a' }));
+  });
+
+  it('round-trips PostgreSQL', () => {
+    const query: DefaultRuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'f', operator: 'matches', value: `a\\d'x`, regexFlags: 'i' },
+        { field: 'g', operator: 'doesNotMatch', value: '^b$' },
+      ],
+    };
+    expect(parseSQL(formatQuery(query, { preset: 'postgresql' }), pr)).toEqual(query);
+    expect(parseSQL(formatQuery(query, { preset: 'oracle' }), pr)).toEqual(query);
   });
 });

@@ -482,3 +482,81 @@ it('handles empty options object', () => {
     rules: [{ field: 'f1', operator: '=', value: 1 }],
   });
 });
+
+describe('matches/doesNotMatch', () => {
+  const fields: FullField[] = [
+    toFullOption({
+      name: 'f',
+      label: 'F',
+      operators: [
+        { name: 'matches', label: 'M' },
+        { name: 'contains', label: 'C' },
+      ],
+    }),
+  ];
+  it('parses $regex as matches when opted in', () => {
+    expect(
+      parseMongoDB(
+        {
+          $and: [
+            { f: { $regex: 'a.b', $options: 'gi' } },
+            { f: { $not: { $regex: '^x+$' } } },
+            { f: /y/im },
+            { f: { $regex: 'plain' } },
+            { f: { $regex: '^pre' } },
+            { f: { $regex: 'suf$' } },
+            { f: { $regex: '^eq$' } },
+          ],
+        },
+        { fields }
+      )
+    ).toEqual({
+      combinator: 'and',
+      rules: [
+        { field: 'f', operator: 'matches', value: 'a.b', regexFlags: 'i' },
+        { field: 'f', operator: 'doesNotMatch', value: '^x+$' },
+        { field: 'f', operator: 'matches', value: 'y', regexFlags: 'im' },
+        { field: 'f', operator: 'contains', value: 'plain' },
+        { field: 'f', operator: 'beginsWith', value: 'pre' },
+        { field: 'f', operator: 'endsWith', value: 'suf' },
+        { field: 'f', operator: '=', value: 'eq' },
+      ],
+    });
+  });
+  it('drops invalid fields / keeps legacy when not opted in', () => {
+    expect(
+      parseMongoDB(
+        { f: { $regex: 'a.b' } },
+        { parseRegex: true, fields: [{ name: 'g', label: 'G' }] }
+      )
+    ).toEqual(emptyRuleGroup);
+    expect(parseMongoDB({ f: { $regex: '^a.b', $options: 'i' } })).toEqual({
+      combinator: 'and',
+      rules: [{ field: 'f', operator: 'beginsWith', value: 'a.b' }],
+    });
+    expect(
+      parseMongoDB(
+        { f: { $regex: '^pre' }, g: { $regex: 'suf$' }, h: { $regex: '^eq$' } },
+        { parseRegex: true }
+      )
+    ).toEqual({
+      combinator: 'and',
+      rules: [
+        { field: 'f', operator: 'beginsWith', value: 'pre' },
+        { field: 'g', operator: 'endsWith', value: 'suf' },
+        { field: 'h', operator: '=', value: 'eq' },
+      ],
+    });
+  });
+  it('round-trips formatQuery "mongodb_query" output', () => {
+    for (const value of ['a.b', '^(a|b)$', 'x/y+']) {
+      for (const operator of ['matches', 'doesNotMatch'] as const) {
+        const q: DefaultRuleGroupType = {
+          combinator: 'and',
+          rules: [{ field: 'f', operator, value, regexFlags: 'im' }],
+        };
+        expect(parseMongoDB(formatQuery(q, 'mongodb_query'), { parseRegex: true })).toEqual(q);
+      }
+    }
+  });
+});

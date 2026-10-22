@@ -84,6 +84,36 @@ describe('Gremlin (Grafeo)', () => {
     );
   });
 
+  test('matches', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [{ field: 'madeUpName', operator: 'matches', value: 'an\\b|^S' }],
+      },
+      superUsers.filter(u => /an\b|^S/.test(u.madeUpName))
+    );
+  });
+
+  test('matches (case-insensitive)', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [{ field: 'madeUpName', operator: 'matches', value: 'BAT', regexFlags: 'i' }],
+      },
+      superUsers.filter(u => /bat/i.test(u.madeUpName))
+    );
+  });
+
+  test('doesNotMatch', async () => {
+    await expectGremlin(
+      {
+        combinator: 'and',
+        rules: [{ field: 'madeUpName', operator: 'doesNotMatch', value: 'man$' }],
+      },
+      superUsers.filter(u => !u.madeUpName.endsWith('man'))
+    );
+  });
+
   test('beginsWith', async () => {
     await expectGremlin(
       {

@@ -205,3 +205,52 @@ describe('parameter value source', () => {
     });
   });
 });
+
+describe('regex operators', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: "a\\d'x", regexFlags: 'is' },
+      { field: 'g', operator: 'doesNotMatch', value: '123' },
+      { field: 'h', operator: 'matches', value: 'k', valueSource: 'field' },
+      { field: 'i', operator: 'matches', value: 'p', valueSource: 'parameter' },
+    ],
+  };
+
+  it('parameterized', () => {
+    expect(formatQuery(q, { format: 'parameterized', preset: 'postgresql' })).toEqual({
+      sql: `("f" ~* $1 and "g" !~ $2 and "h" ~ "k" and "i" ~ $p)`,
+      params: ["a\\d'x", '123'],
+    });
+    expect(formatQuery(q, { format: 'parameterized', preset: 'mysql' })).toEqual({
+      sql: "(regexp_like(`f`, ?, 'in') and `g` not regexp ? and `h` regexp `k` and `i` regexp :p)",
+      params: ["a\\d'x", '123'],
+    });
+    expect(formatQuery(q, { format: 'parameterized', preset: 'sqlite' })).toEqual({
+      sql: `(f regexp ? and g not regexp ? and h regexp k and i regexp :p)`,
+      params: ["(?is)a\\d'x", '123'],
+    });
+    expect(formatQuery(q, { format: 'parameterized' })).toEqual({
+      sql: `(f like ? and g not like ? and h like '%' || k || '%' and i like '%' || :p || '%')`,
+      params: ["%a\\d'x%", '%123%'],
+    });
+  });
+
+  it('parameterized_named', () => {
+    expect(formatQuery(q, { format: 'parameterized_named', preset: 'oracle' })).toEqual({
+      sql: `(regexp_like(f, :f_1, 'in') and not regexp_like(g, :g_1) and regexp_like(h, k) and regexp_like(i, :p))`,
+      params: { f_1: "a\\d'x", g_1: '123', p: null },
+    });
+    expect(
+      formatQuery(q, { format: 'parameterized_named', preset: 'sqlite', paramsKeepPrefix: false })
+    ).toEqual({
+      sql: `(f regexp :f_1 and g not regexp :g_1 and h regexp k and i regexp :p)`,
+      params: { f_1: "(?is)a\\d'x", g_1: '123', p: null },
+    });
+    expect(formatQuery(q, { format: 'parameterized_named', preset: 'sqlite' }).params).toEqual({
+      ':f_1': "(?is)a\\d'x",
+      ':g_1': '123',
+      ':p': null,
+    });
+  });
+});

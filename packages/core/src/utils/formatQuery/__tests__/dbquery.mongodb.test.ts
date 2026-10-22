@@ -14,6 +14,22 @@ import {
 } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
 
+const regexCases: [string, DefaultRuleGroupType, (u: { madeUpName: string }) => boolean][] = [
+  [
+    'matches i',
+    {
+      combinator: 'and',
+      rules: [{ field: 'madeUpName', operator: 'matches', value: '^bat|MAN$', regexFlags: 'i' }],
+    },
+    u => /^bat|MAN$/i.test(u.madeUpName),
+  ],
+  [
+    'doesNotMatch',
+    { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'doesNotMatch', value: 'a.a' }] },
+    u => !/a.a/.test(u.madeUpName),
+  ],
+];
+
 const cleanProjection = { _id: 0, __v: 0, createdAt: 0, updatedAt: 0 } as const;
 
 const addId = <T extends SuperUser | AugmentedSuperUser>(u: T) =>
@@ -118,6 +134,21 @@ describe('MongoDB', () => {
               );
             });
           }
+        });
+      }
+    }
+  });
+
+  describe('regex', () => {
+    for (const [name, query, fn] of regexCases) {
+      for (const avoidFieldsAsKeys of [false, true]) {
+        test(`${name}${avoidFieldsAsKeys ? ' (aggrn)' : ''}`, async () => {
+          const q = formatQuery(query, { format: 'mongodb_query', context: { avoidFieldsAsKeys } });
+          const queryResult = await SuperHero.find(
+            (avoidFieldsAsKeys ? { $expr: q } : q) as QueryFilter<SuperUserMongoDB>,
+            cleanProjection
+          );
+          expect(queryResult).toMatchObject(superUsersMongoDB.filter(u => fn(u)));
         });
       }
     }

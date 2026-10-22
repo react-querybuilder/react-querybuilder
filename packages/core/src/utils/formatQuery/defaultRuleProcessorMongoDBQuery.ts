@@ -10,6 +10,8 @@ import {
   isValidValue,
   mongoOperators,
   processMatchMode,
+  regexFallbackRule,
+  sanitizeRegexFlags,
   shouldRenderAsNumber,
 } from './utils';
 
@@ -112,6 +114,27 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
   }
 
   const operatorLC = lc(operator);
+
+  if (operatorLC === 'matches' || operatorLC === 'doesnotmatch') {
+    if (valueIsField) {
+      return defaultRuleProcessorMongoDBQuery(regexFallbackRule(rule), options);
+    }
+    const $options = sanitizeRegexFlags(rule.regexFlags, 'imsx');
+    const neg = operatorLC === 'doesnotmatch';
+    if (avoidFieldsAsKeys) {
+      const m = {
+        $regexMatch: {
+          input: `$${field}`,
+          regex: `${value}`,
+          ...($options ? { options: $options } : {}),
+        },
+      };
+      return neg ? { $not: m } : m;
+    }
+    const m = { $regex: `${value}`, ...($options ? { $options } : {}) };
+    return { [field]: neg ? { $not: m } : m };
+  }
+
   // String-match values are literals, not patterns
   const rx = escapeRegexLiteral(`${value}`);
   switch (operatorLC) {

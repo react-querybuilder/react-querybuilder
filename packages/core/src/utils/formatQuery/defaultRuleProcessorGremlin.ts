@@ -1,6 +1,11 @@
 import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
-import { escapeSingleQuotedString, shouldRenderAsNumber } from './utils';
+import {
+  escapeSingleQuotedString,
+  regexFallbackRule,
+  shouldRenderAsNumber,
+  toInlineFlagsRegex,
+} from './utils';
 
 const escapeSingleQuotes = (v: unknown, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(/(['\\])/g, '\\$1');
@@ -60,6 +65,13 @@ export const defaultRuleProcessorGremlin: RuleProcessor = (
       return `.has('${prop}', endingWith(${fmtVal(value)}))`;
     case 'doesnotendwith':
       return `.has('${prop}', notEndingWith(${fmtVal(value)}))`;
+    case 'matches':
+    case 'doesnotmatch': {
+      if (valueIsField) return defaultRuleProcessorGremlin(regexFallbackRule(rule), opts);
+      // TextP.regex = Java find semantics; always escape (backslashes are significant)
+      const re = escapeSingleQuotes(toInlineFlagsRegex(`${value}`, rule.regexFlags), true);
+      return `.has('${prop}', ${operatorTL === 'matches' ? 'regex' : 'notRegex'}('${re}'))`;
+    }
     case 'null':
       return `.hasNot('${prop}')`;
     case 'notnull':

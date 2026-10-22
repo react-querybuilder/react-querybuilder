@@ -2,6 +2,7 @@ import type { RuleProcessor } from '../../types';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { formatCapabilities, getUnsupportedRuleFeature } from './formatCapabilities';
+import { regexFallbackRule } from './utils';
 import {
   coerceBoolean,
   coerceNumber,
@@ -66,7 +67,7 @@ export const defaultRuleProcessorWeaviate: RuleProcessor = (
 ): WeaviateFilter | false => {
   if (getUnsupportedRuleFeature(rule, formatCapabilities.weaviate!)) return false;
 
-  const { field, operator, value } = rule;
+  const { field, operator, value } = regexFallbackRule(rule);
   const { parseNumbers, preserveValueOrder, fieldData, fieldIdentifierSeparator } = options;
   const op = lc(operator);
   const path = fieldIdentifierSeparator ? field.split(fieldIdentifierSeparator) : [field];

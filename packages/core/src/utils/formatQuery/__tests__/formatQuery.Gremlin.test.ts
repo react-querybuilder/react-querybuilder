@@ -230,3 +230,32 @@ describe('case-insensitive (custom ruleProcessor)', () => {
     ).toBe(`.has('madeUpName', startingWith('super').ignoreCase())`);
   });
 });
+
+describe('regex', () => {
+  const matchesQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: "a\\d'+", regexFlags: 'igm' },
+      { field: 'g', operator: 'doesNotMatch', value: 'x|y' },
+    ],
+  };
+  const regexFieldQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+      { field: 'f', operator: 'doesNotMatch', value: 'g', valueSource: 'field' },
+    ],
+  };
+
+  it('matches/doesNotMatch', () => {
+    expect(formatQuery(matchesQuery, 'gremlin')).toBe(
+      `.has('f', regex('(?im)a\\\\d\\'+')).has('g', notRegex('x|y'))`
+    );
+  });
+
+  it('valueSource field falls back to contains', () => {
+    expect(formatQuery(regexFieldQuery, 'gremlin')).toBe(
+      `.has('f', containing(g)).has('f', notContaining(g))`
+    );
+  });
+});

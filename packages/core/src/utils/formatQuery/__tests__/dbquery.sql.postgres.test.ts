@@ -73,6 +73,48 @@ describe('PostgreSQL', () => {
       });
     }
 
+    describe('regex', () => {
+      const regexTests: [string, DefaultRuleGroupType, (u: SuperUser<boolean>) => boolean][] = [
+        [
+          'matches',
+          {
+            combinator: 'and',
+            rules: [{ field: 'madeUpName', operator: 'matches', value: 'man$' }],
+          },
+          u => u.madeUpName.endsWith('man'),
+        ],
+        [
+          'matches i',
+          {
+            combinator: 'and',
+            rules: [{ field: 'madeUpName', operator: 'matches', value: '^s', regexFlags: 'i' }],
+          },
+          u => /^s/i.test(u.madeUpName),
+        ],
+        [
+          'doesNotMatch',
+          {
+            combinator: 'and',
+            rules: [{ field: 'firstName', operator: 'doesNotMatch', value: "e'?r" }],
+          },
+          u => !/e'?r/.test(u.firstName),
+        ],
+        [
+          'doesNotMatch i',
+          {
+            combinator: 'and',
+            rules: [{ field: 'firstName', operator: 'doesNotMatch', value: 'B', regexFlags: 'i' }],
+          },
+          u => !/B/i.test(u.firstName),
+        ],
+      ];
+      for (const [name, query, filter] of regexTests) {
+        describe(name, () => {
+          testSQL(commonSchema, { query, expectedResult: superUsersPostgres.filter(filter) });
+        });
+      }
+    });
+
     // "parameter" value source: the generated SQL references bind variables that must
     // be supplied at execution time, so these can't use the shared `dbTests` harness.
     describe('parameter value source', () => {

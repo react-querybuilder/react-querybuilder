@@ -1,6 +1,11 @@
 import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
-import { quoteCypherIdentifier, shouldRenderAsNumber } from './utils';
+import {
+  quoteCypherIdentifier,
+  regexFallbackRule,
+  shouldRenderAsNumber,
+  toInlineFlagsRegex,
+} from './utils';
 
 const escapeSingleQuotes = (v: unknown, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(/(['\\])/g, '\\$1');
@@ -53,6 +58,16 @@ export const defaultRuleProcessorCypher: RuleProcessor = (
       return `${field} ENDS WITH ${fmtVal(value)}`;
     case 'doesnotendwith':
       return `NOT ${field} ENDS WITH ${fmtVal(value)}`;
+    case 'matches':
+    case 'doesnotmatch': {
+      if (valueIsField) return defaultRuleProcessorCypher(regexFallbackRule(rule), opts);
+      // `=~` is full-match Java regex; always escape (backslashes are significant)
+      const re = escapeSingleQuotes(
+        toInlineFlagsRegex(`${value}`, rule.regexFlags, { full: true }),
+        true
+      );
+      return `${operatorTL === 'matches' ? '' : 'NOT '}${field} =~ '${re}'`;
+    }
     case 'null':
       return `${field} IS NULL`;
     case 'notnull':

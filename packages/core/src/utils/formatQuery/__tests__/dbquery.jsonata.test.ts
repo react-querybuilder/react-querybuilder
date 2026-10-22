@@ -11,6 +11,22 @@ import {
 } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
 
+const regexCases: [string, DefaultRuleGroupType, (u: { madeUpName: string }) => boolean][] = [
+  [
+    'matches i',
+    {
+      combinator: 'and',
+      rules: [{ field: 'madeUpName', operator: 'matches', value: '^bat|MAN$', regexFlags: 'i' }],
+    },
+    u => /^bat|MAN$/i.test(u.madeUpName),
+  ],
+  [
+    'doesNotMatch',
+    { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'doesNotMatch', value: 'a.a' }] },
+    u => !/a.a/.test(u.madeUpName),
+  ],
+];
+
 const superUsersJSONata = superUsers('jsonata');
 const augmentedSuperUsersJSONata = augmentedSuperUsers('jsonata');
 
@@ -43,6 +59,12 @@ describe('JSONata', () => {
   for (const [name, t] of Object.entries(dbTests(superUsersJSONata))) {
     testJSONata(name, t);
   }
+
+  describe('regex', () => {
+    for (const [name, query, fn] of regexCases) {
+      testJSONata(name, { query, expectedResult: superUsersJSONata.filter(u => fn(u)) });
+    }
+  });
 
   // JsonLogic-specific tests
   describe('match modes', () => {

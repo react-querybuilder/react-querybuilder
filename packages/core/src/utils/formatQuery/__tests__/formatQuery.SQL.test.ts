@@ -1153,3 +1153,40 @@ describe('non-standard combinators', () => {
     ).toBe(`(f1 = 'v1' and (f1 = 'v1' xor f2 = 'v2'))`);
   });
 });
+
+describe('regex operators', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: "a\\d'x", regexFlags: 'gims' },
+      { field: 'g', operator: 'doesNotMatch', value: '123' },
+      { field: 'h', operator: 'doesNotMatch', value: 'b', regexFlags: 'i' },
+      { field: 'j', operator: 'matches', value: 'k', valueSource: 'field' },
+    ],
+  };
+  it.each([
+    [
+      'ansi',
+      `(f like '%a\\d''x%' and g not like '%123%' and h not like '%b%' and j like '%' || k || '%')`,
+    ],
+    [
+      'mssql',
+      `([f] like '%a\\d''x%' and [g] not like '%123%' and [h] not like '%b%' and [j] like '%' + [k] + '%')`,
+    ],
+    ['postgresql', `("f" ~* 'a\\d''x' and "g" !~ '123' and "h" !~* 'b' and "j" ~ "k")`],
+    [
+      'mysql',
+      "(regexp_like(`f`, 'a\\\\d''x', 'imn') and `g` not regexp '123' and not regexp_like(`h`, 'b', 'i') and `j` regexp `k`)",
+    ],
+    [
+      'oracle',
+      `(regexp_like(f, 'a\\d''x', 'imn') and not regexp_like(g, '123') and not regexp_like(h, 'b', 'i') and regexp_like(j, k))`,
+    ],
+    [
+      'sqlite',
+      `(f regexp '(?ims)a\\d''x' and g not regexp '123' and h not regexp '(?i)b' and j regexp k)`,
+    ],
+  ] as const)('%s', (preset, expected) => {
+    expect(formatQuery(q, { format: 'sql', preset })).toBe(expected);
+  });
+});

@@ -10,6 +10,7 @@ import type {
   ValueSources,
 } from '../../types';
 import type { Except } from '../../types/typeUtils';
+import { formatQuery } from '../formatQuery';
 import { toFullOption } from '../optGroupUtils';
 import type { ParseCELOptionsIC, ParseCELOptionsStandard } from './parseCEL';
 import { parseCEL } from './parseCEL';
@@ -618,36 +619,38 @@ it('handles custom expressions in subqueries', () => {
     { name: '', value: '', label: 'Empty Field' },
   ];
 
-  expectParseCEL(
-    'user.features.exists(elem_alias, elem_alias.matches("tall"))',
-    wrapRule({
-      field: 'user.features',
-      operator: '=',
-      match: { mode: 'some' },
-      value: {
-        combinator: 'and',
-        rules: [{ field: '', operator: 'matches' as DefaultOperatorName, value: 'tall' }],
-      },
-    }),
-    {
-      fields: subqueryFields,
-      customExpressionHandler: expr => {
-        if (
-          isCELMember(expr) &&
-          isCELIdentifier(expr.left!) &&
-          !!expr.right &&
-          expr.list?.value.length === 1 &&
-          isCELStringLiteral(expr.list.value[0])
-        )
-          return {
-            field: expr.left.value,
-            operator: expr.right.value,
-            value: expr.list.value[0].value.slice(1, -1), // Remove quotes
-          };
-        return null;
-      },
-    }
-  );
+  for (const m of ['matches', 'isTall']) {
+    expectParseCEL(
+      `user.features.exists(elem_alias, elem_alias.${m}("tall"))`,
+      wrapRule({
+        field: 'user.features',
+        operator: '=',
+        match: { mode: 'some' },
+        value: {
+          combinator: 'and',
+          rules: [{ field: '', operator: m as DefaultOperatorName, value: 'tall' }],
+        },
+      }),
+      {
+        fields: subqueryFields,
+        customExpressionHandler: expr => {
+          if (
+            isCELMember(expr) &&
+            isCELIdentifier(expr.left!) &&
+            !!expr.right &&
+            expr.list?.value.length === 1 &&
+            isCELStringLiteral(expr.list.value[0])
+          )
+            return {
+              field: expr.left.value,
+              operator: expr.right.value,
+              value: expr.list.value[0].value.slice(1, -1), // Remove quotes
+            };
+          return null;
+        },
+      }
+    );
+  }
 });
 
 describe('subqueries', () => {
@@ -1197,4 +1200,43 @@ describe('subqueries', () => {
       );
     });
   });
+});
+
+describe('matches/doesNotMatch', () => {
+  const rf = { combinator: 'and' as const };
+  it('parses regex when opted in', () => {
+    expect(
+      parseCEL(`f.matches("(?i)a\\\\d") && !f.matches("^x") && f.matches(g)`, { parseRegex: true })
+    ).toEqual({
+      ...rf,
+      rules: [
+        { field: 'f', operator: 'matches', value: 'a\\d', regexFlags: 'i' },
+        { field: 'f', operator: 'doesNotMatch', value: '^x' },
+        { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+      ],
+    });
+  });
+  it('ignores regex w/o opt-in or invalid field', () => {
+    expect(parseCEL(`f.matches("a")`)).toEqual({ ...rf, rules: [] });
+    const fields = [{ name: 'f', label: 'F', operators: [{ name: 'matches', label: 'm' }] }];
+    expect(parseCEL(`f.matches("a")`, { fields })).toEqual({
+      ...rf,
+      rules: [{ field: 'f', operator: 'matches', value: 'a' }],
+    });
+    expect(parseCEL(`f.matches("a") && f.matches(g)`, { fields, parseRegex: true })).toEqual({
+      ...rf,
+      rules: [{ field: 'f', operator: 'matches', value: 'a' }],
+    });
+  });
+});
+
+it('round-trips matches', () => {
+  const q = wrapRule({ field: 'f', operator: 'matches', value: 'a\\d', regexFlags: 'i' });
+  expect(parseCEL(formatQuery(q, 'cel'), { parseRegex: true })).toEqual(q);
+});
+
+it('rejects matches on invalid field', () => {
+  expect(
+    parseCEL(`f.matches("a")`, { parseRegex: true, fields: [{ name: 'g', label: 'G' }] })
+  ).toEqual({ combinator: 'and', rules: [] });
 });

@@ -2,7 +2,7 @@ import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
 import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { processMatchMode, shouldRenderAsNumber } from './utils';
+import { processMatchMode, regexFallbackRule, shouldRenderAsNumber } from './utils';
 
 const negateIf = (clause: string, negate: boolean) => (negate ? `(!${clause})` : `${clause}`);
 
@@ -22,7 +22,7 @@ export const defaultRuleProcessorLDAP: RuleProcessor = (
   // v8 ignore next
   options = {}
 ) => {
-  const { field, operator, value, valueSource } = rule;
+  const { field, operator, value, valueSource } = regexFallbackRule(rule);
   const { preserveValueOrder } = options;
   const operatorLC = lc(operator);
 

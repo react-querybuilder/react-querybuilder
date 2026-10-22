@@ -162,6 +162,8 @@ export const defaultOperatorLabelMap: Record<DefaultOperatorName, string> = {
   notIn: 'not in',
   between: 'between',
   notBetween: 'not between',
+  matches: 'matches',
+  doesNotMatch: 'does not match',
 };
 
 export const defaultCombinatorLabelMap: Record<DefaultCombinatorNameExtended, string> = {
@@ -222,6 +224,8 @@ export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOper
   notIn: 'in',
   notNull: 'null',
   null: 'notNull',
+  matches: 'doesNotMatch',
+  doesNotMatch: 'matches',
 } satisfies Record<DefaultOperatorName, DefaultOperatorName>;
 
 /**
@@ -272,6 +276,35 @@ export const inOperators: Set<DefaultOperatorName> = new Set(['in', 'notIn']);
  * @group Defaults
  */
 export const betweenOperators: Set<DefaultOperatorName> = new Set(['between', 'notBetween']);
+
+/**
+ * Regular expression operators (`matches`, `doesNotMatch`).
+ *
+ * @group Defaults
+ */
+export const regexOperators: Set<DefaultOperatorName> = new Set(['matches', 'doesNotMatch']);
+
+/**
+ * Opt-in regular expression operators (not included in {@link defaultOperators}).
+ *
+ * @group Defaults
+ */
+// #region docs-regexoperators
+export const defaultRegexOperators: StringUnionToFullOptionArray<'matches' | 'doesNotMatch'> = [
+  { name: 'matches', value: 'matches', label: 'matches' },
+  { name: 'doesNotMatch', value: 'doesNotMatch', label: 'does not match' },
+];
+// #endregion
+
+/**
+ * {@link defaultOperators} plus {@link defaultRegexOperators}.
+ *
+ * @group Defaults
+ */
+export const defaultOperatorsWithRegex: DefaultOperators = [
+  ...defaultOperators,
+  ...defaultRegexOperators,
+];
 
 export type DefaultCombinators = StringUnionToFullOptionArray<DefaultCombinatorName>;
 

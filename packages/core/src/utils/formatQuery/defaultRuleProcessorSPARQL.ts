@@ -1,6 +1,6 @@
 import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
-import { shouldRenderAsNumber } from './utils';
+import { regexFallbackRule, sanitizeRegexFlags, shouldRenderAsNumber } from './utils';
 
 const escapeDoubleQuotes = (v: unknown, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(/(["\\])/g, '\\$1');
@@ -65,6 +65,15 @@ export const defaultRuleProcessorSPARQL: RuleProcessor = (
       return `STRENDS(${field}, ${fmtVal(value)})`;
     case 'doesnotendwith':
       return `!STRENDS(${field}, ${fmtVal(value)})`;
+    case 'matches':
+    case 'doesnotmatch': {
+      if (valueIsField) return defaultRuleProcessorSPARQL(regexFallbackRule(rule), opts);
+      // Always escape (backslashes are significant)
+      const re = escapeDoubleQuotes(`${value}`, true);
+      const flags = sanitizeRegexFlags(rule.regexFlags, 'ims');
+      const fn = `REGEX(${field}, "${re}"${flags ? `, "${flags}"` : ''})`;
+      return operatorTL === 'matches' ? fn : `!${fn}`;
+    }
     case 'null':
       return `!BOUND(${field})`;
     case 'notnull':

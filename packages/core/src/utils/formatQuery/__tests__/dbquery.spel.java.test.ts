@@ -68,5 +68,25 @@ if (spelEvaluator) {
         });
       }
     });
+    describe('regex', () => {
+      const data = superUsers('spel');
+      for (const [name, operator, value, regexFlags, hit] of [
+        ['matches', 'matches', '^[BS]', undefined, true],
+        ['matches (flags)', 'matches', '^[bs]', 'i', true],
+        ['doesNotMatch', 'doesNotMatch', '^[BS]', undefined, false],
+      ] as const) {
+        test(name, async () => {
+          const q = {
+            combinator: 'and',
+            rules: [{ field: 'firstName', operator, value, regexFlags }],
+          };
+          const spel = formatQuery(q, 'spel');
+          const result = await spelEvaluator({ data, spel, typemap });
+          // oxlint-disable-next-line typescript/no-explicit-any
+          const expected = data.filter((d: any) => /^[BS]/.test(d.firstName) === hit);
+          expect(result).toEqual(expected);
+        });
+      }
+    });
   });
 }

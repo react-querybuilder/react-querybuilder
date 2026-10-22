@@ -1,6 +1,6 @@
 import type { DefaultOperatorName, ExportFormat, MatchMode, RuleType } from '../../types';
 import { lc } from '../misc';
-import { processMatchMode } from './utils';
+import { processMatchMode, regexFallbackRule } from './utils';
 
 /**
  * Describes what an export format can express. Used by default rule processors to decide
@@ -157,14 +157,16 @@ export type UnsupportedRuleFeature = 'operator' | 'valueSource' | 'matchMode';
 
 /**
  * Returns the first feature of `rule` unsupported per `caps`, or `null` if fully supported.
- * Match-mode rules are checked by mode only (operator ignored).
+ * Match-mode rules are checked by mode only (operator ignored). Regex operators are checked as
+ * their `contains`/`doesNotContain` fallbacks.
  *
  * @group Export
  */
 export const getUnsupportedRuleFeature = (
-  rule: RuleType,
+  ruleParam: RuleType,
   caps: FormatCapabilities
 ): UnsupportedRuleFeature | null => {
+  const rule = regexFallbackRule(ruleParam);
   if (rule.match?.mode) {
     const mm = processMatchMode(rule);
     const mode = mm ? mm.mode : (lc(rule.match.mode) as Lowercase<MatchMode>);

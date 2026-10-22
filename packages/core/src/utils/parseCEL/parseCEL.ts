@@ -20,7 +20,7 @@ import type { ParserCommonOptions } from '../../types/import';
 import type { Except } from '../../types/typeUtils';
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
-import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray, shouldParseRegex } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import { CELParser } from './celParser';
 import type {
@@ -287,6 +287,25 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
     } else if (isCELLikeExpression(expr)) {
       const field = getCELIdentifierFromChain(expr.left);
       const func = expr.right.value;
+      if (func === 'matches') {
+        const valueObj = expr.list.value[0];
+        if (!shouldParseRegex(options, field)) {
+          return customExpressionHandler
+            ? (customExpressionHandler(expr) as DefaultRuleType | DefaultRuleGroupTypeAny | null)
+            : null;
+        }
+        const operator = forwardedNegation ? 'doesNotMatch' : 'matches';
+        if (!isCELStringLiteral(valueObj)) {
+          return fieldIsValid(field, operator, valueObj.value)
+            ? { field, operator, value: valueObj.value, valueSource: 'field' }
+            : null;
+        }
+        const [, regexFlags, value] = /^(?:\(\?([a-z]+)\))?(.*)$/s.exec(
+          evalCELLiteralValue(valueObj).replaceAll(/\\(["'\\])/g, '$1')
+        )!;
+        if (!fieldIsValid(field, operator)) return null;
+        return regexFlags ? { field, operator, value, regexFlags } : { field, operator, value };
+      }
       const operatorPre: DefaultOperatorName = func === 'startsWith' ? 'beginsWith' : func;
       const operator = forwardedNegation
         ? (`doesNot${operatorPre[0].toUpperCase()}${operatorPre

@@ -9,7 +9,13 @@ import { isRuleGroup } from '../isRuleGroup';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
-import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  isValidValue,
+  processMatchMode,
+  regexFallbackRule,
+  sanitizeRegexFlags,
+  shouldRenderAsNumber,
+} from './utils';
 
 const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
   op
@@ -19,6 +25,31 @@ const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
 
 const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
   op.startsWith('not') || op.startsWith('doesnot') ? { '!': jsonRule } : jsonRule;
+
+/**
+ * Custom JsonLogic operation for the `regex` operator emitted by `matches`/`doesNotMatch`
+ * rules (`{ "regex": [{ "var": "f" }, "pattern", "flags"] }`). Unanchored. Returns `false`
+ * for non-string inputs or invalid patterns.
+ *
+ * ```ts
+ * jsonLogic.add_operation('regex', jsonLogicRegexOperator.regex);
+ * ```
+ *
+ * @group Export
+ */
+export const jsonLogicRegexOperator: Record<
+  'regex',
+  (a: unknown, pattern: unknown, flags?: unknown) => boolean
+> = {
+  regex: (a, pattern, flags) => {
+    if (typeof a !== 'string' || typeof pattern !== 'string') return false;
+    try {
+      return new RegExp(pattern, sanitizeRegexFlags(flags)).test(a);
+    } catch {
+      return false;
+    }
+  },
+};
 
 /**
  * Default rule processor used by {@link formatQuery} for "jsonlogic" format.
@@ -89,6 +120,15 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (rule, options = {})
   }
 
   const operatorLC = lc(operator);
+
+  if (operatorLC === 'matches' || operatorLC === 'doesnotmatch') {
+    if (valueIsField) return defaultRuleProcessorJsonLogic(regexFallbackRule(rule), options);
+    const flags = sanitizeRegexFlags(rule.regexFlags);
+    return negateIfNotOp(operatorLC, {
+      regex: [fieldObject, `${value}`, ...(flags ? [flags] : [])],
+    } as unknown as RQBJsonLogic);
+  }
+
   switch (operatorLC) {
     case '<':
     case '<=':

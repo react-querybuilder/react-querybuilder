@@ -5,7 +5,7 @@ import { parseNumber } from '../parseNumber';
 import { escapeRegexLiteral } from '../regexLiteral';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
-import { processMatchMode, shouldRenderAsNumber } from './utils';
+import { processMatchMode, shouldRenderAsNumber, toInlineFlagsRegex } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -118,6 +118,18 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
           typeof value === 'string' && value.endsWith('$')
           ? `'.*${escapeSingleQuotes(value, escapeQuotes)}'`
           : `'.*${escapeSingleQuotes(escapeRegexLiteral(`${value}`), escapeQuotes)}$'`;
+
+      return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
+    }
+
+    case 'matches':
+    case 'doesnotmatch': {
+      const valueTL = valueIsField
+        ? trimIfString(value)
+        : `'${escapeSingleQuotes(
+            toInlineFlagsRegex(`${value}`, rule.regexFlags, { full: true }),
+            escapeQuotes
+          )}'`;
 
       return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
     }
