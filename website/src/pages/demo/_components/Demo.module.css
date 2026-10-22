@@ -5,6 +5,13 @@
   padding: var(--ifm-global-spacing);
 }
 
+.demoSidebar {
+  color: var(--ifm-menu-color);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ifm-global-spacing) / 8);
+}
+
 .demoSidebarHeader {
   display: flex;
   justify-content: space-between;
@@ -12,6 +19,7 @@
 }
 
 .demoOption {
+  font-size: 0.875rem;
   display: flex;
   justify-content: space-between;
 }

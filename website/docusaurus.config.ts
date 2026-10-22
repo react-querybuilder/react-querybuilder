@@ -1,7 +1,6 @@
 import path from 'node:path';
 import type { Options as PluginContentDocsOptions } from '@docusaurus/plugin-content-docs';
 import type { Options as PresetClassicOptions, ThemeConfig } from '@docusaurus/preset-classic';
-import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
 import type { Config } from '@docusaurus/types';
 import type { PluginOptions as LlmsTxtPluginOptions } from '@signalwire/docusaurus-plugin-llms-txt';
 import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus-plugin-typedoc';
@@ -10,6 +9,7 @@ import rehypeRaw from 'rehype-raw';
 import type { TypeDocOptions } from 'typedoc';
 import { discordLink } from './src/constants';
 import { llmsApiPlugin } from './src/plugins/llms-api';
+import remarkPluginPkgMgr from './src/plugins/pkg-mgr';
 import { rehypeLlmsCleanup } from './src/plugins/rehype-llms-cleanup';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 
@@ -231,9 +231,7 @@ const config: Config = {
       {
         docs: {
           beforeDefaultRemarkPlugins: [remarkPluginImport],
-          remarkPlugins: [
-            [remarkPluginNpm2Yarn, { sync: true, converters: ['bun', 'yarn', 'pnpm'] }],
-          ],
+          remarkPlugins: [[remarkPluginPkgMgr, { sync: true }]],
           rehypePlugins: [
             [
               rehypeRaw,
@@ -278,6 +276,8 @@ const config: Config = {
       } satisfies PresetClassicOptions,
     ],
   ],
+
+  stylesheets: ['https://rsms.me/inter/inter.css'],
 
   themeConfig: {
     algolia: {

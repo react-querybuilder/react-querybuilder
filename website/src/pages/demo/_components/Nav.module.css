@@ -14,6 +14,7 @@
 }
 
 .demoNav {
+  gap: calc(var(--ifm-global-spacing) / 2);
   flex-direction: row;
   justify-content: space-between;
   font-size: smaller;

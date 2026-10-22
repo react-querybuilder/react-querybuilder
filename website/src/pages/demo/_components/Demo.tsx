@@ -496,7 +496,7 @@ export default function Demo({
     () => (
       <>
         <h4>Call</h4>
-        <CodeBlock>{exportCall}</CodeBlock>
+        <CodeBlock language="typescript">{exportCall}</CodeBlock>
         <h4>Return</h4>
         <CodeBlock language={getExportDisplayLanguage(format)} className={styles.wsPreWrap}>
           {formatString}
@@ -713,7 +713,7 @@ export default function Demo({
             <span>{infoChar}</span>
           </Link>
         </h3>
-        <div>
+        <div className={styles.demoSidebar}>
           {optionsInfo.map(({ checked, label, link, setter, title }) => (
             <div key={label} className={styles.demoOption}>
               <label>

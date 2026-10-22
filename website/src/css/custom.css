@@ -3,6 +3,7 @@
 @import '@react-querybuilder/expr/dist/expressions.css';
 @import './classname-diagram.css';
 @import './justified.css';
+@import './theme.css';
 
 :root {
   /* This is the effective color of a level 3 group when using the default stylesheet on a white background. */
@@ -29,7 +30,7 @@
   --ifm-color-primary-light: color-mix(in srgb, var(--ifm-color-primary), white 20%);
   --ifm-color-primary-lighter: color-mix(in srgb, var(--ifm-color-primary-light), white 20%);
   --ifm-color-primary-lightest: color-mix(in srgb, var(--ifm-color-primary-lighter), white 20%);
-  --ifm-code-font-size: 95%;
+  --ifm-code-font-size: 87.5%;
   --ifm-footer-background-color: #3c649f;
 
   /* Slightly alter the code block line highlight color */
