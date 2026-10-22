@@ -210,6 +210,10 @@ table {
   font-size: 0.875rem;
 }
 
+details.alert {
+  border-width: 0 0 0 var(--ifm-alert-border-left-width);
+}
+
 .theme-doc-version-badge {
   margin-bottom: calc(var(--ifm-global-spacing) / 2);
 }
