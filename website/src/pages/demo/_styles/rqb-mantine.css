@@ -38,7 +38,7 @@
   }
 }
 
-/* BEGIN_MANTINE_STYLES v9.7.0
+/* BEGIN_MANTINE_STYLES v9.7.3
 The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
@@ -701,7 +701,7 @@ fieldset:disabled .mantine-active:active {
     [data-offset-scrollbars='y'],
     [data-offset-scrollbars='present']
   ):not([data-vertical-hidden]) {
-  padding-inline-end: var(--scrollarea-scrollbar-size);
+  padding-inline-end: var(--scrollarea-offset-size, var(--scrollarea-scrollbar-size));
   padding-inline-start: unset;
 }
 
@@ -711,7 +711,7 @@ fieldset:disabled .mantine-active:active {
     [data-offset-scrollbars='present']
   ):not([data-vertical-hidden]):where([data-vertical-scrollbar-position='left']) {
   padding-inline-end: unset;
-  padding-left: var(--scrollarea-scrollbar-size);
+  padding-left: var(--scrollarea-offset-size, var(--scrollarea-scrollbar-size));
   padding-right: unset;
 }
 
@@ -722,7 +722,7 @@ fieldset:disabled .mantine-active:active {
   ):not([data-vertical-hidden]):where([data-vertical-scrollbar-position='right']) {
   padding-inline-end: unset;
   padding-left: unset;
-  padding-right: var(--scrollarea-scrollbar-size);
+  padding-right: var(--scrollarea-offset-size, var(--scrollarea-scrollbar-size));
 }
 
 .m_c0783ff9:where([data-scrollbars='xy'], [data-scrollbars='x']):where(
@@ -738,7 +738,7 @@ fieldset:disabled .mantine-active:active {
     [data-offset-scrollbars='x'],
     [data-offset-scrollbars='present']
   ):not([data-horizontal-hidden]) {
-  padding-bottom: var(--scrollarea-scrollbar-size);
+  padding-bottom: var(--scrollarea-offset-size, var(--scrollarea-scrollbar-size));
 }
 
 .m_f8f631dd {
@@ -6971,6 +6971,7 @@ fieldset:disabled .m_8ee546b8,
 }
 
 .m_8ae40964 {
+  position: relative;
   display: flex;
   flex-direction: column;
   animation: m_18d73873 var(--rn-duration) var(--rn-timing-function);
