@@ -1,4 +1,10 @@
-import { createSchema, dropSchema, getSharedSQL, reserveSchema } from '@rqb-dbpool';
+import {
+  createSchema,
+  dropSchema,
+  getSharedPGlite,
+  getSharedSQL,
+  reserveSchema,
+} from '@rqb-dbpool';
 import type { DefaultRuleGroupType } from '../../../types';
 import type { SuperUser, TestSQLParams } from '../dbqueryTestUtils';
 import {
@@ -12,6 +18,7 @@ import {
   superUsers,
 } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
+import { ragQuery } from '../vectorDbqueryTestUtils';
 
 // Each describe block gets an isolated schema in the shared PGlite instance.
 const commonSchema = reserveSchema('pg_common');
@@ -113,6 +120,41 @@ describe('PostgreSQL', () => {
           testSQL(commonSchema, { query, expectedResult: superUsersPostgres.filter(filter) });
         });
       }
+    });
+
+    // pgvector: filter composes w/ nearest-neighbor ordering. Reverse-alphabetical embeddings ->
+    // nearest-first = `madeUpName` desc.
+    describe('vector (pgvector)', () => {
+      beforeAll(async () => {
+        const db = await getSharedPGlite();
+        await db.exec(`CREATE EXTENSION IF NOT EXISTS vector;
+          CREATE TABLE "${commonSchema}".embeddings (
+            "madeUpName" TEXT PRIMARY KEY, embedding vector(2));`);
+        for (const [i, u] of superUsersPostgres.entries()) {
+          await db.query(`INSERT INTO "${commonSchema}".embeddings VALUES ($1, $2)`, [
+            u.madeUpName,
+            `[${superUsersPostgres.length - i},0]`,
+          ]);
+        }
+      });
+
+      test('filter + nearest-neighbor ordering', async () => {
+        const sql = await getSharedSQL();
+        const { sql: where, params } = formatQuery(ragQuery, {
+          format: 'parameterized',
+          preset: 'postgresql',
+        });
+        const rows = await sql.unsafe(
+          `SELECT "madeUpName" FROM "${commonSchema}".superusers
+           JOIN "${commonSchema}".embeddings USING ("madeUpName")
+           WHERE ${where} ORDER BY embedding <-> '[0,0]'`,
+          params
+        );
+        expect(rows.map((r: { madeUpName: string }) => r.madeUpName)).toEqual([
+          'Superman',
+          'Spider-Man',
+        ]);
+      });
     });
 
     // "parameter" value source: the generated SQL references bind variables that must

@@ -5,6 +5,7 @@ export * from './mssql';
 export * from './mysql';
 export * from './oracle';
 export * from './pglite';
+export * from './sqliteExt';
 export * from './chroma';
 export * from './milvus';
 export * from './pinecone';

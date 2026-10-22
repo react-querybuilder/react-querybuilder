@@ -199,6 +199,7 @@
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
     "@electric-sql/pglite": "catalog:test",
+    "@electric-sql/pglite-pgvector": "catalog:test",
     "@electric-sql/pglite-socket": "catalog:test",
     "@prisma/client": "catalog:test",
     "@react-querybuilder/grafeo": "catalog:test",
@@ -220,6 +221,8 @@
     "sass": "catalog:",
     "sequelize": "catalog:test",
     "spel2js": "catalog:",
+    "sqlite-regex": "catalog:test",
+    "sqlite-vec": "catalog:test",
     "sqlite3": "catalog:test",
     "type-fest": "catalog:",
     "typescript": "catalog:",
