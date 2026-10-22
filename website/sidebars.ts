@@ -97,6 +97,7 @@ export default {
         'tips/common-mistakes',
         'tips/comparison',
         'tips/migrate-from-raqb',
+        'tips/migrate-from-jquery-querybuilder',
       ],
     },
     'compat',
