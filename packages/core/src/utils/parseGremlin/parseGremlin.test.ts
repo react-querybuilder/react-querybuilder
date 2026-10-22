@@ -131,3 +131,23 @@ describe('parseGremlin', () => {
     expect(result.rules.length).toBe(2);
   });
 });
+
+describe('regex', () => {
+  it('parses regex/notRegex w/ parseRegex', () => {
+    expect(
+      parseGremlin(".has('f', regex('(?im)a\\\\d\\'+')).has('g', TextP.notRegex('x|y'))", {
+        parseRegex: true,
+      }).rules
+    ).toEqual([
+      { field: 'f', operator: 'matches', value: "a\\d'+", regexFlags: 'im' },
+      { field: 'g', operator: 'doesNotMatch', value: 'x|y' },
+    ]);
+  });
+
+  it('falls back to contains', () => {
+    expect(parseGremlin(".has('f', regex('(?i)a')).has('g', notRegex('b'))").rules).toEqual([
+      { field: 'f', operator: 'contains', value: '(?i)a' },
+      { field: 'g', operator: 'doesNotContain', value: 'b' },
+    ]);
+  });
+});

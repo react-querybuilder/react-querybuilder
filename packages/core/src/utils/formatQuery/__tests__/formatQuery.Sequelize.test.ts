@@ -7,6 +7,7 @@
  */
 
 import { col, fn, Op } from 'sequelize';
+import type { RuleType } from '../../../types';
 import { defaultRuleProcessorSequelize } from '../defaultRuleProcessorSequelize';
 import { formatQuery } from '../formatQuery';
 import {
@@ -173,4 +174,28 @@ it('parseNumbers', () => {
       context: contextWithAllReqs,
     })
   ).toBeTruthy();
+});
+
+it('handles regex operators', () => {
+  const fq = (rules: RuleType[]) =>
+    formatQuery({ combinator: 'and', rules }, { format: 'sequelize', context: contextWithAllReqs });
+  expect(
+    fq([
+      { field: 'f', operator: 'matches', value: 'a' },
+      { field: 'f', operator: 'matches', value: 'b', regexFlags: 'gi' },
+      { field: 'f', operator: 'doesNotMatch', value: 'c' },
+      { field: 'f', operator: 'doesNotMatch', value: 'd', regexFlags: 'i' },
+    ])
+  ).toEqual({
+    [Op.and]: [
+      { f: { [Op.regexp]: 'a' } },
+      { f: { [Op.iRegexp]: 'b' } },
+      { f: { [Op.notRegexp]: 'c' } },
+      { f: { [Op.notIRegexp]: 'd' } },
+    ],
+  });
+  // Field value source falls back to `contains`
+  expect(fq([{ field: 'f', operator: 'matches', value: 'g', valueSource: 'field' }])).toEqual(
+    fq([{ field: 'f', operator: 'contains', value: 'g', valueSource: 'field' }])
+  );
 });

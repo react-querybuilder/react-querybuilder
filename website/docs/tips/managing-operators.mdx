@@ -161,3 +161,21 @@ export default () => (
 ```
 
 </SandpackRQB>
+
+## Regular expression operators
+
+The `matches` and `doesNotMatch` operators test a field against a regular expression. They are not part of `defaultOperators`; opt in with `defaultOperatorsWithRegex` (or append `defaultRegexOperators` to your own list).
+
+```ts
+import { defaultOperatorsWithRegex, type Field } from 'react-querybuilder';
+
+const fields: Field[] = [{ name: 'sku', label: 'SKU', operators: defaultOperatorsWithRegex }];
+```
+
+The rule `value` is the pattern string (no slashes), so the default text `ValueEditor` works as-is. Flags go in the optional `regexFlags` rule property:
+
+```json
+{ "field": "sku", "operator": "matches", "value": "^AB-\\d+", "regexFlags": "i" }
+```
+
+There's no built-in control for `regexFlags`; use a custom `valueEditor` if users need to set flags. `matches` uses unanchored "find" semantics (like `RegExp#test`) in every export format. See [Export > Regular expressions](../utils/export#regular-expressions) for per-format output and [Import > Regular expressions](../utils/import#regular-expressions) for parser support.

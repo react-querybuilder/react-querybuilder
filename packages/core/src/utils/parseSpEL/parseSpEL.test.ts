@@ -624,3 +624,48 @@ it('ignores things', () => {
     expectParseSpEL(pr, wrapRule());
   }
 });
+
+describe('matches/doesNotMatch', () => {
+  const rf = { combinator: 'and' as const };
+  it('parses regex when opted in', () => {
+    expect(
+      parseSpEL(`f matches '(?i).*(?:a''b).*' and !(f matches '.*(?:^x).*')`, { parseRegex: true })
+    ).toEqual({
+      ...rf,
+      rules: [
+        { field: 'f', operator: 'matches', value: "a'b", regexFlags: 'i' },
+        { field: 'f', operator: 'doesNotMatch', value: '^x' },
+      ],
+    });
+  });
+  it('uses field operators to opt in', () => {
+    const fields = [{ name: 'f', label: 'F', operators: [{ name: 'matches', label: 'm' }] }];
+    expect(parseSpEL(`f matches '.*(?:a).*'`, { fields }).rules[0]).toMatchObject({
+      operator: 'matches',
+      value: 'a',
+    });
+    expect(parseSpEL(`f matches '.*(?:a).*'`, { fields: [{ name: 'g', label: 'G' }] })).toEqual({
+      ...rf,
+      rules: [],
+    });
+  });
+  it('falls back w/o opt-in or w/o wrapper', () => {
+    expect(parseSpEL(`f matches '.*(?:a).*'`).rules[0]).not.toMatchObject({ operator: 'matches' });
+    expect(parseSpEL(`f matches '.*a.*'`, { parseRegex: true }).rules[0]).toMatchObject({
+      operator: 'contains',
+    });
+  });
+  it('round-trips', () => {
+    const q: DefaultRuleGroupType = {
+      ...rf,
+      rules: [{ field: 'f', operator: 'matches', value: 'a.b', regexFlags: 'is' }],
+    };
+    expect(parseSpEL(formatQuery(q, 'spel'), { parseRegex: true })).toEqual(q);
+  });
+});
+
+it('rejects matches on invalid field', () => {
+  expect(
+    parseSpEL(`f matches '.*(?:a).*'`, { parseRegex: true, fields: [{ name: 'g', label: 'G' }] })
+  ).toEqual({ combinator: 'and', rules: [] });
+});

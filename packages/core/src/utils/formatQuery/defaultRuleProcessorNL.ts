@@ -10,7 +10,13 @@ import { lc } from '../misc';
 import { getOption, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
-import { getQuotedFieldName, normalizeConstituentWordOrder, processMatchMode } from './utils';
+import {
+  getQuotedFieldName,
+  isRegexOperator,
+  normalizeConstituentWordOrder,
+  processMatchMode,
+  sanitizeRegexFlags,
+} from './utils';
 
 /**
  * Default operator map used by {@link formatQuery} for "natural_language" format.
@@ -36,6 +42,8 @@ export const defaultExportOperatorMap: ExportOperatorMap = {
   notin: ['is not one of the values', 'is not the same as any value in'],
   between: ['is between', 'is between the values in'],
   notbetween: ['is not between', 'is not between the values in'],
+  matches: ['matches regular expression', 'matches the regular expression in'],
+  doesnotmatch: ['does not match regular expression', 'does not match the regular expression in'],
 };
 
 /* v8 ignore next -- @preserve */
@@ -191,10 +199,12 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
 
   const processedOperator = operatorProcessor(rule, opts);
 
+  const flags = isRegexOperator(operator) ? sanitizeRegexFlags(rule.regexFlags, 'imsu') : '';
+
   const wordOrderMap = {
     S: processedField,
     V: processedOperator,
-    O: value,
+    O: flags ? `${value} with flags ${quoteValuesWith}${flags}${quoteValuesWith}` : value,
   };
 
   const translations = opts?.translations ?? {};

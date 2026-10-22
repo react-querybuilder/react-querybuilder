@@ -248,6 +248,7 @@
       "@prisma/client": "^7.10.1",
       "@react-querybuilder/grafeo": "^0.5.44",
       "@electric-sql/pglite": "0.5.11",
+      "@electric-sql/pglite-pgvector": "0.0.12",
       "@electric-sql/pglite-socket": "0.2.14",
       "@tanstack/db": "^0.15.2",
       "@testing-library/dom": "^10.4.2",
@@ -261,6 +262,8 @@
       "pglite-prisma-adapter": "^0.7.2",
       "prisma": "^7.10.0",
       "sequelize": "^6.37.8",
+      "sqlite-regex": "^0.2.4-alpha.1",
+      "sqlite-vec": "^0.1.9",
       "sqlite3": "^6.0.1"
     }
   },

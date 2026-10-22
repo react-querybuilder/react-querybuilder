@@ -25,4 +25,11 @@ export interface ParserCommonOptions {
    * outside the safe boundaries of the `number` type.
    */
   bigIntOnOverflow?: boolean;
+  /**
+   * Import regular expressions as `matches`/`doesNotMatch` rules (with `regexFlags`). When
+   * `undefined`, regexes are imported this way only for fields whose `operators` include
+   * `matches` or `doesNotMatch`; otherwise they fall back to string-match operators like
+   * `contains` (pattern source as value).
+   */
+  parseRegex?: boolean;
 }

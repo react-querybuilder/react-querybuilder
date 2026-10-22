@@ -110,3 +110,22 @@ export const filterRulesByFields = (
     });
   return walk(rules);
 };
+
+const regexOperatorNames = new Set(['matches', 'doesNotMatch']);
+
+/**
+ * Whether a regex for `fieldName` should be imported as `matches`/`doesNotMatch`. Explicit
+ * `parseRegex` wins; otherwise `true` iff the field's `operators` include a regex operator.
+ */
+export const shouldParseRegex = (
+  options: Pick<ParserCommonOptions, 'fields' | 'parseRegex'>,
+  fieldName: string
+): boolean => {
+  if (typeof options.parseRegex === 'boolean') return options.parseRegex;
+  const field = getFieldsArray(options.fields).find(f => f.name === fieldName);
+  return field?.operators
+    ? toFlatOptionArray(toFullOptionList(field.operators as unknown[])).some(o =>
+        regexOperatorNames.has(`${(o as { name: string }).name}`)
+      )
+    : false;
+};

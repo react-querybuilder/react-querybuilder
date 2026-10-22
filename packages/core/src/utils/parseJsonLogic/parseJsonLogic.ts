@@ -177,7 +177,8 @@ function parseJsonLogic(
             rule.operator === 'in' ||
             rule.operator === 'contains' ||
             rule.operator === 'beginsWith' ||
-            rule.operator === 'endsWith')
+            rule.operator === 'endsWith' ||
+            rule.operator === 'matches')
         ) {
           const newRule = { ...rule, operator: defaultOperatorNegationMap[rule.operator] };
           if (outermost) {
@@ -387,6 +388,23 @@ function parseJsonLogic(
 
       if (fieldIsValid(field, operator) && value.length >= 2) {
         rule = { field, operator, value, valueSource };
+      }
+    } else if (
+      key === 'regex' &&
+      options.parseRegex !== false &&
+      Array.isArray(keyValue) &&
+      isRQBJsonLogicVar(keyValue[0]) &&
+      typeof keyValue[1] === 'string'
+    ) {
+      field = keyValue[0].var;
+      const regexFlags = typeof keyValue[2] === 'string' ? keyValue[2].replaceAll('g', '') : '';
+      if (inSubquery || fieldIsValid(field, 'matches')) {
+        rule = {
+          field,
+          operator: 'matches',
+          value: keyValue[1],
+          ...(regexFlags ? { regexFlags } : {}),
+        };
       }
     } else if (isJsonLogicInArray(logic) && isRQBJsonLogicVar(keyValue[0])) {
       field = keyValue[0].var;

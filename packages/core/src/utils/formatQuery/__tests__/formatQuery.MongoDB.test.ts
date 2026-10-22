@@ -763,3 +763,33 @@ it('parseNumbers', () => {
     expectBoth(queryForNumberParsing, allNumbersParsed, opts);
   }
 });
+
+it('handles matches/doesNotMatch', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: '^a.b', regexFlags: 'gixu' },
+      { field: 'f', operator: 'doesNotMatch', value: 'x+' },
+      { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+    ],
+  };
+  expect(formatQuery(q, 'mongodb_query')).toEqual({
+    $and: [
+      { f: { $regex: '^a.b', $options: 'ix' } },
+      { f: { $not: { $regex: 'x+' } } },
+      { $where: 'this.f.includes(this.g)' },
+    ],
+  });
+  expect(formatQuery(q, { format: 'mongodb_query', context: { avoidFieldsAsKeys: true } })).toEqual(
+    {
+      $and: [
+        { $regexMatch: { input: '$f', regex: '^a.b', options: 'ix' } },
+        { $not: { $regexMatch: { input: '$f', regex: 'x+' } } },
+        { $where: 'this.f.includes(this.g)' },
+      ],
+    }
+  );
+  expect(formatQuery(q, 'mongodb')).toBe(
+    '{"$and":[{"f":{"$regex":"^a.b","$options":"ix"}},{"f":{"$not":{"$regex":"x+"}}},{"$where":"this.f.includes(this.g)"}]}'
+  );
+});

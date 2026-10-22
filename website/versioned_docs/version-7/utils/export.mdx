@@ -1010,6 +1010,7 @@ The root-level `valid` property is `true` only when the group itself is valid _a
 | `VALUE_TYPE_MISMATCH`  | `type-check`                          | Value is incompatible with the field's `inputType`, or isn't a boolean for a `checkbox`/`switch` `valueEditorType`                             |
 | `INVALID_OPERATOR`     | `field-check`                         | Operator isn't in the field's `operators` (only checked when the field defines `operators`)                                                    |
 | `INVALID_VALUE_ARITY`  | `type-check`                          | `between`/`notBetween` value doesn't have exactly 2 items, or `in`/`notIn` value is empty                                                      |
+| `INVALID_VALUE`        | `type-check`                          | `matches`/`doesNotMatch` value isn't a valid regular expression (rule is invalid and skipped by all formats)                                   |
 | `VALUE_NOT_IN_OPTIONS` | `type-check`                          | Value isn't in the field's `values` (unless `valueEditorType` is `text`/`textarea`)                                                            |
 | `INVALID_STRUCTURE`    | `structure-check`                     | An independent combinator group's `rules` don't alternate rule/group and combinator, or a standard group's `rules` contain a combinator string |
 
@@ -1038,6 +1039,39 @@ For targets without native group negation, rules under an odd number of `not` gr
 `result.stats` provides aggregate counts: `totalRules`, `totalGroups`, `validRules`, `invalidRules`, `validGroups`, `invalidGroups`.
 
 `result.fieldSummary` is a record keyed by field name, where each value has `ruleCount` (total rules for that field) and `invalidCount` (invalid rules for that field).
+
+### Regular expressions
+
+The opt-in `matches`/`doesNotMatch` operators (see [Regular expression operators](../tips/managing-operators#regular-expression-operators)) use unanchored "find" semantics in every format: a rule matches if the pattern is found anywhere in the field value. Formats whose native regex operator requires a full-string match wrap the pattern as `.*(?:pattern).*`. Flags come from the rule's `regexFlags` property; flags a format can't express are dropped, and `g`/`y` are always ignored. Rules with invalid patterns (per JavaScript's `RegExp`) are skipped.
+
+| Format                                                         | `matches` output                                                               | Flags                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------- |
+| `jsonata`                                                      | `$contains(f, /pattern/flags)`                                                 | `i`, `m`                   |
+| `mongodb_query`/`mongodb`                                      | `{ f: { $regex: 'pattern', $options: 'flags' } }`                              | native                     |
+| `spel`                                                         | `f matches '(?i).*(?:pattern).*'`                                              | inline                     |
+| `cel`                                                          | `f.matches("(?i)pattern")` (RE2)                                               | inline                     |
+| `elasticsearch`                                                | `regexp` query (Lucene syntax), wrapped in `.*(…).*`                           | `case_insensitive` for `i` |
+| `sql`/`parameterized*`                                         | Per `preset`: PostgreSQL `~`/`~*`, MySQL/Oracle `REGEXP_LIKE`, SQLite `REGEXP` | per dialect                |
+| `sequelize`                                                    | `Op.regexp`/`Op.iRegexp`                                                       | `i`                        |
+| `jsonlogic`                                                    | custom `regex` operation (register `jsonLogicRegexOperator`)                   | third argument             |
+| `cypher`/`gql`                                                 | `f =~ '(?i).*(?:pattern).*'`                                                   | inline                     |
+| `gremlin`                                                      | `regex('(?i)pattern')` (`TextP.regex`)                                         | inline                     |
+| `sparql`                                                       | `REGEX(?f, "pattern", "flags")`                                                | native                     |
+| `natural_language`                                             | `f matches regular expression 'pattern' with flags 'i'`                        | described                  |
+| others (LDAP, Prisma, TanStack DB, vector DBs, ANSI/MSSQL SQL) | falls back to `contains`/`doesNotContain` with the pattern as a literal        | n/a                        |
+
+:::caution
+
+Patterns are passed through as-is. Regex dialects differ between targets (JavaScript, PCRE, POSIX, Java, RE2, Lucene, XPath), so a pattern that works in one may fail or behave differently in another. Notes:
+
+- SQLite has no built-in `REGEXP` function; register one (e.g. the sqlean `regexp` extension) before running the output. Flags are inlined as `(?i)`.
+- MySQL's plain `REGEXP` (used when there are no flags) follows the column collation, so it's case-insensitive on `_ci` collations.
+- PostgreSQL only gets the `i` flag (`~*`/`!~*`); `m`/`s` are dropped.
+- ElasticSearch uses Lucene regex syntax, which has no `\d`-style classes or inline flags.
+
+:::
+
+See the exact output for each format in the tests and the `defaultRuleProcessor*` source; some details (e.g. negation style) vary by format.
 
 ## Configuration
 

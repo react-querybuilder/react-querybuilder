@@ -4,7 +4,12 @@ import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
-import { processMatchMode, getSubqueryElementAlias, shouldRenderAsNumber } from './utils';
+import {
+  getSubqueryElementAlias,
+  processMatchMode,
+  shouldRenderAsNumber,
+  toInlineFlagsRegex,
+} from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -109,6 +114,16 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
       const negate = shouldNegate(operatorTL) ? '!' : '';
       return `${negate}${field}.endsWith(${
         valueIsField ? trimIfString(value) : `"${escapeDoubleQuotes(value, escapeQuotes)}"`
+      })`;
+    }
+
+    case 'matches':
+    case 'doesnotmatch': {
+      const negate = shouldNegate(operatorTL) ? '!' : '';
+      return `${negate}${field}.matches(${
+        valueIsField
+          ? trimIfString(value)
+          : `"${escapeDoubleQuotes(toInlineFlagsRegex(`${value}`, rule.regexFlags), escapeQuotes)}"`
       })`;
     }
 

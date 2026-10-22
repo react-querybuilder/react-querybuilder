@@ -12,7 +12,7 @@ import type { ParserCommonOptions } from '../../types/import';
 import type { Except } from '../../types/typeUtils';
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
-import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray, shouldParseRegex } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import { SQLParser } from './sqlParser';
 import type {
@@ -21,7 +21,10 @@ import type {
   ParseSQLExpressionContext,
   SQLExpression,
   SQLExpressionOperand,
+  SQLFunctionCall,
   SQLIdentifier,
+  SQLStringValue,
+  SQLWhereObjectAny,
 } from './types';
 import {
   evalSQLLiteralValue,
@@ -222,6 +225,36 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
     fieldExists: fieldName => fieldsFlat.length === 0 || fieldsFlat.some(f => f.name === fieldName),
   };
 
+  const makeRegexRule = (
+    left: SQLWhereObjectAny | undefined,
+    right: SQLWhereObjectAny | undefined,
+    negate: boolean,
+    flags: string
+  ): DefaultRuleType | null => {
+    if (!isSQLIdentifier(left) || right?.type !== 'String') return null;
+    const f = getFieldName(left);
+    const operator = negate ? 'doesNotMatch' : 'matches';
+    if (!shouldParseRegex(options, f) || !fieldIsValid(f, operator)) return null;
+    const value = evalSQLLiteralValue(right as SQLStringValue) as string;
+    return { field: f, operator, value, ...(flags && { regexFlags: flags }) };
+  };
+
+  // `REGEXP_LIKE(field, 'pattern'[, 'flags'])` (MySQL/Oracle match params)
+  const processRegexpLike = (fc: SQLFunctionCall, negate: boolean): DefaultRuleType | null => {
+    if (!/^regexp_like$/i.test(fc.name)) return null;
+    const [left, right, flagsNode] = fc.params;
+    let flags = '';
+    if (flagsNode) {
+      if (flagsNode.type !== 'String') return null;
+      for (const c of evalSQLLiteralValue(flagsNode) as string) {
+        if (c === 'i' || c === 'm') flags = `${flags.replace(c, '')}${c}`;
+        else if (c === 'n') flags = `${flags.replace('s', '')}s`;
+        else if (c === 'c') flags = flags.replace('i', '');
+      }
+    }
+    return makeRegexRule(left, right, negate, [...'ims'].filter(c => flags.includes(c)).join(''));
+  };
+
   const processSQLExpression = (
     expr: SQLExpression
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
@@ -229,6 +262,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
       case 'NotExpression': {
         const val =
           expr.value.type === 'SimpleExprParentheses' ? expr.value.value.value[0] : expr.value;
+        if (val.type === 'FunctionCall') return processRegexpLike(val, true);
         const rule = processSQLExpression(val);
         /* instanbul ignore else */
         if (rule) {
@@ -573,6 +607,10 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
 
         break;
       }
+      case 'RegexpPredicate':
+        return makeRegexRule(expr.left, expr.right, !!expr.hasNot, expr.caseInsensitive ? 'i' : '');
+      case 'FunctionCall':
+        return processRegexpLike(expr, false);
       // No default
     }
     return null;

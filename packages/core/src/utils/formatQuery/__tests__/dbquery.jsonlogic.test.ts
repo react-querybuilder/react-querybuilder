@@ -9,14 +9,34 @@ import {
   matchModeTests,
   superUsers,
 } from '../dbqueryTestUtils';
+import { jsonLogicRegexOperator } from '../defaultRuleProcessorJsonLogic';
 import { formatQuery } from '../formatQuery';
 import { jsonLogicAdditionalOperators } from '../utils';
+
+const regexCases: [string, DefaultRuleGroupType, (u: { madeUpName: string }) => boolean][] = [
+  [
+    'matches i',
+    {
+      combinator: 'and',
+      rules: [{ field: 'madeUpName', operator: 'matches', value: '^bat|MAN$', regexFlags: 'i' }],
+    },
+    u => /^bat|MAN$/i.test(u.madeUpName),
+  ],
+  [
+    'doesNotMatch',
+    { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'doesNotMatch', value: 'a.a' }] },
+    u => !/a.a/.test(u.madeUpName),
+  ],
+];
 
 const superUsersJsonLogic = superUsers('jsonlogic');
 
 const augmentedSuperUsersJsonLogic = augmentedSuperUsers('jsonlogic');
 
-for (const [op, func] of Object.entries(jsonLogicAdditionalOperators)) {
+for (const [op, func] of Object.entries({
+  ...jsonLogicAdditionalOperators,
+  ...jsonLogicRegexOperator,
+})) {
   add_operation(op, func);
 }
 
@@ -38,6 +58,12 @@ describe('JsonLogic', () => {
   for (const [name, t] of Object.entries(dbTests(superUsersJsonLogic))) {
     testJsonLogic(name, t);
   }
+
+  describe('regex', () => {
+    for (const [name, query, fn] of regexCases) {
+      testJsonLogic(name, { query, expectedResult: superUsersJsonLogic.filter(u => fn(u)) });
+    }
+  });
 
   describe('match modes', () => {
     const runTest = (

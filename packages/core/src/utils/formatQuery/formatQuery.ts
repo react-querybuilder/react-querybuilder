@@ -81,6 +81,7 @@ import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import {
   bigIntJsonStringifyReplacer,
   getQuoteFieldNamesWithArray,
+  isRegexRuleInvalid,
   isValueProcessorLegacy,
   numerifyValues,
   stripParamPrefix,
@@ -663,6 +664,10 @@ function formatQuery(
       if (!validParamNames.has(stripParamPrefix(rule.value, optObj.paramPrefix))) {
         validationResult = false;
       }
+    }
+    // Invalidate regex rules w/ invalid patterns
+    if (isRegexRuleInvalid(rule)) {
+      validationResult = false;
     }
     return [validationResult, fieldValidator] as const;
   };

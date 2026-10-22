@@ -612,3 +612,42 @@ it('returns false for invalid match mode - negative threshold', () => {
     )
   ).toBe(false);
 });
+
+describe('regex', () => {
+  const matchesQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: "a\\d'+", regexFlags: 'igm' },
+      { field: 'g', operator: 'doesNotMatch', value: 'x|y' },
+    ],
+  };
+  const regexFieldQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+      { field: 'f', operator: 'doesNotMatch', value: 'g', valueSource: 'field' },
+    ],
+  };
+
+  it('matches/doesNotMatch', () => {
+    expect(formatQuery(matchesQuery, 'elasticsearch')).toEqual({
+      bool: {
+        must: [
+          { regexp: { f: { value: ".*(a\\d'+).*", case_insensitive: true } } },
+          { bool: { must_not: { regexp: { g: { value: '.*(x|y).*' } } } } },
+        ],
+      },
+    });
+  });
+
+  it('valueSource field falls back to contains script', () => {
+    expect(formatQuery(regexFieldQuery, 'elasticsearch')).toEqual({
+      bool: {
+        must: [
+          { bool: { filter: { script: { script: "doc['f'].value.contains(doc['g'].value)" } } } },
+          { bool: { filter: { script: { script: "!doc['f'].value.contains(doc['g'].value)" } } } },
+        ],
+      },
+    });
+  });
+});

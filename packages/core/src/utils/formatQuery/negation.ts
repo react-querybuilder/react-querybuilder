@@ -12,6 +12,7 @@ const negationPairs: [DefaultOperatorName, DefaultOperatorName][] = [
   ['contains', 'doesNotContain'],
   ['beginsWith', 'doesNotBeginWith'],
   ['endsWith', 'doesNotEndWith'],
+  ['matches', 'doesNotMatch'],
 ];
 
 const negationMap = new Map<string, DefaultOperatorName>(

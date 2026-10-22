@@ -11,8 +11,11 @@ import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
 import {
   escapeSingleQuotedString,
+  isRegexOperator,
   isValidValue,
   processMatchMode,
+  regexFallbackRule,
+  sanitizeRegexFlags,
   shouldRenderAsNumber,
 } from './utils';
 
@@ -28,7 +31,7 @@ type ElasticSearchRule =
   // oxlint-disable-next-line typescript/no-explicit-any
   | { term: Record<string, any> }
   | { exists: { field: string } }
-  | { regexp: { [k: string]: { value: string } } }
+  | { regexp: { [k: string]: { value: string; case_insensitive?: boolean } } }
   | { nested: { path: string; query: ElasticSearchQuery | ElasticSearchRule } };
 type ElasticSearchQuery = {
   bool:
@@ -144,6 +147,17 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         return false;
       }
     }
+  }
+
+  if (isRegexOperator(operator)) {
+    // Regex w/ field value not supported; fall back to contains-field script
+    if (valueSource === 'field')
+      return defaultRuleProcessorElasticSearch(regexFallbackRule(rule), options);
+    // Lucene regexp is anchored and lacks `(?:`; plain group wraps for "find" semantics
+    const ci = sanitizeRegexFlags(rule.regexFlags, 'i') === 'i';
+    return negateIfNotOp(operatorLC, {
+      regexp: { [field]: { value: `.*(${value}).*`, ...(ci && { case_insensitive: true }) } },
+    });
   }
 
   if (valueSource === 'field') {

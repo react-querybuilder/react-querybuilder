@@ -1,6 +1,7 @@
 import { createSchema, dropSchema, getSharedPGlite, reserveSchema } from '@rqb-dbpool';
 import { boolean, integer, pgSchema, text } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/pglite';
+import type { DefaultRuleGroupType } from '../../../types';
 import { convertToIC } from '../../convertQuery';
 import { formatQuery } from '../../formatQuery';
 import { dbTestsDrizzle } from '../dbqueryDrizzleTestUtils';
@@ -66,6 +67,40 @@ describe('Drizzle relational queries (PostgreSQL)', () => {
       testPostgres(t);
     });
   }
+
+  describe('regex', () => {
+    const rq = (r: DefaultRuleGroupType['rules'][number]): DefaultRuleGroupType => ({
+      combinator: 'and',
+      rules: [r],
+    });
+    const fqOptions = { preset: 'postgresql' } as const;
+    describe('matches', () => {
+      testPostgres({
+        query: rq({ field: 'madeUpName', operator: 'matches', value: 'man$' }),
+        expectedResult: superUsersPostgres.filter(u => u.madeUpName.endsWith('man')),
+        fqOptions,
+      });
+    });
+    describe('doesNotMatch i', () => {
+      testPostgres({
+        query: rq({ field: 'firstName', operator: 'doesNotMatch', value: 'B', regexFlags: 'i' }),
+        expectedResult: superUsersPostgres.filter(u => !/B/i.test(u.firstName)),
+        fqOptions,
+      });
+    });
+    describe('matches field', () => {
+      testPostgres({
+        query: rq({
+          field: 'madeUpName',
+          operator: 'matches',
+          value: 'nickname',
+          valueSource: 'field',
+        }),
+        expectedResult: superUsersPostgres.filter(u => new RegExp(u.nickname).test(u.madeUpName)),
+        fqOptions,
+      });
+    });
+  });
 });
 
 describe('Drizzle nested array queries (PostgreSQL)', () => {

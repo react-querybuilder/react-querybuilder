@@ -163,7 +163,8 @@ export const isCELLikeExpression = (expr: CELExpression): expr is CELLikeExpress
   isCELIdentifier(expr.right) &&
   (expr.right.value === 'contains' ||
     expr.right.value === 'startsWith' ||
-    expr.right.value === 'endsWith') &&
+    expr.right.value === 'endsWith' ||
+    expr.right.value === 'matches') &&
   expr.list.value.length === 1 &&
   (isCELStringLiteral(expr.list.value[0]) || isCELIdentifier(expr.list.value[0]));
 
@@ -176,7 +177,8 @@ export const isCELNegatedLikeExpression = (expr: CELExpression): expr is CELNega
   isCELIdentifier(expr.right) &&
   (expr.right.value === 'contains' ||
     expr.right.value === 'startsWith' ||
-    expr.right.value === 'endsWith') &&
+    expr.right.value === 'endsWith' ||
+    expr.right.value === 'matches') &&
   expr.list.value.length === 1 &&
   (isCELStringLiteral(expr.list.value[0]) || isCELIdentifier(expr.list.value[0]));
 

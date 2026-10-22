@@ -14,7 +14,7 @@ import type {
 import type { ParserCommonOptions } from '../../types/import';
 import type { Except } from '../../types/typeUtils';
 import { isRuleGroup } from '../isRuleGroup';
-import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray, shouldParseRegex } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import type { RegexStringMatchOperator } from '../regexLiteral';
 import { regexToStringMatch } from '../regexLiteral';
@@ -257,6 +257,9 @@ function parseJSONata(
             operator: negatedLikeOperators[negatedExpr.operator],
           };
         }
+        if (!isRuleGroup(negatedExpr) && negatedExpr.operator === 'matches') {
+          return { ...negatedExpr, operator: 'doesNotMatch' };
+        }
         if (
           !isRuleGroup(negatedExpr) &&
           negatedExpr.operator === '=' &&
@@ -288,6 +291,16 @@ function parseJSONata(
           // v8 ignore else
           if (isJSONataString(arg2)) {
             regex = getValidValue(arg2);
+          } else if (isJSONataRegex(arg2) && shouldParseRegex(options, field)) {
+            const regexFlags = arg2.value.flags.replaceAll('g', '');
+            if (fieldIsValid(field, 'matches')) {
+              return {
+                field,
+                operator: 'matches',
+                value: arg2.value.source.replaceAll(/\\(\\|\/)/g, (m, c) => (c === '/' ? c : m)),
+                ...(regexFlags ? { regexFlags } : {}),
+              };
+            }
           } else if (isJSONataRegex(arg2)) {
             // Reverse `formatQuery` templates (`/^x/` → beginsWith, etc.)
             ({ operator, value: regex } = regexToStringMatch(getValidValue(arg2), 'find'));

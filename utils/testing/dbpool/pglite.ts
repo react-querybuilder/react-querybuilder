@@ -20,7 +20,8 @@ declare global {
 const pglite = memo(async () => {
   globalThis.__rqbPGliteActive = true;
   const { PGlite } = await import('@electric-sql/pglite');
-  const db = new PGlite();
+  const { vector } = await import('@electric-sql/pglite-pgvector');
+  const db = new PGlite({ extensions: { vector } });
   await db.query('SELECT 1'); // force WASM init/ready
   return db;
 });

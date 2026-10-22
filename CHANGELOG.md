@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `formatCapabilities` map and `getUnsupportedRuleFeature` helper describe which operators, value sources, and match modes each vector format supports.
 - [#1119] "diagnostics" format: new `diagnosticsTargetFormat` option reports rules the target format can't express as `"format-check"` entries, including rules nested in match-mode subqueries. New optional `severity` (`"error"`/`"warning"`) on diagnostic entries; warnings never affect validity.
 
+- Opt-in regular expression operators `matches`/`doesNotMatch` (not in `defaultOperators`; use `defaultOperatorsWithRegex` or `defaultRegexOperators`). The rule `value` is the pattern string and flags go in the new optional `regexFlags` rule property.
+  - `formatQuery` emits native regex matching where the target supports it (JSONata, MongoDB, SpEL, CEL, ElasticSearch, SQL presets "postgresql"/"mysql"/"oracle"/"sqlite", Sequelize, JsonLogic via the new `jsonLogicRegexOperator`, Cypher/GQL, Gremlin, SPARQL, natural language) with unanchored "find" semantics everywhere. Other formats fall back to `contains`/`doesNotContain`.
+  - Rules with invalid patterns are skipped; the "diagnostics" format reports them as `INVALID_VALUE`.
+  - Parsers import regexes as `matches`/`doesNotMatch` when the new `parseRegex` option is `true`, or when it's `undefined` and the field's `operators` include a regex operator. Otherwise parser output is unchanged.
+  - New helpers: `regexOperators`, `isRegexOperator`, `sanitizeRegexFlags`, `toRegExpSource`, `isValidRegex`, `toInlineFlagsRegex`, `regexFallbackRule`, `isRegexRuleInvalid`.
+
 ### Fixed
 
 - [#1118] `formatQuery` SQL dialect presets now produce SQL the target database accepts. These output changes are bug fixes; the old output failed to run.

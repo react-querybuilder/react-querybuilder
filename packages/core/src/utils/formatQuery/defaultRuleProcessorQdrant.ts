@@ -4,7 +4,7 @@ import { isRuleGroup } from '../isRuleGroup';
 import { lc } from '../misc';
 import { defaultRuleGroupProcessorQdrant } from './defaultRuleGroupProcessorQdrant';
 import { formatCapabilities, getUnsupportedRuleFeature } from './formatCapabilities';
-import { processMatchMode } from './utils';
+import { processMatchMode, regexFallbackRule } from './utils';
 import { coerceBoolean, coerceNumber, isDateInputType, toRFC3339 } from './vectorValueUtils';
 
 type QdrantCondition = Record<string, unknown>;
@@ -37,7 +37,7 @@ export const defaultRuleProcessorQdrant: RuleProcessor = (
 ): QdrantCondition | false => {
   if (getUnsupportedRuleFeature(rule, formatCapabilities.qdrant!)) return false;
 
-  const { field: key, operator, value } = rule;
+  const { field: key, operator, value } = regexFallbackRule(rule);
   const { parseNumbers, preserveValueOrder, fieldData } = options;
   const op = lc(operator);
 

@@ -557,3 +557,50 @@ it('ignores things', () => {
     expectParseJSONata(pr, wrapRule());
   }
 });
+
+it('handles matches/doesNotMatch', () => {
+  const fields: Field[] = [
+    {
+      name: 'f',
+      label: 'F',
+      operators: [
+        { name: 'matches', label: 'M' },
+        { name: 'doesNotMatch', label: 'DNM' },
+      ],
+    },
+  ];
+  expectParseJSONata(
+    '$contains(f, /a.b/im) and $not($contains(f, /^x$/))',
+    wrapRule([
+      { field: 'f', operator: 'matches', value: 'a.b', regexFlags: 'im' },
+      { field: 'f', operator: 'doesNotMatch', value: '^x$' },
+    ]),
+    { fields }
+  );
+  expectParseJSONata(
+    '$contains(f, /^x/)',
+    wrapRule({ field: 'f', operator: 'matches', value: '^x' }),
+    { parseRegex: true }
+  );
+  // field validation rejects matches
+  expectParseJSONata('$contains(f, /^x/)', wrapRule(), {
+    parseRegex: true,
+    fields: [{ name: 'g', label: 'G' }],
+  });
+  // not opted in → legacy
+  expectParseJSONata(
+    '$contains(f, /^x/)',
+    wrapRule({ field: 'f', operator: 'beginsWith', value: 'x' })
+  );
+});
+
+it('round-trips formatQuery "jsonata" matches output', () => {
+  for (const value of ['a.b', 'x/y', String.raw`a\\/b`, '^(a|b)$']) {
+    for (const operator of ['matches', 'doesNotMatch'] as const) {
+      const rule: DefaultRuleType = { field: 'f1', operator, value, regexFlags: 'i' };
+      expectParseJSONata(formatQuery(wrapRule(rule), 'jsonata'), wrapRule(rule), {
+        parseRegex: true,
+      });
+    }
+  }
+});
