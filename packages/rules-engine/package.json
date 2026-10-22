@@ -78,7 +78,6 @@
     "rollup-plugin-visualizer": "catalog:",
     "rulepilot": "^1.4.9",
     "sass": "catalog:",
-    "type-fest": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   },

@@ -33,7 +33,9 @@ const escapeStringValueQuotes = (
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
   // v8 ignore next - defaultRuleProcessorSQL always provides options
-  {
+  opts = {}
+) => {
+  const {
     escapeQuotes,
     parseNumbers,
     preserveValueOrder,
@@ -45,8 +47,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     preset,
     wrapValueWith = ['', ''] as [string, string],
     translations,
-  } = {}
-) => {
+  } = opts;
   // Parameter value sources render as a (prefix-aware) bind-variable reference.
   if (valueSource === 'parameter') {
     const operatorLowerCase = lc(operator);

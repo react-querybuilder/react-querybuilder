@@ -90,7 +90,6 @@
     "sass": "catalog:",
     "sequelize": "catalog:test",
     "sqlite3": "catalog:test",
-    "type-fest": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   },

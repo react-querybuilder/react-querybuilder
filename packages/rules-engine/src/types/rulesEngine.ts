@@ -8,8 +8,10 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '@react-querybuilder/core';
-import type { Simplify } from 'type-fest';
 import type { EvaluationMode } from './export';
+
+// Local copy of type-fest util (avoids loading all of type-fest when typechecking source)
+type Simplify<T> = { [K in keyof T]: T[K] } & {};
 
 // #region Conditions
 /**

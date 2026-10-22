@@ -1,4 +1,3 @@
-import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -10,6 +9,7 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types';
+import type { Except } from '../../types/typeUtils';
 import { formatQuery } from '../formatQuery';
 import { toFullOption } from '../optGroupUtils';
 import type { ParseSpELOptions } from './parseSpEL';

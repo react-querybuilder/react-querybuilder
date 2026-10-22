@@ -9,9 +9,13 @@ import type {
   RuleGroupTypeAny,
   RuleType,
 } from 'react-querybuilder';
-import type { SetOptional } from 'type-fest';
 import type { DndAdapter } from './adapter';
 import type { RdndBackendFactory, ReactDnDExports } from './vendored';
+
+// Local copy of type-fest util (avoids loading all of type-fest when typechecking source)
+type SetOptional<B, K extends keyof B> = {
+  [P in keyof (Omit<B, K> & Partial<Pick<B, K>>)]: (Omit<B, K> & Partial<Pick<B, K>>)[P];
+};
 
 interface OptionalKnownDndBackends {
   HTML5Backend?: RdndBackendFactory;

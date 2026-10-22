@@ -17,7 +17,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "types": ["vitest/globals", "@testing-library/jest-dom/vitest", "node", "web", "bun"],
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest", "node", "web"],
     "paths": {
       "react-querybuilder": ["./packages/react-querybuilder/src"],
       "react-querybuilder/async": ["./packages/react-querybuilder/src/async"],
@@ -35,7 +35,12 @@
       "@rqb-dbpool": ["./utils/testing/dbpool"],
       "@rqb-dbmongo": ["./utils/testing/mongo"],
       "@rqb-dbquerytestutils": ["./packages/core/src/utils/formatQuery/dbqueryTestUtils"],
-      "@rqb-utils": ["./packages/core/src/utils"]
+      "@rqb-utils": ["./packages/core/src/utils"],
+      // Stubs for optional ORM peers reached only via core's formatQuery processors. Projects
+      // that use the real types extend `tsconfig.base.orm.json` instead.
+      "drizzle-orm": ["./utils/typestubs/drizzle-orm.d.ts"],
+      "sequelize": ["./utils/typestubs/sequelize.d.ts"],
+      "@tanstack/db": ["./utils/typestubs/tanstack-db.d.ts"]
     }
   }
 }

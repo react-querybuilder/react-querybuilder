@@ -5,8 +5,8 @@ import type { FormatConfig } from 'oxfmt';
 import { format } from 'oxfmt';
 import { transformWithOxc } from 'vite';
 import _oxfmtConfig from '../.oxfmtrc.json' with { type: 'json5' };
-import { version } from '../lerna.json' with { type: 'json5' };
-import { catalogs } from '../package.json' with { type: 'json5' };
+import { version } from '../lerna.json' with { type: 'json' };
+import { catalogs } from '../package.json' with { type: 'json' };
 import { configs } from './exampleConfigs.js';
 
 const oxfmtConfig = _oxfmtConfig as FormatConfig;

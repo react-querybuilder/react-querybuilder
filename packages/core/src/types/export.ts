@@ -1,5 +1,4 @@
 import type { RulesLogic } from 'json-logic-js';
-import type { Except } from 'type-fest';
 import type {
   FullField,
   FullOperator,
@@ -10,6 +9,7 @@ import type {
 import type { FlexibleOptionList, FullOption, FullOptionList } from './options';
 import type { DefaultOperatorName, RuleGroupArray, RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupICArray, RuleGroupTypeAny, RuleGroupTypeIC } from './ruleGroupsIC';
+import type { Except } from './typeUtils';
 import type { QueryValidator, RuleValidator, ValidationMap, ValidationResult } from './validation';
 
 /**

@@ -1,4 +1,3 @@
-import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultCombinatorName,
@@ -18,6 +17,7 @@ import type {
   ValueSource,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
+import type { Except } from '../../types/typeUtils';
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';

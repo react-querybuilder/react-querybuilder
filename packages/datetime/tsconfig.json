@@ -1,4 +1,4 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "include": ["./*.ts", "./*.mts", "./src/", "./dev/"]
+  "extends": "../../tsconfig.base.orm.json",
+  "include": ["./src/", "./dev/"]
 }

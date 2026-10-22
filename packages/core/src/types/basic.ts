@@ -1,4 +1,3 @@
-import type { SetOptional, Simplify } from 'type-fest';
 import type {
   BaseFullOption,
   FlexibleOption,
@@ -7,6 +6,7 @@ import type {
   StringUnionToFullOptionArray,
   WithUnknownIndex,
 } from './options';
+import type { SetOptional, Simplify } from './typeUtils';
 import type { RuleValidator } from './validation';
 
 /**

@@ -86,59 +86,75 @@ export type QueryBuilderNativeStyleSheets = WrapEachPropertyInStyleProp<QueryBui
 /**
  * @group Props
  */
-export type RuleGroupNativeProps = RuleGroupProps & WithSchemaNative;
+export interface RuleGroupNativeProps extends RuleGroupProps, WithSchemaNative {
+  schema: RuleGroupProps['schema'] & SchemaNative<FullField, string>;
+}
 
 /**
  * @group Props
  */
-export type RuleNativeProps = RuleProps & WithSchemaNative;
+export interface RuleNativeProps extends RuleProps, WithSchemaNative {
+  schema: RuleProps['schema'] & SchemaNative<FullField, string>;
+}
 
 /**
  * @group Props
  */
-export type NotToggleNativeProps = NotToggleProps & WithSchemaNative;
+export interface NotToggleNativeProps extends NotToggleProps, WithSchemaNative {
+  schema: NotToggleProps['schema'] & SchemaNative<FullField, string>;
+}
 
 /**
  * @group Props
  */
-export type InlineCombinatorNativeProps = InlineCombinatorProps & WithSchemaNative;
+export interface InlineCombinatorNativeProps extends InlineCombinatorProps, WithSchemaNative {
+  schema: InlineCombinatorProps['schema'] & SchemaNative<FullField, string>;
+}
 
 /**
  * @group Props
  */
-export type ActionNativeProps = ActionProps & WithSchemaNative;
+export interface ActionNativeProps extends ActionProps, WithSchemaNative {
+  schema: ActionProps['schema'] & SchemaNative<FullField, string>;
+}
 
 /**
  * @group Props
  */
-export type ShiftActionsNativeProps = ShiftActionsProps & WithSchemaNative;
+export interface ShiftActionsNativeProps extends ShiftActionsProps, WithSchemaNative {
+  schema: ShiftActionsProps['schema'] & SchemaNative<FullField, string>;
+}
 
 /**
  * @group Props
  */
-export type UndoRedoActionsNativeProps = UndoRedoActionsProps & WithSchemaNative;
+export interface UndoRedoActionsNativeProps extends UndoRedoActionsProps, WithSchemaNative {
+  schema: UndoRedoActionsProps['schema'] & SchemaNative<FullField, string>;
+}
 
 /**
  * @group Props
  */
-export type ValueSelectorNativeProps<OptType extends FullOption = FullOption> =
-  ValueSelectorProps<OptType> & WithSchemaNative;
+export interface ValueSelectorNativeProps<OptType extends FullOption = FullOption>
+  extends ValueSelectorProps<OptType>, WithSchemaNative {
+  schema: ValueSelectorProps<OptType>['schema'] & SchemaNative<FullField, string>;
+}
 
 /**
  * @group Props
  */
-export type ValueEditorNativeProps = ValueEditorProps &
-  WithSchemaNative & {
-    selectorComponent?: ComponentType<ValueSelectorNativeProps>;
-  };
+export interface ValueEditorNativeProps extends ValueEditorProps, WithSchemaNative {
+  schema: ValueEditorProps['schema'] & SchemaNative<FullField, string>;
+  selectorComponent?: ComponentType<ValueSelectorNativeProps>;
+}
 
 /**
  * @group Props
  */
-export type MatchModeEditorNativeProps = MatchModeEditorProps &
-  WithSchemaNative & {
-    selectorComponent?: ComponentType<ValueSelectorNativeProps>;
-  };
+export interface MatchModeEditorNativeProps extends MatchModeEditorProps, WithSchemaNative {
+  schema: MatchModeEditorProps['schema'] & SchemaNative<FullField, string>;
+  selectorComponent?: ComponentType<ValueSelectorNativeProps>;
+}
 
 /**
  * @group Props

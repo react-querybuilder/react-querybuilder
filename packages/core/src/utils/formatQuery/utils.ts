@@ -1,4 +1,3 @@
-import type { SetRequired } from 'type-fest';
 import type {
   ConstituentWordOrder,
   DefaultCombinatorName,
@@ -15,6 +14,7 @@ import type {
   ValueProcessorLegacy,
   ValueProcessorOptions,
 } from '../../types';
+import type { SetRequired } from '../../types/typeUtils';
 import { joinWith, splitBy, toArray } from '../arrayUtils';
 import { getParseNumberMethod } from '../getParseNumberMethod';
 import { isRuleGroup } from '../isRuleGroup';
