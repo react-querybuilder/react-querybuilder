@@ -104,7 +104,6 @@
     "react-dom": "catalog:",
     "react-querybuilder": "8.25.0",
     "rollup-plugin-visualizer": "catalog:",
-    "type-fest": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   },

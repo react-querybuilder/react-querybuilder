@@ -5,6 +5,7 @@
     "isolatedDeclarations": false,
     "declaration": false,
     "jsx": "react-jsx",
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest", "node", "web", "bun"],
     "paths": {
       "react-querybuilder": ["../../packages/react-querybuilder/src"],
       "react-querybuilder/async": ["../../packages/react-querybuilder/src/async"],

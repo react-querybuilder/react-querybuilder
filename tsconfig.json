@@ -1,6 +1,9 @@
 {
-  // Root-level scripts only. Shared compiler options live in tsconfig.base.json.
-  // Packages, utils, examples, and website each own their own project.
-  "extends": "./tsconfig.base.json",
-  "include": ["./*.mts", "./*.ts"]
+  // Root-level scripts and per-package tool configs (vite/vitest/tsdown). Shared compiler options
+  // live in tsconfig.base.json. Packages, utils, examples, and website each own their own project.
+  "extends": "./tsconfig.base.orm.json",
+  "compilerOptions": {
+    "types": ["vitest/globals", "node", "bun"]
+  },
+  "include": ["./*.mts", "./*.ts", "./packages/*/*.ts", "./packages/*/*.mts"]
 }

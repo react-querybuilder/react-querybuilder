@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["vitest/globals", "@testing-library/react-native", "node", "web", "bun"]
+    "types": ["vitest/globals", "@testing-library/react-native", "node", "web"]
   },
-  "include": ["./*.ts", "./*.mts", "./src/", "./dev/"]
+  "include": ["./src/", "./dev/"]
 }

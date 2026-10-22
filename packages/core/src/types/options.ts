@@ -1,11 +1,4 @@
-import type { Except, SetRequired, Simplify } from 'type-fest';
-
-// Local impl: type-fest's RequireAtLeastOne wraps in IfNotAnyOrNever which
-// defers evaluation on generic params, breaking property access downstream.
-type RequireAtLeastOne<O, K extends keyof O> = {
-  [P in K]-?: Required<Pick<O, P>> & Partial<Pick<O, Exclude<K, P>>>;
-}[K] &
-  Except<O, K>;
+import type { RequireAtLeastOne, SetRequired, Simplify } from './typeUtils';
 
 export type StringUnionToFlexibleOptionArray<Op extends string> = Array<
   Op extends unknown ? FlexibleOption<Op> : never

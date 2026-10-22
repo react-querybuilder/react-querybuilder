@@ -1,4 +1,3 @@
-import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultOperatorName,
@@ -11,6 +10,7 @@ import type {
   RuleType,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
+import type { Except } from '../../types/typeUtils';
 import { joinWith } from '../arrayUtils';
 import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';

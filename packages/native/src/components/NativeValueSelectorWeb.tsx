@@ -8,4 +8,4 @@ import { NativeValueSelector } from './NativeValueSelector';
  */
 export const NativeValueSelectorWeb = <OptType extends FullOption = FullOption>(
   props: ValueSelectorNativeProps<OptType>
-): React.JSX.Element => <NativeValueSelector {...props} />;
+): React.JSX.Element => <NativeValueSelector<OptType> {...props} />;

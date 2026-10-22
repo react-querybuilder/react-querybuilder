@@ -11,7 +11,6 @@ import type {
 } from '@react-querybuilder/core';
 import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
-import type { Except } from 'type-fest';
 import type {
   ActionElementREProps,
   ShiftActionsREProps,
@@ -27,6 +26,9 @@ import type {
   RulesEngine,
   RulesEngineAny,
 } from './rulesEngine';
+
+// Local copy of type-fest util (avoids loading all of type-fest when typechecking source)
+type Except<O, K extends keyof O> = { [P in keyof O as P extends K ? never : P]: O[P] };
 
 /**
  * Configuration options passed in the `schema` prop from

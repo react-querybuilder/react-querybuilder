@@ -4,8 +4,11 @@
     "paths": {
       "@react-querybuilder/core": ["../core/src"],
       "@react-querybuilder/core/*": ["../core/src/utils/*"],
-      "@rqb-utils": ["../core/src/utils"]
+      "@rqb-utils": ["../core/src/utils"],
+      "drizzle-orm": ["../../utils/typestubs/drizzle-orm.d.ts"],
+      "sequelize": ["../../utils/typestubs/sequelize.d.ts"],
+      "@tanstack/db": ["../../utils/typestubs/tanstack-db.d.ts"]
     }
   },
-  "include": ["./*.ts", "./*.mts", "./src/"]
+  "include": ["./src/"]
 }

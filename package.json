@@ -96,7 +96,7 @@
     "typecheck:examples": "./node_modules/typescript/bin/tsc -p examples",
     "typecheck:website": "./node_modules/typescript/bin/tsc -p website",
     "typecheck:utils": "./node_modules/typescript/bin/tsc -p utils",
-    "typecheck:root": "./node_modules/typescript/bin/tsc -p ./tsconfig.json",
+    "typecheck:configs": "./node_modules/typescript/bin/tsc -p ./tsconfig.json",
     "are-the-types-wrong": "bun run --parallel 'attw:*'",
     "attw:antd": "attw --format table-flipped --pack ./packages/antd",
     "attw:bootstrap": "attw --format table-flipped --pack ./packages/bootstrap",
@@ -198,7 +198,7 @@
     "spel2js": "^0.2.9",
     "tailwindcss": "^4.3.3",
     "type-fest": "^5.10.0",
-    "typescript": "^7.0.2",
+    "typescript": "7.1.0-beta",
     "vite": "^8.3.4"
   },
   "catalogs": {

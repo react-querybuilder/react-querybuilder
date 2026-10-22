@@ -1,6 +1,6 @@
 import type { Op as _OpTypes, col as _colType, fn as _fnType } from 'sequelize';
-import type { Simplify } from 'type-fest';
 import type { RuleProcessor } from '../../types';
+import type { Simplify } from '../../types/typeUtils';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
@@ -18,8 +18,9 @@ type FnType = typeof _fnType;
 export const defaultRuleProcessorSequelize: RuleProcessor = (
   rule,
   // v8 ignore next
-  { parseNumbers, preserveValueOrder, context = {} } = {}
+  opts = {}
 ): Record<string, unknown> | undefined => {
+  const { parseNumbers, preserveValueOrder, context = {} } = opts;
   const {
     sequelizeOperators: Op,
     sequelizeCol: col,

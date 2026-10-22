@@ -7,6 +7,8 @@ import type {
   GetOptionIdentifierType,
   QueryBuilderProps,
   RuleGroupTypeAny,
+  UseQueryBuilderSchema,
+  UseQueryBuilderSetup,
 } from 'react-querybuilder';
 import { useQueryBuilderSchema, useQueryBuilderSetup } from 'react-querybuilder';
 import type { QueryBuilderNativeProps, SchemaNative } from '../types';
@@ -21,7 +23,7 @@ export const useQueryBuilderNative = <
   C extends FullCombinator,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>
-): ReturnType<typeof useQueryBuilderSchema<RG, F, O, C>> =>
+): UseQueryBuilderSchema<RG, F, O, C> =>
   useQueryBuilderSchemaNative(props, useQueryBuilderSetup(props as QueryBuilderProps<RG, F, O, C>));
 
 /**
@@ -34,13 +36,16 @@ export const useQueryBuilderSchemaNative = <
   C extends FullCombinator,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>,
-  setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>
-): ReturnType<typeof useQueryBuilderSchema<RG, F, O, C>> & {
+  setup: UseQueryBuilderSetup<RG, F, O, C>
+): UseQueryBuilderSchema<RG, F, O, C> & {
   schema: SchemaNative<F, GetOptionIdentifierType<O>>;
 } => {
   const qb = useQueryBuilderSchema<RG, F, O, C>(props, setup);
 
   const styles = useMemo(() => StyleSheet.create(props.styles ?? {}), [props.styles]);
 
-  return { ...qb, schema: { ...qb.schema, styles } };
+  const schema: SchemaNative<F, GetOptionIdentifierType<O>> = { ...qb.schema, styles };
+
+  // Not spread: `{ ...qb, schema }` forces a ~0.5s structural compare vs the return type
+  return Object.assign({}, qb, { schema });
 };

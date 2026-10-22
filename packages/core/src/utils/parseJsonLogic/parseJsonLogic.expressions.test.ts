@@ -1,10 +1,10 @@
-import type { Except } from 'type-fest';
 import type {
   DefaultRuleGroupType,
   DefaultRuleType,
   ExpressionNode,
   RQBJsonLogic,
 } from '../../types';
+import type { Except } from '../../types/typeUtils';
 import { parseJsonLogic } from './parseJsonLogic';
 import type { ParseJsonLogicOptions } from './parseJsonLogic';
 import type { JsonLogicExpressionOperand, ParseJsonLogicExpressionContext } from './types';

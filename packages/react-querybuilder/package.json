@@ -232,7 +232,6 @@
     "react-dom": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "sass": "catalog:",
-    "type-fest": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   },

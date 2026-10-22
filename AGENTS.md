@@ -102,6 +102,13 @@ export interface QueryBuilderProps<
 import type { RuleGroupType } from '../types';
 ```
 
+### tsconfig / typecheck perf
+
+- Package `tsconfig.json`s include only `src/` (+ `dev/`); tool configs (`packages/*/*.{ts,mts}`) are checked by root `tsconfig.json` (`bun typecheck:configs`)
+- `tsconfig.base.json` maps `drizzle-orm`/`sequelize`/`@tanstack/db` to `any` stubs in `utils/typestubs/`; projects using real ORM types (core, expr, datetime, root) extend `tsconfig.base.orm.json` (keep its `paths` in sync)
+- No `type-fest` imports in src; use `packages/core/src/types/typeUtils.ts` (guarded by `typeUtils.test-d.ts`) or a local copy
+- Profile w/ `tsc -p <pkg> --extendedDiagnostics` / `--generateTrace` + `bunx @typescript/analyze-trace`
+
 ### Components
 
 - Composition over inheritance

@@ -1,4 +1,3 @@
-import type { SetOptional } from 'type-fest';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
   DiagnosticsResult,
@@ -23,6 +22,7 @@ import type {
   ValidationResult,
   ValueProcessorByRule,
 } from '../../types';
+import type { SetOptional } from '../../types/typeUtils';
 import { getParseNumberMethod } from '../getParseNumberMethod';
 import { lc } from '../misc';
 import { getOption, toFlatOptionArray, toFullOptionList } from '../optGroupUtils';

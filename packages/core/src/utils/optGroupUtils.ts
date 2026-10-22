@@ -1,4 +1,3 @@
-import type { RequireAtLeastOne } from 'type-fest';
 import { defaultPlaceholderLabel, defaultPlaceholderName } from '../defaults';
 import type {
   BaseOption,
@@ -19,6 +18,7 @@ import type {
   ValueOption,
   WithUnknownIndex,
 } from '../types';
+import type { RequireAtLeastOne } from '../types/typeUtils';
 import { isPojo } from './misc';
 import { objectKeys } from './objectUtils';
 

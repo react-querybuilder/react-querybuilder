@@ -53,9 +53,13 @@ import type {
   Ref,
   RefAttributes,
 } from 'react';
-import type { SetNonNullable } from 'type-fest';
 import type { UseRuleGroup } from '../components/RuleGroup';
 import type { SetQueryStateOptions } from '../redux/queriesSlice';
+
+// Local copy of type-fest util (avoids loading all of type-fest when typechecking source)
+type SetNonNullable<B, K extends keyof B = keyof B> = {
+  [P in keyof B]: P extends K ? NonNullable<B[P]> : B[P];
+};
 
 /**
  * Base interface for all subcomponents.

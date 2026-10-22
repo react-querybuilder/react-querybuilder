@@ -1,7 +1,7 @@
-import type { RequiredDeep } from 'type-fest';
 import type { Classname, Path } from './basic';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';
+import type { RequiredDeep } from './typeUtils';
 
 /**
  * Base interface for all rule subcomponents.
