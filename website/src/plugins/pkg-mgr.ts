@@ -129,7 +129,8 @@ type ThemeImport = 'Tabs' | 'TabItem';
 const themeImports: ThemeImport[] = ['Tabs', 'TabItem'];
 // TODO legacy approximation, good-enough for now but not 100% accurate
 const hasThemeImport = (node: Node, name: ThemeImport): boolean =>
-  isMdxEsmLiteral(node) && new RegExp(`['"]@theme/${name}['"]`).test(node.value);
+  isMdxEsmLiteral(node) &&
+  new RegExp(`\\bimport\\s+${name}\\s+from\\s+['"]@theme/${name}['"]`).test(node.value);
 
 const isParent = (node: Node): node is Parent => Array.isArray((node as Parent).children);
 const isNpm2Yarn = (node: Node): node is Code =>
