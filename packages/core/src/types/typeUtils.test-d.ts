@@ -7,6 +7,12 @@ import type * as L from './typeUtils';
 type Equal<A, B> =
   (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 type Expect<T extends true> = T;
+type Extends<A, B> = A extends B ? true : false;
+
+type RequireAtLeastOneOption = L.RequireAtLeastOne<
+  { name?: string; value?: string; label: string },
+  'name' | 'value'
+>;
 
 interface Obj {
   a: number;
@@ -17,6 +23,9 @@ interface Obj {
 type Fn = ((x: number) => string) & { p?: { q?: number } };
 
 export type _Tests = [
+  Expect<Extends<{ name: string; label: string }, RequireAtLeastOneOption>>,
+  Expect<Extends<{ value: string; label: string }, RequireAtLeastOneOption>>,
+  Expect<Equal<Extends<{ label: string }, RequireAtLeastOneOption>, false>>,
   Expect<Equal<L.Simplify<{ a: 1 } & { b: 2 }>, TF.Simplify<{ a: 1 } & { b: 2 }>>>,
   Expect<Equal<L.Except<Obj, 'a'>, TF.Except<Obj, 'a'>>>,
   Expect<Equal<L.Except<RuleGroupType, 'rules'>, TF.Except<RuleGroupType, 'rules'>>>,
