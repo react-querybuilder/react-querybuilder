@@ -70,7 +70,10 @@ describe('helpers', () => {
 
   it('getSQLRegexPatternValue', () => {
     expect(getSQLRegexPatternValue('sqlite', 'a', 'im')).toBe('(?im)a');
-    expect(getSQLRegexPatternValue('postgresql', 'a', 'im')).toBe('(?w)a');
+    expect(getSQLRegexPatternValue('postgresql', 'a', '')).toBe('(?p)a');
+    expect(getSQLRegexPatternValue('postgresql', 'a', 'im')).toBe('(?n)a');
+    expect(getSQLRegexPatternValue('postgresql', 'a', 's')).toBe('a');
+    expect(getSQLRegexPatternValue('postgresql', 'a', 'ms')).toBe('(?w)a');
     expect(getSQLRegexPatternValue('mysql', 'a', 'im')).toBe('a');
     expect(getSQLRegexPatternValue('sqlite', 1, 'i')).toBe(1);
   });

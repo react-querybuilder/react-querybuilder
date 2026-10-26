@@ -190,10 +190,10 @@ it('handles regex operators', () => {
   ];
   expect(fq(regexRules, 'postgresql')).toEqual({
     [Op.and]: [
-      { f: { [Op.regexp]: 'a' } },
-      { f: { [Op.iRegexp]: 'b' } },
-      { f: { [Op.notRegexp]: 'c' } },
-      { f: { [Op.notIRegexp]: 'd' } },
+      { f: { [Op.regexp]: '(?p)a' } },
+      { f: { [Op.iRegexp]: '(?p)b' } },
+      { f: { [Op.notRegexp]: '(?p)c' } },
+      { f: { [Op.notIRegexp]: '(?p)d' } },
     ],
   });
   // `iRegexp` ops are PostgreSQL-only; inline `(?i)` otherwise

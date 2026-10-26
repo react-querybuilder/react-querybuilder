@@ -156,7 +156,7 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
     case 'matches':
     case 'doesnotmatch': {
       const not = operatorLC === 'doesnotmatch';
-      // `Op.iRegexp`/`Op.notIRegexp` are PostgreSQL-only (`m` → `(?w)`, `s` is PG default);
+      // `Op.iRegexp`/`Op.notIRegexp` are PostgreSQL-only (`m`/`s` → `(?p|n|w)`);
       // inline `(?ims)` elsewhere (MySQL/MariaDB/SQLite)
       if (opts.preset !== 'postgresql') {
         return {

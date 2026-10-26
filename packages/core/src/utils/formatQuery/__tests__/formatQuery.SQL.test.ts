@@ -1175,7 +1175,7 @@ describe('regex operators', () => {
     ],
     [
       'postgresql',
-      `("f" ~* '(?w)a\\d''x' and "g" !~ '123' and "h" !~* 'b' and "j" ~* ('(?w)' || "k"))`,
+      `("f" ~* '(?w)a\\d''x' and "g" !~ '(?p)123' and "h" !~* '(?p)b' and "j" ~* ('(?n)' || "k"))`,
     ],
     [
       'mysql',

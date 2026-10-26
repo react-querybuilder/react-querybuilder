@@ -282,7 +282,7 @@ it('handles regex operators', () => {
       },
       { format: 'drizzle', preset }
     )(fields, ops);
-  expect(rule('postgresql')).toEqual([[fields.f, 'raw: !~* ', 'a']]);
+  expect(rule('postgresql')).toEqual([[fields.f, 'raw: !~* ', '(?p)a']]);
   expect(rule('oracle', { operator: 'matches', value: 'f1', valueSource: 'field' })).toEqual([
     ['raw:regexp_like(', fields.f, 'raw:, ', fields.f1, "raw:, 'i')"],
   ]);

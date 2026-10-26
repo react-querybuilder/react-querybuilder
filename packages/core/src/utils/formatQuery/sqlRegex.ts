@@ -15,11 +15,17 @@ export const isSQLRegexPreset = (preset?: string): boolean => sqlRegexPresets.ha
 
 /**
  * Inline flag prefix for presets w/o a (complete) flags argument. SQLite: `(?ims)`.
- * PostgreSQL: `m` → `(?w)` (ARE "weird" newline-sensitive: `^`/`$` match at line breaks).
+ * PostgreSQL ARE newline modes (JS semantics): none → `(?p)`, `m` → `(?n)`, `s` → default,
+ * `ms` → `(?w)`.
  */
 const getInlineFlagsPrefix = (preset: string | undefined, flags: unknown): string => {
   if (preset === 'sqlite') return toInlineFlagsRegex('', flags, { whitelist: 'ims' });
-  if (preset === 'postgresql') return sanitizeRegexFlags(flags, 'm') ? '(?w)' : '';
+  if (preset === 'postgresql') {
+    const f = sanitizeRegexFlags(flags, 'ms');
+    const m = f.includes('m');
+    const s = f.includes('s');
+    return m ? (s ? '(?w)' : '(?n)') : s ? '' : '(?p)';
+  }
   return '';
 };
 
@@ -39,7 +45,7 @@ export const getSQLRegexPatternValue = (
  * literal, field name, or bind placeholder. Set `flagsInlined` when `pattern` came from
  * {@link getSQLRegexPatternValue}; otherwise inline flags are prepended via SQL concatenation.
  *
- * - postgresql: `f ~ p`, `f ~* p` (`i`), `f !~ p`, `f !~* p` (`m` inlined as `(?w)`)
+ * - postgresql: `f ~ p`, `f ~* p` (`i`), `f !~ p`, `f !~* p` (`m`/`s` inlined as `(?p|n|w)`)
  * - mysql: `f REGEXP p`, or `f REGEXP CONCAT('(?flags)', p)` w/ flags (inline `s` valid in both
  *   MySQL ICU and MariaDB PCRE)
  * - oracle: `REGEXP_LIKE(f, p[, 'flags'])` (`s` → `n`)

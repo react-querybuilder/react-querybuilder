@@ -219,8 +219,8 @@ describe('regex operators', () => {
 
   it('parameterized', () => {
     expect(formatQuery(q, { format: 'parameterized', preset: 'postgresql' })).toEqual({
-      sql: `("f" ~* $1 and "g" !~ $2 and "h" ~ "k" and "i" ~ $p)`,
-      params: ["a\\d'x", '123'],
+      sql: `("f" ~* $1 and "g" !~ $2 and "h" ~ ('(?p)' || "k") and "i" ~ ('(?p)' || $p))`,
+      params: ["a\\d'x", '(?p)123'],
     });
     expect(formatQuery(q, { format: 'parameterized', preset: 'mysql' })).toEqual({
       sql: "(`f` regexp CONCAT('(?is)', ?) and `g` not regexp ? and `h` regexp `k` and `i` regexp :p)",
@@ -259,7 +259,7 @@ describe('regex operators', () => {
       `(h regexp ('(?i)' || k) and i regexp ('(?m)' || :p))`
     );
     expect(formatQuery(qFlags, { format: 'parameterized_named', preset: 'postgresql' }).sql).toBe(
-      `("h" ~* "k" and "i" ~ ('(?w)' || $p))`
+      `("h" ~* ('(?p)' || "k") and "i" ~ ('(?n)' || $p))`
     );
     expect(formatQuery(q, { format: 'parameterized_named', preset: 'sqlite' }).params).toEqual({
       ':f_1': "(?is)a\\d'x",
