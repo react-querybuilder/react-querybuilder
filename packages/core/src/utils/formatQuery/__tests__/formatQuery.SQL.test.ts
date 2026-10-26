@@ -1176,7 +1176,7 @@ describe('regex operators', () => {
     ['postgresql', `("f" ~* 'a\\d''x' and "g" !~ '123' and "h" !~* 'b' and "j" ~ "k")`],
     [
       'mysql',
-      "(regexp_like(`f`, 'a\\\\d''x', 'imn') and `g` not regexp '123' and not regexp_like(`h`, 'b', 'i') and `j` regexp `k`)",
+      "(`f` regexp CONCAT('(?imn)', 'a\\\\d''x') and `g` not regexp '123' and `h` not regexp CONCAT('(?i)', 'b') and `j` regexp `k`)",
     ],
     [
       'oracle',

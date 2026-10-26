@@ -223,7 +223,7 @@ describe('regex operators', () => {
       params: ["a\\d'x", '123'],
     });
     expect(formatQuery(q, { format: 'parameterized', preset: 'mysql' })).toEqual({
-      sql: "(regexp_like(`f`, ?, 'in') and `g` not regexp ? and `h` regexp `k` and `i` regexp :p)",
+      sql: "(`f` regexp CONCAT('(?in)', ?) and `g` not regexp ? and `h` regexp `k` and `i` regexp :p)",
       params: ["a\\d'x", '123'],
     });
     expect(formatQuery(q, { format: 'parameterized', preset: 'sqlite' })).toEqual({

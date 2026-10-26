@@ -1,5 +1,5 @@
 import { lc } from '../misc';
-import { sanitizeRegexFlags, toInlineFlagsRegex } from './utils';
+import { getSQLConcat, sanitizeRegexFlags, toInlineFlagsRegex } from './utils';
 
 /**
  * SQL presets w/ native regex support. Others ("ansi", "mssql") fall back to `contains`.
@@ -54,10 +54,12 @@ export const buildSQLRegex = ({
       const i = sanitizeRegexFlags(flags, 'i') ? '*' : '';
       return `${field} ${not ? '!' : ''}~${i} ${pattern}`;
     }
-    case 'mysql':
+    case 'mysql': {
+      const f = sanitizeRegexFlags(flags, 'ims').replace('s', 'n');
+      return `${field} ${not ? 'not ' : ''}regexp ${f ? getSQLConcat('CONCAT')(`'(?${f})'`, pattern) : pattern}`;
+    }
     case 'oracle': {
       const f = sanitizeRegexFlags(flags, 'ims').replace('s', 'n');
-      if (preset === 'mysql' && !f) return `${field} ${not ? 'not ' : ''}regexp ${pattern}`;
       return `${not ? 'not ' : ''}regexp_like(${field}, ${pattern}${f ? `, '${f}'` : ''})`;
     }
     // sqlite
