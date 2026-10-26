@@ -4,6 +4,7 @@ import type { Simplify } from '../../types/typeUtils';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
+import { getSQLRegexPatternValue } from './sqlRegex';
 import {
   isRegexOperator,
   isValidValue,
@@ -11,6 +12,7 @@ import {
   regexFallbackRule,
   sanitizeRegexFlags,
   shouldRenderAsNumber,
+  toInlineFlagsRegex,
 } from './utils';
 
 // Presets w/o `Op.regexp` support in Sequelize
@@ -153,15 +155,21 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
 
     case 'matches':
     case 'doesnotmatch': {
-      const i = !!sanitizeRegexFlags(rule.regexFlags, 'i');
       const not = operatorLC === 'doesnotmatch';
-      // `Op.iRegexp`/`Op.notIRegexp` are PostgreSQL-only; inline `(?i)` elsewhere (MySQL/MariaDB)
-      if (i && opts.preset !== 'postgresql') {
-        return { [field]: { [not ? Op.notRegexp : Op.regexp]: `(?i)${value}` } };
+      // `Op.iRegexp`/`Op.notIRegexp` are PostgreSQL-only (`m` → `(?w)`, `s` is PG default);
+      // inline `(?ims)` elsewhere (MySQL/MariaDB/SQLite)
+      if (opts.preset !== 'postgresql') {
+        return {
+          [field]: {
+            [not ? Op.notRegexp : Op.regexp]: toInlineFlagsRegex(`${value}`, rule.regexFlags),
+          },
+        };
       }
+      const i = !!sanitizeRegexFlags(rule.regexFlags, 'i');
       return {
         [field]: {
-          [not ? (i ? Op.notIRegexp : Op.notRegexp) : i ? Op.iRegexp : Op.regexp]: `${value}`,
+          [not ? (i ? Op.notIRegexp : Op.notRegexp) : i ? Op.iRegexp : Op.regexp]:
+            getSQLRegexPatternValue('postgresql', `${value}`, rule.regexFlags),
         },
       };
     }

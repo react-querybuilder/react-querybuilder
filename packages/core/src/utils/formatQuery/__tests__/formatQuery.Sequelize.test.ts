@@ -205,6 +205,19 @@ it('handles regex operators', () => {
       { f: { [Op.notRegexp]: '(?i)d' } },
     ],
   });
+  // `m`/`s` flags
+  const msRules: RuleType[] = [
+    { field: 'f', operator: 'matches', value: 'a', regexFlags: 'ims' },
+    { field: 'f', operator: 'doesNotMatch', value: 'b', regexFlags: 'ms' },
+  ];
+  expect(fq(msRules, 'postgresql')).toEqual({
+    [Op.and]: [{ f: { [Op.iRegexp]: '(?w)a' } }, { f: { [Op.notRegexp]: '(?w)b' } }],
+  });
+  for (const preset of [undefined, 'mysql', 'sqlite'] as const) {
+    expect(fq(msRules, preset)).toEqual({
+      [Op.and]: [{ f: { [Op.regexp]: '(?ims)a' } }, { f: { [Op.notRegexp]: '(?ms)b' } }],
+    });
+  }
   // Field value source falls back to `contains`
   expect(fq([{ field: 'f', operator: 'matches', value: 'g', valueSource: 'field' }])).toEqual(
     fq([{ field: 'f', operator: 'contains', value: 'g', valueSource: 'field' }])
