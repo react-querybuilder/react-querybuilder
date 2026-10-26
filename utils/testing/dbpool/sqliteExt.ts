@@ -27,11 +27,9 @@ export const configureCustomSQLite = async (): Promise<boolean> => {
   if (process.platform !== 'darwin') return true;
   for await (const path of dylibCandidates()) {
     if (await Bun.file(path).exists()) {
-      try {
-        extSupported = Database.setCustomSQLite(path);
-      } catch {
-        extSupported = false;
-      }
+      // Rejection of an existing candidate = broken config; throw so tests fail, not skip
+      extSupported = Database.setCustomSQLite(path);
+      if (!extSupported) throw new Error(`Database.setCustomSQLite rejected ${path}`);
       return extSupported;
     }
   }
