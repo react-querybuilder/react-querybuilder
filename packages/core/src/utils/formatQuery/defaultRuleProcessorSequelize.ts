@@ -13,6 +13,9 @@ import {
   shouldRenderAsNumber,
 } from './utils';
 
+// Presets w/o `Op.regexp` support in Sequelize
+const nonRegexPresets = new Set(['ansi', 'mssql', 'oracle']);
+
 type OpTypes = Simplify<typeof _OpTypes>;
 type ColType = typeof _colType;
 type FnType = typeof _fnType;
@@ -41,8 +44,11 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
   // Match modes are not supported in this format
   if (processMatchMode(rule)) return undefined;
 
-  // Regex w/ field value source not supported; fall back to `contains`-style
-  if (isRegexOperator(rule.operator) && rule.valueSource === 'field') {
+  // Regex w/ field value source or non-regex preset not supported; fall back to `contains`-style
+  if (
+    isRegexOperator(rule.operator) &&
+    (rule.valueSource === 'field' || nonRegexPresets.has(opts.preset ?? ''))
+  ) {
     return defaultRuleProcessorSequelize(regexFallbackRule(rule), opts);
   }
 

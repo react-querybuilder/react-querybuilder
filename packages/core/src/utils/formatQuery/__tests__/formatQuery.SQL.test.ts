@@ -1179,7 +1179,7 @@ describe('regex operators', () => {
     ],
     [
       'mysql',
-      "(`f` regexp CONCAT('(?imn)', 'a\\\\d''x') and `g` not regexp '123' and `h` not regexp CONCAT('(?i)', 'b') and `j` regexp CONCAT('(?im)', `k`))",
+      "(`f` regexp CONCAT('(?ims)', 'a\\\\d''x') and `g` not regexp '123' and `h` not regexp CONCAT('(?i)', 'b') and `j` regexp CONCAT('(?im)', `k`))",
     ],
     [
       'oracle',

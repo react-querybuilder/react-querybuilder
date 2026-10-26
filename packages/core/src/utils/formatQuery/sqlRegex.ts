@@ -40,7 +40,8 @@ export const getSQLRegexPatternValue = (
  * {@link getSQLRegexPatternValue}; otherwise inline flags are prepended via SQL concatenation.
  *
  * - postgresql: `f ~ p`, `f ~* p` (`i`), `f !~ p`, `f !~* p` (`m` inlined as `(?w)`)
- * - mysql: `f REGEXP p`, or `f REGEXP CONCAT('(?flags)', p)` w/ flags (`s` → `n`)
+ * - mysql: `f REGEXP p`, or `f REGEXP CONCAT('(?flags)', p)` w/ flags (inline `s` valid in both
+ *   MySQL ICU and MariaDB PCRE)
  * - oracle: `REGEXP_LIKE(f, p[, 'flags'])` (`s` → `n`)
  * - sqlite: `f REGEXP p` (flags inlined; requires a `regexp` extension)
  */
@@ -68,7 +69,7 @@ export const buildSQLRegex = ({
       return `${field} ${not ? '!' : ''}~${i} ${p}`;
     }
     case 'mysql': {
-      const f = sanitizeRegexFlags(flags, 'ims').replace('s', 'n');
+      const f = sanitizeRegexFlags(flags, 'ims');
       return `${field} ${not ? 'not ' : ''}regexp ${f ? getSQLConcat('CONCAT')(`'(?${f})'`, pattern) : pattern}`;
     }
     case 'oracle': {

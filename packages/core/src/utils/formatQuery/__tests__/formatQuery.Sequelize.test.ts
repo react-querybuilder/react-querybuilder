@@ -7,7 +7,7 @@
  */
 
 import { col, fn, Op } from 'sequelize';
-import type { RuleType } from '../../../types';
+import type { RuleType, SQLPreset } from '../../../types';
 import { defaultRuleProcessorSequelize } from '../defaultRuleProcessorSequelize';
 import { formatQuery } from '../formatQuery';
 import {
@@ -177,7 +177,7 @@ it('parseNumbers', () => {
 });
 
 it('handles regex operators', () => {
-  const fq = (rules: RuleType[], preset?: 'postgresql') =>
+  const fq = (rules: RuleType[], preset?: SQLPreset) =>
     formatQuery(
       { combinator: 'and', rules },
       { format: 'sequelize', context: contextWithAllReqs, preset }
@@ -209,4 +209,10 @@ it('handles regex operators', () => {
   expect(fq([{ field: 'f', operator: 'matches', value: 'g', valueSource: 'field' }])).toEqual(
     fq([{ field: 'f', operator: 'contains', value: 'g', valueSource: 'field' }])
   );
+  // No `Op.regexp` support for these presets; fall back to `contains`
+  for (const preset of ['ansi', 'mssql', 'oracle'] as const) {
+    expect(fq([{ field: 'f', operator: 'doesNotMatch', value: 'g' }], preset)).toEqual(
+      fq([{ field: 'f', operator: 'doesNotContain', value: 'g' }], preset)
+    );
+  }
 });
