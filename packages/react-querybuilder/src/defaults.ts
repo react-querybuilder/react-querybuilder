@@ -50,33 +50,88 @@ export const defaultControlElements: {
   valueSelector: typeof ValueSelector;
   valueSourceSelector: typeof ValueSelector;
 } = {
-  actionElement: ActionElement,
-  addGroupAction: ActionElement,
-  addRuleAction: ActionElement,
-  cloneGroupAction: ActionElement,
-  cloneRuleAction: ActionElement,
-  combinatorSelector: ValueSelector,
-  dragHandle: DragHandle,
-  fieldSelector: ValueSelector,
-  inlineCombinator: InlineCombinator,
-  lockGroupAction: ActionElement,
-  lockRuleAction: ActionElement,
-  matchModeEditor: MatchModeEditor,
-  muteGroupAction: ActionElement,
-  muteRuleAction: ActionElement,
-  notToggle: NotToggle,
-  operatorSelector: ValueSelector,
-  removeGroupAction: ActionElement,
-  removeRuleAction: ActionElement,
-  rule: Rule,
-  ruleGroup: RuleGroup,
-  ruleGroupBodyElements: RuleGroupBodyComponents,
-  ruleGroupHeaderElements: RuleGroupHeaderComponents,
-  shiftActions: ShiftActions,
+  // Getters avoid TDZ errors from circular imports (e.g. Rule → ... → useMergedContext → defaults)
+  get actionElement() {
+    return ActionElement;
+  },
+  get addGroupAction() {
+    return ActionElement;
+  },
+  get addRuleAction() {
+    return ActionElement;
+  },
+  get cloneGroupAction() {
+    return ActionElement;
+  },
+  get cloneRuleAction() {
+    return ActionElement;
+  },
+  get combinatorSelector() {
+    return ValueSelector;
+  },
+  get dragHandle() {
+    return DragHandle;
+  },
+  get fieldSelector() {
+    return ValueSelector;
+  },
+  get inlineCombinator() {
+    return InlineCombinator;
+  },
+  get lockGroupAction() {
+    return ActionElement;
+  },
+  get lockRuleAction() {
+    return ActionElement;
+  },
+  get matchModeEditor() {
+    return MatchModeEditor;
+  },
+  get muteGroupAction() {
+    return ActionElement;
+  },
+  get muteRuleAction() {
+    return ActionElement;
+  },
+  get notToggle() {
+    return NotToggle;
+  },
+  get operatorSelector() {
+    return ValueSelector;
+  },
+  get removeGroupAction() {
+    return ActionElement;
+  },
+  get removeRuleAction() {
+    return ActionElement;
+  },
+  get rule() {
+    return Rule;
+  },
+  get ruleGroup() {
+    return RuleGroup;
+  },
+  get ruleGroupBodyElements() {
+    return RuleGroupBodyComponents;
+  },
+  get ruleGroupHeaderElements() {
+    return RuleGroupHeaderComponents;
+  },
+  get shiftActions() {
+    return ShiftActions;
+  },
   // Requires the history recorder from `react-querybuilder/history`; see `showUndoRedo`.
   undoRedoActions: null,
-  ungroupAction: ActionElement,
-  valueEditor: ValueEditor,
-  valueSelector: ValueSelector,
-  valueSourceSelector: ValueSelector,
+  get ungroupAction() {
+    return ActionElement;
+  },
+  get valueEditor() {
+    return ValueEditor;
+  },
+  get valueSelector() {
+    return ValueSelector;
+  },
+  get valueSourceSelector() {
+    return ValueSelector;
+  },
 } satisfies Controls<FullField, string>;
