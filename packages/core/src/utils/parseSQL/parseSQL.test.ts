@@ -806,7 +806,8 @@ describe('regex', () => {
       combinator: 'and',
       rules: [
         { field: 'f', operator: 'matches', value: `a\\d'x`, regexFlags: 'i' },
-        { field: 'g', operator: 'doesNotMatch', value: '^b$' },
+        { field: 'g', operator: 'doesNotMatch', value: '^b$', regexFlags: 'm' },
+        { field: 'h', operator: 'matches', value: 'c', regexFlags: 'ims' },
       ],
     };
     expect(parseSQL(formatQuery(query, { preset: 'postgresql' }), pr)).toEqual(query);

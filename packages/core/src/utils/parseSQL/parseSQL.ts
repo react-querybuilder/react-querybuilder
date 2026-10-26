@@ -235,7 +235,14 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
     const f = getFieldName(left);
     const operator = negate ? 'doesNotMatch' : 'matches';
     if (!shouldParseRegex(options, f) || !fieldIsValid(f, operator)) return null;
-    const value = evalSQLLiteralValue(right as SQLStringValue) as string;
+    let value = evalSQLLiteralValue(right as SQLStringValue) as string;
+    // Strip PostgreSQL ARE newline-mode prefix emitted by `formatQuery` (`p`: none, `n`: m, `w`: ms)
+    const pg = /^\(\?([pnw])\)/.exec(value);
+    if (pg) {
+      value = value.slice(pg[0].length);
+      const extra = pg[1] === 'n' ? 'm' : pg[1] === 'w' ? 'ms' : '';
+      flags = [...'ims'].filter(c => flags.includes(c) || extra.includes(c)).join('');
+    }
     return { field: f, operator, value, ...(flags && { regexFlags: flags }) };
   };
 
