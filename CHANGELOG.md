@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `"oracle"` preset: the "parameterized" format emits numbered placeholders (`:1`, `:2`, ...) instead of `?`.
   - `"mysql"` preset: field names are quoted with backticks (and `fieldIdentifierSeparator` is `"."`), so reserved words and special characters work. With `escapeQuotes` on, backslashes in string values are doubled, since MySQL/MariaDB treat `\` as an escape character and an unescaped trailing backslash would escape the closing quote.
 - [#1118] `@react-querybuilder/expr`: the `mod` function serializes as `MOD(a, b)` for the `"oracle"` preset, since Oracle has no `%` operator.
+- [#1124] Importing `Rule` (or anything else) from `react-querybuilder` no longer throws "Cannot access 'Rule' before initialization" when a bundler loads individual ESM modules in a different order (via `sideEffects`).
 
 ## [v8.25.0] - 2026-10-12
 
@@ -2624,6 +2625,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1114]: https://github.com/react-querybuilder/react-querybuilder/issues/1114
 [#1118]: https://github.com/react-querybuilder/react-querybuilder/issues/1118
 [#1119]: https://github.com/react-querybuilder/react-querybuilder/issues/1119
+[#1124]: https://github.com/react-querybuilder/react-querybuilder/pull/1124
 
 <!-- #endregion -->
 
