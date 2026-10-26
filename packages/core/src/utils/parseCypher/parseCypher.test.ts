@@ -231,6 +231,10 @@ describe('regex', () => {
 
   it('round-trips w/ parseRegex', () => {
     expect(parseCypher(formatQuery(query, 'cypher'), { parseRegex: true })).toEqual(query);
+    // Legacy `.*(?:p).*` wrapper
+    expect(parseCypher("f =~ '.*(?:a).*'", { parseRegex: true }).rules).toEqual([
+      { field: 'f', operator: 'matches', value: 'a' },
+    ]);
   });
 
   it('uses field operators to decide', () => {
@@ -240,7 +244,7 @@ describe('regex', () => {
     ];
     expect(parseCypher(formatQuery(query, 'cypher'), { fields }).rules).toEqual([
       query.rules[0],
-      { field: 'g', operator: 'doesNotContain', value: '.*(?:x|y).*' },
+      { field: 'g', operator: 'doesNotContain', value: String.raw`[\s\S]*(?:x|y)[\s\S]*` },
     ]);
   });
 

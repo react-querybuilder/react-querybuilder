@@ -183,11 +183,11 @@ describe('matches/doesNotMatch', () => {
       rules: [
         { field: 'f', operator: 'matches', value: "a'b", regexFlags: 'igx' },
         { field: 'f', operator: 'doesNotMatch', value: '^x' },
-        { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+        { field: 'f', operator: 'matches', value: 'g', valueSource: 'field', regexFlags: 'i' },
       ],
     };
     expect(formatQuery(q, 'spel')).toBe(
-      `f matches '(?i).*(?:a''b).*' and !(f matches '.*(?:^x).*') and f matches g`
+      String.raw`f matches '(?i)[\s\S]*(?:a''b)[\s\S]*' and !(f matches '[\s\S]*(?:^x)[\s\S]*') and f matches '(?i)[\s\S]*(?:'.concat(g).concat(')[\s\S]*')`
     );
   });
 });

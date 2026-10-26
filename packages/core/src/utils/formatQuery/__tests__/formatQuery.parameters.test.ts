@@ -247,6 +247,20 @@ describe('regex operators', () => {
       sql: `(f regexp :f_1 and g not regexp :g_1 and h regexp k and i regexp :p)`,
       params: { f_1: "(?is)a\\d'x", g_1: '123', p: null },
     });
+    // Flags on field/param patterns inlined via SQL concat
+    const qFlags: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'h', operator: 'matches', value: 'k', valueSource: 'field', regexFlags: 'i' },
+        { field: 'i', operator: 'matches', value: 'p', valueSource: 'parameter', regexFlags: 'm' },
+      ],
+    };
+    expect(formatQuery(qFlags, { format: 'parameterized_named', preset: 'sqlite' }).sql).toBe(
+      `(h regexp ('(?i)' || k) and i regexp ('(?m)' || :p))`
+    );
+    expect(formatQuery(qFlags, { format: 'parameterized_named', preset: 'postgresql' }).sql).toBe(
+      `("h" ~* "k" and "i" ~ ('(?w)' || $p))`
+    );
     expect(formatQuery(q, { format: 'parameterized_named', preset: 'sqlite' }).params).toEqual({
       ':f_1': "(?is)a\\d'x",
       ':g_1': '123',

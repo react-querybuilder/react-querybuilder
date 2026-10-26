@@ -124,8 +124,10 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
 
     case 'matches':
     case 'doesnotmatch': {
+      // Field/param pattern: wrap at runtime for same 'find' + flags semantics as literals
+      const [pre, post] = toInlineFlagsRegex('\0', rule.regexFlags, { full: true }).split('\0');
       const valueTL = valueIsField
-        ? trimIfString(value)
+        ? `'${pre}'.concat(${trimIfString(value)}).concat('${post}')`
         : `'${escapeSingleQuotes(
             toInlineFlagsRegex(`${value}`, rule.regexFlags, { full: true }),
             escapeQuotes

@@ -2,7 +2,7 @@ import { lc } from '../misc';
 import { getSQLConcat, sanitizeRegexFlags, toInlineFlagsRegex } from './utils';
 
 /**
- * SQL presets w/ native regex support. Others ("ansi", "mssql") fall back to `contains`.
+ * SQL presets w/ native regex support. Others ('ansi', 'mssql') fall back to `contains`.
  */
 const sqlRegexPresets = new Set(['postgresql', 'mysql', 'oracle', 'sqlite']);
 
@@ -14,26 +14,35 @@ const sqlRegexPresets = new Set(['postgresql', 'mysql', 'oracle', 'sqlite']);
 export const isSQLRegexPreset = (preset?: string): boolean => sqlRegexPresets.has(preset ?? '');
 
 /**
- * Pre-processes a regex pattern value for the preset. SQLite has no flags argument, so flags
- * are inlined (`(?i)`).
+ * Inline flag prefix for presets w/o a (complete) flags argument. SQLite: `(?ims)`.
+ * PostgreSQL: `m` → `(?w)` (ARE "weird" newline-sensitive: `^`/`$` match at line breaks).
+ */
+const getInlineFlagsPrefix = (preset: string | undefined, flags: unknown): string => {
+  if (preset === 'sqlite') return toInlineFlagsRegex('', flags, { whitelist: 'ims' });
+  if (preset === 'postgresql') return sanitizeRegexFlags(flags, 'm') ? '(?w)' : '';
+  return '';
+};
+
+/**
+ * Pre-processes a literal regex pattern value for the preset, inlining flags the preset can't
+ * pass as an argument (see {@link buildSQLRegex}).
  */
 export const getSQLRegexPatternValue = (
   preset: string | undefined,
   value: unknown,
   flags: unknown
 ): unknown =>
-  preset === 'sqlite' && typeof value === 'string'
-    ? toInlineFlagsRegex(value, flags, { whitelist: 'ims' })
-    : value;
+  typeof value === 'string' ? `${getInlineFlagsPrefix(preset, flags)}${value}` : value;
 
 /**
  * Builds a regex match expression for a supported SQL preset. `pattern` must already be a SQL
- * literal, field name, or bind placeholder.
+ * literal, field name, or bind placeholder. Set `flagsInlined` when `pattern` came from
+ * {@link getSQLRegexPatternValue}; otherwise inline flags are prepended via SQL concatenation.
  *
- * - postgresql: `f ~ p`, `f ~* p` (`i`), `f !~ p`, `f !~* p`
- * - mysql: `f REGEXP p`, or `REGEXP_LIKE(f, p, 'flags')` w/ flags (`s` → `n`)
+ * - postgresql: `f ~ p`, `f ~* p` (`i`), `f !~ p`, `f !~* p` (`m` inlined as `(?w)`)
+ * - mysql: `f REGEXP p`, or `f REGEXP CONCAT('(?flags)', p)` w/ flags (`s` → `n`)
  * - oracle: `REGEXP_LIKE(f, p[, 'flags'])` (`s` → `n`)
- * - sqlite: `f REGEXP p` (flags inlined into pattern; requires a `regexp` extension)
+ * - sqlite: `f REGEXP p` (flags inlined; requires a `regexp` extension)
  */
 export const buildSQLRegex = ({
   preset,
@@ -41,18 +50,22 @@ export const buildSQLRegex = ({
   pattern,
   flags,
   operator,
+  flagsInlined = false,
 }: {
   preset: string | undefined;
   field: string;
   pattern: string;
   flags: unknown;
   operator: string;
+  flagsInlined?: boolean;
 }): string => {
   const not = lc(operator) === 'doesnotmatch';
+  const prefix = flagsInlined ? '' : getInlineFlagsPrefix(preset, flags);
+  const p = prefix ? `('${prefix}' || ${pattern})` : pattern;
   switch (preset) {
     case 'postgresql': {
       const i = sanitizeRegexFlags(flags, 'i') ? '*' : '';
-      return `${field} ${not ? '!' : ''}~${i} ${pattern}`;
+      return `${field} ${not ? '!' : ''}~${i} ${p}`;
     }
     case 'mysql': {
       const f = sanitizeRegexFlags(flags, 'ims').replace('s', 'n');
@@ -64,6 +77,6 @@ export const buildSQLRegex = ({
     }
     // sqlite
     default:
-      return `${field} ${not ? 'not ' : ''}regexp ${pattern}`;
+      return `${field} ${not ? 'not ' : ''}regexp ${p}`;
   }
 };

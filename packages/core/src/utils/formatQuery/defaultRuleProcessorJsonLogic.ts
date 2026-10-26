@@ -125,7 +125,11 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (rule, options = {})
     if (valueIsField) return defaultRuleProcessorJsonLogic(regexFallbackRule(rule), options);
     const flags = sanitizeRegexFlags(rule.regexFlags);
     return negateIfNotOp(operatorLC, {
-      regex: [fieldObject, `${value}`, ...(flags ? [flags] : [])],
+      regex: [
+        fieldObject,
+        valueSource === 'parameter' ? { var: value } : `${value}`,
+        ...(flags ? [flags] : []),
+      ],
     } as unknown as RQBJsonLogic);
   }
 

@@ -21,15 +21,18 @@ async function* dylibCandidates(): AsyncGenerator<string> {
  * macOS only: point `bun:sqlite` at `RQB_SQLITE_DYLIB` or Homebrew's `libsqlite3.dylib`. Must run
  * before any `Database` is created. Returns whether extensions can be loaded.
  */
+let extSupported = process.platform !== 'darwin';
+
 export const configureCustomSQLite = async (): Promise<boolean> => {
   if (process.platform !== 'darwin') return true;
   for await (const path of dylibCandidates()) {
     if (await Bun.file(path).exists()) {
       try {
-        return Database.setCustomSQLite(path);
+        extSupported = Database.setCustomSQLite(path);
       } catch {
-        return false;
+        extSupported = false;
       }
+      return extSupported;
     }
   }
   return false;
@@ -48,17 +51,24 @@ const loaders: Record<SQLiteExt, (db: Database) => Promise<void>> = {
   vec: async db => (await import('sqlite-vec')).load(db),
 };
 
+// Known "unavailable" errors: package/prebuilt binary missing for this platform
+const isUnavailableError = (e: unknown) =>
+  /cannot find (module|package)|not found|unsupported platform/i.test(`${(e as Error)?.message}`);
+
 /**
- * In-memory `bun:sqlite` DB w/ the given extensions loaded, or `null` if unavailable (Apple
- * SQLite, no prebuilt binary for this platform, etc.). `Bun.SQL` has no `loadExtension`.
+ * In-memory `bun:sqlite` DB w/ the given extensions loaded, or `null` if known unavailable
+ * (Apple SQLite, no prebuilt binary for this platform). Other load errors propagate so tests
+ * fail instead of silently skipping. `Bun.SQL` has no `loadExtension`.
  */
 export const openSQLiteWithExt = async (exts: SQLiteExt[]): Promise<Database | null> => {
+  if (!extSupported) return null;
   const db = new Database(':memory:');
   try {
     for (const ext of exts) await loaders[ext](db);
     return db;
-  } catch {
+  } catch (e) {
     db.close();
-    return null;
+    if (isUnavailableError(e)) return null;
+    throw e;
   }
 };

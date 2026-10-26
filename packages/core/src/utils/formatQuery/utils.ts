@@ -611,7 +611,8 @@ export const isValidRegex = (pattern: unknown, flags?: string): boolean => {
 /**
  * Prefixes a pattern with inline flags (e.g. `(?i)`) for targets without a flags argument.
  * When `full` is `true` (target requires a full-string match), the pattern is wrapped in
- * `.*(?:…).*` to preserve the unanchored "find" semantics of `matches`.
+ * `[\s\S]*(?:…)[\s\S]*` to preserve the unanchored "find" semantics of `matches` (spans
+ * line terminators w/o altering the pattern's own `s` flag).
  *
  * @group Export
  */
@@ -621,7 +622,7 @@ export const toInlineFlagsRegex = (
   { whitelist = 'ims', full = false }: { whitelist?: string; full?: boolean } = {}
 ): string => {
   const f = sanitizeRegexFlags(flags, whitelist);
-  return `${f ? `(?${f})` : ''}${full ? `.*(?:${pattern}).*` : pattern}`;
+  return `${f ? `(?${f})` : ''}${full ? `[\\s\\S]*(?:${pattern})[\\s\\S]*` : pattern}`;
 };
 
 /**

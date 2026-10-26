@@ -127,6 +127,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
       pattern: '\0P',
       flags: rule.regexFlags,
       operator,
+      flagsInlined: !valueIsField,
     });
     return sql.join(
       expr

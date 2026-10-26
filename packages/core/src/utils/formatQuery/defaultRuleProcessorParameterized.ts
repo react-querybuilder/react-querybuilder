@@ -149,6 +149,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
         pattern,
         flags: rule.regexFlags,
         operator: rule.operator,
+        flagsInlined: (rule.valueSource ?? 'value') === 'value',
       })
     );
   }

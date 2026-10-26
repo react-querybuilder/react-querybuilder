@@ -84,8 +84,11 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
     if (!isSQLRegexPreset(opts.preset)) {
       return defaultRuleProcessorSQL(regexFallbackRule(rule), opts);
     }
+    const flagsInlined = rule.valueSource !== 'field';
     const pattern = valueProcessor(
-      { ...rule, value: getSQLRegexPatternValue(opts.preset, rule.value, rule.regexFlags) },
+      flagsInlined
+        ? { ...rule, value: getSQLRegexPatternValue(opts.preset, rule.value, rule.regexFlags) }
+        : rule,
       {
         ...opts,
         parseNumbers: false,
@@ -101,6 +104,7 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
       pattern,
       flags: rule.regexFlags,
       operator: rule.operator,
+      flagsInlined,
     });
   }
 

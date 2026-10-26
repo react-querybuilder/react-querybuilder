@@ -10,6 +10,7 @@ import { shouldParseRegex } from '../../parserUtils';
 import { formatCapabilities, getUnsupportedRuleFeature } from '../formatCapabilities';
 import { formatQuery } from '../formatQuery';
 import { negateOperator, negateRule } from '../negation';
+import { getSQLRegexPatternValue } from '../sqlRegex';
 import {
   isRegexOperator,
   isRegexRuleInvalid,
@@ -61,8 +62,17 @@ describe('helpers', () => {
   it('toInlineFlagsRegex', () => {
     expect(toInlineFlagsRegex('a.b', 'gi')).toBe('(?i)a.b');
     expect(toInlineFlagsRegex('a.b', '')).toBe('a.b');
-    expect(toInlineFlagsRegex('a.b', 'is', { full: true })).toBe('(?is).*(?:a.b).*');
+    expect(toInlineFlagsRegex('a.b', 'is', { full: true })).toBe(
+      String.raw`(?is)[\s\S]*(?:a.b)[\s\S]*`
+    );
     expect(toInlineFlagsRegex('a.b', 'is', { whitelist: 'i' })).toBe('(?i)a.b');
+  });
+
+  it('getSQLRegexPatternValue', () => {
+    expect(getSQLRegexPatternValue('sqlite', 'a', 'im')).toBe('(?im)a');
+    expect(getSQLRegexPatternValue('postgresql', 'a', 'im')).toBe('(?w)a');
+    expect(getSQLRegexPatternValue('mysql', 'a', 'im')).toBe('a');
+    expect(getSQLRegexPatternValue('sqlite', 1, 'i')).toBe(1);
   });
 
   it('regexFallbackRule', () => {

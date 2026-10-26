@@ -210,7 +210,7 @@ describe('regex', () => {
 
   it('matches/doesNotMatch', () => {
     expect(formatQuery(matchesQuery, 'cypher')).toBe(
-      `f =~ '(?im).*(?:a\\\\d\\'+).*' AND NOT g =~ '.*(?:x|y).*'`
+      `f =~ '(?im)[\\\\s\\\\S]*(?:a\\\\d\\'+)[\\\\s\\\\S]*' AND NOT g =~ '[\\\\s\\\\S]*(?:x|y)[\\\\s\\\\S]*'`
     );
   });
 

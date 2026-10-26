@@ -177,21 +177,32 @@ it('parseNumbers', () => {
 });
 
 it('handles regex operators', () => {
-  const fq = (rules: RuleType[]) =>
-    formatQuery({ combinator: 'and', rules }, { format: 'sequelize', context: contextWithAllReqs });
-  expect(
-    fq([
-      { field: 'f', operator: 'matches', value: 'a' },
-      { field: 'f', operator: 'matches', value: 'b', regexFlags: 'gi' },
-      { field: 'f', operator: 'doesNotMatch', value: 'c' },
-      { field: 'f', operator: 'doesNotMatch', value: 'd', regexFlags: 'i' },
-    ])
-  ).toEqual({
+  const fq = (rules: RuleType[], preset?: 'postgresql') =>
+    formatQuery(
+      { combinator: 'and', rules },
+      { format: 'sequelize', context: contextWithAllReqs, preset }
+    );
+  const regexRules: RuleType[] = [
+    { field: 'f', operator: 'matches', value: 'a' },
+    { field: 'f', operator: 'matches', value: 'b', regexFlags: 'gi' },
+    { field: 'f', operator: 'doesNotMatch', value: 'c' },
+    { field: 'f', operator: 'doesNotMatch', value: 'd', regexFlags: 'i' },
+  ];
+  expect(fq(regexRules, 'postgresql')).toEqual({
     [Op.and]: [
       { f: { [Op.regexp]: 'a' } },
       { f: { [Op.iRegexp]: 'b' } },
       { f: { [Op.notRegexp]: 'c' } },
       { f: { [Op.notIRegexp]: 'd' } },
+    ],
+  });
+  // `iRegexp` ops are PostgreSQL-only; inline `(?i)` otherwise
+  expect(fq(regexRules)).toEqual({
+    [Op.and]: [
+      { f: { [Op.regexp]: 'a' } },
+      { f: { [Op.regexp]: '(?i)b' } },
+      { f: { [Op.notRegexp]: 'c' } },
+      { f: { [Op.notRegexp]: '(?i)d' } },
     ],
   });
   // Field value source falls back to `contains`

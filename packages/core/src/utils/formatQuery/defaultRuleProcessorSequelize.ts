@@ -149,6 +149,10 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
     case 'doesnotmatch': {
       const i = !!sanitizeRegexFlags(rule.regexFlags, 'i');
       const not = operatorLC === 'doesnotmatch';
+      // `Op.iRegexp`/`Op.notIRegexp` are PostgreSQL-only; inline `(?i)` elsewhere (MySQL/MariaDB)
+      if (i && opts.preset !== 'postgresql') {
+        return { [field]: { [not ? Op.notRegexp : Op.regexp]: `(?i)${value}` } };
+      }
       return {
         [field]: {
           [not ? (i ? Op.notIRegexp : Op.notRegexp) : i ? Op.iRegexp : Op.regexp]: `${value}`,

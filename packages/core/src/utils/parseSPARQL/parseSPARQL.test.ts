@@ -197,6 +197,12 @@ describe('regex', () => {
     expect(parseSPARQL(formatQuery(query, 'sparql'), { parseRegex: true })).toEqual(query);
   });
 
+  it('ignores non-literal pattern/flags', () => {
+    expect(parseSPARQL('REGEX(?f, ?p) && REGEX(?g, "x", ?fl)', { parseRegex: true }).rules).toEqual(
+      []
+    );
+  });
+
   it('falls back to contains', () => {
     expect(parseSPARQL('REGEX(?f, "a.c", "x") && !REGEX(?g, "b")').rules).toEqual([
       { field: '?f', operator: 'contains', value: 'a.c' },

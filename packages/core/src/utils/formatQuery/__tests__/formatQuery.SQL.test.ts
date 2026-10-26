@@ -1161,7 +1161,7 @@ describe('regex operators', () => {
       { field: 'f', operator: 'matches', value: "a\\d'x", regexFlags: 'gims' },
       { field: 'g', operator: 'doesNotMatch', value: '123' },
       { field: 'h', operator: 'doesNotMatch', value: 'b', regexFlags: 'i' },
-      { field: 'j', operator: 'matches', value: 'k', valueSource: 'field' },
+      { field: 'j', operator: 'matches', value: 'k', valueSource: 'field', regexFlags: 'im' },
     ],
   };
   it.each([
@@ -1173,18 +1173,21 @@ describe('regex operators', () => {
       'mssql',
       `([f] like '%a\\d''x%' and [g] not like '%123%' and [h] not like '%b%' and [j] like '%' + [k] + '%')`,
     ],
-    ['postgresql', `("f" ~* 'a\\d''x' and "g" !~ '123' and "h" !~* 'b' and "j" ~ "k")`],
+    [
+      'postgresql',
+      `("f" ~* '(?w)a\\d''x' and "g" !~ '123' and "h" !~* 'b' and "j" ~* ('(?w)' || "k"))`,
+    ],
     [
       'mysql',
-      "(`f` regexp CONCAT('(?imn)', 'a\\\\d''x') and `g` not regexp '123' and `h` not regexp CONCAT('(?i)', 'b') and `j` regexp `k`)",
+      "(`f` regexp CONCAT('(?imn)', 'a\\\\d''x') and `g` not regexp '123' and `h` not regexp CONCAT('(?i)', 'b') and `j` regexp CONCAT('(?im)', `k`))",
     ],
     [
       'oracle',
-      `(regexp_like(f, 'a\\d''x', 'imn') and not regexp_like(g, '123') and not regexp_like(h, 'b', 'i') and regexp_like(j, k))`,
+      `(regexp_like(f, 'a\\d''x', 'imn') and not regexp_like(g, '123') and not regexp_like(h, 'b', 'i') and regexp_like(j, k, 'im'))`,
     ],
     [
       'sqlite',
-      `(f regexp '(?ims)a\\d''x' and g not regexp '123' and h not regexp '(?i)b' and j regexp k)`,
+      `(f regexp '(?ims)a\\d''x' and g not regexp '123' and h not regexp '(?i)b' and j regexp ('(?im)' || k))`,
     ],
   ] as const)('%s', (preset, expected) => {
     expect(formatQuery(q, { format: 'sql', preset })).toBe(expected);

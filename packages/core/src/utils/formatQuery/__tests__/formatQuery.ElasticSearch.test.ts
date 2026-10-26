@@ -640,6 +640,25 @@ describe('regex', () => {
     });
   });
 
+  it('translates/rejects anchors', () => {
+    const re = (value: string) =>
+      formatQuery(
+        { combinator: 'and', rules: [{ field: 'f', operator: 'matches', value }] },
+        'elasticsearch'
+      );
+    expect(re('^a$')).toEqual({ bool: { must: [{ regexp: { f: { value: '(a)' } } }] } });
+    expect(re('^a')).toEqual({ bool: { must: [{ regexp: { f: { value: '(a).*' } } }] } });
+    expect(re('a$')).toEqual({ bool: { must: [{ regexp: { f: { value: '.*(a)' } } }] } });
+    expect(re('(a|b)$')).toEqual({ bool: { must: [{ regexp: { f: { value: '.*((a|b))' } } }] } });
+    expect(re(String.raw`[^$]\^`)).toEqual({
+      bool: { must: [{ regexp: { f: { value: String.raw`.*([^$]\^).*` } } }] },
+    });
+    expect(re('[]^]')).toEqual({ bool: { must: [{ regexp: { f: { value: '.*([]^]).*' } } }] } });
+    for (const unsupported of ['a^', '$a', 'a|^b', '^a|b']) {
+      expect(re(unsupported)).toEqual({});
+    }
+  });
+
   it('valueSource field falls back to contains script', () => {
     expect(formatQuery(regexFieldQuery, 'elasticsearch')).toEqual({
       bool: {

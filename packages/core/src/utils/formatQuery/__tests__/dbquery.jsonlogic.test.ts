@@ -24,8 +24,11 @@ const regexCases: [string, DefaultRuleGroupType, (u: { madeUpName: string }) => 
   ],
   [
     'doesNotMatch',
-    { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'doesNotMatch', value: 'a.a' }] },
-    u => !/a.a/.test(u.madeUpName),
+    {
+      combinator: 'and',
+      rules: [{ field: 'madeUpName', operator: 'doesNotMatch', value: 'man$' }],
+    },
+    u => !u.madeUpName.endsWith('man'),
   ],
 ];
 

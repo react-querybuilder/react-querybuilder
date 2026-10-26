@@ -491,6 +491,7 @@ it('handles matches/doesNotMatch', () => {
       { field: 'f', operator: 'matches', value: '^a.b', regexFlags: 'gix' },
       { field: 'f', operator: 'doesNotMatch', value: 'x+' },
       { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+      { field: 'f', operator: 'matches', value: 'p', valueSource: 'parameter' },
     ],
   };
   expect(formatQuery(q, 'jsonlogic')).toEqual({
@@ -498,6 +499,7 @@ it('handles matches/doesNotMatch', () => {
       { regex: [{ var: 'f' }, '^a.b', 'i'] },
       { '!': { regex: [{ var: 'f' }, 'x+'] } },
       { in: [{ var: 'g' }, { var: 'f' }] },
+      { regex: [{ var: 'f' }, { var: 'p' }] },
     ],
   });
 });

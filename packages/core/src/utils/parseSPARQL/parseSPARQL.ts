@@ -288,13 +288,17 @@ const visitFilter = (
     }
     // REGEX(?f, "pattern"[, "flags"])
     if (op === 'regex' && (args.length === 2 || args.length === 3)) {
+      const [, patternTerm, flagsTerm] = args as TraqulaTerm[];
+      const isLiteral = (t?: TraqulaTerm) => t?.type === 'term' && t.subType === 'literal';
+      // Non-literal pattern/flags (e.g. variables) can't be represented
+      if (!isLiteral(patternTerm) || (flagsTerm && !isLiteral(flagsTerm))) return;
       const field = termToString(args[0] as TraqulaTerm);
-      const value = (args[1] as TraqulaTerm).value ?? '';
+      const value = patternTerm.value ?? '';
       if (!shouldParseRegex(regexOpts, field)) {
         out.push({ field, operator: 'contains', value } as DefaultRuleType);
         return;
       }
-      const regexFlags = [...new Set((args[2] as TraqulaTerm | undefined)?.value ?? '')]
+      const regexFlags = [...new Set(flagsTerm?.value ?? '')]
         .filter(f => 'ims'.includes(f))
         .join('');
       out.push({

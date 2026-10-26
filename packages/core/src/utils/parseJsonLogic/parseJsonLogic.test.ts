@@ -617,7 +617,9 @@ it('parses regex op as matches/doesNotMatch', () => {
       { regex: ['f', 'x'] },
     ],
   } as unknown as RQBJsonLogic;
-  expect(parseJsonLogic(logic)).toEqual({
+  // Not parsed unless `parseRegex: true` or field declares regex operators
+  expect(parseJsonLogic(logic)).toEqual(emptyRuleGroup);
+  expect(parseJsonLogic(logic, { parseRegex: true })).toEqual({
     combinator: 'and',
     rules: [
       { field: 'f', operator: 'matches', value: 'a.b', regexFlags: 'i' },
@@ -627,9 +629,10 @@ it('parses regex op as matches/doesNotMatch', () => {
   expect(parseJsonLogic(logic, { parseRegex: false })).toEqual(emptyRuleGroup);
   expect(parseJsonLogic(logic, { fields: [{ name: 'g', label: 'G' }] })).toEqual(emptyRuleGroup);
   expect(
-    parseJsonLogic({
-      some: [{ var: 'fs' }, { regex: [{ var: '' }, 'x'] }],
-    } as unknown as RQBJsonLogic)
+    parseJsonLogic(
+      { some: [{ var: 'fs' }, { regex: [{ var: '' }, 'x'] }] } as unknown as RQBJsonLogic,
+      { parseRegex: true }
+    )
   ).toEqual({
     combinator: 'and',
     rules: [

@@ -228,7 +228,9 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
         }
       } else {
         const wrapped = shouldParseRegex(options, field)
-          ? /^(?:\(\?([a-z]+)\))?\.\*\(\?:(.*)\)\.\*$/s.exec(`${regex}`)
+          ? /^(?:\(\?([a-z]+)\))?(?:\.\*|\[\\s\\S\]\*)\(\?:(.*)\)(?:\.\*|\[\\s\\S\]\*)$/s.exec(
+              `${regex}`
+            )
           : null;
         if (wrapped) {
           const [, regexFlags, value] = wrapped;

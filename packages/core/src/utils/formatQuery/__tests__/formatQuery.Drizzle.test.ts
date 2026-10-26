@@ -268,7 +268,12 @@ it('handles regex operators', () => {
     raw: (s: string) => `raw:${s}`,
     join: (chunks: unknown[]) => chunks,
   });
-  const ops = { ...drizzleOperators, sql };
+  const ops = {
+    ...drizzleOperators,
+    sql,
+    like: (...x: unknown[]) => ['like', ...x],
+    notLike: (...x: unknown[]) => ['notLike', ...x],
+  };
   const rule = (preset?: 'postgresql' | 'oracle', r: Partial<RuleType> = {}) =>
     formatQuery(
       {
@@ -282,5 +287,6 @@ it('handles regex operators', () => {
     ['raw:regexp_like(', fields.f, 'raw:, ', fields.f1, "raw:, 'i')"],
   ]);
   // Fallback to `notLike`
-  expect(rule()).toEqual([[fields.f, '%a%']]);
+  expect(rule()).toEqual([['notLike', fields.f, '%a%']]);
+  expect(rule(undefined, { operator: 'matches' })).toEqual([['like', fields.f, '%a%']]);
 });

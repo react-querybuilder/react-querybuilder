@@ -119,11 +119,12 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
 
     case 'matches':
     case 'doesnotmatch': {
+      // always escape (backslashes are significant)
       const negate = shouldNegate(operatorTL) ? '!' : '';
       return `${negate}${field}.matches(${
         valueIsField
           ? trimIfString(value)
-          : `"${escapeDoubleQuotes(toInlineFlagsRegex(`${value}`, rule.regexFlags), escapeQuotes)}"`
+          : `"${escapeDoubleQuotes(toInlineFlagsRegex(`${value}`, rule.regexFlags), true)}"`
       })`;
     }
 

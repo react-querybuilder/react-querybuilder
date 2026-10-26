@@ -121,11 +121,8 @@ describe('SPARQL (Grafeo)', () => {
 
   test('matches', async () => {
     await expectSPARQL(
-      {
-        combinator: 'and',
-        rules: [{ field: 'madeUpName', operator: 'matches', value: 'an\\b|^S' }],
-      },
-      superUsersWithAge.filter(u => /an\b|^S/.test(u.madeUpName))
+      { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'matches', value: 'an$|^S' }] },
+      superUsersWithAge.filter(u => /an$|^S/.test(u.madeUpName))
     );
   });
 

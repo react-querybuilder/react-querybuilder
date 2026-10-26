@@ -559,7 +559,7 @@ const visitCondition = (node: CstNode): DefaultRuleType => {
 
 /**
  * Converts a full-match Java regex (w/ optional inline flags) to a "find" pattern + flags.
- * Strips formatQuery's `.*(?:p).*` wrapper; otherwise anchors as `^(?:p)$`.
+ * Strips formatQuery's `[\s\S]*(?:p)[\s\S]*` (or legacy `.*(?:p).*`) wrapper; otherwise anchors as `^(?:p)$`.
  */
 const fromCypherRegex = (src: string): { value: string; regexFlags?: string } => {
   const flagsMatch = /^\(\?([a-z]+)\)/.exec(src);
@@ -567,7 +567,7 @@ const fromCypherRegex = (src: string): { value: string; regexFlags?: string } =>
     ? [...new Set(flagsMatch[1])].filter(f => 'ims'.includes(f)).join('')
     : '';
   const body = flagsMatch ? src.slice(flagsMatch[0].length) : src;
-  const wrapped = /^\.\*\(\?:([\s\S]*)\)\.\*$/.exec(body)?.[1];
+  const wrapped = /^(?:\.\*|\[\\s\\S\]\*)\(\?:([\s\S]*)\)(?:\.\*|\[\\s\\S\]\*)$/.exec(body)?.[1];
   const value = wrapped !== undefined && isValidRegex(wrapped) ? wrapped : `^(?:${body})$`;
   return regexFlags ? { value, regexFlags } : { value };
 };

@@ -81,6 +81,47 @@ const valueRenderer = (v: unknown, parseNumbers?: boolean) =>
       : v;
 
 /**
+ * Wraps a pattern for Lucene regexp (always anchored) w/ "find" semantics. Lucene has no
+ * `^`/`$` anchors, so a leading `^`/trailing `$` drops the corresponding `.*`. Returns
+ * `null` for anchors elsewhere (or w/ top-level alternation), which Lucene can't express.
+ */
+const toLuceneRegexp = (pattern: string): string | null => {
+  let start = false;
+  let end = false;
+  let topLevelAlt = false;
+  let depth = 0;
+  let inClass = false;
+  for (let i = 0; i < pattern.length; i++) {
+    const c = pattern[i];
+    if (c === '\\') {
+      i++;
+    } else if (inClass) {
+      if (c === ']') inClass = false;
+    } else if (c === '[') {
+      inClass = true;
+      // `[^`/`[]` are part of the class, not anchors/terminators
+      if (pattern[i + 1] === '^') i++;
+      if (pattern[i + 1] === ']') i++;
+    } else if (c === '(') {
+      depth++;
+    } else if (c === ')') {
+      depth--;
+    } else if (c === '|') {
+      if (depth === 0) topLevelAlt = true;
+    } else if (c === '^') {
+      if (i !== 0) return null;
+      start = true;
+    } else if (c === '$') {
+      if (i !== pattern.length - 1) return null;
+      end = true;
+    }
+  }
+  if ((start || end) && topLevelAlt) return null;
+  const inner = pattern.slice(start ? 1 : 0, end ? -1 : undefined);
+  return `${start ? '' : '.*'}(${inner})${end ? '' : '.*'}`;
+};
+
+/**
  * Default rule processor used by {@link formatQuery} for "elasticsearch" format.
  *
  * @group Export
@@ -154,9 +195,11 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
     if (valueSource === 'field')
       return defaultRuleProcessorElasticSearch(regexFallbackRule(rule), options);
     // Lucene regexp is anchored and lacks `(?:`; plain group wraps for "find" semantics
+    const luceneValue = toLuceneRegexp(`${value}`);
+    if (luceneValue === null) return false;
     const ci = sanitizeRegexFlags(rule.regexFlags, 'i') === 'i';
     return negateIfNotOp(operatorLC, {
-      regexp: { [field]: { value: `.*(${value}).*`, ...(ci && { case_insensitive: true }) } },
+      regexp: { [field]: { value: luceneValue, ...(ci && { case_insensitive: true }) } },
     });
   }
 

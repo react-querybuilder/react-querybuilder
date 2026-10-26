@@ -241,6 +241,9 @@ it('handles matches/doesNotMatch', () => {
     String.raw`$contains(f, /^a\/b\/c$/im) and $not($contains(f, /x+/)) and $contains(f, g)`
   );
   expect(defaultRuleProcessorJSONata({ field: 'f', operator: 'matches', value: 'a\\' }, {})).toBe(
-    String.raw`$contains(f, /a\/)`
+    String.raw`$contains(f, /a\\/)`
+  );
+  expect(defaultRuleProcessorJSONata({ field: 'f', operator: 'matches', value: '' }, {})).toBe(
+    '$contains(f, /(?:)/)'
   );
 });

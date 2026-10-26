@@ -24,7 +24,8 @@ const negate = (clause: string, neg: boolean) => (neg ? `$not(${clause})` : clau
 const escapeRegexDelimiter = (src: string) => {
   let out = '';
   for (let i = 0; i < src.length; i++) {
-    if (src[i] === '\\') out += src[i] + (src[++i] ?? '');
+    // trailing lone backslash → literal backslash (else escapes closing delimiter)
+    if (src[i] === '\\') out += src[i] + (src[++i] ?? '\\');
     else out += src[i] === '/' ? '\\/' : src[i];
   }
   return out;
@@ -108,7 +109,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     }
     const flags = sanitizeRegexFlags(rule.regexFlags, 'im');
     return negate(
-      `$contains(${qfn(field)}, /${escapeRegexDelimiter(`${value}`)}/${flags})`,
+      `$contains(${qfn(field)}, /${escapeRegexDelimiter(`${value}`) || '(?:)'}/${flags})`,
       operatorLC === 'doesnotmatch'
     );
   }

@@ -20,7 +20,7 @@ import { convertToIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';
 import { objectKeys } from '../objectUtils';
-import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray, shouldParseRegex } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import type { JsonLogicExpressionOperand, ParseJsonLogicExpressionContext } from './types';
 import {
@@ -391,14 +391,13 @@ function parseJsonLogic(
       }
     } else if (
       key === 'regex' &&
-      options.parseRegex !== false &&
       Array.isArray(keyValue) &&
       isRQBJsonLogicVar(keyValue[0]) &&
       typeof keyValue[1] === 'string'
     ) {
       field = keyValue[0].var;
       const regexFlags = typeof keyValue[2] === 'string' ? keyValue[2].replaceAll('g', '') : '';
-      if (inSubquery || fieldIsValid(field, 'matches')) {
+      if (shouldParseRegex(options, field) && (inSubquery || fieldIsValid(field, 'matches'))) {
         rule = {
           field,
           operator: 'matches',
