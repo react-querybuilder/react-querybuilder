@@ -52,7 +52,7 @@
     "typecheck:watch": "../../node_modules/typescript/bin/tsc --noEmit --watch"
   },
   "dependencies": {
-    "@modelcontextprotocol/server": "^2.3.1",
+    "@modelcontextprotocol/server": "^2.4.0",
     "@react-querybuilder/core": "8.25.0",
     "@traqula/parser-sparql-1-2": "catalog:",
     "chevrotain": "catalog:",
@@ -61,7 +61,7 @@
     "spel2js": "catalog:"
   },
   "devDependencies": {
-    "@modelcontextprotocol/client": "^2.3.1",
+    "@modelcontextprotocol/client": "^2.4.0",
     "typescript": "catalog:"
   }
 }
