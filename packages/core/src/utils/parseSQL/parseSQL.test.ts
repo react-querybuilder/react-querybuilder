@@ -770,6 +770,8 @@ describe('regex', () => {
     [`f ~ '(?ps)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 's' }],
     [`f ~ '(?x)a'`, { field: 'f', operator: 'matches', value: '(?x)a', regexFlags: 's' }],
     [`f REGEXP '(?n)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'm' }],
+    [`f REGEXP '(?w)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'ms' }],
+    [`f REGEXP '(?p)a'`, { field: 'f', operator: 'matches', value: 'a' }],
     [`REGEXP_LIKE(f, 'a')`, { field: 'f', operator: 'matches', value: 'a' }],
     [
       `regexp_like(f, 'a', 'nmixc')`,
