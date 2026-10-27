@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/core",
-  "version": "8.25.0",
+  "version": "8.26.0",
   "type": "commonjs",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
@@ -201,8 +201,8 @@
     "@electric-sql/pglite": "catalog:test",
     "@electric-sql/pglite-pgvector": "catalog:test",
     "@electric-sql/pglite-socket": "catalog:test",
-    "@prisma/client": "catalog:test",
     "@grafeo-db/js": "catalog:test",
+    "@prisma/client": "catalog:test",
     "@tanstack/db": "catalog:test",
     "@traqula/parser-sparql-1-2": "catalog:",
     "@types/node": "catalog:",
