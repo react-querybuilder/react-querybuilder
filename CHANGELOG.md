@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.26.0] - 2026-10-26
+
 ### Added
 
 - [#1119] Experimental vector DB export formats for `formatQuery` (and `QueryManager#format`): "pinecone", "chroma", "qdrant", and "weaviate" (metadata filter objects; `{}` when empty/invalid, so omit the filter param) and "milvus" (boolean filter expression string). Each has a `defaultRuleProcessor*`/`defaultRuleGroupProcessor*` pair. Milvus field-to-field comparisons are limited to comparison and `between` operators.
@@ -2637,7 +2639,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.25.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.26.0...HEAD
+[v8.26.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.25.0...v8.26.0
 [v8.25.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.4...v8.25.0
 [v8.24.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.3...v8.24.4
 [v8.24.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.2...v8.24.3
