@@ -5,14 +5,14 @@ import type {
   DefaultRuleType,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
-import { filterRulesByFields } from '../parserUtils';
+import { filterRulesByFields, shouldParseRegex } from '../parserUtils';
 
 /**
  * Options for {@link parseGremlin}.
  */
 export interface ParseGremlinOptions extends Pick<
   ParserCommonOptions,
-  'fields' | 'getValueSources'
+  'fields' | 'getValueSources' | 'parseRegex'
 > {
   independentCombinators?: boolean;
 }
@@ -85,7 +85,7 @@ export function parseGremlin(
     const hasEqMatch = step.match(/^has\('([^']+)',\s*(.+)\)$/);
     if (hasEqMatch) {
       const [, prop, rawValue] = hasEqMatch;
-      const parsed = parseGremlinPredicate(prop, rawValue.trim());
+      const parsed = parseGremlinPredicate(prop, rawValue.trim(), options);
       if (parsed) {
         rules.push(parsed);
       }
@@ -132,7 +132,31 @@ const tokenizeGremlinSteps = (gremlin: string): string[] => {
 };
 
 /** Parses a Gremlin predicate (the second argument of `.has()`). */
-const parseGremlinPredicate = (prop: string, rawValue: string): DefaultRuleType | null => {
+const parseGremlinPredicate = (
+  prop: string,
+  rawValue: string,
+  options: ParseGremlinOptions
+): DefaultRuleType | null => {
+  // TextP.regex()/notRegex() (`TextP.` optional); find semantics w/ optional inline flags
+  const regexMatch = rawValue.match(/^(?:TextP\.)?(regex|notRegex)\('((?:[^'\\]|\\.)*)'\)$/);
+  if (regexMatch) {
+    const isMatch = regexMatch[1] === 'regex';
+    const src = regexMatch[2].replaceAll(/\\(.)/g, '$1');
+    if (!shouldParseRegex(options, prop)) {
+      return { field: prop, operator: isMatch ? 'contains' : 'doesNotContain', value: src };
+    }
+    const flagsMatch = /^\(\?([a-z]+)\)/.exec(src);
+    const regexFlags = flagsMatch
+      ? [...new Set(flagsMatch[1])].filter(f => 'ims'.includes(f)).join('')
+      : '';
+    return {
+      field: prop,
+      operator: isMatch ? 'matches' : 'doesNotMatch',
+      value: flagsMatch ? src.slice(flagsMatch[0].length) : src,
+      ...(regexFlags && { regexFlags }),
+    } as DefaultRuleType;
+  }
+
   // Predicate functions: gt(), lt(), gte(), lte(), neq(), within(), without(), between(), outside()
   const predicateMatch = rawValue.match(/^(\w+)\((.+)\)$/);
   if (predicateMatch) {

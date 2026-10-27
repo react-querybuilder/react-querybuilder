@@ -16,9 +16,9 @@ import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';
 import { objectKeys } from '../objectUtils';
-import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray, shouldParseRegex } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
-import { regexToStringMatch } from '../regexLiteral';
+import { escapeRegexLiteral, regexToStringMatch } from '../regexLiteral';
 import type {
   MongoDBExpressionOperand,
   MongoDbSupportedOperators,
@@ -269,7 +269,8 @@ function parseMongoDB(
     field: string,
     mdbOperator: MongoDbSupportedOperators,
     // oxlint-disable-next-line typescript/no-explicit-any
-    keyValue: any
+    keyValue: any,
+    regexOptions?: unknown
   ): DefaultRuleType | false {
     let operator: DefaultOperatorName = '=';
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -296,7 +297,32 @@ function parseMongoDB(
       }
     } else if (mdbOperator === '$regex') {
       // Reverse `formatQuery` templates (`^x` → beginsWith, etc.); unescape plain literals
-      const { operator: op, value: v } = regexToStringMatch(getRegExStr(keyValue), 'find');
+      const src = getRegExStr(keyValue);
+      const { operator: op, value: v } = regexToStringMatch(src, 'find');
+      if (shouldParseRegex(options, field)) {
+        const regexFlags = [
+          ...new Set(
+            `${keyValue instanceof RegExp ? keyValue.flags : ''}${typeof regexOptions === 'string' ? regexOptions : ''}`.replaceAll(
+              'g',
+              ''
+            )
+          ),
+        ].join('');
+        const esc = escapeRegexLiteral(v);
+        const rebuilt =
+          op === 'beginsWith'
+            ? `^${esc}`
+            : op === 'endsWith'
+              ? `${esc}$`
+              : op === '='
+                ? `^${esc}$`
+                : esc;
+        if (regexFlags || rebuilt !== src) {
+          return fieldIsValid(field, 'matches')
+            ? { field, operator: 'matches', value: src, ...(regexFlags ? { regexFlags } : {}) }
+            : false;
+        }
+      }
       if (fieldIsValid(field, op)) {
         return { field, operator: op, value: v };
       }
@@ -475,6 +501,8 @@ function parseMongoDB(
         if (fieldIsValid(field, '=')) {
           return { field, operator: '=', value: keyValue };
         }
+      } else if (keyValue instanceof RegExp && shouldParseRegex(options, field)) {
+        return processMongoDbQueryBooleanOperator(field, '$regex', keyValue);
       } else if (keyValue === null) {
         if (fieldIsValid(field, 'null')) {
           return { field, operator: 'null', value: keyValue };
@@ -530,7 +558,7 @@ function parseMongoDB(
           .map(op =>
             op in additionalOperators && typeof additionalOperators[op] === 'function'
               ? additionalOperators[op](field, op, keyValue[op], otherOptions)
-              : processMongoDbQueryBooleanOperator(field, op, keyValue[op])
+              : processMongoDbQueryBooleanOperator(field, op, keyValue[op], keyValue.$options)
           )
           .filter(Boolean) as (DefaultRuleGroupType | DefaultRuleType)[];
 

@@ -51,6 +51,7 @@ SOUNDS                                                            return 'SOUNDS
 LIKE                                                              return 'LIKE'
 ESCAPE                                                            return 'ESCAPE'
 REGEXP                                                            return 'REGEXP'
+RLIKE                                                             return 'REGEXP'
 IS                                                                return 'IS'
 UNKNOWN                                                           return 'UNKNOWN'
 AND                                                               return 'AND'
@@ -95,7 +96,10 @@ UNION                                                             return 'UNION'
 "="                                                               return '='
 "("                                                               return '('
 ")"                                                               return ')'
+"~*"                                                              return 'REGEX_I'
 "~"                                                               return '~'
+"!~*"                                                             return 'NOT_REGEX_I'
+"!~"                                                              return 'NOT_REGEX'
 "!="                                                              return '!='
 "!"                                                               return '!'
 "||"                                                              return '||'
@@ -398,6 +402,10 @@ predicate
   | bit_expr SOUNDS LIKE bit_expr -> { type: 'SoundsLikePredicate', hasNot: false, left: $1, right: $4 }
   | bit_expr not_opt LIKE simple_expr escape_opt -> { type: 'LikePredicate', hasNot: $2, left: $1, right: $4, escape: $5 }
   | bit_expr not_opt REGEXP bit_expr -> { type: 'RegexpPredicate', hasNot: $2, left: $1, right: $4 }
+  | bit_expr '~' bit_expr -> { type: 'RegexpPredicate', tilde: true, hasNot: null, left: $1, right: $3 }
+  | bit_expr REGEX_I bit_expr -> { type: 'RegexpPredicate', tilde: true, hasNot: null, caseInsensitive: true, left: $1, right: $3 }
+  | bit_expr NOT_REGEX bit_expr -> { type: 'RegexpPredicate', tilde: true, hasNot: '!', left: $1, right: $3 }
+  | bit_expr NOT_REGEX_I bit_expr -> { type: 'RegexpPredicate', tilde: true, hasNot: '!', caseInsensitive: true, left: $1, right: $3 }
   ;
 comparison_operator
   : '=' -> $1

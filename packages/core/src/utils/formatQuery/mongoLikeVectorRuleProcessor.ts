@@ -2,6 +2,7 @@ import type { RuleType, ValueProcessorOptions } from '../../types';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { formatCapabilities, getUnsupportedRuleFeature } from './formatCapabilities';
+import { regexFallbackRule } from './utils';
 import { coerceBoolean, coerceNumber, isBooleanEditor } from './vectorValueUtils';
 
 type Scalar = string | number | boolean;
@@ -24,7 +25,7 @@ export const mongoLikeRuleProcessor = (
 ): Record<string, unknown> | false => {
   if (getUnsupportedRuleFeature(rule, formatCapabilities[flavor]!)) return false;
 
-  const { field, operator, value } = rule;
+  const { field, operator, value } = regexFallbackRule(rule);
   const { parseNumbers, preserveValueOrder, fieldData } = options;
   const op = lc(operator);
   const isBool = isBooleanEditor(fieldData, operator);

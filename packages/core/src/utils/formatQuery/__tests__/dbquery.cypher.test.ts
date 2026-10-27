@@ -168,6 +168,36 @@ describe('Cypher (Grafeo)', () => {
     );
   });
 
+  test('matches', async () => {
+    await expectCypher(
+      {
+        combinator: 'and',
+        rules: [{ field: 'su.madeUpName', operator: 'matches', value: 'an\\b|^S' }],
+      },
+      superUsers.filter(u => /an\b|^S/.test(u.madeUpName))
+    );
+  });
+
+  test('matches (case-insensitive)', async () => {
+    await expectCypher(
+      {
+        combinator: 'and',
+        rules: [{ field: 'su.madeUpName', operator: 'matches', value: 'BAT', regexFlags: 'i' }],
+      },
+      superUsers.filter(u => /bat/i.test(u.madeUpName))
+    );
+  });
+
+  test('doesNotMatch', async () => {
+    await expectCypher(
+      {
+        combinator: 'and',
+        rules: [{ field: 'su.madeUpName', operator: 'doesNotMatch', value: 'man$' }],
+      },
+      superUsers.filter(u => !u.madeUpName.endsWith('man'))
+    );
+  });
+
   test('NOT group', async () => {
     await expectCypher(
       {

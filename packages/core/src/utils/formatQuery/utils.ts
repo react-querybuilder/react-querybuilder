@@ -563,3 +563,91 @@ export const bigIntJsonParseReviver = (_key: string, value: unknown): unknown =>
   isPojo(value) && Object.keys(value).length === 1 && typeof value.$bigint === 'string'
     ? BigInt(value.$bigint)
     : value;
+
+/**
+ * Determines whether an operator is a regular expression operator (`matches`/`doesNotMatch`,
+ * case-insensitive).
+ *
+ * @group Export
+ */
+export const isRegexOperator = (operator: string): boolean => {
+  const op = lc(operator);
+  return op === 'matches' || op === 'doesnotmatch';
+};
+
+/**
+ * Filters regular expression flags to the given whitelist, removing duplicates. `g` and `y`
+ * are never kept (stateful/irrelevant for match tests).
+ *
+ * @group Export
+ */
+export const sanitizeRegexFlags = (flags: unknown, whitelist = 'imsu'): string =>
+  typeof flags === 'string'
+    ? [...new Set(flags)].filter(f => f !== 'g' && f !== 'y' && whitelist.includes(f)).join('')
+    : '';
+
+/**
+ * Returns the pattern string of a `RegExp` (its `source`) or the string itself.
+ *
+ * @group Export
+ */
+export const toRegExpSource = (pattern: RegExp | string): string =>
+  typeof pattern === 'string' ? pattern : pattern.source;
+
+/**
+ * Determines whether `pattern` is a valid (JS) regular expression with the given flags.
+ *
+ * @group Export
+ */
+export const isValidRegex = (pattern: unknown, flags?: string): boolean => {
+  if (typeof pattern !== 'string') return false;
+  try {
+    return RegExp(pattern, sanitizeRegexFlags(flags, 'dimsuv')) instanceof RegExp;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Prefixes a pattern with inline flags (e.g. `(?i)`) for targets without a flags argument.
+ * When `full` is `true` (target requires a full-string match), the pattern is wrapped in
+ * `[\s\S]*(?:…)[\s\S]*` to preserve the unanchored "find" semantics of `matches` (spans
+ * line terminators w/o altering the pattern's own `s` flag).
+ *
+ * @group Export
+ */
+export const toInlineFlagsRegex = (
+  pattern: string,
+  flags: unknown,
+  { whitelist = 'ims', full = false }: { whitelist?: string; full?: boolean } = {}
+): string => {
+  const f = sanitizeRegexFlags(flags, whitelist);
+  return `${f ? `(?${f})` : ''}${full ? `[\\s\\S]*(?:${pattern})[\\s\\S]*` : pattern}`;
+};
+
+/**
+ * Converts a `matches`/`doesNotMatch` rule to `contains`/`doesNotContain` with the pattern
+ * as a literal value. Used by formats with no regular expression support. Other rules are
+ * returned as-is.
+ *
+ * @group Export
+ */
+export const regexFallbackRule = <R extends RuleType>(rule: R): R => {
+  if (!isRegexOperator(rule.operator)) return rule;
+  const { regexFlags: _rf, ...r } = rule;
+  return {
+    ...r,
+    operator: lc(rule.operator) === 'matches' ? 'contains' : 'doesNotContain',
+  } as R;
+};
+
+/**
+ * Determines whether a rule is a `matches`/`doesNotMatch` rule with an invalid pattern.
+ * Rules with a `valueSource` other than `"value"` are never considered invalid.
+ *
+ * @group Export
+ */
+export const isRegexRuleInvalid = (rule: RuleType): boolean =>
+  isRegexOperator(rule.operator) &&
+  (rule.valueSource ?? 'value') === 'value' &&
+  !isValidRegex(rule.value, rule.regexFlags);

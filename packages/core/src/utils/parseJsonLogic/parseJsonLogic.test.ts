@@ -607,3 +607,41 @@ it('handles empty options object', () => {
     rules: [{ field: 'f1', operator: '=', value: 1 }],
   });
 });
+
+it('parses regex op as matches/doesNotMatch', () => {
+  const logic = {
+    and: [
+      { regex: [{ var: 'f' }, 'a.b', 'gi'] },
+      { '!': { regex: [{ var: 'f' }, 'x+'] } },
+      { regex: [{ var: 'f' }, 1] },
+      { regex: ['f', 'x'] },
+    ],
+  } as unknown as RQBJsonLogic;
+  // Not parsed unless `parseRegex: true` or field declares regex operators
+  expect(parseJsonLogic(logic)).toEqual(emptyRuleGroup);
+  expect(parseJsonLogic(logic, { parseRegex: true })).toEqual({
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: 'a.b', regexFlags: 'i' },
+      { field: 'f', operator: 'doesNotMatch', value: 'x+' },
+    ],
+  });
+  expect(parseJsonLogic(logic, { parseRegex: false })).toEqual(emptyRuleGroup);
+  expect(parseJsonLogic(logic, { fields: [{ name: 'g', label: 'G' }] })).toEqual(emptyRuleGroup);
+  expect(
+    parseJsonLogic(
+      { some: [{ var: 'fs' }, { regex: [{ var: '' }, 'x'] }] } as unknown as RQBJsonLogic,
+      { parseRegex: true }
+    )
+  ).toEqual({
+    combinator: 'and',
+    rules: [
+      {
+        field: 'fs',
+        operator: '=',
+        match: { mode: 'some' },
+        value: { combinator: 'and', rules: [{ field: '', operator: 'matches', value: 'x' }] },
+      },
+    ],
+  });
+});

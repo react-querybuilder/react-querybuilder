@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `@react-querybuilder/mcp`: `format_query` supports the vector formats, and `validate_query` accepts a `targetFormat` argument to warn about rules that format can't express.
   - New `formatCapabilities` map and `getUnsupportedRuleFeature` helper describe which operators, value sources, and match modes each vector format supports.
 - [#1119] "diagnostics" format: new `diagnosticsTargetFormat` option reports rules the target format can't express as `"format-check"` entries, including rules nested in match-mode subqueries. New optional `severity` (`"error"`/`"warning"`) on diagnostic entries; warnings never affect validity.
+- [#1122] Opt-in regular expression operators `matches`/`doesNotMatch` (not in `defaultOperators`; use `defaultOperatorsWithRegex` or `defaultRegexOperators`). The rule `value` is the pattern string and flags go in the new optional `regexFlags` rule property.
+  - `formatQuery` emits native regex matching where the target supports it (JSONata, MongoDB, SpEL, CEL, ElasticSearch, SQL presets "postgresql"/"mysql"/"oracle"/"sqlite", Sequelize, JsonLogic via the new `jsonLogicRegexOperator`, Cypher/GQL, Gremlin, SPARQL, natural language) with unanchored "find" semantics everywhere. Other formats fall back to `contains`/`doesNotContain`.
+  - Rules with invalid patterns are skipped; the "diagnostics" format reports them as `INVALID_VALUE`.
+  - Parsers import regexes as `matches`/`doesNotMatch` when the new `parseRegex` option is `true`, or when it's `undefined` and the field's `operators` include a regex operator. Otherwise parser output is unchanged.
+  - New helpers: `regexOperators`, `isRegexOperator`, `sanitizeRegexFlags`, `toRegExpSource`, `isValidRegex`, `toInlineFlagsRegex`, `regexFallbackRule`, `isRegexRuleInvalid`.
 
 ### Fixed
 
@@ -2616,15 +2621,16 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1082]: https://github.com/react-querybuilder/react-querybuilder/pull/1082
 [#1084]: https://github.com/react-querybuilder/react-querybuilder/pull/1084
 [#1092]: https://github.com/react-querybuilder/react-querybuilder/issues/1092
-[#1099]: https://github.com/react-querybuilder/react-querybuilder/issues/1099
-[#1101]: https://github.com/react-querybuilder/react-querybuilder/issues/1101
-[#1103]: https://github.com/react-querybuilder/react-querybuilder/issues/1103
-[#1109]: https://github.com/react-querybuilder/react-querybuilder/issues/1109
-[#1112]: https://github.com/react-querybuilder/react-querybuilder/issues/1112
-[#1113]: https://github.com/react-querybuilder/react-querybuilder/issues/1113
-[#1114]: https://github.com/react-querybuilder/react-querybuilder/issues/1114
-[#1118]: https://github.com/react-querybuilder/react-querybuilder/issues/1118
-[#1119]: https://github.com/react-querybuilder/react-querybuilder/issues/1119
+[#1099]: https://github.com/react-querybuilder/react-querybuilder/pull/1099
+[#1101]: https://github.com/react-querybuilder/react-querybuilder/pull/1101
+[#1103]: https://github.com/react-querybuilder/react-querybuilder/pull/1103
+[#1109]: https://github.com/react-querybuilder/react-querybuilder/pull/1109
+[#1112]: https://github.com/react-querybuilder/react-querybuilder/pull/1112
+[#1113]: https://github.com/react-querybuilder/react-querybuilder/pull/1113
+[#1114]: https://github.com/react-querybuilder/react-querybuilder/pull/1114
+[#1118]: https://github.com/react-querybuilder/react-querybuilder/pull/1118
+[#1119]: https://github.com/react-querybuilder/react-querybuilder/pull/1119
+[#1122]: https://github.com/react-querybuilder/react-querybuilder/pull/1122
 [#1124]: https://github.com/react-querybuilder/react-querybuilder/pull/1124
 
 <!-- #endregion -->

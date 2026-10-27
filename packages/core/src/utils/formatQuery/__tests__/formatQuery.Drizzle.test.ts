@@ -7,7 +7,7 @@
  */
 
 import type { Column } from 'drizzle-orm';
-import type { RuleGroupType } from '../../../types';
+import type { RuleGroupType, RuleType } from '../../../types';
 import { defaultRuleProcessorDrizzle } from '../defaultRuleProcessorDrizzle';
 import { formatQuery } from '../formatQuery';
 import {
@@ -261,4 +261,32 @@ it('parseNumbers does not affect non-numeric strings', () => {
   );
   // and(eq(column, value)) → [[column, value]]
   expect(result).toEqual([[fields.firstName, 'Alice']]);
+});
+
+it('handles regex operators', () => {
+  const sql = Object.assign((s: TemplateStringsArray, ...v: unknown[]) => v[0], {
+    raw: (s: string) => `raw:${s}`,
+    join: (chunks: unknown[]) => chunks,
+  });
+  const ops = {
+    ...drizzleOperators,
+    sql,
+    like: (...x: unknown[]) => ['like', ...x],
+    notLike: (...x: unknown[]) => ['notLike', ...x],
+  };
+  const rule = (preset?: 'postgresql' | 'oracle', r: Partial<RuleType> = {}) =>
+    formatQuery(
+      {
+        combinator: 'and',
+        rules: [{ field: 'f', operator: 'doesNotMatch', value: 'a', regexFlags: 'i', ...r }],
+      },
+      { format: 'drizzle', preset }
+    )(fields, ops);
+  expect(rule('postgresql')).toEqual([[fields.f, 'raw: !~* ', '(?p)a']]);
+  expect(rule('oracle', { operator: 'matches', value: 'f1', valueSource: 'field' })).toEqual([
+    ['raw:regexp_like(', fields.f, 'raw:, ', fields.f1, "raw:, 'i')"],
+  ]);
+  // Fallback to `notLike`
+  expect(rule()).toEqual([['notLike', fields.f, '%a%']]);
+  expect(rule(undefined, { operator: 'matches' })).toEqual([['like', fields.f, '%a%']]);
 });

@@ -3,11 +3,14 @@ import { lc } from '../misc';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
+import { buildSQLRegex, getSQLRegexPatternValue, isSQLRegexPreset } from './sqlRegex';
 import {
   getQuotedFieldName,
   getSubqueryElementAlias,
+  isRegexOperator,
   mapSQLOperator,
   processMatchMode,
+  regexFallbackRule,
 } from './utils';
 
 /**
@@ -75,6 +78,34 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
         return `(select count(*)${threshold > 0 && threshold < 1 ? `::float / array_length(${ruleField}, 1)` : ''} from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedArrayFilter}) ${op} ${threshold}`;
       }
     }
+  }
+
+  if (isRegexOperator(rule.operator)) {
+    if (!isSQLRegexPreset(opts.preset)) {
+      return defaultRuleProcessorSQL(regexFallbackRule(rule), opts);
+    }
+    const flagsInlined = rule.valueSource !== 'field';
+    const pattern = valueProcessor(
+      flagsInlined
+        ? { ...rule, value: getSQLRegexPatternValue(opts.preset, rule.value, rule.regexFlags) }
+        : rule,
+      {
+        ...opts,
+        parseNumbers: false,
+        quoteFieldNamesWith,
+        fieldIdentifierSeparator,
+        quoteValuesWith,
+        concatOperator,
+      }
+    );
+    return buildSQLRegex({
+      preset: opts.preset,
+      field: ruleField,
+      pattern,
+      flags: rule.regexFlags,
+      operator: rule.operator,
+      flagsInlined,
+    });
   }
 
   const value = valueProcessor(rule, {

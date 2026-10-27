@@ -4,7 +4,19 @@ import type { Simplify } from '../../types/typeUtils';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
+import { getSQLRegexPatternValue } from './sqlRegex';
+import {
+  isRegexOperator,
+  isValidValue,
+  processMatchMode,
+  regexFallbackRule,
+  sanitizeRegexFlags,
+  shouldRenderAsNumber,
+  toInlineFlagsRegex,
+} from './utils';
+
+// Presets w/o `Op.regexp` support in Sequelize
+const nonRegexPresets = new Set(['ansi', 'mssql', 'oracle']);
 
 type OpTypes = Simplify<typeof _OpTypes>;
 type ColType = typeof _colType;
@@ -33,6 +45,14 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
 
   // Match modes are not supported in this format
   if (processMatchMode(rule)) return undefined;
+
+  // Regex w/ field value source or non-regex preset not supported; fall back to `contains`-style
+  if (
+    isRegexOperator(rule.operator) &&
+    (rule.valueSource === 'field' || nonRegexPresets.has(opts.preset ?? ''))
+  ) {
+    return defaultRuleProcessorSequelize(regexFallbackRule(rule), opts);
+  }
 
   const { field, operator, value, valueSource } = rule;
   const valueIsField = valueSource === 'field';
@@ -132,6 +152,27 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
       return {
         [field]: { [Op.notLike]: valueIsField ? fn!('CONCAT', '%', col!(value)) : `%${value}` },
       };
+
+    case 'matches':
+    case 'doesnotmatch': {
+      const not = operatorLC === 'doesnotmatch';
+      // `Op.iRegexp`/`Op.notIRegexp` are PostgreSQL-only (`m`/`s` → `(?p|n|w)`);
+      // inline `(?ims)` elsewhere (MySQL/MariaDB/SQLite)
+      if (opts.preset !== 'postgresql') {
+        return {
+          [field]: {
+            [not ? Op.notRegexp : Op.regexp]: toInlineFlagsRegex(`${value}`, rule.regexFlags),
+          },
+        };
+      }
+      const i = !!sanitizeRegexFlags(rule.regexFlags, 'i');
+      return {
+        [field]: {
+          [not ? (i ? Op.notIRegexp : Op.notRegexp) : i ? Op.iRegexp : Op.regexp]:
+            getSQLRegexPatternValue('postgresql', `${value}`, rule.regexFlags),
+        },
+      };
+    }
 
     case 'null':
       return { [field]: { [Op.is]: null } };

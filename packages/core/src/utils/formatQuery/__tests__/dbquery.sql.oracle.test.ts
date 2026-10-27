@@ -79,6 +79,40 @@ describe.skipIf(!oracleEnabled)('Oracle', () => {
       });
     }
 
+    describe('regex', () => {
+      const rq = (r: DefaultRuleGroupType['rules'][number]): DefaultRuleGroupType => ({
+        combinator: 'and',
+        rules: [r],
+      });
+      const regexTests: [string, DefaultRuleGroupType, (u: SuperUser) => boolean][] = [
+        [
+          'matches',
+          rq({ field: 'madeUpName', operator: 'matches', value: 'man$' }),
+          u => u.madeUpName.endsWith('man'),
+        ],
+        [
+          'matches i',
+          rq({ field: 'madeUpName', operator: 'matches', value: '^s', regexFlags: 'i' }),
+          u => /^s/i.test(u.madeUpName),
+        ],
+        [
+          'doesNotMatch',
+          rq({ field: 'firstName', operator: 'doesNotMatch', value: "e'?r" }),
+          u => !/e'?r/.test(u.firstName),
+        ],
+        [
+          'doesNotMatch i',
+          rq({ field: 'firstName', operator: 'doesNotMatch', value: 'B', regexFlags: 'i' }),
+          u => !/B/i.test(u.firstName),
+        ],
+      ];
+      for (const [name, query, filter] of regexTests) {
+        describe(name, () => {
+          testSQL(commonSchema, { query, expectedResult: superUsersOracle.filter(filter) });
+        });
+      }
+    });
+
     // "parameter" value source: bindings supplied at execution time (positional -> `:1`, ...)
     describe('parameter value source', () => {
       const testParam = (

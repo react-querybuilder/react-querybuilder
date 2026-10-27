@@ -3,7 +3,7 @@ import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import type { TsDbExpression } from './tanStackDbTypes.ts';
-import { isValidValue, shouldRenderAsNumber } from './utils';
+import { isValidValue, regexFallbackRule, shouldRenderAsNumber } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for the "tanstack_db" format.
@@ -38,7 +38,7 @@ export const defaultRuleProcessorTanStackDB: RuleProcessor = (
     return refs[primaryRef][fieldName];
   };
 
-  const { field, operator, value, valueSource } = rule;
+  const { field, operator, value, valueSource } = regexFallbackRule(rule);
   const column = resolveField(field);
   const operatorLC = lc(operator);
 

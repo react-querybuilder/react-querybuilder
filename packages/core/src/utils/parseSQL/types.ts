@@ -224,8 +224,14 @@ export interface SQLInSubQueryPredicate extends SQLWhereObjectAny {
 export interface SQLSoundsLikePredicate extends SQLWhereObjectAny {
   type: 'SoundsLikePredicate';
 }
-export interface SQLRegexpPredicate extends SQLWhereObjectAny {
+export interface SQLRegexpPredicate extends SQLWhereObject {
   type: 'RegexpPredicate';
+  hasNot: NotOpt | '!';
+  caseInsensitive?: boolean;
+  /** PostgreSQL `~` operator family (vs. `REGEXP`) */
+  tilde?: boolean;
+  left: SQLSimpleExpression;
+  right: SQLSimpleExpression;
 }
 export interface SQLComparisonSubQueryBooleanPrimary extends SQLWhereObjectAny {
   type: 'ComparisonSubQueryBooleanPrimary';

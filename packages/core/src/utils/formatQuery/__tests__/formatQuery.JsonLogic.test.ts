@@ -9,7 +9,10 @@ import type {
   RuleProcessor,
 } from '../../../types';
 import { add } from '../../queryTools';
-import { defaultRuleProcessorJsonLogic } from '../defaultRuleProcessorJsonLogic';
+import {
+  defaultRuleProcessorJsonLogic,
+  jsonLogicRegexOperator,
+} from '../defaultRuleProcessorJsonLogic';
 import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
@@ -479,4 +482,33 @@ it('handles match modes', () => {
       },
     ],
   });
+});
+
+it('handles matches/doesNotMatch', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: '^a.b', regexFlags: 'gix' },
+      { field: 'f', operator: 'doesNotMatch', value: 'x+' },
+      { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+      { field: 'f', operator: 'matches', value: 'p', valueSource: 'parameter' },
+    ],
+  };
+  expect(formatQuery(q, 'jsonlogic')).toEqual({
+    and: [
+      { regex: [{ var: 'f' }, '^a.b', 'i'] },
+      { '!': { regex: [{ var: 'f' }, 'x+'] } },
+      { in: [{ var: 'g' }, { var: 'f' }] },
+      { regex: [{ var: 'f' }, { var: 'p' }] },
+    ],
+  });
+});
+
+it('jsonLogicRegexOperator', () => {
+  const { regex } = jsonLogicRegexOperator;
+  expect(regex('aXb', 'x', 'gi')).toBe(true);
+  expect(regex('aXb', 'x')).toBe(false);
+  expect(regex(1, 'x')).toBe(false);
+  expect(regex('x', 1)).toBe(false);
+  expect(regex('x', '(')).toBe(false);
 });

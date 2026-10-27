@@ -7,6 +7,7 @@
  */
 
 import { col, fn, Op } from 'sequelize';
+import type { RuleType, SQLPreset } from '../../../types';
 import { defaultRuleProcessorSequelize } from '../defaultRuleProcessorSequelize';
 import { formatQuery } from '../formatQuery';
 import {
@@ -173,4 +174,58 @@ it('parseNumbers', () => {
       context: contextWithAllReqs,
     })
   ).toBeTruthy();
+});
+
+it('handles regex operators', () => {
+  const fq = (rules: RuleType[], preset?: SQLPreset) =>
+    formatQuery(
+      { combinator: 'and', rules },
+      { format: 'sequelize', context: contextWithAllReqs, preset }
+    );
+  const regexRules: RuleType[] = [
+    { field: 'f', operator: 'matches', value: 'a' },
+    { field: 'f', operator: 'matches', value: 'b', regexFlags: 'gi' },
+    { field: 'f', operator: 'doesNotMatch', value: 'c' },
+    { field: 'f', operator: 'doesNotMatch', value: 'd', regexFlags: 'i' },
+  ];
+  expect(fq(regexRules, 'postgresql')).toEqual({
+    [Op.and]: [
+      { f: { [Op.regexp]: '(?p)a' } },
+      { f: { [Op.iRegexp]: '(?p)b' } },
+      { f: { [Op.notRegexp]: '(?p)c' } },
+      { f: { [Op.notIRegexp]: '(?p)d' } },
+    ],
+  });
+  // `iRegexp` ops are PostgreSQL-only; inline `(?i)` otherwise
+  expect(fq(regexRules)).toEqual({
+    [Op.and]: [
+      { f: { [Op.regexp]: 'a' } },
+      { f: { [Op.regexp]: '(?i)b' } },
+      { f: { [Op.notRegexp]: 'c' } },
+      { f: { [Op.notRegexp]: '(?i)d' } },
+    ],
+  });
+  // `m`/`s` flags
+  const msRules: RuleType[] = [
+    { field: 'f', operator: 'matches', value: 'a', regexFlags: 'ims' },
+    { field: 'f', operator: 'doesNotMatch', value: 'b', regexFlags: 'ms' },
+  ];
+  expect(fq(msRules, 'postgresql')).toEqual({
+    [Op.and]: [{ f: { [Op.iRegexp]: '(?w)a' } }, { f: { [Op.notRegexp]: '(?w)b' } }],
+  });
+  for (const preset of [undefined, 'mysql', 'sqlite'] as const) {
+    expect(fq(msRules, preset)).toEqual({
+      [Op.and]: [{ f: { [Op.regexp]: '(?ims)a' } }, { f: { [Op.notRegexp]: '(?ms)b' } }],
+    });
+  }
+  // Field value source falls back to `contains`
+  expect(fq([{ field: 'f', operator: 'matches', value: 'g', valueSource: 'field' }])).toEqual(
+    fq([{ field: 'f', operator: 'contains', value: 'g', valueSource: 'field' }])
+  );
+  // No `Op.regexp` support for these presets; fall back to `contains`
+  for (const preset of ['ansi', 'mssql', 'oracle'] as const) {
+    expect(fq([{ field: 'f', operator: 'doesNotMatch', value: 'g' }], preset)).toEqual(
+      fq([{ field: 'f', operator: 'doesNotContain', value: 'g' }], preset)
+    );
+  }
 });

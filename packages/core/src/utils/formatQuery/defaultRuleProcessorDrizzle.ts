@@ -5,10 +5,13 @@ import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
+import { buildSQLRegex, getSQLRegexPatternValue, isSQLRegexPreset } from './sqlRegex';
 import {
   getSubqueryElementAlias,
+  isRegexOperator,
   isValidValue,
   processMatchMode,
+  regexFallbackRule,
   shouldRenderAsNumber,
 } from './utils';
 
@@ -108,6 +111,30 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
           : sql`(select count(*) from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)}) ${sql.raw(`${op} ${threshold}`)}`;
       }
     }
+  }
+
+  if (isRegexOperator(operator)) {
+    if (!isSQLRegexPreset(opts.preset)) {
+      return defaultRuleProcessorDrizzle(regexFallbackRule(rule), opts);
+    }
+    const pattern = valueIsField
+      ? columns[value]
+      : getSQLRegexPatternValue(opts.preset, value, rule.regexFlags);
+    // Build w/ placeholders, then swap in column/pattern as drizzle chunks
+    const expr = buildSQLRegex({
+      preset: opts.preset,
+      field: '\0F',
+      pattern: '\0P',
+      flags: rule.regexFlags,
+      operator,
+      flagsInlined: !valueIsField,
+    });
+    return sql.join(
+      expr
+        .split(/(\0[FP])/)
+        .filter(Boolean)
+        .map(p => (p === '\0F' ? sql`${column}` : p === '\0P' ? sql`${pattern}` : sql.raw(p)))
+    );
   }
 
   switch (operatorLC) {

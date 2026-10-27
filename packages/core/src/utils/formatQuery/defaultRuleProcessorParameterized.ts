@@ -6,10 +6,13 @@ import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultOperatorProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
+import { buildSQLRegex, getSQLRegexPatternValue, isSQLRegexPreset } from './sqlRegex';
 import {
   getQuotedFieldName,
   getSubqueryElementAlias,
+  isRegexOperator,
   processMatchMode,
+  regexFallbackRule,
   shouldRenderAsNumber,
   stripParamPrefix,
   withParamPrefix,
@@ -114,6 +117,42 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     }
   }
   /* v8 ignore stop -- @preserve */
+
+  if (isRegexOperator(rule.operator)) {
+    const preset = opts?.preset;
+    if (!isSQLRegexPreset(preset)) {
+      return defaultRuleProcessorParameterized(regexFallbackRule(rule), opts, meta);
+    }
+    let pattern: string;
+    if (rule.valueSource === 'field') {
+      pattern = getQuotedFieldName(rule.value, { quoteFieldNamesWith, fieldIdentifierSeparator });
+    } else if (rule.valueSource === 'parameter') {
+      pattern = withParamPrefix(rule.value, paramPrefix);
+      if (!parameterized) {
+        paramsNamed[paramsKeepPrefix ? pattern : stripParamPrefix(rule.value, paramPrefix)] = null;
+      }
+    } else {
+      const paramValue = getSQLRegexPatternValue(preset, rule.value, rule.regexFlags);
+      if (parameterized) {
+        params.push(paramValue);
+        pattern = numberedParams ? `${paramPrefix}${processedParams.length + 1}` : '?';
+      } else {
+        const paramName = getNextNamedParam!(rule.field);
+        paramsNamed[`${paramsKeepPrefix ? paramPrefix : ''}${paramName}`] = paramValue;
+        pattern = `${paramPrefix}${paramName}`;
+      }
+    }
+    return finalize(
+      buildSQLRegex({
+        preset,
+        field: ruleField,
+        pattern,
+        flags: rule.regexFlags,
+        operator: rule.operator,
+        flagsInlined: (rule.valueSource ?? 'value') === 'value',
+      })
+    );
+  }
 
   const value = valueProcessor(rule, {
     parseNumbers,

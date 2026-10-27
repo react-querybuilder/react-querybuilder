@@ -178,3 +178,26 @@ it('parseNumbers with between operators', () => {
     '(age >= "22" && age <= "34") && (score < "10" || score > "20")'
   );
 });
+
+describe('matches/doesNotMatch', () => {
+  it('formats regex operators', () => {
+    const q: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'f', operator: 'matches', value: 'a"\\d', regexFlags: 'igs' },
+        { field: 'f', operator: 'doesNotMatch', value: '^x' },
+        { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+      ],
+    };
+    expect(formatQuery(q, 'cel')).toBe(
+      `f.matches("(?is)a\\"\\\\d") && !f.matches("^x") && f.matches(g)`
+    );
+    // Backslashes escaped even w/o `escapeQuotes`
+    expect(
+      defaultRuleProcessorCEL(
+        { field: 'f', operator: 'matches', value: String.raw`^\d+$` },
+        { escapeQuotes: false }
+      )
+    ).toBe(String.raw`f.matches("^\\d+$")`);
+  });
+});

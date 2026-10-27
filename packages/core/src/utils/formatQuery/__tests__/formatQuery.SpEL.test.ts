@@ -175,3 +175,19 @@ it('parseNumbers with between operators', () => {
     "(age >= '22' and age <= '34') and (score < '10' or score > '20')"
   );
 });
+
+describe('matches/doesNotMatch', () => {
+  it('formats regex operators', () => {
+    const q: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'f', operator: 'matches', value: "a'b", regexFlags: 'igx' },
+        { field: 'f', operator: 'doesNotMatch', value: '^x' },
+        { field: 'f', operator: 'matches', value: 'g', valueSource: 'field', regexFlags: 'i' },
+      ],
+    };
+    expect(formatQuery(q, 'spel')).toBe(
+      String.raw`f matches '(?i)[\s\S]*(?:a''b)[\s\S]*' and !(f matches '[\s\S]*(?:^x)[\s\S]*') and f matches '(?i)[\s\S]*(?:'.concat(g).concat(')[\s\S]*')`
+    );
+  });
+});

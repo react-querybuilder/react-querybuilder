@@ -20,6 +20,12 @@ import {
 } from '../formatQueryTestUtils';
 import { defaultMongoDBValueProcessor } from '../index';
 
+// `$regexMatch` w/ non-string input guard (`avoidFieldsAsKeys`)
+const guardedRegexMatch = (f: string, regex: unknown, neg = false) => {
+  const m = { $regexMatch: { input: `$${f}`, regex } };
+  return { $cond: [{ $eq: [{ $type: `$${f}` }, 'string'] }, neg ? { $not: m } : m, neg] };
+};
+
 const expectBoth = (
   query: RuleGroupTypeAny,
   expectation: unknown,
@@ -163,12 +169,12 @@ const mongoQueryExpectationForAvoidFieldsAsKeys = {
     { $eq: ['$age', '26'] },
     { $eq: ['$isMusician', true] },
     { $eq: ['$isLucky', false] },
-    { $regexMatch: { input: '$email', regex: '@' } },
-    { $regexMatch: { input: '$email', regex: '^ab' } },
-    { $regexMatch: { input: '$email', regex: 'com$' } },
-    { $not: { $regexMatch: { input: '$hello', regex: 'com' } } },
-    { $not: { $regexMatch: { input: '$job', regex: '^Man' } } },
-    { $not: { $regexMatch: { input: '$job', regex: 'ger$' } } },
+    guardedRegexMatch('email', '@'),
+    guardedRegexMatch('email', '^ab'),
+    guardedRegexMatch('email', 'com$'),
+    guardedRegexMatch('hello', 'com', true),
+    guardedRegexMatch('job', '^Man', true),
+    guardedRegexMatch('job', 'ger$', true),
     { $or: [{ $eq: ['$job', 'Sales Executive'] }, { $in: ['$job', []] }] },
   ],
 };
@@ -205,7 +211,7 @@ const mongoQueryExpectationForMatchModes = {
                 {
                   $filter: {
                     as: 'item',
-                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    cond: { $and: [guardedRegexMatch('$item', 'S')] },
                     input: '$fs',
                   },
                 },
@@ -226,7 +232,7 @@ const mongoQueryExpectationForMatchModes = {
                 {
                   $filter: {
                     as: 'item',
-                    cond: { $and: [{ $regexMatch: { input: '$$item.fv', regex: 'S' } }] },
+                    cond: { $and: [guardedRegexMatch('$item.fv', 'S')] },
                     input: '$fs',
                   },
                 },
@@ -251,7 +257,7 @@ const mongoQueryExpectationForMatchModes = {
                 {
                   $filter: {
                     as: 'item',
-                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    cond: { $and: [guardedRegexMatch('$item', 'S')] },
                     input: '$fs',
                   },
                 },
@@ -272,7 +278,7 @@ const mongoQueryExpectationForMatchModes = {
                 {
                   $filter: {
                     as: 'item',
-                    cond: { $and: [{ $regexMatch: { input: '$$item.fv', regex: 'S' } }] },
+                    cond: { $and: [guardedRegexMatch('$item.fv', 'S')] },
                     input: '$fs',
                   },
                 },
@@ -293,7 +299,7 @@ const mongoQueryExpectationForMatchModes = {
                 {
                   $filter: {
                     as: 'item',
-                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    cond: { $and: [guardedRegexMatch('$item', 'S')] },
                     input: '$fs',
                   },
                 },
@@ -314,7 +320,7 @@ const mongoQueryExpectationForMatchModes = {
                 {
                   $filter: {
                     as: 'item',
-                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    cond: { $and: [guardedRegexMatch('$item', 'S')] },
                     input: '$fs',
                   },
                 },
@@ -335,7 +341,7 @@ const mongoQueryExpectationForMatchModes = {
                 {
                   $filter: {
                     as: 'item',
-                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    cond: { $and: [guardedRegexMatch('$item', 'S')] },
                     input: '$fs',
                   },
                 },
@@ -356,7 +362,7 @@ const mongoQueryExpectationForMatchModes = {
                 {
                   $filter: {
                     as: 'item',
-                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    cond: { $and: [guardedRegexMatch('$item', 'S')] },
                     input: '$fs',
                   },
                 },
@@ -377,7 +383,7 @@ const mongoQueryExpectationForMatchModes = {
                 {
                   $filter: {
                     as: 'item',
-                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    cond: { $and: [guardedRegexMatch('$item', 'S')] },
                     input: '$fs',
                   },
                 },
@@ -401,10 +407,7 @@ const mongoQueryExpectationForMatchModes = {
                     cond: {
                       $and: [
                         {
-                          $and: [
-                            { $regexMatch: { input: '$$item', regex: 'S' } },
-                            { $regexMatch: { input: '$$item', regex: 'S' } },
-                          ],
+                          $and: [guardedRegexMatch('$item', 'S'), guardedRegexMatch('$item', 'S')],
                         },
                       ],
                     },
@@ -431,10 +434,7 @@ const mongoQueryExpectationForMatchModes = {
                     cond: {
                       $and: [
                         {
-                          $and: [
-                            { $regexMatch: { input: '$$item', regex: 'S' } },
-                            { $regexMatch: { input: '$$item', regex: 'S' } },
-                          ],
+                          $and: [guardedRegexMatch('$item', 'S'), guardedRegexMatch('$item', 'S')],
                         },
                       ],
                     },
@@ -555,7 +555,7 @@ it('formats to mongo query correctly', () => {
                   $filter: {
                     input: '$fs',
                     as: 'item',
-                    cond: { $and: [{ $not: { $regexMatch: { input: '$$item', regex: 'S' } } }] },
+                    cond: { $and: [{ $not: guardedRegexMatch('$item', 'S') }] },
                   },
                 },
                 [],
@@ -647,9 +647,9 @@ it('escapes regex metacharacters in string-match values', () => {
   expect(formatQuery(q, { format: 'mongodb_query', context: { avoidFieldsAsKeys: true } })).toEqual(
     {
       $and: [
-        { $regexMatch: { input: '$f', regex: String.raw`a\.b` } },
-        { $regexMatch: { input: '$f', regex: String.raw`^\(x\|y\)` } },
-        { $not: { $regexMatch: { input: '$f', regex: String.raw`1\+1$` } } },
+        guardedRegexMatch('f', String.raw`a\.b`),
+        guardedRegexMatch('f', String.raw`^\(x\|y\)`),
+        guardedRegexMatch('f', String.raw`1\+1$`, true),
       ],
     }
   );
@@ -762,4 +762,40 @@ it('parseNumbers', () => {
   ] as FormatQueryOptions[]) {
     expectBoth(queryForNumberParsing, allNumbersParsed, opts);
   }
+});
+
+it('handles matches/doesNotMatch', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: '^a.b', regexFlags: 'gixu' },
+      { field: 'f', operator: 'doesNotMatch', value: 'x+' },
+      { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+    ],
+  };
+  expect(formatQuery(q, 'mongodb_query')).toEqual({
+    $and: [
+      { f: { $regex: '^a.b', $options: 'ix' } },
+      { f: { $not: { $regex: 'x+' } } },
+      { $where: 'this.f.includes(this.g)' },
+    ],
+  });
+  expect(formatQuery(q, { format: 'mongodb_query', context: { avoidFieldsAsKeys: true } })).toEqual(
+    {
+      $and: [
+        {
+          $cond: [
+            { $eq: [{ $type: '$f' }, 'string'] },
+            { $regexMatch: { input: '$f', regex: { $literal: '^a.b' }, options: 'ix' } },
+            false,
+          ],
+        },
+        guardedRegexMatch('f', { $literal: 'x+' }, true),
+        { $where: 'this.f.includes(this.g)' },
+      ],
+    }
+  );
+  expect(formatQuery(q, 'mongodb')).toBe(
+    '{"$and":[{"f":{"$regex":"^a.b","$options":"ix"}},{"f":{"$not":{"$regex":"x+"}}},{"$where":"this.f.includes(this.g)"}]}'
+  );
 });

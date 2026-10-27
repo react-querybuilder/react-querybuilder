@@ -2,6 +2,7 @@ import type { RuleProcessor } from '../../types';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { formatCapabilities, getUnsupportedRuleFeature } from './formatCapabilities';
+import { regexFallbackRule } from './utils';
 import { coerceBoolean, coerceNumber, isBooleanEditor } from './vectorValueUtils';
 
 const cmpOps = { '=': '==', '!=': '!=', '<': '<', '<=': '<=', '>': '>', '>=': '>=' } as const;
@@ -47,7 +48,7 @@ const escapeLike = (s: string) => s.replaceAll(/[\\%_]/g, '\\$&');
 export const defaultRuleProcessorMilvus: RuleProcessor = (rule, options = {}): string => {
   if (getUnsupportedRuleFeature(rule, formatCapabilities.milvus!)) return '';
 
-  const { field, operator, value, valueSource } = rule;
+  const { field, operator, value, valueSource } = regexFallbackRule(rule);
   const { parseNumbers, preserveValueOrder, fieldData } = options;
   const op = lc(operator);
   const isField = valueSource === 'field';

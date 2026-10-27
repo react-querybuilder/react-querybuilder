@@ -3,6 +3,10 @@
 // can own their teardown.
 import { afterAll } from 'bun:test';
 import path from 'node:path';
+import { configureCustomSQLite } from './dbpool/sqliteExt';
+
+// Must precede any SQLite DB creation (see sqliteExt.ts)
+await configureCustomSQLite();
 
 // `@react-querybuilder/mcp` imports its (gitignored) generated docs index; build it if missing
 const mcpDocsIndex = path.join(

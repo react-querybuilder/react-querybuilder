@@ -219,3 +219,59 @@ describe('keyword-prefixed identifiers', () => {
     expect(parseCypher(formatQuery(query, 'cypher'))).toEqual(query);
   });
 });
+
+describe('regex', () => {
+  const query: DefaultRuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: "a\\d'+", regexFlags: 'im' },
+      { field: 'g', operator: 'doesNotMatch', value: 'x|y' },
+    ],
+  };
+
+  it('round-trips w/ parseRegex', () => {
+    expect(parseCypher(formatQuery(query, 'cypher'), { parseRegex: true })).toEqual(query);
+    // Legacy `.*(?:p).*` wrapper
+    expect(parseCypher("f =~ '.*(?:a).*'", { parseRegex: true }).rules).toEqual([
+      { field: 'f', operator: 'matches', value: 'a' },
+    ]);
+  });
+
+  it('uses field operators to decide', () => {
+    const fields = [
+      { name: 'f', label: 'F', operators: [{ name: 'matches', label: 'matches' }] },
+      { name: 'g', label: 'G' },
+    ];
+    expect(parseCypher(formatQuery(query, 'cypher'), { fields }).rules).toEqual([
+      query.rules[0],
+      { field: 'g', operator: 'doesNotContain', value: String.raw`[\s\S]*(?:x|y)[\s\S]*` },
+    ]);
+  });
+
+  it('falls back to contains w/ raw pattern', () => {
+    expect(parseCypher("n.x =~ '(?i)ab'").rules).toEqual([
+      { field: 'n.x', operator: 'contains', value: '(?i)ab' },
+    ]);
+  });
+
+  it('anchors unwrapped full-match patterns', () => {
+    expect(parseCypher("n.x =~ 'ab.*' OR n.y =~ '.*(?:a)|(?:b).*'", { parseRegex: true })).toEqual({
+      combinator: 'and',
+      rules: [
+        {
+          combinator: 'or',
+          rules: [
+            { field: 'n.x', operator: 'matches', value: '^(?:ab.*)$' },
+            { field: 'n.y', operator: 'matches', value: '^(?:.*(?:a)|(?:b).*)$' },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('handles non-string literal', () => {
+    expect(parseCypher('n.x =~ 12', { parseRegex: true }).rules).toEqual([
+      { field: 'n.x', operator: 'matches', value: '^(?:12)$' },
+    ]);
+  });
+});

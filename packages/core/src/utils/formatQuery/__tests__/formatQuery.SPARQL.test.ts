@@ -304,3 +304,30 @@ describe('case-insensitive (custom ruleProcessor)', () => {
     ).toBe(`STRSTARTS(LCASE(?madeUpName), LCASE("super"))`);
   });
 });
+
+describe('regex', () => {
+  const matchesQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: "a\\d'+", regexFlags: 'igm' },
+      { field: 'g', operator: 'doesNotMatch', value: 'x|y' },
+    ],
+  };
+  const regexFieldQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+      { field: 'f', operator: 'doesNotMatch', value: 'g', valueSource: 'field' },
+    ],
+  };
+
+  it('matches/doesNotMatch', () => {
+    expect(formatQuery(matchesQuery, 'sparql')).toBe(
+      `REGEX(?f, "a\\\\d'+", "im") && !REGEX(?g, "x|y")`
+    );
+  });
+
+  it('valueSource field falls back to contains', () => {
+    expect(formatQuery(regexFieldQuery, 'sparql')).toBe('CONTAINS(?f, ?g) && !CONTAINS(?f, ?g)');
+  });
+});

@@ -217,13 +217,13 @@ export interface CELMapInit extends CELExpression {
 export interface CELLikeExpression extends CELExpression {
   type: 'LikeExpression';
   left: CELIdentifier | CELMemberIdentifierChain;
-  right: CELIdentifier<'contains' | 'startsWith' | 'endsWith'>;
+  right: CELIdentifier<'contains' | 'startsWith' | 'endsWith' | 'matches'>;
   list: CELExpressionList & { value: [CELStringLiteral | CELIdentifier] };
 }
 export interface CELNegatedLikeExpression extends CELExpression {
   type: 'LikeExpression';
   left: CELMemberNegatedIdentifier | CELMemberNegatedIdentifierChain;
-  right: CELIdentifier<'contains' | 'startsWith' | 'endsWith'>;
+  right: CELIdentifier<'contains' | 'startsWith' | 'endsWith' | 'matches'>;
   list: CELExpressionList & { value: [CELStringLiteral | CELIdentifier] };
 }
 export interface CELSubqueryExpression extends CELExpression {

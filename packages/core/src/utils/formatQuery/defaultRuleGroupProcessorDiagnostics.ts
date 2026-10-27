@@ -23,6 +23,7 @@ import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import type { FormatCapabilities } from './formatCapabilities';
 import { formatCapabilities, getUnsupportedRuleFeature } from './formatCapabilities';
 import { negateRule } from './negation';
+import { isRegexRuleInvalid } from './utils';
 
 const numericInputTypes = new Set(['number', 'range', 'bigint']);
 const betweenOps = new Set(['between', 'notbetween']);
@@ -457,9 +458,21 @@ const collectRuleDiagnostics = (
     });
   }
 
+  const regexInvalid = isRegexRuleInvalid(rule);
+  if (regexInvalid && !rule.muted) {
+    diagnostics.push({
+      id,
+      path,
+      code: 'INVALID_VALUE',
+      message: `Value "${rule.value}" is not a valid regular expression${rule.regexFlags ? ` (flags "${rule.regexFlags}")` : ''}`,
+      source: 'type-check',
+    });
+  }
+
   // Custom validator diagnostics (only if not already covered by other checks)
   if (
     !rule.muted &&
+    !regexInvalid &&
     rule.field !== placeholderFieldName &&
     rule.operator !== placeholderOperatorName &&
     !(placeholderValueName !== undefined && rule.value === placeholderValueName)

@@ -4,7 +4,13 @@ import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
-import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  getQuotedFieldName,
+  processMatchMode,
+  regexFallbackRule,
+  sanitizeRegexFlags,
+  shouldRenderAsNumber,
+} from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -13,6 +19,17 @@ const quote = (v: unknown, escapeQuotes?: boolean) =>
   `"${typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll('\\', '\\\\').replaceAll(`"`, `\\"`)}"`;
 
 const negate = (clause: string, neg: boolean) => (neg ? `$not(${clause})` : clause);
+
+// Escapes unescaped `/` so pattern fits in a `/.../` literal
+const escapeRegexDelimiter = (src: string) => {
+  let out = '';
+  for (let i = 0; i < src.length; i++) {
+    // trailing lone backslash → literal backslash (else escapes closing delimiter)
+    if (src[i] === '\\') out += src[i] + (src[++i] ?? '\\');
+    else out += src[i] === '/' ? '\\/' : src[i];
+  }
+  return out;
+};
 
 const escapeStringRegex = (s: string) =>
   `${s}`.replaceAll(/[/$()*+.?[\\\]^{|}]/g, String.raw`\$&`).replaceAll('-', String.raw`\x2d`);
@@ -85,6 +102,18 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
   }
 
   const operatorLC = lc(operator);
+
+  if (operatorLC === 'matches' || operatorLC === 'doesnotmatch') {
+    if (valueIsField) {
+      return defaultRuleProcessorJSONata(regexFallbackRule(rule), options);
+    }
+    const flags = sanitizeRegexFlags(rule.regexFlags, 'im');
+    return negate(
+      `$contains(${qfn(field)}, /${escapeRegexDelimiter(`${value}`) || '(?:)'}/${flags})`,
+      operatorLC === 'doesnotmatch'
+    );
+  }
+
   switch (operatorLC) {
     case '<':
     case '<=':

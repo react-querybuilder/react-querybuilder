@@ -226,3 +226,24 @@ it('does not escape quote chars in field names (JSONata has no escape syntax)', 
   };
   expect(formatQuery(q, { format: 'jsonata', quoteFieldNamesWith: '`' })).toBe('`a`b` = `c`d`');
 });
+
+it('handles matches/doesNotMatch', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: '^a/b\\/c$', regexFlags: 'gimsu' },
+      { field: 'f', operator: 'doesNotMatch', value: 'x+' },
+      { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+      { field: 'f', operator: 'matches', value: 'a\\' },
+    ],
+  };
+  expect(formatQuery(q, 'jsonata')).toBe(
+    String.raw`$contains(f, /^a\/b\/c$/im) and $not($contains(f, /x+/)) and $contains(f, g)`
+  );
+  expect(defaultRuleProcessorJSONata({ field: 'f', operator: 'matches', value: 'a\\' }, {})).toBe(
+    String.raw`$contains(f, /a\\/)`
+  );
+  expect(defaultRuleProcessorJSONata({ field: 'f', operator: 'matches', value: '' }, {})).toBe(
+    '$contains(f, /(?:)/)'
+  );
+});

@@ -1,4 +1,5 @@
-import type { DefaultRuleType } from '../../types';
+import type { DefaultRuleGroupType, DefaultRuleType } from '../../types';
+import { formatQuery } from '../formatQuery';
 import { parseSPARQL } from './parseSPARQL';
 
 describe('parseSPARQL', () => {
@@ -181,5 +182,31 @@ describe('parseSPARQL', () => {
         parseSPARQL('SELECT * WHERE { ?s <urn:a:b> ?t . FILTER(?t = "12:30" && ?age > 30) }').rules
       ).toEqual([{ field: '?t', operator: '=', value: '12:30' }, ...ageGt30]);
     });
+  });
+});
+
+describe('regex', () => {
+  it('round-trips w/ parseRegex', () => {
+    const query: DefaultRuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: '?f', operator: 'matches', value: "a\\d'+", regexFlags: 'im' },
+        { field: '?g', operator: 'doesNotMatch', value: 'x|y' },
+      ],
+    };
+    expect(parseSPARQL(formatQuery(query, 'sparql'), { parseRegex: true })).toEqual(query);
+  });
+
+  it('ignores non-literal pattern/flags', () => {
+    expect(parseSPARQL('REGEX(?f, ?p) && REGEX(?g, "x", ?fl)', { parseRegex: true }).rules).toEqual(
+      []
+    );
+  });
+
+  it('falls back to contains', () => {
+    expect(parseSPARQL('REGEX(?f, "a.c", "x") && !REGEX(?g, "b")').rules).toEqual([
+      { field: '?f', operator: 'contains', value: 'a.c' },
+      { field: '?g', operator: 'doesNotContain', value: 'b' },
+    ]);
   });
 });

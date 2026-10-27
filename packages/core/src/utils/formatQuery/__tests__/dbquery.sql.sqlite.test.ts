@@ -1,8 +1,11 @@
 import { SQL } from 'bun';
+import type { SQLQueryBindings } from 'bun:sqlite';
+import { openSQLiteWithExt } from '@rqb-dbpool';
 import type { DefaultRuleGroupType } from '../../../types';
 import type { SuperUser, TestSQLParams } from '../dbqueryTestUtils';
 import { dbSetup, dbTests, getSqlOrderBy, sqlBase, superUsers } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
+import { ragQuery } from '../vectorDbqueryTestUtils';
 
 const sql = new SQL({ adapter: 'sqlite', filename: ':memory:' });
 
@@ -198,5 +201,108 @@ describe('SQLite', () => {
       { ':p1': 10, ':p2': 30 },
       superUsersSQLite.filter(u => (u.powerUpAge ?? -1) >= 10 && (u.powerUpAge ?? -1) <= 30)
     );
+  });
+});
+
+// Extension-backed tests: separate `bun:sqlite` DBs since `Bun.SQL` can't load extensions. Skipped
+// if unavailable (e.g. macOS w/o Homebrew `sqlite`; see `@rqb-dbpool` sqliteExt.ts).
+const regexDb = await openSQLiteWithExt(['regex']);
+const vecDb = await openSQLiteWithExt(['vec']);
+
+afterAll(() => {
+  regexDb?.close();
+  vecDb?.close();
+});
+
+describe.skipIf(!regexDb)('SQLite regex (sqlite-regex)', () => {
+  const db = regexDb!;
+
+  beforeAll(() => {
+    db.run(dbSetup('sqlite'));
+  });
+
+  const run = (where: string, params: unknown) => {
+    const stmt = db.query(`${sqlBase()} ${where} ${getSqlOrderBy()}`);
+    return Array.isArray(params)
+      ? stmt.all(...(params as SQLQueryBindings[]))
+      : stmt.all(params as SQLQueryBindings);
+  };
+
+  const regexTests: [string, DefaultRuleGroupType, (u: SuperUser<0 | 1>) => boolean][] = [
+    [
+      'matches',
+      { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'matches', value: 'man$' }] },
+      u => u.madeUpName.endsWith('man'),
+    ],
+    [
+      'matches i',
+      {
+        combinator: 'and',
+        rules: [{ field: 'madeUpName', operator: 'matches', value: '^s', regexFlags: 'i' }],
+      },
+      u => /^s/i.test(u.madeUpName),
+    ],
+    [
+      'doesNotMatch',
+      {
+        combinator: 'and',
+        rules: [{ field: 'firstName', operator: 'doesNotMatch', value: "e'?r" }],
+      },
+      u => !/e'?r/.test(u.firstName),
+    ],
+    [
+      'doesNotMatch i',
+      {
+        combinator: 'and',
+        rules: [{ field: 'firstName', operator: 'doesNotMatch', value: 'B', regexFlags: 'i' }],
+      },
+      u => !/B/i.test(u.firstName),
+    ],
+  ];
+
+  for (const [name, query, filter] of regexTests) {
+    describe(name, () => {
+      const expected = superUsersSQLite.filter(filter);
+      test('sql', () => {
+        expect(run(formatQuery(query, { format: 'sql', preset: 'sqlite' }), [])).toEqual(expected);
+      });
+      for (const format of ['parameterized', 'parameterized_named'] as const) {
+        test(format, () => {
+          const fq = formatQuery(query, { format, preset: 'sqlite' }) as unknown as {
+            sql: string;
+            params: unknown;
+          };
+          expect(run(fq.sql, fq.params)).toEqual(expected);
+        });
+      }
+    });
+  }
+});
+
+describe.skipIf(!vecDb)('SQLite vector (sqlite-vec)', () => {
+  const db = vecDb!;
+
+  // Reverse-alphabetical embeddings -> nearest-first = `madeUpName` desc
+  beforeAll(() => {
+    db.run(dbSetup('sqlite'));
+    db.run('CREATE TABLE embeddings (madeUpName TEXT PRIMARY KEY, embedding BLOB)');
+    const insert = db.prepare('INSERT INTO embeddings VALUES (?, vec_f32(?))');
+    for (const [i, u] of superUsersSQLite.entries()) {
+      insert.run(u.madeUpName, `[${superUsersSQLite.length - i}, 0]`);
+    }
+  });
+
+  test('filter + nearest-neighbor ordering', () => {
+    const { sql: where, params } = formatQuery(ragQuery, {
+      format: 'parameterized',
+      preset: 'sqlite',
+    });
+    const rows = db
+      .query<{ madeUpName: string }, SQLQueryBindings[]>(
+        `SELECT madeUpName FROM superusers JOIN embeddings USING (madeUpName)
+         WHERE ${where} ORDER BY vec_distance_l2(embedding, vec_f32('[0, 0]'))`
+      )
+      .all(...(params as SQLQueryBindings[]));
+    expect(rows.map(r => r.madeUpName)).toEqual(['Superman', 'Spider-Man']);
   });
 });

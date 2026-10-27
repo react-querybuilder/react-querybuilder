@@ -191,3 +191,30 @@ describe('case-insensitive (custom ruleProcessor)', () => {
     ).toBe(`toLower(madeUpName) STARTS WITH toLower('super')`);
   });
 });
+
+describe('regex', () => {
+  const matchesQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: "a\\d'+", regexFlags: 'igm' },
+      { field: 'g', operator: 'doesNotMatch', value: 'x|y' },
+    ],
+  };
+  const regexFieldQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'matches', value: 'g', valueSource: 'field' },
+      { field: 'f', operator: 'doesNotMatch', value: 'g', valueSource: 'field' },
+    ],
+  };
+
+  it('matches/doesNotMatch', () => {
+    expect(formatQuery(matchesQuery, 'cypher')).toBe(
+      `f =~ '(?im)[\\\\s\\\\S]*(?:a\\\\d\\'+)[\\\\s\\\\S]*' AND NOT g =~ '[\\\\s\\\\S]*(?:x|y)[\\\\s\\\\S]*'`
+    );
+  });
+
+  it('valueSource field falls back to contains', () => {
+    expect(formatQuery(regexFieldQuery, 'cypher')).toBe('f CONTAINS g AND NOT f CONTAINS g');
+  });
+});

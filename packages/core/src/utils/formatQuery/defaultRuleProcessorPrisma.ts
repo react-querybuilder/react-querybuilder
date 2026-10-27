@@ -2,7 +2,13 @@ import type { ParseNumbersPropConfig, RuleProcessor } from '../../types';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, prismaOperators, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  isValidValue,
+  prismaOperators,
+  processMatchMode,
+  regexFallbackRule,
+  shouldRenderAsNumber,
+} from './utils';
 
 const processNumber = <T>(value: unknown, fallback: T, parseNumbers?: ParseNumbersPropConfig) =>
   shouldRenderAsNumber(value, !!parseNumbers || typeof value === 'bigint')
@@ -19,7 +25,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
   // v8 ignore next
   options = {}
 ) => {
-  const { field, operator, value, valueSource } = rule;
+  const { field, operator, value, valueSource } = regexFallbackRule(rule);
   // v8 ignore next
   const { parseNumbers, preserveValueOrder } = options;
 

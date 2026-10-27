@@ -6,7 +6,7 @@ import type {
   DefaultRuleType,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
-import { filterRulesByFields } from '../parserUtils';
+import { filterRulesByFields, shouldParseRegex } from '../parserUtils';
 
 // Reuse a single parser instance (Chevrotain-backed; creating parsers is expensive)
 let parserInstance: SparqlParser | undefined;
@@ -91,6 +91,9 @@ interface TraqulaExpression {
   langOrIri?: unknown;
   [key: string]: unknown;
 }
+
+// Options for the current parse (walker is synchronous)
+let currentOptions: ParseSPARQLOptions = {};
 
 // ─── AST Walker ──────────────────────────────────────────────────────────────
 
@@ -207,6 +210,7 @@ const visitFilter = (
   expr: TraqulaExpression,
   out: (DefaultRuleType | DefaultRuleGroupType)[]
 ): void => {
+  const regexOpts = currentOptions;
   if (expr.type === 'expression' && expr.subType === 'operation') {
     const op = expr.operator ?? '';
     const args = expr.args ?? [];
@@ -282,6 +286,29 @@ const visitFilter = (
       out.push({ field, operator: 'beginsWith', value } as DefaultRuleType);
       return;
     }
+    // REGEX(?f, "pattern"[, "flags"])
+    if (op === 'regex' && (args.length === 2 || args.length === 3)) {
+      const [, patternTerm, flagsTerm] = args as TraqulaTerm[];
+      const isLiteral = (t?: TraqulaTerm) => t?.type === 'term' && t.subType === 'literal';
+      // Non-literal pattern/flags (e.g. variables) can't be represented
+      if (!isLiteral(patternTerm) || (flagsTerm && !isLiteral(flagsTerm))) return;
+      const field = termToString(args[0] as TraqulaTerm);
+      const value = patternTerm.value ?? '';
+      if (!shouldParseRegex(regexOpts, field)) {
+        out.push({ field, operator: 'contains', value } as DefaultRuleType);
+        return;
+      }
+      const regexFlags = [...new Set(flagsTerm?.value ?? '')]
+        .filter(f => 'ims'.includes(f))
+        .join('');
+      out.push({
+        field,
+        operator: 'matches',
+        value,
+        ...(regexFlags && { regexFlags }),
+      } as DefaultRuleType);
+      return;
+    }
     if (op === 'strends' && args.length === 2) {
       const field = termToString(args[0] as TraqulaTerm);
       const value = termToLiteralValue(args[1]);
@@ -294,6 +321,7 @@ const visitFilter = (
 /** Negates a rule by converting its operator. */
 const negateRule = (rule: DefaultRuleType): DefaultRuleType => {
   const negMap: Record<string, string> = {
+    matches: 'doesNotMatch',
     contains: 'doesNotContain',
     beginsWith: 'doesNotBeginWith',
     endsWith: 'doesNotEndWith',
@@ -351,7 +379,7 @@ const ensurePrefixes = (sparql: string): string => {
  */
 export interface ParseSPARQLOptions extends Pick<
   ParserCommonOptions,
-  'fields' | 'getValueSources'
+  'fields' | 'getValueSources' | 'parseRegex'
 > {
   independentCombinators?: boolean;
 }
@@ -415,6 +443,7 @@ export function parseSPARQL(
   }
 
   const rules: (DefaultRuleType | DefaultRuleGroupType)[] = [];
+  currentOptions = options;
   visitPatterns(typed.where.patterns ?? [], rules);
   return { combinator: 'and', rules: filterRulesByFields(rules, options) };
 }

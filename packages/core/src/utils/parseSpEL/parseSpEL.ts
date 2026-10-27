@@ -15,7 +15,7 @@ import type { ParserCommonOptions } from '../../types/import';
 import type { Except } from '../../types/typeUtils';
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
-import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { fieldIsValidUtil, getFieldsArray, shouldParseRegex } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import { regexToStringMatch } from '../regexLiteral';
 import type {
@@ -139,6 +139,9 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
               .replace('s', '')}` as DefaultOperatorName,
           };
         }
+        if (!isRuleGroup(negatedExpr) && negatedExpr.operator === 'matches') {
+          return { ...negatedExpr, operator: 'doesNotMatch' };
+        }
         if (
           !isRuleGroup(negatedExpr) &&
           negatedExpr.operator === '=' &&
@@ -224,6 +227,18 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           return { field, operator: 'contains', value: regex, valueSource };
         }
       } else {
+        const wrapped = shouldParseRegex(options, field)
+          ? /^(?:\(\?([a-z]+)\))?(?:\.\*|\[\\s\\S\]\*)\(\?:(.*)\)(?:\.\*|\[\\s\\S\]\*)$/s.exec(
+              `${regex}`
+            )
+          : null;
+        if (wrapped) {
+          const [, regexFlags, value] = wrapped;
+          if (!fieldIsValid(field, 'matches')) return null;
+          return regexFlags
+            ? { field, operator: 'matches', value, regexFlags }
+            : { field, operator: 'matches', value };
+        }
         // `matches` is a full-string match; reverse `formatQuery` templates
         const { operator, value } = regexToStringMatch(`${regex}`, 'full');
         // v8 ignore else

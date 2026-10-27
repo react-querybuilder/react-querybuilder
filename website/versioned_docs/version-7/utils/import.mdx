@@ -710,6 +710,20 @@ Output (`RuleGroupTypeIC`):
 }
 ```
 
+### Regular expressions
+
+Regex syntax in the source (e.g. JSONata `/re/i`, MongoDB `$regex`, SpEL `matches`, CEL `.matches()`, SQL `REGEXP`/`~`/`REGEXP_LIKE`, Cypher `=~`, SPARQL `REGEX()`, Gremlin `TextP.regex`) is imported as a [`matches`/`doesNotMatch`](../tips/managing-operators#regular-expression-operators) rule, with flags in `regexFlags`, when either:
+
+- the `parseRegex` option is `true`, or
+- `parseRegex` is `undefined` and the field's `operators` (in the `fields` option) include `matches` or `doesNotMatch`.
+
+Otherwise, the previous behavior applies (e.g. `contains` with the pattern source as the value). `parseRegex: false` always disables regex import. The `g` flag is dropped.
+
+```ts
+parseJSONata('$contains(firstName, /^st.v/i)', { parseRegex: true });
+// { combinator: 'and', rules: [{ field: 'firstName', operator: 'matches', value: '^st.v', regexFlags: 'i' }] }
+```
+
 ### Field validation
 
 When the `fields` option is provided, `parse*` functions drop any rule whose field isn't in the list (or whose operator isn't valid for the field per `getValueSources`/`valueSources`), then drop any group left empty. Use this to whitelist fields when parsing untrusted input.

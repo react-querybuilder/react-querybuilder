@@ -6,7 +6,8 @@ import type {
   DefaultRuleType,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
-import { filterRulesByFields } from '../parserUtils';
+import { isValidRegex } from '../formatQuery/utils';
+import { filterRulesByFields, shouldParseRegex } from '../parserUtils';
 
 // ─── Lexer Tokens ────────────────────────────────────────────────────────────
 
@@ -59,6 +60,7 @@ const GreaterEqual = /* @__PURE__ */ createToken({ name: 'GreaterEqual', pattern
 const NotEqual = /* @__PURE__ */ createToken({ name: 'NotEqual', pattern: /<>/ });
 const Less = /* @__PURE__ */ createToken({ name: 'Less', pattern: /</ });
 const Greater = /* @__PURE__ */ createToken({ name: 'Greater', pattern: />/ });
+const RegexMatch = /* @__PURE__ */ createToken({ name: 'RegexMatch', pattern: /=~/ });
 const Equal = /* @__PURE__ */ createToken({ name: 'Equal', pattern: /=/ });
 
 // Punctuation
@@ -104,6 +106,7 @@ const allTokens = [
   LessEqual,
   GreaterEqual,
   NotEqual,
+  RegexMatch,
   DashArrowRight,
   ArrowLeftDash,
   // Single-char operators
@@ -310,6 +313,12 @@ class CypherCstParser extends CstParser {
           this.SUBRULE8(this.literal, { LABEL: 'value' });
         },
       },
+      {
+        ALT: () => {
+          this.CONSUME(RegexMatch);
+          this.SUBRULE9(this.literal, { LABEL: 'value' });
+        },
+      },
       { ALT: () => this.CONSUME(IsNotNull) },
       { ALT: () => this.CONSUME(IsNull) },
       {
@@ -483,6 +492,10 @@ const visitNotExpression = (node: CstNode): RuleOrGroup[] => {
   if (atomic.children.condition && (atomicRules[0] as DefaultRuleType).operator === 'in') {
     return [{ ...(atomicRules[0] as DefaultRuleType), operator: 'notIn' }];
   }
+  // `NOT x =~ '...'` → doesNotMatch
+  if (atomic.children.condition && (atomicRules[0] as DefaultRuleType).operator === 'matches') {
+    return [{ ...(atomicRules[0] as DefaultRuleType), operator: 'doesNotMatch' }];
+  }
 
   return [{ combinator: 'and', not: true, rules: atomicRules }];
 };
@@ -519,6 +532,16 @@ const visitCondition = (node: CstNode): DefaultRuleType => {
   }
 
   const valueNode = (node.children.value as CstNode[] | undefined)?.[0];
+
+  if (node.children.RegexMatch) {
+    // Raw pattern w/ string escapes undone (backslashes are significant)
+    const strTok = (valueNode!.children.StringLiteral as IToken[] | undefined)?.[0];
+    const value = strTok
+      ? strTok.image.slice(1, -1).replaceAll(/\\(.)/g, '$1')
+      : String(extractLiteral(valueNode!));
+    return { field, operator: 'matches', value } as DefaultRuleType;
+  }
+
   const value = valueNode ? extractLiteral(valueNode) : null;
 
   if (node.children.Equal) return { field, operator: '=', value } as DefaultRuleType;
@@ -534,6 +557,30 @@ const visitCondition = (node: CstNode): DefaultRuleType => {
   return { field, operator: '=', value } as DefaultRuleType;
 };
 
+/**
+ * Converts a full-match Java regex (w/ optional inline flags) to a "find" pattern + flags.
+ * Strips formatQuery's `[\s\S]*(?:p)[\s\S]*` (or legacy `.*(?:p).*`) wrapper; otherwise anchors as `^(?:p)$`.
+ */
+const fromCypherRegex = (src: string): { value: string; regexFlags?: string } => {
+  const flagsMatch = /^\(\?([a-z]+)\)/.exec(src);
+  const regexFlags = flagsMatch
+    ? [...new Set(flagsMatch[1])].filter(f => 'ims'.includes(f)).join('')
+    : '';
+  const body = flagsMatch ? src.slice(flagsMatch[0].length) : src;
+  const wrapped = /^(?:\.\*|\[\\s\\S\]\*)\(\?:([\s\S]*)\)(?:\.\*|\[\\s\\S\]\*)$/.exec(body)?.[1];
+  const value = wrapped !== undefined && isValidRegex(wrapped) ? wrapped : `^(?:${body})$`;
+  return regexFlags ? { value, regexFlags } : { value };
+};
+
+/** Resolves raw `matches`/`doesNotMatch` rules per `parseRegex`/field config. */
+const resolveRegexRules = (rules: RuleOrGroup[], options: ParseCypherOptions): RuleOrGroup[] =>
+  rules.map(r => {
+    if ('rules' in r) return { ...r, rules: resolveRegexRules(r.rules as RuleOrGroup[], options) };
+    if (r.operator !== 'matches' && r.operator !== 'doesNotMatch') return r;
+    if (shouldParseRegex(options, r.field)) return { ...r, ...fromCypherRegex(`${r.value}`) };
+    return { ...r, operator: r.operator === 'matches' ? 'contains' : 'doesNotContain' };
+  });
+
 // ─── Public API ──────────────────────────────────────────────────────────────
 
 /**
@@ -541,7 +588,7 @@ const visitCondition = (node: CstNode): DefaultRuleType => {
  */
 export interface ParseCypherOptions extends Pick<
   ParserCommonOptions,
-  'fields' | 'getValueSources'
+  'fields' | 'getValueSources' | 'parseRegex'
 > {
   independentCombinators?: boolean;
 }
@@ -624,7 +671,10 @@ export function parseCypher(
     }
   }
 
-  return { combinator: 'and', rules: filterRulesByFields(rules, options) };
+  return {
+    combinator: 'and',
+    rules: filterRulesByFields(resolveRegexRules(rules, options), options),
+  };
 }
 
 /**
