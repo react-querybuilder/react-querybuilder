@@ -228,6 +228,8 @@ export interface SQLRegexpPredicate extends SQLWhereObject {
   type: 'RegexpPredicate';
   hasNot: NotOpt | '!';
   caseInsensitive?: boolean;
+  /** PostgreSQL `~` operator family (vs. `REGEXP`) */
+  tilde?: boolean;
   left: SQLSimpleExpression;
   right: SQLSimpleExpression;
 }

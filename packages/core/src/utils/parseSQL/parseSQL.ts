@@ -229,19 +229,35 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
     left: SQLWhereObjectAny | undefined,
     right: SQLWhereObjectAny | undefined,
     negate: boolean,
-    flags: string
+    flags: string,
+    tilde = false
   ): DefaultRuleType | null => {
     if (!isSQLIdentifier(left) || right?.type !== 'String') return null;
     const f = getFieldName(left);
     const operator = negate ? 'doesNotMatch' : 'matches';
     if (!shouldParseRegex(options, f) || !fieldIsValid(f, operator)) return null;
     let value = evalSQLLiteralValue(right as SQLStringValue) as string;
-    // Strip PostgreSQL ARE newline-mode prefix emitted by `formatQuery` (`p`: none, `n`: m, `w`: ms)
-    const pg = /^\(\?([pnw])\)/.exec(value);
-    if (pg) {
-      value = value.slice(pg[0].length);
-      const extra = pg[1] === 'n' ? 'm' : pg[1] === 'w' ? 'ms' : '';
-      flags = [...'ims'].filter(c => flags.includes(c) || extra.includes(c)).join('');
+    if (tilde) {
+      // PostgreSQL ARE embedded options (last wins); default newline mode `s` → JS `s`
+      let i = flags.includes('i');
+      let nl = 's';
+      const pg = /^\(\?([cimnpsw]+)\)/.exec(value);
+      if (pg) {
+        value = value.slice(pg[0].length);
+        for (const c of pg[1]) {
+          if (c === 'i' || c === 'c') i = c === 'i';
+          else nl = c === 'p' ? '' : c === 'w' ? 'ms' : c === 's' ? 's' : 'm';
+        }
+      }
+      flags = [...'ims'].filter(c => (c === 'i' ? i : nl.includes(c))).join('');
+    } else {
+      // Strip ARE newline-mode prefix (`p`: none, `n`: m, `w`: ms)
+      const pg = /^\(\?([pnw])\)/.exec(value);
+      if (pg) {
+        value = value.slice(pg[0].length);
+        const extra = pg[1] === 'n' ? 'm' : pg[1] === 'w' ? 'ms' : '';
+        flags = [...'ims'].filter(c => flags.includes(c) || extra.includes(c)).join('');
+      }
     }
     return { field: f, operator, value, ...(flags && { regexFlags: flags }) };
   };
@@ -615,7 +631,13 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         break;
       }
       case 'RegexpPredicate':
-        return makeRegexRule(expr.left, expr.right, !!expr.hasNot, expr.caseInsensitive ? 'i' : '');
+        return makeRegexRule(
+          expr.left,
+          expr.right,
+          !!expr.hasNot,
+          expr.caseInsensitive ? 'i' : '',
+          expr.tilde
+        );
       case 'FunctionCall':
         return processRegexpLike(expr, false);
       // No default

@@ -225,16 +225,16 @@ case 117:
 this.$ = { type: 'RegexpPredicate', hasNot: $$[$0-2], left: $$[$0-3], right: $$[$0] };
 break;
 case 118:
-this.$ = { type: 'RegexpPredicate', hasNot: null, left: $$[$0-2], right: $$[$0] };
+this.$ = { type: 'RegexpPredicate', tilde: true, hasNot: null, left: $$[$0-2], right: $$[$0] };
 break;
 case 119:
-this.$ = { type: 'RegexpPredicate', hasNot: null, caseInsensitive: true, left: $$[$0-2], right: $$[$0] };
+this.$ = { type: 'RegexpPredicate', tilde: true, hasNot: null, caseInsensitive: true, left: $$[$0-2], right: $$[$0] };
 break;
 case 120:
-this.$ = { type: 'RegexpPredicate', hasNot: '!', left: $$[$0-2], right: $$[$0] };
+this.$ = { type: 'RegexpPredicate', tilde: true, hasNot: '!', left: $$[$0-2], right: $$[$0] };
 break;
 case 121:
-this.$ = { type: 'RegexpPredicate', hasNot: '!', caseInsensitive: true, left: $$[$0-2], right: $$[$0] };
+this.$ = { type: 'RegexpPredicate', tilde: true, hasNot: '!', caseInsensitive: true, left: $$[$0-2], right: $$[$0] };
 break;
 case 132:
 this.$ = { type: 'IsNullBooleanPrimary', hasNot: $$[$0-1] , value: $$[$0-3] };

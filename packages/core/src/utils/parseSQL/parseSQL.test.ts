@@ -756,10 +756,20 @@ describe('regex', () => {
     [`f REGEXP 'a'`, { field: 'f', operator: 'matches', value: 'a' }],
     [`f RLIKE 'a'`, { field: 'f', operator: 'matches', value: 'a' }],
     [`f NOT REGEXP 'a'`, { field: 'f', operator: 'doesNotMatch', value: 'a' }],
-    [`f ~ 'a''b'`, { field: 'f', operator: 'matches', value: `a'b` }],
-    [`f ~* 'a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'i' }],
-    [`f !~ 'a'`, { field: 'f', operator: 'doesNotMatch', value: 'a' }],
-    [`f !~* 'a'`, { field: 'f', operator: 'doesNotMatch', value: 'a', regexFlags: 'i' }],
+    [`f ~ 'a''b'`, { field: 'f', operator: 'matches', value: `a'b`, regexFlags: 's' }],
+    [`f ~* 'a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'is' }],
+    [`f !~ 'a'`, { field: 'f', operator: 'doesNotMatch', value: 'a', regexFlags: 's' }],
+    [`f !~* 'a'`, { field: 'f', operator: 'doesNotMatch', value: 'a', regexFlags: 'is' }],
+    [`f ~ '(?i)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'is' }],
+    [`f ~* '(?c)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 's' }],
+    [`f ~ '(?ic)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 's' }],
+    [`f ~ '(?p)a'`, { field: 'f', operator: 'matches', value: 'a' }],
+    [`f ~ '(?n)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'm' }],
+    [`f ~ '(?m)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'm' }],
+    [`f ~ '(?wi)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'ims' }],
+    [`f ~ '(?ps)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 's' }],
+    [`f ~ '(?x)a'`, { field: 'f', operator: 'matches', value: '(?x)a', regexFlags: 's' }],
+    [`f REGEXP '(?n)a'`, { field: 'f', operator: 'matches', value: 'a', regexFlags: 'm' }],
     [`REGEXP_LIKE(f, 'a')`, { field: 'f', operator: 'matches', value: 'a' }],
     [
       `regexp_like(f, 'a', 'nmixc')`,
@@ -798,7 +808,7 @@ describe('regex', () => {
           { name: 'g', label: 'G' },
         ],
       })
-    ).toEqual(wrapRule({ field: 'f', operator: 'matches', value: 'a' }));
+    ).toEqual(wrapRule({ field: 'f', operator: 'matches', value: 'a', regexFlags: 's' }));
   });
 
   it('round-trips PostgreSQL', () => {
@@ -808,6 +818,7 @@ describe('regex', () => {
         { field: 'f', operator: 'matches', value: `a\\d'x`, regexFlags: 'i' },
         { field: 'g', operator: 'doesNotMatch', value: '^b$', regexFlags: 'm' },
         { field: 'h', operator: 'matches', value: 'c', regexFlags: 'ims' },
+        { field: 'k', operator: 'matches', value: 'a.b', regexFlags: 's' },
       ],
     };
     expect(parseSQL(formatQuery(query, { preset: 'postgresql' }), pr)).toEqual(query);
