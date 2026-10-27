@@ -1,4 +1,4 @@
-import type { GrafeoDB as GrafeoDBType } from '@react-querybuilder/grafeo';
+import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import type { RuleGroupType } from '../../../types';
 import type { SuperUser } from '../dbqueryTestUtils';
 import {
@@ -11,7 +11,7 @@ import { formatQuery } from '../formatQuery';
 import { gremlinGraphProcessor } from './graphTestUtils';
 
 // Native addon — use require for reliable .node file loading
-const { GrafeoDB } = require('@react-querybuilder/grafeo') as { GrafeoDB: typeof GrafeoDBType };
+const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
 
 // ─── Test Data ────────────────────────────────────────────────────────────────
 
