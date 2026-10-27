@@ -1,4 +1,4 @@
-import type { GrafeoDB as GrafeoDBType } from '@react-querybuilder/grafeo';
+import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import type { RuleGroupType } from '../../../types';
 import type { SuperUser } from '../dbqueryTestUtils';
 import { fields, superUsers as getSuperUsers } from '../dbqueryTestUtils';
@@ -6,7 +6,7 @@ import { formatQuery } from '../formatQuery';
 import { sparqlGraphProcessor, sparqlTypedLiteralProcessor } from './graphTestUtils';
 
 // Native addon — use require for reliable .node file loading
-const { GrafeoDB } = require('@react-querybuilder/grafeo') as { GrafeoDB: typeof GrafeoDBType };
+const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
 
 // ─── Test Data ────────────────────────────────────────────────────────────────
 
@@ -14,22 +14,36 @@ const superUsers = getSuperUsers('postgres');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+const XSD = 'http://www.w3.org/2001/XMLSchema#';
+
 const fieldNames = fields.map(f => f.name);
 const selectVariables = fieldNames.map(f => `?${f}`);
 
 // Triple patterns bind each property to a SPARQL variable
 const triplePatterns = fieldNames.map(f => `?su <${f}> ?${f}`).join(' .\n    ');
 
-const selectClause = `SELECT ${selectVariables.join(' ')}`;
+const selectClause = `PREFIX xsd: <${XSD}>\nSELECT ${selectVariables.join(' ')}`;
+
+// RDF/JS literal term, as returned by Grafeo >= 0.6
+const literal = (value: unknown, type: string) => ({
+  termType: 'Literal',
+  value: String(value),
+  language: '',
+  datatype: { termType: 'NamedNode', value: `${XSD}${type}` },
+});
 
 const toSparqlRow = (u: SuperUser): Record<string, unknown> => ({
-  firstName: u.firstName,
-  lastName: u.lastName,
-  enhanced: String(u.enhanced),
-  madeUpName: u.madeUpName,
-  nickname: u.nickname,
-  powerUpAge: String(u.powerUpAge),
+  firstName: literal(u.firstName, 'string'),
+  lastName: literal(u.lastName, 'string'),
+  enhanced: literal(u.enhanced, 'boolean'),
+  madeUpName: literal(u.madeUpName, 'string'),
+  nickname: literal(u.nickname, 'string'),
+  powerUpAge: literal(u.powerUpAge, 'integer'),
 });
+
+// Drops term methods (`equals`) so rows compare structurally
+// oxlint-disable-next-line typescript/no-explicit-any
+const toPlainRows = (result: any): unknown => JSON.parse(JSON.stringify(result.toArray()));
 
 // ─── DB Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -77,7 +91,7 @@ const expectSPARQL = async (
   } ORDER BY ?madeUpName`;
   // oxlint-disable-next-line typescript/no-explicit-any
   const result = await (db as any).executeSparql(sparql);
-  expect(result.toArray()).toEqual(expectedResult.map(toSparqlRow));
+  expect(toPlainRows(result)).toEqual(expectedResult.map(toSparqlRow));
 };
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -348,7 +362,7 @@ const expectSPARQLCustom = async (
   } ORDER BY ?madeUpName`;
   // oxlint-disable-next-line typescript/no-explicit-any
   const result = await (db as any).executeSparql(sparql);
-  expect(result.toArray()).toEqual(expectedResult.map(toSparqlRow));
+  expect(toPlainRows(result)).toEqual(expectedResult.map(toSparqlRow));
 };
 
 describe('SPARQL graph patterns (Grafeo)', () => {
@@ -393,7 +407,7 @@ describe('SPARQL graph patterns (Grafeo)', () => {
       } ORDER BY ?madeUpName`;
       // oxlint-disable-next-line typescript/no-explicit-any
       const result = await (db as any).executeSparql(sparql);
-      expect(result.toArray()).toEqual(
+      expect(toPlainRows(result)).toEqual(
         superUsersWithAge.filter(u => u.powerUpAge! > 15).map(toSparqlRow)
       );
     });

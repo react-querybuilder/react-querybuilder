@@ -1,10 +1,10 @@
+import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import { formatQuery } from '@react-querybuilder/core';
-import type { GrafeoDB as GrafeoDBType } from '@react-querybuilder/grafeo';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
 import { getDatetimeRuleProcessorCypher } from '../getDatetimeRuleProcessorCypher';
 
 // Native addon — use require for reliable .node file loading
-const { GrafeoDB } = require('@react-querybuilder/grafeo') as { GrafeoDB: typeof GrafeoDBType };
+const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
 
 // ─── Test Data ────────────────────────────────────────────────────────────────
 
@@ -32,6 +32,13 @@ const toCypherRow = (m: (typeof musicians)[number]): CypherRow =>
       return [key, null];
     })
   ) as CypherRow;
+
+// Grafeo >= 0.6 returns datetimes as ISO strings w/ trailing fractional zeros trimmed
+const normalizeRow = (row: Record<string, unknown>) => ({
+  ...row,
+  'm.created_at': new Date(row['m.created_at'] as string),
+  'm.updated_at': new Date(row['m.updated_at'] as string),
+});
 
 // ─── DB Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -76,7 +83,7 @@ const expectCypher = async (
   const cypher = `MATCH (m:Musician)\nWHERE ${where}\n${returnClause}`;
   // oxlint-disable-next-line typescript/no-explicit-any
   const result = await (db as any).executeCypher(cypher);
-  expect(result.toArray()).toEqual(expectedResult.map(toCypherRow));
+  expect(result.toArray().map(normalizeRow)).toEqual(expectedResult.map(toCypherRow));
 };
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
