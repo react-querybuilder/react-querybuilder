@@ -300,6 +300,27 @@ describe('actions', () => {
     expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '!=' }] });
   });
 
+  it.each([
+    { initialOperator: '=', operator: 'in', listsAsArrays: false, value: 'x' },
+    { initialOperator: '=', operator: 'in', listsAsArrays: true, value: ['x'] },
+    { initialOperator: '!=', operator: 'notIn', listsAsArrays: false, value: 'x' },
+    { initialOperator: '!=', operator: 'notIn', listsAsArrays: true, value: ['x'] },
+  ])(
+    'normalizes a scalar value for $operator with listsAsArrays=$listsAsArrays',
+    async ({ initialOperator, operator, listsAsArrays, value }) => {
+      const { onQueryChange } = setup({
+        defaultQuery: {
+          combinator: 'and',
+          rules: [{ field: 'field1', operator: initialOperator, value: 'x' }],
+        },
+        listsAsArrays,
+      });
+
+      await user.selectOptions(screen.getByTestId(TestID.operators), operator);
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator, value }] });
+    }
+  );
+
   it('changes the combinator of the root group', async () => {
     const { onQueryChange } = setup();
     expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [] });

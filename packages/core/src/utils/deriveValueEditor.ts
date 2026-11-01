@@ -15,13 +15,11 @@ export const isBetweenOperator = (operator: string): boolean =>
   operator === 'between' || operator === 'notBetween';
 
 /**
- * Determines whether a rule's `value` needs to be collapsed to a single element because it no
- * longer represents a list, and what it should become.
+ * Determines whether a rule's `value` needs to be normalized for its operator and what it should
+ * become.
  *
- * This happens when the value is an array (or a comma-containing string in a `number` input,
- * which `<input type="number">` can't display) while the operator is not one of the multi-value
- * operators and the editor is not a multiselect—typically right after the operator changes from
- * `"in"` or `"between"` to something else.
+ * This collapses list values when leaving a multi-value operator, and wraps scalar values for
+ * `in`/`notIn` when `listsAsArrays` is enabled.
  *
  * The React `useValueEditor` hook applies the result in an effect; other implementations may
  * apply it wherever is idiomatic.
@@ -34,19 +32,31 @@ export const getValueEditorReset = ({
   operator,
   value,
   inputType,
+  listsAsArrays,
 }: {
   skipHook?: boolean;
   type?: string;
   operator: string;
   value: unknown;
   inputType?: InputType | null;
+  listsAsArrays?: boolean;
 }): { reset: boolean; value: unknown } => {
+  const normalizeToArray =
+    !skipHook &&
+    listsAsArrays &&
+    (operator === 'in' || operator === 'notIn') &&
+    !Array.isArray(value) &&
+    value !== undefined;
   const reset =
     !skipHook &&
     type !== 'multiselect' &&
     !multiValueOperators.has(operator) &&
     (Array.isArray(value) ||
       (inputType === 'number' && typeof value === 'string' && value.includes(',')));
+
+  if (normalizeToArray) {
+    return { reset: true, value: toArray(value, { retainEmptyStrings: true }) };
+  }
 
   return reset
     ? { reset: true, value: toArray(value, { retainEmptyStrings: true })[0] ?? '' }

@@ -68,6 +68,17 @@ describe('getValueEditorReset', () => {
       value: 'a',
     });
   });
+
+  it.each(['in', 'notIn'])('normalizes a scalar to an array for "%s" when listsAsArrays is set', operator => {
+    expect(getValueEditorReset({ operator, value: 'a', listsAsArrays: true })).toEqual({
+      reset: true,
+      value: ['a'],
+    });
+  });
+
+  it.each(['in', 'notIn'])('does not normalize a scalar for "%s" by default', operator => {
+    expect(getValueEditorReset({ operator, value: 'a' })).toEqual({ reset: false, value: 'a' });
+  });
 });
 
 describe('getMultiValueUpdate', () => {

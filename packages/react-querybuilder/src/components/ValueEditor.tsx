@@ -324,11 +324,12 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
       operator,
       value,
       inputType,
+      listsAsArrays,
     });
     if (reset) {
       handleOnChange(nextValue);
     }
-  }, [handleOnChange, inputType, operator, skipHook, type, value]);
+  }, [handleOnChange, inputType, listsAsArrays, operator, skipHook, type, value]);
 
   const valueAsArray = useMemo(() => toArray(value, { retainEmptyStrings: true }), [value]);
 
