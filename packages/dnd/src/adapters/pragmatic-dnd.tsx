@@ -709,10 +709,9 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     // When updateWhileDragging is active, disable inline combinator drop targets
     const isUpdateWhileDragging = dragPreviewState !== null;
 
-    const hoveringItem = (params.rules ??
-      /* v8 ignore start -- @preserve */ []) /* v8 ignore stop -- @preserve */[
-      params.path.at(-1)! - 1
-    ] as RuleType | RuleGroupTypeAny;
+    const hoveringItem = (
+      params.rules ?? /* v8 ignore start -- @preserve */ []
+    ) /* v8 ignore stop -- @preserve */[params.path.at(-1)! - 1] as RuleType | RuleGroupTypeAny;
 
     const paramsRef = useRef(params);
     useEffect(() => {

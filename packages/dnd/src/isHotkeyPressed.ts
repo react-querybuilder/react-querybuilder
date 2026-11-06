@@ -1,5 +1,3 @@
-/* oxlint-disable prefer-global-this */
-
 /* v8 ignore file -- @preserve */
 
 /**

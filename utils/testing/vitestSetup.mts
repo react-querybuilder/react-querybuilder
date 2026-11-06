@@ -6,7 +6,6 @@ if (typeof Element !== 'undefined') {
   Element.prototype.scrollIntoView = vi.fn();
 }
 
-// oxlint-disable-next-line prefer-global-this
 if (typeof window !== 'undefined') {
   // Suppress React act() warning caused by Vitest jsdom/Node context mismatch.
   // react-dom runs in Node's global scope (externalized) while tests run in

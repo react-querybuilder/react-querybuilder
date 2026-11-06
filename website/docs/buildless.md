@@ -81,13 +81,13 @@ For drag-and-drop functionality, import `react-dnd`, `react-dnd-html5-backend`, 
       }
     </script>
     <script type="module">
+      import { QueryBuilderDnD } from '@react-querybuilder/dnd';
       import * as React from 'react';
-      import { createRoot } from 'react-dom/client';
-      import { QueryBuilder } from 'react-querybuilder';
       // highlight-start
       import * as ReactDnD from 'react-dnd';
       import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
-      import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+      import { createRoot } from 'react-dom/client';
+      import { QueryBuilder } from 'react-querybuilder';
       // highlight-end
 
       const fields = [

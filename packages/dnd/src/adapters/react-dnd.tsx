@@ -296,10 +296,9 @@ export const createReactDnDAdapter = (dndExports: DndProp): DndAdapter => {
     const dropRef = useRef<HTMLDivElement>(null);
 
     // The "hovering" item is the rule or group which precedes this inline combinator.
-    const hoveringItem = (params.rules ??
-      /* v8 ignore start -- @preserve */ []) /* v8 ignore stop -- @preserve */[
-      params.path.at(-1)! - 1
-    ] as RuleType | RuleGroupTypeAny;
+    const hoveringItem = (
+      params.rules ?? /* v8 ignore start -- @preserve */ []
+    ) /* v8 ignore stop -- @preserve */[params.path.at(-1)! - 1] as RuleType | RuleGroupTypeAny;
 
     const [{ isOver, dropMonitorId, dropEffect, dropNotAllowed }, drop] = useDrop<
       DraggedItem,

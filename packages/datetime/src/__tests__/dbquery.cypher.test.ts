@@ -33,11 +33,13 @@ const toCypherRow = (m: (typeof musicians)[number]): CypherRow =>
     })
   ) as CypherRow;
 
-// Grafeo >= 0.6 returns datetimes as ISO strings w/ trailing fractional zeros trimmed
+// Grafeo >= 0.6.1 returns temporals as tagged objects ({ $date }, { $zoned_datetime }, ...)
+const unwrap = (v: unknown) => (v && typeof v === 'object' ? Object.values(v)[0] : v);
 const normalizeRow = (row: Record<string, unknown>) => ({
   ...row,
-  'm.created_at': new Date(row['m.created_at'] as string),
-  'm.updated_at': new Date(row['m.updated_at'] as string),
+  'm.birthdate': unwrap(row['m.birthdate']),
+  'm.created_at': new Date(unwrap(row['m.created_at']) as string),
+  'm.updated_at': new Date(unwrap(row['m.updated_at']) as string),
 });
 
 // ─── DB Lifecycle ─────────────────────────────────────────────────────────────
