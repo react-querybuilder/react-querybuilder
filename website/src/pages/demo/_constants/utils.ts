@@ -135,7 +135,7 @@ const stringify = (o: unknown) =>
   );
 
 export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
-  const cacheKey = JSON.stringify([query, options]);
+  const cacheKey = JSON.stringify([query, options], bigIntJsonStringifyReplacer);
 
   if (formatQueryCache.has(cacheKey)) {
     return formatQueryCache.get(cacheKey);
