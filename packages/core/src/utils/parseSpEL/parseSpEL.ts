@@ -61,13 +61,13 @@ export interface ParseSpELOptions extends ParserCommonOptions {
 
 /**
  * Converts a SpEL string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseSpEL(spel: string): DefaultRuleGroupType;
 /**
  * Converts a SpEL string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseSpEL(
@@ -78,7 +78,7 @@ function parseSpEL(
 ): DefaultRuleGroupType;
 /**
  * Converts a SpEL string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
 function parseSpEL(

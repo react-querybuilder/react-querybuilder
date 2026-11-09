@@ -65,13 +65,13 @@ export interface ParseJSONataOptions extends ParserCommonOptions {
 
 /**
  * Converts a JSONata string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseJSONata(jsonataInput: string): DefaultRuleGroupType;
 /**
  * Converts a JSONata string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseJSONata(
@@ -82,7 +82,7 @@ function parseJSONata(
 ): DefaultRuleGroupType;
 /**
  * Converts a JSONata string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
 function parseJSONata(

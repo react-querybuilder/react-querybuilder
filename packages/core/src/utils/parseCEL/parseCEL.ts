@@ -104,13 +104,13 @@ export type ParseCELOptions = ParseCELOptionsStandard | ParseCELOptionsIC;
 
 /**
  * Converts a CEL string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseCEL(cel: string): DefaultRuleGroupType;
 /**
  * Converts a CEL string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!RuleGroupType RuleGroupType}).
  */
 function parseCEL(
@@ -121,7 +121,7 @@ function parseCEL(
 ): RuleGroupType;
 /**
  * Converts a CEL string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!RuleGroupTypeIC RuleGroupTypeIC}).
  */
 function parseCEL(
@@ -132,13 +132,13 @@ function parseCEL(
 ): RuleGroupTypeIC;
 /**
  * Converts a CEL string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseCEL(cel: string, options?: ParseCELOptionsStandard): DefaultRuleGroupType;
 /**
  * Converts a CEL string expression into a query suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
 function parseCEL(cel: string, options: ParseCELOptionsIC): DefaultRuleGroupTypeIC;

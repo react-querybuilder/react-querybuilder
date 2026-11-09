@@ -107,14 +107,14 @@ const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 
 /**
  * Converts a MongoDB query object or parseable string into a query suitable
- * for the {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * for the {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 // oxlint-disable-next-line typescript/no-explicit-any
 function parseMongoDB(mongoDbRules: string | Record<string, any>): DefaultRuleGroupType;
 /**
  * Converts a MongoDB query object or parseable string into a query suitable
- * for the {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * for the {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseMongoDB(
@@ -126,7 +126,7 @@ function parseMongoDB(
 ): DefaultRuleGroupType;
 /**
  * Converts a MongoDB query object or parseable string into a query suitable
- * for the {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * for the {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
 function parseMongoDB(

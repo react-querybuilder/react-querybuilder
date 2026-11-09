@@ -1,3 +1,9 @@
+/**
+ * Generates a JSON Schema describing valid query objects for a given configuration.
+ *
+ * @module getQueryJsonSchema
+ */
+
 import { betweenOperators, defaultCombinators, defaultOperators, inOperators } from '../defaults';
 import type {
   BaseOptionMap,

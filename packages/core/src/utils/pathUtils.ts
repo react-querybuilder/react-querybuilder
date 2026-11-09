@@ -141,8 +141,6 @@ export const pathIsDisabled = (path: Path, query: RuleGroupTypeAny): boolean => 
  * form of the `QueryBuilder` `disabled` prop, which disables nodes by position rather than by a
  * `disabled` property on the node itself. A path is disabled if it appears in `disabledPaths` or
  * descends from a path that does.
- *
- * @group Paths
  */
 export const pathIsDisabledByPaths = (path: Path, disabledPaths: Path[] = []): boolean =>
   disabledPaths.some(p => pathsAreEqual(p, path) || isAncestor(p, path));
@@ -155,8 +153,6 @@ export const pathIsDisabledByPaths = (path: Path, disabledPaths: Path[] = []): b
 /**
  * Builds the {@link PathInfo} for each child of a group at `path`. A child is disabled if its
  * parent is disabled or if its own path appears in `disabledPaths`.
- *
- * @group Paths
  */
 export const derivePathInfo = (
   path: Path,
