@@ -1,13 +1,15 @@
 ---
-title: Migrating to v7 or v8
+title: Migrating to v8
 ---
 
-:::info[Regarding version 8]
+Version 8 requires minimal code changes when upgrading from v6. While [some defaults have changed](#updated-default-labels), most applications will work without modifications. To take advantage of [performance improvements](#performance-improvements) and [new features](#built-in-shift-actions), you may need minor refactoring.
 
-Version 8 has no breaking changes from version 7, **except** for `@react-querybuilder/chakra`. If you're not using the Chakra UI package, you can upgrade from v7 to v8 without any code changes.
+> _Previous migration instructions: [v5 to v6](/docs/6/migrate) / [v4 to v5](/docs/5/migrate) / [v3 to v4](/docs/4/migrate)._
 
 <details>
-<summary>More information</summary>
+<summary>What happened to v7?</summary>
+
+Version 7 docs were merged into the version 8 docs. Version 8 has no breaking changes from version 7 **except** for `@react-querybuilder/chakra`, so the two versions share documentation. The breaking changes on this page were introduced in v7 and apply equally to v8. If you're not using the Chakra UI package, you can upgrade from v7 to v8 without any code changes.
 
 - `@react-querybuilder/chakra@7` supports Chakra UI v2
 - `@react-querybuilder/chakra@8` supports Chakra UI v3
@@ -15,13 +17,9 @@ Version 8 has no breaking changes from version 7, **except** for `@react-querybu
 - Version 8 would have been a patch release if not for Chakra UI's breaking changes
 - We maintain consistent version numbers across all packages, requiring the major version bump
 
+Features added in v8.x releases are not available in v7. Check the [changelog](./changelog) when using v7.
+
 </details>
-
-:::
-
-Version 7 requires minimal code changes when upgrading from v6. While [some defaults have changed](#updated-default-labels), most applications will work without modifications. To take advantage of [performance improvements](#performance-improvements) and [new features](#built-in-shift-actions), you may need minor refactoring.
-
-> _Previous migration instructions: [v5 to v6](/docs/6/migrate) / [v4 to v5](/docs/5/migrate) / [v3 to v4](/docs/4/migrate)._
 
 ## Breaking changes
 

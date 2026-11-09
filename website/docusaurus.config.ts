@@ -253,13 +253,13 @@ const config: Config = {
             4: { label: 'v4' },
             5: { label: 'v5' },
             6: { label: 'v6' },
-            7: { label: 'v7 / v8' },
+            8: { label: 'v8' },
             current: { label: 'Next' },
           },
           // v3-v5 are archived versions that rarely change. Excluding them from the default
           // build keeps local/PR builds fast. Set RQB_ALL_VERSIONS=true to include them (used
           // for the `main`-branch deploy build, or manually via `bun run website:build:full`).
-          onlyIncludeVersions: process.env.RQB_ALL_VERSIONS ? undefined : ['current', '6', '7'],
+          onlyIncludeVersions: process.env.RQB_ALL_VERSIONS ? undefined : ['current', '6', '8'],
         },
         // blog: {
         //   showReadingTime: true,

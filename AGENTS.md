@@ -49,6 +49,14 @@ bun run build
 - `bun web` - Serve documentation website locally
 - `bun web:skiptypedoc` - Skip TypeDoc generation for faster startup
 
+**Docs versions:**
+
+- `website/docs/` = "Next"; `website/versioned_docs/version-8/` (+ `versioned_sidebars/version-8-sidebars.json`) = latest (served at `/docs/`)
+- Behavior/feature changes: update both `docs/` and `version-8/` (unless releasing a new major)
+- No v7 docs: v7 merged into v8 (v8 only broke `@react-querybuilder/chakra`); explained in "What happened to v7?" (`version-8/migrate.mdx`)
+- Dropdown: v3–v6, v8, Next. v3–v5 built only w/ `RQB_ALL_VERSIONS=true` (`bun website:build:full`)
+- `utils/vector-format-tables.ts` and `utils/recipes.ts` write into both `docs/` and latest versioned docs
+
 ### Build
 
 - `bun run build` - All packages (concurrent via Bun CLI filter)
