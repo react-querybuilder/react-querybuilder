@@ -4,6 +4,20 @@ linker = "hoisted"
 [test]
 preload = [ "./utils/testing/bunTestSetup.ts" ]
 pathIgnorePatterns = [ "**/*.tsx" ]
+# Mirror Vitest coverage include/exclude
+coveragePathIgnorePatterns = [
+  "utils/**",
+  "packages/*/dist/**",
+  "packages/*/vitestSetup.mts",
+  "**/*TestUtils.ts",
+  "**/*.test-d.ts",
+  "**/prisma/generated/**",
+  "packages/chakra/src/snippets/**",
+  "packages/core/src/utils/parse{CEL,SQL}/{cel,sql}Parser.ts",
+  "packages/core/src/utils/parse{Cypher,Gremlin,SPARQL}/parse{Cypher,Gremlin,SPARQL}.ts",
+  "packages/rules-engine/src/components/**",
+  "packages/mcp/src/cli.ts",
+]
 
 [serve.static]
 plugins = [ "./utils/devapp/bun-plugin-sass.ts", "bun-plugin-tailwind" ]
