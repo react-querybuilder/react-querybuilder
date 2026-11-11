@@ -1845,16 +1845,21 @@ formatQuery(query, {
     ruleSeparator: ' ',
     listSeparator: ', ',
   },
-  // Skip quoted values ('...', with '' as an escaped quote)
-  nlPostProcessor: output =>
-    output
-      .split(/('(?:[^']|'')*')/u)
+  // Skip quoted values ('...', with '' as an escaped quote), but peek at the next one.
+  // Replacements preserve length, so slicing restores the original segment boundary.
+  nlPostProcessor: output => {
+    const segments = output.split(/('(?:[^']|'')*')/u);
+    return segments
       .map((s, i) =>
         i % 2
           ? s
-          : s.replace(/ y (?=h?[iíIÍ](?![aeouáéóú]))/gu, ' e ').replace(/ o (?=h?[oóOÓ])/gu, ' u ')
+          : (s + (segments[i + 1]?.slice(1) ?? ''))
+              .replace(/ y (?=h?[iíIÍ](?![aeouáéóú]))/gu, ' e ')
+              .replace(/ o (?=h?[oóOÓ])/gu, ' u ')
+              .slice(0, s.length)
       )
-      .join(''),
+      .join('');
+  },
 });
 // First Name comienza con 'Stev' y Age es mayor que '28'
 ```
