@@ -12,5 +12,7 @@ const mapUnquoted = (output: string, fn: (text: string) => string) => {
 // y → e before /i/, o → u before /o/
 export const nlPostProcessor = (output: string): string =>
   mapUnquoted(output, s =>
-    s.replace(/ y (?=h?[iíIÍ](?![aeouáéóú]))/gu, ' e ').replace(/ o (?=h?[oóOÓ])/gu, ' u ')
+    s
+      .replace(/ y (?=[hH]?[iíIÍ](?![aeouáéóúAEOUÁÉÓÚ]))/gu, ' e ')
+      .replace(/ o (?=[hH]?[oóOÓ])/gu, ' u ')
   );

@@ -1846,6 +1846,7 @@ formatQuery(query, {
     listSeparator: ', ',
   },
   // Skip quoted values ('...', with '' as an escaped quote), but peek at the next one.
+  // Assumes field labels contain no apostrophes (they are not quoted by default).
   // Replacements preserve length, so slicing restores the original segment boundary.
   nlPostProcessor: output => {
     const segments = output.split(/('(?:[^']|'')*')/u);
@@ -1854,8 +1855,8 @@ formatQuery(query, {
         i % 2
           ? s
           : (s + (segments[i + 1]?.slice(1) ?? ''))
-              .replace(/ y (?=h?[iíIÍ](?![aeouáéóú]))/gu, ' e ')
-              .replace(/ o (?=h?[oóOÓ])/gu, ' u ')
+              .replace(/ y (?=[hH]?[iíIÍ](?![aeouáéóúAEOUÁÉÓÚ]))/gu, ' e ')
+              .replace(/ o (?=[hH]?[oóOÓ])/gu, ' u ')
               .slice(0, s.length)
       )
       .join('');
