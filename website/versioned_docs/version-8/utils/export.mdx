@@ -1745,6 +1745,19 @@ formatQuery(query, {
 // `Color is one of the values ('Red'、'Green' または 'Blue')`
 ```
 
+##### Post-processor
+
+Some grammar depends on neighboring words and can't be expressed with static translations—for example, Korean particles that change form after a consonant (이/가, 을/를) or Spanish conjunctions that change before certain sounds (y → e, o → u). The `nlPostProcessor` option receives the complete output string and returns the final result.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  translations: { and: 'y', or: 'o' },
+  nlPostProcessor: output => output.replace(/ y (?=h?i)/gi, ' e '),
+});
+// `Nombre es 'Ana' e Idioma es 'inglés'`
+```
+
 #### Operator map
 
 `operatorMap` is a map of operators to their natural language equivalents. If the result can differ based on the `valueSource`, the key should map to an array where the second element represents the string to be used when `valueSource` is "field"; the first element will be used in all other cases.
@@ -1766,7 +1779,7 @@ These examples show how `wordOrder`, `operatorMap`, and `translations` combine t
 
 ##### Japanese (SOV with particles)
 
-Japanese uses Subject-Object-Verb order and requires the particle `が` after the subject. Ideographic punctuation (`、`) replaces commas, and the `から…の間` pattern is more natural than `と…の間` for ranges.
+Japanese uses Subject-Object-Verb order and requires the particle `が` after the subject. Ideographic punctuation (`、`) replaces commas, and ranges use the inclusive `以上…以下` pattern (`nlPostProcessor` removes the spaces around `以上`).
 
 ```ts
 formatQuery(query, {
@@ -1777,7 +1790,8 @@ formatQuery(query, {
     '>': ['より大きい', 'の値より大きい'],
     beginswith: ['で始まる', 'の値で始まる'],
     in: ['のいずれかである', 'と同じ値のいずれかである'],
-    between: ['の間である', 'の値の間である'],
+    between: '以下である',
+    notbetween: '以下の範囲外である',
     // ... other operators
   },
   translations: {
@@ -1786,19 +1800,22 @@ formatQuery(query, {
     true: '真',
     false: '偽',
     ruleSeparator: '、',
-    betweenAnd: 'から',
+    betweenAnd: '以上',
     afterSubject: 'が',
     afterObject: '',
     listSeparator: '、',
     groupSuffix: '',
+    groupSuffix_not: 'ではない',
   },
+  nlPostProcessor: output =>
+    output.replace(/ ?以上 ?/g, '以上').replace(/\) ではない/g, ')ではない'),
 });
-// First Nameが'Stev'で始まる、かつ Ageが'28'より大きい
+// First Nameが'Stev'で始まる、かつ Ageが'20'以上'30'以下である
 ```
 
 ##### Spanish (SVO with translations)
 
-Spanish uses the same SVO order as English, so only `operatorMap` and `translations` are needed — no `wordOrder` change.
+Spanish uses the same SVO order as English, so no `wordOrder` change is needed. Spanish doesn't use a comma before `y`/`o` or an Oxford comma, so `ruleSeparator` and `listSeparator` are overridden. `nlPostProcessor` handles `y` → `e` and `o` → `u`.
 
 ```ts
 formatQuery(query, {
@@ -1818,9 +1835,13 @@ formatQuery(query, {
     false: 'falso',
     groupSuffix: 'es verdadero',
     groupSuffix_not: 'no es verdadero',
+    ruleSeparator: ' ',
+    listSeparator: ', ',
   },
+  nlPostProcessor: output =>
+    output.replace(/ y (?=h?[iíIÍ](?![aeouáéóú]))/g, ' e ').replace(/ o (?=h?[oóOÓ])/g, ' u '),
 });
-// First Name comienza con 'Stev', y Age es mayor que '28'
+// First Name comienza con 'Stev' y Age es mayor que '28'
 ```
 
 ##### Welsh (VSO)

@@ -249,6 +249,7 @@ export const getExportCall = async (
     wordOrder,
     operatorMap,
     translations,
+    nlPostProcessor,
   }: FormatQueryOptions,
   { validateQuery }: Pick<DemoOptions, 'validateQuery'>
 ) => {
@@ -286,6 +287,11 @@ export const getExportCall = async (
     if (wordOrder) parts.push(`wordOrder: '${wordOrder}'`);
     if (operatorMap) parts.push(`operatorMap: ${JSON.stringify(operatorMap)}`);
     if (translations) parts.push(`translations: ${JSON.stringify(translations)}`);
+    if (nlPostProcessor) {
+      parts.push(
+        'nlPostProcessor /* https://github.com/react-querybuilder/react-querybuilder/blob/main/website/src/pages/demo/_constants/nlLanguageConfigs.ts */'
+      );
+    }
     optionsString = `{ ${parts.join(', ')} }`;
   } else {
     if (Object.keys(fqOpts).length > 1 || validateQuery) {

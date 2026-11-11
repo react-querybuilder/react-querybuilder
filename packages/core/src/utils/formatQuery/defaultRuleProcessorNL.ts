@@ -151,6 +151,8 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     const nestedArrayFilter = defaultRuleGroupProcessorNL(rule.value, {
       ...(opts as FormatQueryFinalOptions),
       fields: toFullOptionList(fieldData?.subproperties ?? []),
+      // Post-process once, at top level only
+      nlPostProcessor: undefined,
     });
 
     // (H)as (S)ub(P)roperties

@@ -5,7 +5,64 @@ export interface NLLanguageConfig {
   wordOrder?: string;
   operatorMap?: ExportOperatorMap;
   translations?: NLTranslations;
+  nlPostProcessor?: (output: string) => string;
 }
+
+const digitBatchim: Record<string, 'none' | 'rieul' | 'other'> = {
+  '0': 'other',
+  '1': 'rieul',
+  '2': 'none',
+  '3': 'other',
+  '4': 'none',
+  '5': 'none',
+  '6': 'other',
+  '7': 'rieul',
+  '8': 'rieul',
+  '9': 'none',
+};
+
+// Final consonant (batchim) of a character's Korean reading: 'none' | 'rieul' (ㄹ) | 'other'.
+// Null when unknown (e.g. multi-letter Latin words, whose pronunciation is ambiguous).
+const getBatchim = (text: string): 'none' | 'rieul' | 'other' | null => {
+  const t = text.replace(/[\s'")\]]+$/u, '');
+  const ch = t.at(-1);
+  if (!ch) return null;
+  const code = ch.charCodeAt(0);
+  if (code >= 0xac00 && code <= 0xd7a3) {
+    const jong = (code - 0xac00) % 28;
+    return jong === 0 ? 'none' : jong === 8 ? 'rieul' : 'other';
+  }
+  // Digit readings: 영 일 이 삼 사 오 육 칠 팔 구 (multi-digit ending in 0 → 십/백/천/만)
+  const digit = digitBatchim[ch];
+  if (digit) return digit;
+  if (/[a-z]/i.test(ch) && !/[a-z]/i.test(t.at(-2) ?? '')) {
+    // Single letter, read by its name (엘, 엠, 엔, 알, ...)
+    return /[lr]/i.test(ch) ? 'rieul' : /[mn]/i.test(ch) ? 'other' : 'none';
+  }
+  return null;
+};
+
+// Resolves dual-form Korean particles (이(가), 을(를), 과(와), (으)로) against the preceding word.
+// Unresolvable ones keep the dual form, per Korean UI convention.
+const resolveKoreanParticles = (output: string) =>
+  output.replace(
+    /\s*(이\(가\)|을\(를\)|과\(와\)|\(으\)로)/gu,
+    (_m, particle: string, offset: number) => {
+      const b = getBatchim(output.slice(0, offset));
+      if (b === null) return particle;
+      const hasFinal = b !== 'none';
+      switch (particle) {
+        case '이(가)':
+          return hasFinal ? '이' : '가';
+        case '을(를)':
+          return hasFinal ? '을' : '를';
+        case '과(와)':
+          return hasFinal ? '과' : '와';
+        default:
+          return b === 'other' ? '으로' : '로';
+      }
+    }
+  );
 
 export type NLLanguageCode = 'en' | 'ja' | 'es' | 'ko' | 'cy';
 
@@ -33,8 +90,8 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       notnull: 'nullではない',
       in: ['のいずれかである', 'と同じ値のいずれかである'],
       notin: ['のいずれでもない', 'と同じ値のいずれでもない'],
-      between: ['の間である', 'の値の間である'],
-      notbetween: ['の間ではない', 'の値の間ではない'],
+      between: '以下である',
+      notbetween: '以下の範囲外である',
     },
     translations: {
       and: 'かつ',
@@ -42,13 +99,16 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       true: '真',
       false: '偽',
       ruleSeparator: '、',
-      betweenAnd: 'から',
+      betweenAnd: '以上',
       afterSubject: 'が',
       afterObject: '',
       listSeparator: '、',
       groupSuffix: '',
-      groupSuffix_not: 'は偽である',
+      groupSuffix_not: 'ではない',
     },
+    // Drop spaces around 以上 and before ではない
+    nlPostProcessor: output =>
+      output.replace(/ ?以上 ?/gu, '以上').replace(/\) ではない/gu, ')ではない'),
   },
   es: {
     label: 'Español (Spanish)',
@@ -79,30 +139,36 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       false: 'falso',
       groupSuffix: 'es verdadero',
       groupSuffix_not: 'no es verdadero',
+      ruleSeparator: ' ',
+      listSeparator: ', ',
     },
+    // y → e before /i/, o → u before /o/
+    nlPostProcessor: output =>
+      output.replace(/ y (?=h?[iíIÍ](?![aeouáéóú]))/gu, ' e ').replace(/ o (?=h?[oóOÓ])/gu, ' u '),
   },
   ko: {
     label: '한국어 (Korean)',
     wordOrder: 'SOV',
+    // Dual-form particles (이(가), 을(를), 과(와), (으)로) resolved by nlPostProcessor
     operatorMap: {
       '=': ['이다', '의 값과 같다'],
-      '!=': ['이 아니다', '의 값과 같지 않다'],
+      '!=': ['이(가) 아니다', '의 값과 같지 않다'],
       '<': ['보다 작다', '의 값보다 작다'],
       '>': ['보다 크다', '의 값보다 크다'],
-      '<=': ['이하이다', '의 값 이하이다'],
-      '>=': ['이상이다', '의 값 이상이다'],
-      contains: ['을 포함한다', '의 값을 포함한다'],
-      beginswith: ['으로 시작한다', '의 값으로 시작한다'],
-      endswith: ['으로 끝난다', '의 값으로 끝난다'],
-      doesnotcontain: ['을 포함하지 않는다', '의 값을 포함하지 않는다'],
-      doesnotbeginwith: ['으로 시작하지 않는다', '의 값으로 시작하지 않는다'],
-      doesnotendwith: ['으로 끝나지 않는다', '의 값으로 끝나지 않는다'],
+      '<=': [' 이하이다', '의 값 이하이다'],
+      '>=': [' 이상이다', '의 값 이상이다'],
+      contains: ['을(를) 포함한다', '의 값을 포함한다'],
+      beginswith: ['(으)로 시작한다', '의 값으로 시작한다'],
+      endswith: ['(으)로 끝난다', '의 값으로 끝난다'],
+      doesnotcontain: ['을(를) 포함하지 않는다', '의 값을 포함하지 않는다'],
+      doesnotbeginwith: ['(으)로 시작하지 않는다', '의 값으로 시작하지 않는다'],
+      doesnotendwith: ['(으)로 끝나지 않는다', '의 값으로 끝나지 않는다'],
       null: 'null이다',
       notnull: 'null이 아니다',
-      in: ['중 하나이다', '의 값 중 하나이다'],
-      notin: ['중 어느 것도 아니다', '의 값 중 어느 것도 아니다'],
-      between: ['사이에 있다', '의 값 사이에 있다'],
-      notbetween: ['사이에 없다', '의 값 사이에 없다'],
+      in: [' 중 하나이다', '의 값 중 하나이다'],
+      notin: [' 중 어느 것도 아니다', '의 값 중 어느 것도 아니다'],
+      between: [' 사이에 있다', '의 값 사이에 있다'],
+      notbetween: [' 사이에 있지 않다', '의 값 사이에 있지 않다'],
     },
     translations: {
       and: '그리고',
@@ -110,12 +176,14 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       true: '참',
       false: '거짓',
       ruleSeparator: ', ',
-      betweenAnd: '과',
-      afterSubject: '이 ',
+      betweenAnd: '과(와)',
+      afterSubject: '이(가) ',
       afterObject: '',
+      listSeparator: ', ',
       groupSuffix: '',
-      groupSuffix_not: '거짓이다',
+      groupSuffix_not: '이(가) 거짓이다',
     },
+    nlPostProcessor: resolveKoreanParticles,
   },
   cy: {
     label: 'Cymraeg (Welsh)',

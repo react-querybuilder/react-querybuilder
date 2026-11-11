@@ -218,6 +218,7 @@ type MostFormatQueryOptions = SetOptional<
   | 'parseNumbers'
   | 'getParameters'
   | 'diagnosticsTargetFormat'
+  | 'nlPostProcessor'
 >;
 
 const defaultFormatQueryOptions = {
