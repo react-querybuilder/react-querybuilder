@@ -306,6 +306,12 @@ export interface FormatQueryOptions {
    */
   translations?: Partial<Record<NLTranslationKey, string>>;
   /**
+   * Post-processes the final output of the "natural_language" format. Useful for
+   * context-dependent grammar that static translations can't express, like Korean particle
+   * allomorphs (이/가, 을/를) or Spanish conjunction variants (y/e, o/u).
+   */
+  nlPostProcessor?: (output: string) => string;
+  /**
    * For the "diagnostics" format only. When set to a format with an entry in
    * {@link formatCapabilities}, rules the target format can't express are reported
    * as `"format-check"` warnings (they don't affect validity). Ignored by other formats.
@@ -378,8 +384,10 @@ export interface FormatQueryFinalOptions extends Required<
     | 'parseNumbers'
     | 'getParameters'
     | 'diagnosticsTargetFormat'
+    | 'nlPostProcessor'
   >
 > {
+  nlPostProcessor?: FormatQueryOptions['nlPostProcessor'];
   getParameters?: FormatQueryOptions['getParameters'];
   diagnosticsTargetFormat?: ExportFormat;
   fields: FullOptionList<FullField>;

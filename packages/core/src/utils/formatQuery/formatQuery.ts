@@ -218,6 +218,7 @@ type MostFormatQueryOptions = SetOptional<
   | 'parseNumbers'
   | 'getParameters'
   | 'diagnosticsTargetFormat'
+  | 'nlPostProcessor'
 >;
 
 const defaultFormatQueryOptions = {
@@ -618,7 +619,10 @@ function formatQuery(
                         ? {}
                         : format === 'drizzle' || format === 'sequelize' || format === 'tanstack_db'
                           ? undefined
-                          : fallbackExpression;
+                          : format === 'natural_language' &&
+                              typeof optObj.nlPostProcessor === 'function'
+                            ? optObj.nlPostProcessor(fallbackExpression)
+                            : fallbackExpression;
         }
       }
     } else {

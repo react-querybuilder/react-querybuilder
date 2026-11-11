@@ -16,6 +16,7 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
     fields,
     fallbackExpression,
     getParseNumberBoolean,
+    nlPostProcessor,
     placeholderFieldName,
     placeholderOperatorName,
     placeholderValueName,
@@ -142,5 +143,6 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
     )}${suffix}`;
   };
 
-  return processRuleGroup(ruleGroup, true);
+  const output = processRuleGroup(ruleGroup, true);
+  return typeof nlPostProcessor === 'function' ? nlPostProcessor(output) : output;
 };

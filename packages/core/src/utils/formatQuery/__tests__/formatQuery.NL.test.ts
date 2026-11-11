@@ -657,3 +657,31 @@ it('does not escape quote chars in field names (human-readable output)', () => {
     '`a`b` is the same as the value in `c`d`'
   );
 });
+
+describe('nlPostProcessor', () => {
+  it('post-processes final output', () => {
+    expect(formatQuery(query, { format: 'natural_language', nlPostProcessor: s => `<${s}>` })).toBe(
+      `<${formatQuery(query, { format: 'natural_language' })}>`
+    );
+  });
+
+  it('runs once with match modes', () => {
+    const calls: string[] = [];
+    const out = formatQuery(queryWithMatchModes, {
+      format: 'natural_language',
+      nlPostProcessor: s => (calls.push(s), s.toUpperCase()),
+    });
+    expect(calls).toHaveLength(1);
+    expect(out).toBe(out.toUpperCase());
+  });
+});
+
+it('nlPostProcessor applies to validation fallback', () => {
+  expect(
+    formatQuery(query, {
+      format: 'natural_language',
+      validator: () => false,
+      nlPostProcessor: s => `<${s}>`,
+    })
+  ).toBe('<1 is 1>');
+});

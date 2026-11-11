@@ -28,7 +28,7 @@ export const operators: Operator[] = [
   { name: 'doesNotBeginWith', label: 'לא מתחיל ב־' },
   { name: 'doesNotEndWith', label: 'לא מסתיים ב־' },
   { name: 'null', label: 'ריק' },
-  { name: 'notNull', label: 'אינו ריק' },
+  { name: 'notNull', label: 'לא ריק' },
   { name: 'in', label: 'אחד מ־' },
   { name: 'notIn', label: 'לא אחד מ־' },
   // { name: 'between', label: 'בין … ל־' },
@@ -48,7 +48,7 @@ const rtlLabels: Record<string, string> = {
   firstName: 'שם פרטי',
   lastName: 'שם משפחה',
   age: 'גיל',
-  isMusician: 'עוסק במוזיקה',
+  isMusician: 'מוזיקאי/ת',
   instrument: 'כלי נגינה ראשי',
   // alsoPlays: 'מנגן גם ב־', // Literal translation
   alsoPlays: 'כלי נגינה נוסף', // "Additional instrument"
@@ -83,68 +83,98 @@ export const fields: Field[] = demoFields.map(f =>
 export const translations: Partial<Translations> = {
   fields: {
     title: 'שדות',
+    placeholderLabel: '~ בחירת שדה ~',
+    placeholderGroupLabel: '~ בחירת שדה ~',
   },
   operators: {
-    // title: 'מחברים', // More natural in Hebrew
-    title: 'אופרטורים', // More appropriate for technical context
+    title: 'אופרטורים',
+    placeholderLabel: '~ בחירת אופרטור ~',
+    placeholderGroupLabel: '~ בחירת אופרטור ~',
   },
   values: {
     title: 'ערכים',
+    placeholderLabel: '~ בחירת ערך ~',
+    placeholderGroupLabel: '~ בחירת ערך ~',
+  },
+  matchMode: {
+    title: 'מצב התאמה',
+  },
+  matchThreshold: {
+    title: 'סף התאמה',
   },
   value: {
     title: 'ערך',
   },
   removeRule: {
-    title: 'כלל',
+    title: 'הסרת כלל',
   },
   removeGroup: {
-    title: 'קבוצה',
+    title: 'הסרת קבוצה',
   },
   addRule: {
-    label: 'הוסף כלל',
-    title: 'הוסף כלל',
+    label: '+ כלל',
+    title: 'הוספת כלל',
   },
   addGroup: {
-    label: 'הוסף קבוצה',
-    title: 'הוסף קבוצה',
+    label: '+ קבוצה',
+    title: 'הוספת קבוצה',
   },
   combinators: {
-    // title: 'מחברים',
-    title: 'מילות קישור', // Conjunctions / linking words
+    title: 'מילות קישור',
   },
   notToggle: {
     label: 'לא',
-    // title: 'הפוך קבוצה זו',
-    title: 'הפוך את המשמעות של קבוצה לוגית זו',
+    title: 'היפוך קבוצה זו',
   },
   cloneRule: {
-    title: 'שכפל',
+    title: 'שכפול כלל',
   },
   cloneRuleGroup: {
-    title: 'שכפל קבוצה',
+    title: 'שכפול קבוצה',
+  },
+  ungroupRuleGroup: {
+    title: 'פירוק קבוצה',
   },
   shiftActionUp: {
-    title: 'הזז מעלה',
+    title: 'הזזה למעלה',
   },
   shiftActionDown: {
-    title: 'הזז מטה',
+    title: 'הזזה למטה',
+  },
+  undo: {
+    title: 'ביטול',
+  },
+  redo: {
+    title: 'ביצוע מחדש',
   },
   dragHandle: {
     title: 'ידית גרירה',
   },
   lockRule: {
-    title: 'נעל כלל',
+    title: 'נעילת כלל',
   },
   lockGroup: {
-    title: 'נעל קבוצה',
+    title: 'נעילת קבוצה',
   },
   lockRuleDisabled: {
-    title: 'בטל נעילה לכלל',
+    title: 'ביטול נעילת כלל',
   },
   lockGroupDisabled: {
-    title: 'בטל נעילה לקבוצה',
+    title: 'ביטול נעילת קבוצה',
+  },
+  muteRule: {
+    title: 'השתקת כלל',
+  },
+  muteGroup: {
+    title: 'השתקת קבוצה',
+  },
+  unmuteRule: {
+    title: 'ביטול השתקת כלל',
+  },
+  unmuteGroup: {
+    title: 'ביטול השתקת קבוצה',
   },
   valueSourceSelector: {
-    title: 'קור ערך',
+    title: 'מקור ערך',
   },
 };

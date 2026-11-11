@@ -1,10 +1,14 @@
 import type { ExportOperatorMap, NLTranslations } from 'react-querybuilder';
+import { nlPostProcessor as esPostProcessor } from './nlPostProcessors/es';
+import { nlPostProcessor as jaPostProcessor } from './nlPostProcessors/ja';
+import { nlPostProcessor as koPostProcessor } from './nlPostProcessors/ko';
 
 export interface NLLanguageConfig {
   label: string;
   wordOrder?: string;
   operatorMap?: ExportOperatorMap;
   translations?: NLTranslations;
+  nlPostProcessor?: (output: string) => string;
 }
 
 export type NLLanguageCode = 'en' | 'ja' | 'es' | 'ko' | 'cy';
@@ -33,8 +37,8 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       notnull: 'nullではない',
       in: ['のいずれかである', 'と同じ値のいずれかである'],
       notin: ['のいずれでもない', 'と同じ値のいずれでもない'],
-      between: ['の間である', 'の値の間である'],
-      notbetween: ['の間ではない', 'の値の間ではない'],
+      between: '以下である',
+      notbetween: '以下の範囲外である',
     },
     translations: {
       and: 'かつ',
@@ -42,13 +46,14 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       true: '真',
       false: '偽',
       ruleSeparator: '、',
-      betweenAnd: 'から',
+      betweenAnd: '以上',
       afterSubject: 'が',
       afterObject: '',
       listSeparator: '、',
       groupSuffix: '',
-      groupSuffix_not: 'は偽である',
+      groupSuffix_not: 'ではない',
     },
+    nlPostProcessor: jaPostProcessor,
   },
   es: {
     label: 'Español (Spanish)',
@@ -79,30 +84,34 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       false: 'falso',
       groupSuffix: 'es verdadero',
       groupSuffix_not: 'no es verdadero',
+      ruleSeparator: ' ',
+      listSeparator: ', ',
     },
+    nlPostProcessor: esPostProcessor,
   },
   ko: {
     label: '한국어 (Korean)',
     wordOrder: 'SOV',
+    // Dual-form particles (이(가), 을(를), 과(와), (으)로) resolved by nlPostProcessor
     operatorMap: {
       '=': ['이다', '의 값과 같다'],
-      '!=': ['이 아니다', '의 값과 같지 않다'],
+      '!=': ['이(가) 아니다', '의 값과 같지 않다'],
       '<': ['보다 작다', '의 값보다 작다'],
       '>': ['보다 크다', '의 값보다 크다'],
-      '<=': ['이하이다', '의 값 이하이다'],
-      '>=': ['이상이다', '의 값 이상이다'],
-      contains: ['을 포함한다', '의 값을 포함한다'],
-      beginswith: ['으로 시작한다', '의 값으로 시작한다'],
-      endswith: ['으로 끝난다', '의 값으로 끝난다'],
-      doesnotcontain: ['을 포함하지 않는다', '의 값을 포함하지 않는다'],
-      doesnotbeginwith: ['으로 시작하지 않는다', '의 값으로 시작하지 않는다'],
-      doesnotendwith: ['으로 끝나지 않는다', '의 값으로 끝나지 않는다'],
+      '<=': [' 이하이다', '의 값 이하이다'],
+      '>=': [' 이상이다', '의 값 이상이다'],
+      contains: ['을(를) 포함한다', '의 값을 포함한다'],
+      beginswith: ['(으)로 시작한다', '의 값으로 시작한다'],
+      endswith: ['(으)로 끝난다', '의 값으로 끝난다'],
+      doesnotcontain: ['을(를) 포함하지 않는다', '의 값을 포함하지 않는다'],
+      doesnotbeginwith: ['(으)로 시작하지 않는다', '의 값으로 시작하지 않는다'],
+      doesnotendwith: ['(으)로 끝나지 않는다', '의 값으로 끝나지 않는다'],
       null: 'null이다',
       notnull: 'null이 아니다',
-      in: ['중 하나이다', '의 값 중 하나이다'],
-      notin: ['중 어느 것도 아니다', '의 값 중 어느 것도 아니다'],
-      between: ['사이에 있다', '의 값 사이에 있다'],
-      notbetween: ['사이에 없다', '의 값 사이에 없다'],
+      in: [' 중 하나이다', '의 값 중 하나이다'],
+      notin: [' 중 어느 것도 아니다', '의 값 중 어느 것도 아니다'],
+      between: [' 사이에 있다', '의 값 사이에 있다'],
+      notbetween: [' 사이에 있지 않다', '의 값 사이에 있지 않다'],
     },
     translations: {
       and: '그리고',
@@ -110,12 +119,14 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       true: '참',
       false: '거짓',
       ruleSeparator: ', ',
-      betweenAnd: '과',
-      afterSubject: '이 ',
+      betweenAnd: '과(와)',
+      afterSubject: '이(가) ',
       afterObject: '',
+      listSeparator: ', ',
       groupSuffix: '',
-      groupSuffix_not: '거짓이다',
+      groupSuffix_not: '이(가) 거짓이다',
     },
+    nlPostProcessor: koPostProcessor,
   },
   cy: {
     label: 'Cymraeg (Welsh)',
