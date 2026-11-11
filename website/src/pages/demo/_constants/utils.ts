@@ -4,6 +4,12 @@ import { Buffer } from 'buffer';
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // @ts-expect-error !!raw-loader!
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
+// @ts-expect-error !!raw-loader!
+import nlPostProcessorEsCode from '!!raw-loader!@site/src/pages/demo/_constants/nlPostProcessors/es';
+// @ts-expect-error !!raw-loader!
+import nlPostProcessorJaCode from '!!raw-loader!@site/src/pages/demo/_constants/nlPostProcessors/ja';
+// @ts-expect-error !!raw-loader!
+import nlPostProcessorKoCode from '!!raw-loader!@site/src/pages/demo/_constants/nlPostProcessors/ko';
 import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
 import {
@@ -65,6 +71,7 @@ import {
   standardClassnames,
 } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
+import { nlLanguageConfigs } from './nlLanguageConfigs';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 
 type OptionsAction =
@@ -240,6 +247,12 @@ export const expressionRuleProcessorMap: Partial<Record<ExportFormat, RuleProces
   sparql: expressionRuleProcessorSPARQL,
 };
 
+const nlPostProcessorSources = new Map<unknown, string>([
+  [nlLanguageConfigs.es.nlPostProcessor, nlPostProcessorEsCode],
+  [nlLanguageConfigs.ja.nlPostProcessor, nlPostProcessorJaCode],
+  [nlLanguageConfigs.ko.nlPostProcessor, nlPostProcessorKoCode],
+]);
+
 export const getExportCall = async (
   {
     format,
@@ -275,6 +288,11 @@ export const getExportCall = async (
   }
 
   let optionsString: string;
+  // Inline the post-processor source so the snippet is self-contained
+  const nlPostProcessorCode =
+    format === 'natural_language' && nlPostProcessor
+      ? `${(nlPostProcessorSources.get(nlPostProcessor) ?? '').replaceAll(/^export /gmu, '')}\n`
+      : '';
 
   if (format === 'natural_language') {
     const parts: string[] = [`format: '${format}'`];
@@ -287,11 +305,7 @@ export const getExportCall = async (
     if (wordOrder) parts.push(`wordOrder: '${wordOrder}'`);
     if (operatorMap) parts.push(`operatorMap: ${JSON.stringify(operatorMap)}`);
     if (translations) parts.push(`translations: ${JSON.stringify(translations)}`);
-    if (nlPostProcessor) {
-      parts.push(
-        'nlPostProcessor /* https://github.com/react-querybuilder/react-querybuilder/blob/main/website/src/pages/demo/_constants/nlLanguageConfigs.ts */'
-      );
-    }
+    if (nlPostProcessor) parts.push('nlPostProcessor');
     optionsString = `{ ${parts.join(', ')} }`;
   } else {
     if (Object.keys(fqOpts).length > 1 || validateQuery) {
@@ -307,7 +321,7 @@ export const getExportCall = async (
 
   return prettier.format(
     `import { ${rqbImports.join(', ')} } from 'react-querybuilder';
-${validateQuery || format === 'natural_language' ? `import { fields } from './fields';\n` : ''}
+${validateQuery || format === 'natural_language' ? `import { fields } from './fields';\n` : ''}${nlPostProcessorCode}
 formatQuery(query, ${optionsString})`,
     {
       filepath: 'exportCall.ts',

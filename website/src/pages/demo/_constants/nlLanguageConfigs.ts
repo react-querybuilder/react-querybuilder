@@ -1,4 +1,7 @@
 import type { ExportOperatorMap, NLTranslations } from 'react-querybuilder';
+import { nlPostProcessor as esPostProcessor } from './nlPostProcessors/es';
+import { nlPostProcessor as jaPostProcessor } from './nlPostProcessors/ja';
+import { nlPostProcessor as koPostProcessor } from './nlPostProcessors/ko';
 
 export interface NLLanguageConfig {
   label: string;
@@ -7,62 +10,6 @@ export interface NLLanguageConfig {
   translations?: NLTranslations;
   nlPostProcessor?: (output: string) => string;
 }
-
-const digitBatchim: Record<string, 'none' | 'rieul' | 'other'> = {
-  '0': 'other',
-  '1': 'rieul',
-  '2': 'none',
-  '3': 'other',
-  '4': 'none',
-  '5': 'none',
-  '6': 'other',
-  '7': 'rieul',
-  '8': 'rieul',
-  '9': 'none',
-};
-
-// Final consonant (batchim) of a character's Korean reading: 'none' | 'rieul' (ㄹ) | 'other'.
-// Null when unknown (e.g. multi-letter Latin words, whose pronunciation is ambiguous).
-const getBatchim = (text: string): 'none' | 'rieul' | 'other' | null => {
-  const t = text.replace(/[\s'")\]]+$/u, '');
-  const ch = t.at(-1);
-  if (!ch) return null;
-  const code = ch.charCodeAt(0);
-  if (code >= 0xac00 && code <= 0xd7a3) {
-    const jong = (code - 0xac00) % 28;
-    return jong === 0 ? 'none' : jong === 8 ? 'rieul' : 'other';
-  }
-  // Digit readings: 영 일 이 삼 사 오 육 칠 팔 구 (multi-digit ending in 0 → 십/백/천/만)
-  const digit = digitBatchim[ch];
-  if (digit) return digit;
-  if (/[a-z]/i.test(ch) && !/[a-z]/i.test(t.at(-2) ?? '')) {
-    // Single letter, read by its name (엘, 엠, 엔, 알, ...)
-    return /[lr]/i.test(ch) ? 'rieul' : /[mn]/i.test(ch) ? 'other' : 'none';
-  }
-  return null;
-};
-
-// Resolves dual-form Korean particles (이(가), 을(를), 과(와), (으)로) against the preceding word.
-// Unresolvable ones keep the dual form, per Korean UI convention.
-const resolveKoreanParticles = (output: string) =>
-  output.replace(
-    /\s*(이\(가\)|을\(를\)|과\(와\)|\(으\)로)/gu,
-    (_m, particle: string, offset: number) => {
-      const b = getBatchim(output.slice(0, offset));
-      if (b === null) return particle;
-      const hasFinal = b !== 'none';
-      switch (particle) {
-        case '이(가)':
-          return hasFinal ? '이' : '가';
-        case '을(를)':
-          return hasFinal ? '을' : '를';
-        case '과(와)':
-          return hasFinal ? '과' : '와';
-        default:
-          return b === 'other' ? '으로' : '로';
-      }
-    }
-  );
 
 export type NLLanguageCode = 'en' | 'ja' | 'es' | 'ko' | 'cy';
 
@@ -106,9 +53,7 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       groupSuffix: '',
       groupSuffix_not: 'ではない',
     },
-    // Drop spaces around 以上 and before ではない
-    nlPostProcessor: output =>
-      output.replace(/ ?以上 ?/gu, '以上').replace(/\) ではない/gu, ')ではない'),
+    nlPostProcessor: jaPostProcessor,
   },
   es: {
     label: 'Español (Spanish)',
@@ -142,9 +87,7 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       ruleSeparator: ' ',
       listSeparator: ', ',
     },
-    // y → e before /i/, o → u before /o/
-    nlPostProcessor: output =>
-      output.replace(/ y (?=h?[iíIÍ](?![aeouáéóú]))/gu, ' e ').replace(/ o (?=h?[oóOÓ])/gu, ' u '),
+    nlPostProcessor: esPostProcessor,
   },
   ko: {
     label: '한국어 (Korean)',
@@ -183,7 +126,7 @@ export const nlLanguageConfigs: Record<NLLanguageCode, NLLanguageConfig> = {
       groupSuffix: '',
       groupSuffix_not: '이(가) 거짓이다',
     },
-    nlPostProcessor: resolveKoreanParticles,
+    nlPostProcessor: koPostProcessor,
   },
   cy: {
     label: 'Cymraeg (Welsh)',

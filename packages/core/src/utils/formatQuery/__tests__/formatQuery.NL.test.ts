@@ -675,3 +675,13 @@ describe('nlPostProcessor', () => {
     expect(out).toBe(out.toUpperCase());
   });
 });
+
+it('nlPostProcessor applies to validation fallback', () => {
+  expect(
+    formatQuery(query, {
+      format: 'natural_language',
+      validator: () => false,
+      nlPostProcessor: s => `<${s}>`,
+    })
+  ).toBe('<1 is 1>');
+});

@@ -1752,7 +1752,8 @@ Some grammar depends on neighboring words and can't be expressed with static tra
 ```ts
 formatQuery(query, {
   format: 'natural_language',
-  translations: { and: 'y', or: 'o' },
+  operatorMap: { '=': 'es' },
+  translations: { and: 'y', or: 'o', ruleSeparator: ' ' },
   nlPostProcessor: output => output.replace(/ y (?=h?i)/gi, ' e '),
 });
 // `Nombre es 'Ana' e Idioma es 'inglés'`
@@ -1807,8 +1808,14 @@ formatQuery(query, {
     groupSuffix: '',
     groupSuffix_not: 'ではない',
   },
+  // Skip quoted values ('...', with '' as an escaped quote)
   nlPostProcessor: output =>
-    output.replace(/ ?以上 ?/g, '以上').replace(/\) ではない/g, ')ではない'),
+    output
+      .split(/('(?:[^']|'')*')/u)
+      .map((s, i) =>
+        i % 2 ? s : s.replace(/ ?以上 ?/gu, '以上').replace(/\) ではない/gu, ')ではない')
+      )
+      .join(''),
 });
 // First Nameが'Stev'で始まる、かつ Ageが'20'以上'30'以下である
 ```
@@ -1838,8 +1845,16 @@ formatQuery(query, {
     ruleSeparator: ' ',
     listSeparator: ', ',
   },
+  // Skip quoted values ('...', with '' as an escaped quote)
   nlPostProcessor: output =>
-    output.replace(/ y (?=h?[iíIÍ](?![aeouáéóú]))/g, ' e ').replace(/ o (?=h?[oóOÓ])/g, ' u '),
+    output
+      .split(/('(?:[^']|'')*')/u)
+      .map((s, i) =>
+        i % 2
+          ? s
+          : s.replace(/ y (?=h?[iíIÍ](?![aeouáéóú]))/gu, ' e ').replace(/ o (?=h?[oóOÓ])/gu, ' u ')
+      )
+      .join(''),
 });
 // First Name comienza con 'Stev' y Age es mayor que '28'
 ```
