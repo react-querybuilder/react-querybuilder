@@ -9,10 +9,10 @@ const mapUnquoted = (output: string, fn: (text: string) => string) => {
     .join('');
 };
 
-// y → e before /i/, o → u before /o/
+// y → e before /i/, o → u before /o/ (incl. numbers read "ocho…"/"once…")
 export const nlPostProcessor = (output: string): string =>
   mapUnquoted(output, s =>
     s
       .replace(/ y (?=[hH]?[iíIÍ](?![aeouáéóúAEOUÁÉÓÚ]))/gu, ' e ')
-      .replace(/ o (?=[hH]?[oóOÓ])/gu, ' u ')
+      .replace(/ o (?=[hH]?[oóOÓ]|8|11(?:\d{3})*(?!\d))/gu, ' u ')
   );

@@ -1856,7 +1856,7 @@ formatQuery(query, {
           ? s
           : (s + (segments[i + 1]?.slice(1) ?? ''))
               .replace(/ y (?=[hH]?[iíIÍ](?![aeouáéóúAEOUÁÉÓÚ]))/gu, ' e ')
-              .replace(/ o (?=[hH]?[oóOÓ])/gu, ' u ')
+              .replace(/ o (?=[hH]?[oóOÓ]|8|11(?:\d{3})*(?!\d))/gu, ' u ')
               .slice(0, s.length)
       )
       .join('');
