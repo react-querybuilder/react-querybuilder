@@ -251,6 +251,22 @@ export const initialQuery: RuleGroupType = prepareRuleGroup({
   ],
 });
 
+export const initialStylingQuery: RuleGroupType = prepareRuleGroup({
+  combinator: 'and',
+  not: false,
+  rules: [
+    { field: 'firstName', value: 'Stev', operator: 'beginsWith' },
+    {
+      combinator: 'or',
+      rules: [
+        { field: 'isMusician', operator: '=', value: true },
+        { field: 'instrument', operator: '=', value: 'guitar' },
+      ],
+    },
+    { field: 'birthdate', operator: 'between', value: '1954-10-03,1960-06-06' },
+  ],
+});
+
 export const initialQueryIC = convertToIC(initialQuery);
 
 // prettier-ignore

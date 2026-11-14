@@ -87,54 +87,6 @@
       }
     }
   }
-
-  & .custom-styling {
-    & .ruleGroup {
-      border-color: rgba(0, 0, 0, 0);
-      background-color: rgba(0, 160, 52, 0.3);
-      box-shadow: inset 2px 2px 6px 0 rgb(0 0 0 / 40%);
-      padding: 1rem;
-    }
-
-    & .rule-remove,
-    & .ruleGroup-remove {
-      order: -1;
-      display: flex;
-      background: none;
-      color: #ff663399;
-      border: none;
-      text-shadow: 2px 2px 3px #3333334d;
-    }
-
-    & .ruleGroup-addRule {
-      margin-left: auto;
-      background-color: #0000cc33;
-    }
-
-    & .ruleGroup-addGroup {
-      background-color: #00330033;
-    }
-
-    & .ruleGroup-addRule,
-    & .ruleGroup-addGroup {
-      border: 1px solid #00000033;
-      border-radius: 2px;
-      box-shadow: 3px 3px 4px 0 rgb(0 0 0 / 40%);
-    }
-
-    & .rule {
-      row-gap: 0;
-      & .queryBuilder-dragHandle {
-        margin-left: auto;
-      }
-    }
-
-    & .queryBuilder-dragHandle {
-      color: #3366ff99;
-      text-shadow: 2px 2px 3px #3333334d;
-      order: 99;
-    }
-  }
 }
 
 .stats {
@@ -152,35 +104,179 @@
   background-color: var(--ifm-menu-color-background-hover);
 }
 
-html[data-theme='dark'] {
-  & .homepage-showcase {
-    & .custom-styling {
-      & .queryBuilder {
-        background-color: #2d694f30;
-      }
+/* "Style" showcase: pure-CSS restyle + reorder */
+.homepage-showcase .custom-styling {
+  --cs-a: #c2417f;
+  --cs-b: #6b5aa6;
+  --cs-c: #3a7ca5;
+  --cs-text: var(--ifm-font-color-base);
+  --cs-muted: var(--ifm-color-emphasis-600);
+  --cs-glass: var(--ifm-color-emphasis-100);
+  --cs-line: var(--ifm-color-emphasis-300);
+  --cs-input-bg: var(--ifm-background-color);
 
-      & .ruleGroup {
-        background-color: rgba(0, 126, 48, 0.3);
-        box-shadow: inset 2px 2px 6px 0 rgb(0 0 0 / 70%);
-      }
+  & .queryBuilder {
+    padding: 0;
+    color: var(--cs-text);
+  }
 
-      & .rule-remove,
-      & .ruleGroup-remove {
-        color: #ff4500b3;
-        text-shadow: 2px 2px 3px #00000080;
-      }
+  & .ruleGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid var(--cs-line);
+    border-radius: 1rem;
+    background: var(--cs-glass);
+  }
 
-      & .ruleGroup-addRule {
-        background-color: #3434ff4d;
-      }
+  & .ruleGroup .ruleGroup {
+    border-left: 3px solid var(--cs-a);
+    background: transparent;
+  }
 
-      & .ruleGroup-addGroup {
-        background-color: #207e204d;
-      }
+  /* Reorder: group actions move below the rules */
+  & .ruleGroup-header {
+    order: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--cs-line);
+  }
+  & .ruleGroup-body {
+    order: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
 
-      & .queryBuilder-dragHandle {
-        text-shadow: 2px 2px 3px #00000080;
-      }
+  /* Combinator up front as a gradient pill */
+  & .ruleGroup-combinators {
+    order: -2;
+    appearance: none;
+    padding: 0.3rem 1rem;
+    border: none;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: white;
+    background: linear-gradient(90deg, var(--cs-a), var(--cs-b));
+    cursor: pointer;
+    text-align: center;
+  }
+
+  & .rule {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--cs-line);
+    border-radius: 0.75rem;
+    background: var(--cs-input-bg);
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:hover {
+      border-color: var(--cs-a);
     }
+  }
+
+  /* Field reads like a label; value grows to fill */
+  & .rule-fields {
+    font-weight: 700;
+    color: var(--cs-a) !important;
+  }
+  & .rule-value {
+    flex: 1 1 8rem;
+  }
+  & .rule-operators {
+    font-style: italic;
+    color: var(--cs-muted) !important;
+  }
+
+  & select,
+  & input:not([type='checkbox'], [type='radio']) {
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--cs-line);
+    border-radius: 0.5rem;
+    color: var(--cs-text);
+    background-color: var(--cs-input-bg);
+    outline: none;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+
+    &:focus-visible {
+      border-color: var(--cs-c);
+      box-shadow: 0 0 0 2px rgb(58 124 165 / 25%);
+    }
+  }
+  & .rule-fields,
+  & .rule-operators {
+    border-color: transparent;
+    background-color: transparent;
+  }
+  & option {
+    color: initial;
+    background: initial;
+  }
+  & input[type='checkbox'],
+  & input[type='radio'] {
+    accent-color: var(--cs-a);
+  }
+
+  & button {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--cs-line);
+    border-radius: 999px;
+    color: var(--cs-text);
+    background: var(--cs-input-bg);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+      background: var(--ifm-color-emphasis-200);
+    }
+  }
+  & .ruleGroup-addRule {
+    margin-left: auto;
+    border: none;
+    color: white;
+    background: linear-gradient(90deg, var(--cs-b), var(--cs-c));
+  }
+  & .ruleGroup-addGroup {
+    border-color: var(--cs-a);
+    color: var(--cs-a);
+    background: transparent;
+  }
+
+  /* Reorder: remove first, drag handle last */
+  & .rule-remove,
+  & .ruleGroup-remove {
+    order: -1;
+    width: 1.6rem;
+    height: 1.6rem;
+    padding: 0;
+    border: none;
+    color: var(--cs-a);
+    background: transparent;
+  }
+  & .ruleGroup-header .ruleGroup-remove {
+    order: 99;
+  }
+  & .queryBuilder-dragHandle {
+    order: 100;
+    margin-left: auto;
+    color: var(--cs-muted);
+    cursor: grab;
+  }
+  & .rule .queryBuilder-dragHandle {
+    margin-left: 0;
   }
 }

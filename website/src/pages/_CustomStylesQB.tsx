@@ -9,7 +9,7 @@ import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 import { QueryBuilder } from 'react-querybuilder';
 import { loading } from './_utils';
-import { initialQuery } from './demo/_constants';
+import { initialStylingQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
 
 export const dnd = createPragmaticDndAdapter({
@@ -24,11 +24,11 @@ export const CustomStylesQB = () => (
     {() => (
       <QueryBuilderDnD dnd={dnd}>
         <QueryBuilder
-          defaultQuery={initialQuery}
+          defaultQuery={initialStylingQuery}
           fields={fields}
           translations={{ dragHandle: { label: '⇅' } }}
           controlClassnames={{
-            queryBuilder: ['queryBuilder-branches', 'green-branch-lines'],
+            queryBuilder: 'queryBuilder-neon',
           }}
         />
       </QueryBuilderDnD>
