@@ -57,12 +57,15 @@ type PragmaticRealExports = Pick<
 // #region Internal context
 
 interface PragmaticDragState {
+  /** Owning provider's identity token; tags drag data so global monitors ignore others' drags */
+  providerId: object | null;
   activeDragItem: DraggedItem | null;
   timerCopyMode: boolean;
   timerGroupMode: boolean;
 }
 
 const defaultDragState: PragmaticDragState = {
+  providerId: null,
   activeDragItem: null,
   timerCopyMode: false,
   timerGroupMode: false,
@@ -115,6 +118,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     copyModeAfterHoverMs,
     groupModeAfterHoverMs,
   }: DndAdapterProviderProps): React.JSX.Element => {
+    const [providerId] = useState(() => ({}));
     const [activeDragItem, setActiveDragItem] = useState<DraggedItem | null>(null);
     const activeDragItemRef = useRef<DraggedItem | null>(null);
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -269,6 +273,9 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
 
     useEffect(() => {
       const cleanup = monitorForElements({
+        // Monitors are global, so only handle drags from this provider's builders
+        canMonitor: ({ source }: { source: { data: Record<string, unknown> } }) =>
+          source.data.__rqbProviderId === providerId,
         onDragStart({ source }: { source: { data: Record<string, unknown> } }) {
           const data = source.data;
           if (data.__rqbPath && data.__rqbSchema) {
@@ -420,11 +427,12 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
       updatePreviewPosition,
       startHoverTimers,
       clearHoverTimers,
+      providerId,
     ]);
 
     const dragStateValue = useMemo<PragmaticDragState>(
-      () => ({ activeDragItem, timerCopyMode, timerGroupMode }),
-      [activeDragItem, timerCopyMode, timerGroupMode]
+      () => ({ providerId, activeDragItem, timerCopyMode, timerGroupMode }),
+      [providerId, activeDragItem, timerCopyMode, timerGroupMode]
     );
 
     const dragPreviewContextValue = useMemo<DragPreviewContextValue>(
@@ -451,7 +459,8 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
   // #region useRuleDnD
 
   const useRuleDnD = (params: DndAdapterRuleDnDParams): AdapterUseRuleDnDResult => {
-    const { activeDragItem, timerCopyMode, timerGroupMode } = useContext(DragStateContext);
+    const { providerId, activeDragItem, timerCopyMode, timerGroupMode } =
+      useContext(DragStateContext);
     const containerNodeRef = useRef<HTMLDivElement>(null);
     const handleNodeRef = useRef<HTMLSpanElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -476,6 +485,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
           dragHandle: handle,
           canDrag: () => !paramsRef.current.disabled,
           getInitialData: () => ({
+            __rqbProviderId: providerId,
             __rqbPath: paramsRef.current.path,
             __rqbSchema: paramsRef.current.schema,
             __rqbActions: paramsRef.current.actions,
@@ -519,7 +529,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
           onDrop: () => setIsOver(false),
         })
       );
-    }, []);
+    }, [providerId]);
 
     const canDropHere =
       isOver &&
@@ -565,7 +575,8 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
   // #region useRuleGroupDnD
 
   const useRuleGroupDnD = (params: DndAdapterRuleGroupDnDParams): AdapterUseRuleGroupDnDResult => {
-    const { activeDragItem, timerCopyMode, timerGroupMode } = useContext(DragStateContext);
+    const { providerId, activeDragItem, timerCopyMode, timerGroupMode } =
+      useContext(DragStateContext);
     const previewNodeRef = useRef<HTMLDivElement>(null);
     const handleNodeRef = useRef<HTMLSpanElement>(null);
     const dropNodeRef = useRef<HTMLDivElement>(null);
@@ -593,6 +604,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         dragHandle: handleEl,
         canDrag: () => !paramsRef.current.disabled && paramsRef.current.path.length > 0,
         getInitialData: () => ({
+          __rqbProviderId: providerId,
           __rqbPath: paramsRef.current.path,
           __rqbSchema: paramsRef.current.schema,
           __rqbActions: paramsRef.current.actions,
@@ -603,7 +615,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),
       });
-    }, [isDragDisabled]);
+    }, [isDragDisabled, providerId]);
 
     // Register drop target on the drop element (header)
     useEffect(() => {

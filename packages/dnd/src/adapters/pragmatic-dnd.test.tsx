@@ -36,6 +36,7 @@ interface DropTargetRegistration {
 // oxlint-disable typescript/no-explicit-any
 
 interface MonitorRegistration {
+  canMonitor?: (args: { source: { data: Record<string, unknown> } }) => boolean;
   onDragStart?: (args: { source: { data: Record<string, unknown> } }) => void;
   onDrag?: (args: {
     source: { data: Record<string, unknown> };
@@ -153,6 +154,66 @@ describe('createPragmaticDndAdapter', () => {
         </adapter.DndProvider>
       );
       expect(mock.monitorForElements).toHaveBeenCalledTimes(1);
+    });
+
+    it('monitors only drags that originate within the same provider', () => {
+      const mock = createMockPragmaticDnd();
+      const adapter = createPragmaticDndAdapter(mock);
+
+      const RuleComponent = () => {
+        const { dndRef, dragRef } = adapter.useRuleDnD({
+          path: [0],
+          disabled: false,
+          schema: mockSchema(),
+          actions: mockActions(),
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dndRef}>
+            <span ref={dragRef}>Drag</span>
+          </div>
+        );
+      };
+      const RuleGroupComponent = () => {
+        const { previewRef, dragRef, dropRef } = adapter.useRuleGroupDnD({
+          path: [1],
+          disabled: false,
+          schema: mockSchema(),
+          actions: mockActions(),
+          ruleGroup: mockRuleGroup(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={previewRef}>
+            <span ref={dragRef}>Drag</span>
+            <div ref={dropRef}>Drop</div>
+          </div>
+        );
+      };
+
+      render(
+        <>
+          <adapter.DndProvider>
+            <RuleComponent />
+          </adapter.DndProvider>
+          <adapter.DndProvider>
+            <RuleGroupComponent />
+          </adapter.DndProvider>
+        </>
+      );
+
+      const [monitorA, monitorB] = mock._monitors;
+      const [ruleDrag, groupDrag] = mock._draggables;
+      const ruleSource = { data: ruleDrag.getInitialData!() };
+      const groupSource = { data: groupDrag.getInitialData!() };
+
+      expect(monitorA.canMonitor!({ source: ruleSource })).toBe(true);
+      expect(monitorA.canMonitor!({ source: groupSource })).toBe(false);
+      expect(monitorB.canMonitor!({ source: ruleSource })).toBe(false);
+      expect(monitorB.canMonitor!({ source: groupSource })).toBe(true);
     });
   });
 
