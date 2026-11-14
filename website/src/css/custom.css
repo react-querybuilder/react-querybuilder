@@ -83,6 +83,44 @@ html[data-theme='dark'] .header-discord-link:before {
   --ifm-footer-background-color: #3c649f;
 }
 
+/* Compact footer: one row per link group (title + inline links) */
+.footer {
+  padding: 1.5rem 0;
+}
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.footer__links > .footer__col {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.25rem 1rem;
+  max-width: none;
+  flex: none;
+  margin: 0;
+  padding: 0;
+}
+.footer__col > .footer__title {
+  margin: 0;
+}
+.footer__col > .footer__items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 1rem;
+}
+.footer__col .footer__item {
+  line-height: inherit;
+}
+.footer__bottom .margin-bottom--sm {
+  margin-bottom: 0.25rem !important;
+}
+
 .admonition > .admonition-content > blockquote {
   font-style: italic;
 }
