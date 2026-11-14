@@ -18,7 +18,8 @@ const typedocJsonPath = './api/.typedoc.json';
 
 const config: Config = {
   title: 'React Query Builder',
-  tagline: 'A minimally opinionated, fully customizable query builder solution',
+  tagline:
+    'The most complete query builder solution for React. Fully customizable, framework-friendly, and fluent in 20+ query languages.',
   url: 'https://react-querybuilder.js.org',
   baseUrl: '/',
   // Old versioned docs (v3-v5) are excluded from the build by default (see `onlyIncludeVersions`

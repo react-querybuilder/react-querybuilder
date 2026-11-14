@@ -3,10 +3,6 @@
     flex-wrap: wrap;
   }
 
-  & .rule-value {
-    width: 120px;
-  }
-
   & input[type='checkbox'] {
     width: auto;
   }
@@ -139,6 +135,21 @@
       order: 99;
     }
   }
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+  gap: 1rem;
+}
+.stats b {
+  display: block;
+  font-size: 2.2rem;
+  color: var(--ifm-color-primary);
+}
+.alt {
+  background-color: var(--ifm-menu-color-background-hover);
 }
 
 html[data-theme='dark'] {

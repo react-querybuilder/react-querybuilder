@@ -7,8 +7,10 @@ import Slider from '@mui/material/Slider';
 import { MaterialValueEditor, QueryBuilderMaterial } from '@react-querybuilder/material';
 import CodeBlock from '@theme/CodeBlock';
 import Layout from '@theme/Layout';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 import clsx from 'clsx';
-import { forwardRef, StrictMode, useMemo, useState } from 'react';
+import { forwardRef, StrictMode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import type {
@@ -21,6 +23,7 @@ import type {
 import {
   defaultOperators,
   defaultValueProcessorByRule,
+  formatQuery,
   getOption,
   QueryBuilder,
   QueryBuilderContext,
@@ -30,8 +33,9 @@ import {
 import Select from 'react-select';
 import '../css/index.css';
 import { CustomStylesQB } from './_CustomStylesQB';
+import { ExtendQB } from './_ExtendQB';
 import * as rtl from './_rtl';
-import { formatMap, initialQuery } from './demo/_constants';
+import { initialQuery, initialSimpleQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
 import { musicalInstruments } from './demo/_constants/musicalInstruments';
 import { getExportDisplayLanguage, getFormatQueryString } from './demo/_constants/utils';
@@ -155,93 +159,165 @@ const SliderDemo = () => {
   );
 };
 
+const sqlValueProcessor: ValueProcessorByRule = (rule: RuleType) =>
+  `${getOption(fields, rule.field)?.inputType === 'date' ? `DATE ` : ''}${defaultValueProcessorByRule(rule)}`;
+
+const showcaseFormats: [ExportFormat, string][] = [
+  ['sql', 'SQL'],
+  ['mongodb_query', 'Mongo'],
+  ['natural_language', 'English'],
+  ['cel', 'CEL'],
+];
+const CYCLE_MS = 3000;
+
+const ExportShowcase = () => {
+  const [query, setQuery] = useState(initialSimpleQuery);
+  // Permanent stop (tab click/query edit) vs temporary pause (hover/focus)
+  const [stopped, setStopped] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  // Docusaurus Tabs is uncontrolled, so cycle by clicking the next tab element
+  useEffect((): (() => void) | void => {
+    if (stopped || hovered || focused) return;
+    if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const id = setInterval(() => {
+      const tabs = [...(tabsRef.current?.querySelectorAll<HTMLElement>('[role="tab"]') ?? [])];
+      const i = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+      tabs[(i + 1) % tabs.length]?.click();
+    }, CYCLE_MS);
+    return () => clearInterval(id);
+  }, [stopped, hovered, focused]);
+
+  // Programmatic clicks aren't trusted, so this only catches real user selection
+  const stopOnUserTabSelect = (e: React.MouseEvent | React.KeyboardEvent) => {
+    if (e.type === 'keydown' && (e as React.KeyboardEvent).key !== 'Enter') return;
+    if (e.nativeEvent.isTrusted && (e.target as HTMLElement).closest('[role="tab"]')) {
+      setStopped(true);
+    }
+  };
+
+  const onQueryChange = useCallback((q: RuleGroupType) => {
+    setQuery(q);
+    setStopped(true);
+  }, []);
+
+  return (
+    <main
+      className={styles.exportShowcase}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={e => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false);
+      }}>
+      <div>
+        <QueryBuilder
+          fields={fields}
+          defaultQuery={query}
+          onQueryChange={onQueryChange}
+          enableMountQueryChange={false}
+        />
+      </div>
+      <div className={styles.exportShowcaseArrow} aria-hidden>
+        →
+      </div>
+      <div
+        ref={tabsRef}
+        className={styles.exportTabs}
+        onClickCapture={stopOnUserTabSelect}
+        onKeyDownCapture={stopOnUserTabSelect}>
+        <Tabs defaultValue="sql">
+          {showcaseFormats.map(([format, label]) => (
+            <TabItem key={format} value={format} label={label}>
+              <CodeBlock
+                className={clsx(styles.wsPreWrap, styles.scrollVert200)}
+                language={getExportDisplayLanguage(format)}>
+                {format === 'mongodb_query'
+                  ? // Compact JSON to limit height jumps
+                    JSON.stringify(formatQuery(query, { format, fields }))
+                  : getFormatQueryString(query, {
+                      format,
+                      valueProcessor: format === 'sql' ? sqlValueProcessor : undefined,
+                      fields,
+                    })}
+              </CodeBlock>
+            </TabItem>
+          ))}
+        </Tabs>
+        <Link
+          className={styles.exportMoreLink}
+          href="/demo?outputMode=export"
+          title="More formats in the demo">
+          …
+        </Link>
+      </div>
+    </main>
+  );
+};
+
 const LandingPage = () => {
   const { siteConfig } = useDocusaurusContext();
-  const [query, setQuery] = useState(initialQuery);
-  const [exportFormat, setExportFormat] = useState<ExportFormat>('sql');
-
-  const valueProcessor: ValueProcessorByRule | undefined = useMemo(
-    () =>
-      exportFormat === 'sql'
-        ? (rule: RuleType) =>
-            `${getOption(fields, rule.field)?.inputType === 'date' ? `DATE ` : ''}${defaultValueProcessorByRule(rule)}`
-        : undefined,
-    [exportFormat]
-  );
 
   return (
     <Layout description="The Query Builder Component for React">
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
-          <h1 className="hero__title">{siteConfig.title}</h1>
-          <p className="hero__subtitle">{siteConfig.tagline}</p>
-          <div className={styles.buttons}>
+          <h1 className={clsx('hero__title', styles.heroTitle)}>{siteConfig.title}</h1>
+          <p className={clsx('hero__subtitle', styles.heroSubtitle)}>
+            The most complete query builder solution for React.
+            <br />
+            Fully customizable, framework-friendly, and fluent in 20+ query languages.
+          </p>
+          <div className={styles.buttons} style={{ marginBottom: 'var(--ifm-spacing-vertical)' }}>
             <Link className="button button--secondary button--lg" to="/docs/intro">
               Get started
             </Link>
             <Link className="button button--secondary button--lg" href="/demo">
-              Try it out
+              Live demo
             </Link>
+          </div>
+          <div className={styles.buttons}>
+            <CodeBlock>npm i react-querybuilder</CodeBlock>
           </div>
         </div>
       </header>
+      <ExportShowcase />
+      <section className="alt" style={{ padding: '3rem 0' }}>
+        <div className="container">
+          <div className="stats">
+            <div>
+              <b>20+</b>
+              <span className="muted">export formats</span>
+            </div>
+            <div>
+              <b>10</b>
+              <span className="muted">UI library adapters</span>
+            </div>
+            <div>
+              <b>100%</b>
+              <span className="muted">test coverage</span>
+            </div>
+            <div>
+              <b>10+ yrs</b>
+              <span className="muted">in production</span>
+            </div>
+          </div>
+        </div>
+      </section>
       <main className={`${styles.main} homepage-showcase`}>
         <QueryBuilderContext.Provider value={qbContextProviderValue}>
-          <div className={styles.featureContainer}>
+          <div className={styles.featureRow}>
             <div>
-              <h2>Sensible defaults</h2>
-              <p>Build complex queries with robust out-of-the-box features.</p>
+              <span className={styles.eyebrow}>Customize</span>
+              <h2>Bring your own components.</h2>
               <p>
-                Check out the <Link href="/demo">demo</Link> to see the code that generated this
-                query builder.
+                Swap any piece — a date picker, a multi-select, a slider — and keep everything else.
+                Or use an official adapter for MUI, Ant Design, Chakra, Mantine, Bootstrap, and
+                more.
               </p>
-            </div>
-            <div>
-              <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
-            </div>
-            <div style={{ gap: '1rem' }}>
-              <div>
-                <span style={{ fontStyle: 'italic' }}>Convert to ⇒ </span>
-                <select
-                  value={exportFormat}
-                  onChange={e => setExportFormat(e.target.value as ExportFormat)}>
-                  {formatMap.map(f => (
-                    <option key={f[0]} value={f[0]}>
-                      {f[1]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <CodeBlock
-                className={`${styles.wsPreWrap} ${styles.scrollVert200}`}
-                language={getExportDisplayLanguage(exportFormat)}>
-                {getFormatQueryString(query, { format: exportFormat, valueProcessor, fields })}
-              </CodeBlock>
-            </div>
-            <div>
-              <h2>Export/import</h2>
-              <p>
-                Convert to and from SQL, MongoDB, and several other query formats. The code block{' '}
-                <span className={styles.leftOrBelow}></span> reflects the query above converted to
-                the selected format.
-              </p>
-              <div className={styles.linkList}>
-                <Link href="/docs/utils/export">Export documentation</Link>
-                <Link href="/docs/utils/import">Import documentation</Link>
-              </div>
-            </div>
-            <div>
-              <h2>Extensible</h2>
-              <p>
-                Provide <Link href="/docs/tips/custom-with-fallback">custom components</Link> for
-                maximum flexibility, or use one of the official{' '}
-                <Link href="/docs/compat">compatibility packages</Link> for libraries like MUI,
-                Bootstrap, and others.
-              </p>
-              <div className={styles.linkList}>
-                <Link href="/docs/components/querybuilder#controlelements">Documentation</Link>
-                <Link href="/docs/tips/custom-with-fallback">Tips</Link>
-              </div>
+              <Link href="/docs/tips/custom-with-fallback">Custom components →</Link>
             </div>
             <div className="extended-queryBuilder">
               <Link href="https://reactdatepicker.com/" style={{ whiteSpace: 'nowrap' }}>
@@ -269,40 +345,52 @@ const LandingPage = () => {
               </Link>
               <BrowserOnly>{() => <SliderDemo />}</BrowserOnly>
             </div>
+          </div>
+          <div className={styles.featureRow}>
+            <div>
+              <span className={styles.eyebrow}>Style</span>
+              <h2>Make it look like yours.</h2>
+              <p>
+                Every element has a stable class name. Restyle, reorder, or completely reimagine the
+                layout with plain CSS.
+              </p>
+              <Link href="/docs/styling/overview">Styling guide →</Link>
+            </div>
             <div className="custom-styling">
               <CustomStylesQB />
             </div>
+          </div>
+          <div className={styles.featureRow}>
             <div>
-              <h2>Flexible styling</h2>
-              <p>
-                Tweak the default styles or come up with your own. All deviations from the default
-                styles in the query builder <span className={styles.leftOrBelow}></span>, including
-                re-ordering the elements, have been achieved with pure CSS using the standard
-                classes assigned by the component.
-              </p>
-              <div className={styles.linkList}>
-                <Link href="/docs/styling/classnames">Documentation</Link>
-                <Link href="/docs/styling/overview">Tips</Link>
-              </div>
-            </div>
-            <div>
-              <h2>Translatable / RTL support</h2>
-              <p>
-                Easily <Link href="/docs/components/querybuilder#translations">translate</Link> and
-                adapt your layout for any language.
-              </p>
+              <span className={styles.eyebrow}>Globalize</span>
+              <h2>Speaks every language.</h2>
+              <p>Translate every label and flip to right-to-left with a single prop.</p>
+              <Link href="/docs/components/querybuilder#translations">Translations →</Link>
             </div>
             <div dir="rtl">
               <QueryBuilder
                 fields={rtl.fields}
-                query={query}
-                onQueryChange={setQuery}
+                defaultQuery={initialQuery}
                 operators={rtl.operators}
                 combinators={rtl.combinators}
                 translations={rtl.translations}
                 showCloneButtons
                 showNotToggle
               />
+            </div>
+          </div>
+          <div className={styles.featureRow}>
+            <div>
+              <span className={styles.eyebrow}>Extend</span>
+              <h2>Drag-and-drop, date/time, native, and more.</h2>
+              <p>
+                Opt-in packages add reordering, expressions, date/time math, a rules engine, React
+                Native support, and an MCP server for AI tooling.
+              </p>
+              <Link href="/docs/compat">All packages →</Link>
+            </div>
+            <div>
+              <ExtendQB />
             </div>
           </div>
         </QueryBuilderContext.Provider>

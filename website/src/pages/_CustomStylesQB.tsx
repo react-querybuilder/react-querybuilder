@@ -12,7 +12,7 @@ import { loading } from './_utils';
 import { initialQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
 
-const dnd = createPragmaticDndAdapter({
+export const dnd = createPragmaticDndAdapter({
   draggable,
   dropTargetForElements,
   monitorForElements,

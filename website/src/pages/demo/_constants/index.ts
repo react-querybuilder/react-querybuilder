@@ -9,7 +9,7 @@ import packageJSON_rqb_material from '@react-querybuilder/material/package.json'
 import packageJSON_rqb_prime from '@react-querybuilder/prime/package.json';
 import packageJSON_rqb_tremor from '@react-querybuilder/tremor/package.json';
 import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
-import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
+import { convertToIC, objectKeys, prepareRuleGroup } from 'react-querybuilder';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
 export const defaultOptions = {
@@ -224,62 +224,32 @@ export const optionOrderByLabel = optionOrder.toSorted((a, b) =>
 export const emptyQuery = { combinator: 'and', rules: [] } satisfies RuleGroupType;
 export const emptyQueryIC = { rules: [] } satisfies RuleGroupTypeIC;
 
-export const initialQuery: RuleGroupType = {
-  id: generateID(),
+export const initialSimpleQuery: RuleGroupType = prepareRuleGroup({
+  combinator: 'and',
+  rules: [
+    { field: 'firstName', value: 'Stev', operator: 'beginsWith' },
+    { field: 'lastName', value: 'Vai, Vaughan', operator: 'in' },
+  ],
+});
+
+export const initialQuery: RuleGroupType = prepareRuleGroup({
   combinator: 'and',
   not: false,
   rules: [
+    { field: 'firstName', value: 'Stev', operator: 'beginsWith' },
+    { field: 'lastName', value: 'Vai, Vaughan', operator: 'in' },
+    { field: 'age', operator: '>', value: '28' },
     {
-      id: generateID(),
-      field: 'firstName',
-      value: 'Stev',
-      operator: 'beginsWith',
-    },
-    {
-      id: generateID(),
-      field: 'lastName',
-      value: 'Vai, Vaughan',
-      operator: 'in',
-    },
-    {
-      id: generateID(),
-      field: 'age',
-      operator: '>',
-      value: '28',
-    },
-    {
-      id: generateID(),
       combinator: 'or',
       rules: [
-        {
-          id: generateID(),
-          field: 'isMusician',
-          operator: '=',
-          value: true,
-        },
-        {
-          id: generateID(),
-          field: 'instrument',
-          operator: '=',
-          value: 'guitar',
-        },
+        { field: 'isMusician', operator: '=', value: true },
+        { field: 'instrument', operator: '=', value: 'guitar' },
       ],
     },
-    {
-      id: generateID(),
-      field: 'groupedField1',
-      operator: '=',
-      value: 'groupedField4',
-      valueSource: 'field',
-    },
-    {
-      id: generateID(),
-      field: 'birthdate',
-      operator: 'between',
-      value: '1954-10-03,1960-06-06',
-    },
+    { field: 'groupedField1', operator: '=', value: 'groupedField4', valueSource: 'field' },
+    { field: 'birthdate', operator: 'between', value: '1954-10-03,1960-06-06' },
   ],
-};
+});
 
 export const initialQueryIC = convertToIC(initialQuery);
 
