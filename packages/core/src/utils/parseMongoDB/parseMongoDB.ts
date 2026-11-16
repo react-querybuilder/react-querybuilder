@@ -443,6 +443,10 @@ function parseMongoDB(
       if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(v => isPojo(v))) {
         return false;
       }
+      // Empty clause matches all docs, so `$nor` matches none: NOT(empty group)
+      if (keyValue.some(v => objectKeys(v).length === 0)) {
+        return { combinator: 'and', not: true, rules: [] };
+      }
       const rules = keyValue.map(l => processMongoDbQueryObject(l)).filter(Boolean) as (
         | DefaultRuleType
         | DefaultRuleGroupType

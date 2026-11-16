@@ -609,4 +609,18 @@ describe('$nor (#1135)', () => {
       expect(parseMongoDB({ $nor })).toEqual({ combinator: 'and', rules: [] });
     }
   });
+
+  it('treats empty $nor clause as match-all', () => {
+    const matchNone = { combinator: 'and', not: true, rules: [] };
+    expect(parseMongoDB({ $nor: [{}, { b: 'y' }] })).toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{}] })).toEqual(matchNone);
+  });
+
+  it('drops unparseable $nor clauses', () => {
+    expect(parseMongoDB({ $nor: [{ $bogus: 1 }, { b: 'y' }] })).toEqual({
+      combinator: 'and',
+      not: true,
+      rules: [{ field: 'b', operator: '=', value: 'y' }],
+    });
+  });
 });
