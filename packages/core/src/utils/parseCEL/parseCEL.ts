@@ -443,6 +443,29 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
             };
           }
           return null;
+        } else if (
+          leftIsExpr &&
+          expr.operator === 'in' &&
+          isCELList(right) &&
+          right.value.value.every(v => isCELLiteral(v))
+        ) {
+          // expression in [literals] → lhs = expression, literal list value
+          const l = getExpression(left, exprCtx);
+          if (l) {
+            const vals = right.value.value.map(v => evalCELLiteralValue(v));
+            return {
+              field: '',
+              operator: normOp(false),
+              lhs: l,
+              value: listsAsArrays
+                ? vals
+                : joinWith(
+                    vals.map(v => `${v}`),
+                    ','
+                  ),
+            };
+          }
+          return null;
         } else if (isCELLiteral(left) && rightIsExpr) {
           // literal <op> expression → lhs = expression, flip operator
           const r = getExpression(right, exprCtx);

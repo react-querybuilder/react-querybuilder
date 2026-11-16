@@ -270,13 +270,25 @@ describe('SQL processor', () => {
         ruleProcessor: expressionRuleProcessorSQL,
         ...opts,
       });
-    expect(sql({ operator: 'between', value: '5,1' })).toBe('((price * qty) between 1 and 5)');
+    expect(sql({ operator: 'between', value: '5,1' }, { parseNumbers: true })).toBe(
+      '((price * qty) between 1 and 5)'
+    );
+    // Plain bounds go through the (custom) value processor
+    expect(sql({ operator: 'between', value: '5,1' }, { valueProcessor: () => 'LO and HI' })).toBe(
+      '((price * qty) between LO and HI)'
+    );
+    expect(sql({ operator: 'between', value: '5,1' }, { valueProcessor: () => '' })).toBe(
+      '(1 = 1)'
+    );
+    expect(
+      expressionRuleProcessorSQL(exprRule({ operator: 'between', value: [1, 5] }, expressions))
+    ).toBe("(price * qty) between '1' and '5'");
     expect(sql({ operator: 'notBetween', value: [1, 5] })).toBe(
-      '((price * qty) not between 1 and 5)'
+      "((price * qty) not between '1' and '5')"
     );
-    expect(sql({ operator: 'between', value: '5,1' }, { preserveValueOrder: true })).toBe(
-      '((price * qty) between 5 and 1)'
-    );
+    expect(
+      sql({ operator: 'between', value: '5,1' }, { parseNumbers: true, preserveValueOrder: true })
+    ).toBe('((price * qty) between 5 and 1)');
     expect(sql({ operator: 'between', value: ['1', '5'] }, { parseNumbers: false })).toBe(
       "((price * qty) between '1' and '5')"
     );

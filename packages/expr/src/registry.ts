@@ -19,9 +19,10 @@ export const mergeFunctionMeta = (
 
 /**
  * Converts a non-expression `between`/`notBetween` value (array or comma-separated string)
- * into `value`/`field` leaf bounds, mirroring the stock processors: numeric strings are
- * parsed unless `parseNumbers` is `false`, and numeric bounds are ordered unless
- * `preserveValueOrder` is set. Returns `{}` when either bound is missing.
+ * into `value`/`field`/`parameter` leaf bounds, mirroring the stock processors: numeric
+ * bounds are parsed (only when both qualify) unless `parseNumbers` is `false`, and parsed
+ * bounds are ordered unless `preserveValueOrder` is set. Returns `{}` when either bound is
+ * missing.
  */
 const getLiteralBetweenBounds = (
   rule: RuleType,
@@ -40,14 +41,22 @@ const getLiteralBetweenBounds = (
       rhs2: { kind: 'field', field: `${values[1]}` },
     };
   }
+  if (rule.valueSource === 'parameter') {
+    return {
+      rhs: { kind: 'parameter', parameter: `${values[0]}` },
+      rhs2: { kind: 'parameter', parameter: `${values[1]}` },
+    };
+  }
   const parse = parseNumbers !== false;
-  let [from, to] = values
-    .slice(0, 2)
-    .map(v => (shouldRenderAsNumber(v, parse) ? parseNumber(v, { parseNumbers: parse }) : v)) as [
-    unknown,
-    unknown,
-  ];
-  if (!preserveValueOrder && typeof from === 'number' && typeof to === 'number' && to < from) {
+  const [a, b] = values;
+  // Convert only if both bounds numeric; mixed pair keeps original types
+  const numeric = shouldRenderAsNumber(a, parse) && shouldRenderAsNumber(b, parse);
+  let [from, to] = (
+    numeric
+      ? [parseNumber(a, { parseNumbers: parse }), parseNumber(b, { parseNumbers: parse })]
+      : [a, b]
+  ) as [unknown, unknown];
+  if (numeric && !preserveValueOrder && (to as number | bigint) < (from as number | bigint)) {
     [from, to] = [to, from];
   }
   return { rhs: { kind: 'value', value: from }, rhs2: { kind: 'value', value: to } };

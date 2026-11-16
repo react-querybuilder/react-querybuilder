@@ -4,7 +4,6 @@ import {
   defaultOperatorNegationMap,
   lc,
   nullOperators,
-  nullOrUndefinedOrEmpty,
   relationalOperators,
   substringOperators,
   toArray,
@@ -121,13 +120,16 @@ export const makeStringExprProcessor =
     }
 
     if (inList) {
-      const values = toArray(rule.value).filter(v => !nullOrUndefinedOrEmpty(v));
-      if (values.length === 0) return '';
-      const items = values.map(v =>
-        rule.valueSource === 'field'
-          ? dialect.renderField(`${v}`, opts)
-          : dialect.renderLeaf({ kind: 'value', value: v }, opts)
-      );
+      // Empty strings are valid alternatives; empty list still renders (`in []`)
+      const items = toArray(rule.value)
+        .filter(v => v !== null && v !== undefined)
+        .map(v =>
+          rule.valueSource === 'field'
+            ? dialect.renderField(`${v}`, opts)
+            : rule.valueSource === 'parameter'
+              ? ser({ kind: 'parameter', parameter: `${v}` })
+              : dialect.renderLeaf({ kind: 'value', value: v }, opts)
+        );
       return config.renderIn(lhs, items, operator === 'notin');
     }
 

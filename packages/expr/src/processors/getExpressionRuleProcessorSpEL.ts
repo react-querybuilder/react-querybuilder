@@ -31,7 +31,9 @@ const factory = makeStringExprProcessor({
     return negate ? `!(${clause})` : clause;
   },
   renderIn: (lhs, values, negate) =>
-    `(${values.map(v => `${lhs} ${negate ? '!=' : '=='} ${v}`).join(negate ? ' and ' : ' or ')})`,
+    values.length === 0
+      ? `${negate}`
+      : `(${values.map(v => `${lhs} ${negate ? '!=' : '=='} ${v}`).join(negate ? ' and ' : ' or ')})`,
 });
 
 /**

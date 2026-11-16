@@ -137,8 +137,7 @@ false                                                             return 'BOOL_L
 %right '?' ':'
 %left '||'
 %left '&&'
-%left '==' '!='
-%left '>' '>=' '<' '<=' 'in'
+%left '==' '!=' '>' '>=' '<' '<=' 'in'
 %left '+' '-'
 %left '/' '%' '*'
 %left IDENT

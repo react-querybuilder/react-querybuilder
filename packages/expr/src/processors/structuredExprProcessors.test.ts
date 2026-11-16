@@ -173,6 +173,17 @@ describe('MongoDBQuery processor', () => {
     expect(mq(plainBetween)).toEqual({
       $expr: { $and: [{ $gte: [{ $abs: '$d' }, 1] }, { $lte: [{ $abs: '$d' }, 5] }] },
     });
+    // String bounds wrapped in $literal
+    const strBetween = group(
+      exprRule({ operator: 'between', value: ['$a', 'z'] }, { lhs: field('d') })
+    );
+    expect(mq(strBetween)).toEqual({
+      $expr: { $and: [{ $gte: ['$d', { $literal: '$a' }] }, { $lte: ['$d', 'z'] }] },
+    });
+    // Scalar `$` strings wrapped too
+    expect(mq(group(exprRule({ operator: '=', value: '$a' }, { lhs: field('d') })))).toEqual({
+      $expr: { $eq: ['$d', { $literal: '$a' }] },
+    });
     // Unsupported operator w/ lhs defers to the stock processor (lhs ignored).
     const unsupported = group(
       exprRule({ field: 'd', operator: 'in', value: [1, 2] }, { lhs: fn('abs', field('d')) })

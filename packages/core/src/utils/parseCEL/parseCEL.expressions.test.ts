@@ -107,6 +107,20 @@ describe('getExpression wiring', () => {
     });
   });
 
+  it('expression in literal list → lhs = expression, list value', () => {
+    expect(parseCEL('(price * 2) in [1, "x"]', opt).rules[0]).toMatchObject({
+      field: '',
+      operator: 'in',
+      value: '1,x',
+      lhs: { kind: 'func', fn: 'multiply' },
+    });
+    expect(
+      parseCEL('!((price * 2) in [1, 2])', { ...opt, listsAsArrays: true }).rules[0]
+    ).toMatchObject({ field: '', operator: 'notIn', value: [1, 2], lhs: { kind: 'func' } });
+    expect(parseCEL('(notAField * 2) in [1]', opt).rules).toEqual([]);
+    expect(parseCEL('(price * 2) in [cost]', opt).rules).toEqual([]);
+  });
+
   it('literal <op> expression flips operator, lhs set', () => {
     expect(parseCEL('100 < (price * 2)', opt).rules[0]).toMatchObject({
       field: '',

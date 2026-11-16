@@ -209,10 +209,25 @@ describe('CEL processor', () => {
       exprRule({ field: 'q', operator: 'matches', value: 'x' }, { lhs: fn('abs', field('q')) })
     );
     expect(f(unsupported)).toBe(formatQuery(unsupported, { format: 'cel' }));
-    // In/between with an lhs and plain values but no list items/bounds omits the rule.
-    const emptyIn = exprRule({ operator: 'in', value: [] }, { lhs: fn('abs', field('q')) });
+    // Between w/ an lhs but missing bound omits the rule
     const emptyBetween = exprRule({ operator: 'between', value: ['1'] }, { lhs: field('q') });
-    expect(f(group(emptyIn, emptyBetween, plain))).toBe(`x == "1"`);
+    expect(f(group(emptyBetween, plain))).toBe(`x == "1"`);
+    // Empty in/notIn list still renders
+    const emptyIn = exprRule({ operator: 'in', value: [] }, { lhs: field('q') });
+    const emptyNotIn = exprRule({ operator: 'notIn', value: [] }, { lhs: field('q') });
+    expect(f(group(emptyIn, plain))).toBe(`(q in []) && x == "1"`);
+    expect(f(group(emptyNotIn, plain))).toBe(`!(q in []) && x == "1"`);
+    // Empty strings kept as alternatives; parameter values render as parameter refs
+    expect(f(group(exprRule({ operator: 'in', value: ['', 'a'] }, { lhs: field('q') })))).toBe(
+      `(q in ["", "a"])`
+    );
+    expect(
+      f(
+        group(
+          exprRule({ operator: 'in', value: ['p1'], valueSource: 'parameter' }, { lhs: field('q') })
+        )
+      )
+    ).toBe(`(q in [p1])`);
   });
 
   it('supports custom serializers and default options', () => {
@@ -645,4 +660,14 @@ describe('lhs w/ plain-value between/notBetween/in/notIn', () => {
       notInFields
     );
   });
+});
+
+it('spel renders empty in/notIn as constant', () => {
+  const r = (operator: string) =>
+    formatQuery(group(exprRule({ field: 'a', operator, value: [] }, { lhs: field('a') })), {
+      format: 'spel',
+      ruleProcessor: expressionRuleProcessorSpEL,
+    });
+  expect(r('in')).toBe('false');
+  expect(r('notIn')).toBe('true');
 });

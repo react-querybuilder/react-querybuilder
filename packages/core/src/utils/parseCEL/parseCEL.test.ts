@@ -1255,6 +1255,10 @@ describe('grammar precedence', () => {
     if (n.type === 'ConditionalOr') return `(${show(x.left)} || ${show(x.right)})`;
     if (n.type === 'Multiplication') return `(${show(x.left)} * ${show(x.right)})`;
     if (n.type === 'Subtraction') return `(${show(x.left)} - ${show(x.right)})`;
+    if (n.type === 'List') {
+      const items = (x.value as unknown as { value: CELExpression[] }).value;
+      return `[${items.map(show).join(', ')}]`;
+    }
     return `${(n as CELExpression & { value: unknown }).value}`;
   };
   const p = (cel: string) => show(parser.parse(cel).value);
@@ -1274,5 +1278,10 @@ describe('grammar precedence', () => {
     expect(p('a >= b-1')).toBe('(a >= (b - 1))');
     expect(p('a - -2.5 > -3')).toBe('((a - -2.5) > -3)');
     expect(p('a == - 4')).toBe('(a == -4)');
+  });
+
+  it('groups mixed relations left-associatively', () => {
+    expect(p('a == b in [true, false]')).toBe('((a == b) in [true, false])');
+    expect(p('a < b == c')).toBe('((a < b) == c)');
   });
 });

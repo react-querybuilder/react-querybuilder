@@ -73,19 +73,25 @@ export const getExpressionRuleProcessorNL =
 
     if (unary) return `${subject} ${verb}`.trim();
 
+    const processValue = () =>
+      (opts.valueProcessor ?? defaultValueProcessorNL)(rule, {
+        ...opts,
+        quoteFieldNamesWith,
+        fieldIdentifierSeparator,
+        quoteValuesWith,
+        concatOperator: opts.concatOperator ?? '||',
+      });
+
     if (betweenExpr) {
       if (!expr.rhs || !expr.rhs2) return '';
+      // Plain bounds (w/ lhs) go through the value processor
+      if (rule.valueSource !== 'expression') {
+        const bounds = processValue();
+        return bounds ? `${subject} ${verb} ${bounds}`.trim() : '';
+      }
       return `${subject} ${verb} ${ser(expr.rhs)} and ${ser(expr.rhs2)}`.trim();
     }
 
-    const object = expr.rhs
-      ? ser(expr.rhs)
-      : (opts.valueProcessor ?? defaultValueProcessorNL)(rule, {
-          ...opts,
-          quoteFieldNamesWith,
-          fieldIdentifierSeparator,
-          quoteValuesWith,
-          concatOperator: opts.concatOperator ?? '||',
-        });
+    const object = expr.rhs ? ser(expr.rhs) : processValue();
     return `${subject} ${verb} ${object}`.trim();
   };

@@ -67,6 +67,11 @@ export const getExpressionRuleProcessorSQL =
     if (betweenExpr) {
       // Both bounds are required; an incomplete expression between omits the rule.
       if (!expr.rhs || !expr.rhs2) return '';
+      // Plain bounds (w/ lhs) go through the value processor
+      if (rule.valueSource !== 'expression') {
+        const bounds = (opts.valueProcessor ?? defaultValueProcessorByRule)(rule, opts);
+        return bounds ? `${lhs} ${operator} ${bounds}` : '';
+      }
       const from = serializeSQL(expr.rhs, serial, opts);
       const to = serializeSQL(expr.rhs2, serial, opts);
       return `${lhs} ${operator} ${from} and ${to}`;

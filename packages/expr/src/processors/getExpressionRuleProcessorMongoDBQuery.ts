@@ -37,6 +37,12 @@ const STRING_MATCH: Record<
   doesnotendwith: { kind: 'endswith', negate: true },
 };
 
+type Maybe$Str<T> = T extends `${string}` ? { $literal: T } : T;
+
+/** Wraps `$`-prefixed strings in `$literal` so they aren't read as field paths/vars. */
+const literal = <T>(v: T): Maybe$Str<T> =>
+  (typeof v === 'string' && v.startsWith('$') ? { $literal: v } : v) as Maybe$Str<T>;
+
 /**
  * Renders a string-match as an aggregation `$expr` using `$indexOfCP`/`$substrCP` so the
  * search operand is matched as a literal substring (no regex-escaping hazard).
@@ -118,8 +124,10 @@ export const getExpressionRuleProcessorMongoDBQuery =
     if (betweenExpr) {
       // Both bounds are required; an incomplete expression between omits the rule.
       if (!expr.rhs || !expr.rhs2) return '';
-      const from = serializeMongoAgg(expr.rhs, serial, opts);
-      const to = serializeMongoAgg(expr.rhs2, serial, opts);
+      const bound = (n: NonNullable<typeof expr.rhs>) =>
+        n.kind === 'value' ? literal(n.value) : serializeMongoAgg(n, serial, opts);
+      const from = bound(expr.rhs);
+      const to = bound(expr.rhs2);
       return operator === 'notbetween'
         ? { $expr: { $or: [{ $lt: [lhs, from] }, { $gt: [lhs, to] }] } }
         : { $expr: { $and: [{ $gte: [lhs, from] }, { $lte: [lhs, to] }] } };
@@ -131,7 +139,7 @@ export const getExpressionRuleProcessorMongoDBQuery =
         ? `$${rule.value}`
         : shouldRenderAsNumber(rule.value, opts.parseNumbers)
           ? parseNumber(rule.value, { parseNumbers: opts.parseNumbers })
-          : rule.value;
+          : literal(rule.value);
     if (stringMatch) {
       return renderStringMatch(stringMatch.kind, stringMatch.negate, lhs, rhs);
     }
