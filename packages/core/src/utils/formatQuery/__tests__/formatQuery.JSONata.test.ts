@@ -270,3 +270,13 @@ it('sorts numeric primitive between values when parseNumbers is false', () => {
     '$not(n >= 4 and n <= 6)'
   );
 });
+
+it('sorts bigint between values losslessly when parseNumbers is false', () => {
+  const big = {
+    combinator: 'and',
+    rules: [{ field: 'n', operator: 'between', value: [9007199254740993n, 9007199254740992n] }],
+  };
+  expect(formatQuery(big, { format: 'jsonata', parseNumbers: false })).toBe(
+    '(n >= 9007199254740992 and n <= 9007199254740993)'
+  );
+});

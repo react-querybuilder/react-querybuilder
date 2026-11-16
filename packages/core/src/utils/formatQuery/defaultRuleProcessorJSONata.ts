@@ -20,6 +20,8 @@ const quote = (v: unknown, escapeQuotes?: boolean) =>
 
 const negate = (clause: string, neg: boolean) => (neg ? `$not(${clause})` : clause);
 
+const isNaNum = (n: number | bigint) => typeof n === 'number' && Number.isNaN(n);
+
 // Escapes unescaped `/` so pattern fits in a `/.../` literal
 const escapeRegexDelimiter = (src: string) => {
   let out = '';
@@ -194,16 +196,17 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
       // For backwards compatibility, default to parsing numbers for between operators
       // unless parseNumbers is explicitly set to false
       const shouldParseNumbers = !(parseNumbers === false);
-      const toNum = (v: unknown) =>
-        typeof v === 'number'
+      // bigint kept as-is for lossless comparison
+      const toNum = (v: unknown): number | bigint =>
+        typeof v === 'number' || typeof v === 'bigint'
           ? v
           : shouldRenderAsNumber(v, shouldParseNumbers)
             ? parseNumber(v, { parseNumbers: shouldParseNumbers })
             : Number.NaN;
       const firstNum = toNum(first);
       const secondNum = toNum(second);
-      let firstValue = Number.isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
-      let secondValue = Number.isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
+      let firstValue = isNaNum(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
+      let secondValue = isNaNum(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
 
       if (
         !preserveValueOrder &&
@@ -217,7 +220,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
       }
 
       const renderAsNumbers = isNumeric(first) && isNumeric(second);
-      const getValueString = (raw: unknown, val: string | number) =>
+      const getValueString = (raw: unknown, val: unknown) =>
         valueIsField ? qfn(raw) : renderAsNumbers ? val : quote(val, escapeQuotes);
 
       const expression = `${qfn(field)} >= ${getValueString(first, firstValue)} and ${qfn(field)} <= ${getValueString(second, secondValue)}`;
