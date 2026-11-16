@@ -3,6 +3,7 @@ import { lc } from '../misc';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
+import { getLikeEscapeClause } from './internalUtils';
 import { buildSQLRegex, getSQLRegexPatternValue, isSQLRegexPreset } from './sqlRegex';
 import {
   getQuotedFieldName,
@@ -129,5 +130,5 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
     return '';
   }
 
-  return `${ruleField} ${operator} ${value}`.trim();
+  return `${ruleField} ${operator} ${value}${getLikeEscapeClause(rule, opts)}`.trim();
 };

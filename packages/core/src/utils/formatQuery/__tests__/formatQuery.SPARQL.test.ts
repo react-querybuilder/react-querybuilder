@@ -331,3 +331,18 @@ describe('regex', () => {
     expect(formatQuery(regexFieldQuery, 'sparql')).toBe('CONTAINS(?f, ?g) && !CONTAINS(?f, ?g)');
   });
 });
+
+it('sorts numeric between values unless preserveValueOrder', () => {
+  const q = (operator: string, value: unknown) => ({
+    combinator: 'and',
+    rules: [{ field: 'n', operator, value }],
+  });
+  const fq = (operator: string, value: unknown, preserveValueOrder?: boolean) =>
+    formatQuery(q(operator, value), { format: 'sparql', parseNumbers: true, preserveValueOrder });
+  expect(fq('between', '6,5')).toBe(fq('between', '5,6'));
+  expect(fq('notBetween', [6, 5])).toBe(fq('notBetween', [5, 6]));
+  expect(fq('between', '6,5', true)).not.toBe(fq('between', '5,6'));
+  expect(formatQuery(q('between', '6,5'), 'sparql')).not.toBe(
+    formatQuery(q('between', '5,6'), 'sparql')
+  );
+});

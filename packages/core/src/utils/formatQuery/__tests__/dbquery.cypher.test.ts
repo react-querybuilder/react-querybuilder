@@ -49,16 +49,17 @@ afterAll(() => {
 
 const expectCypher = async (
   query: Parameters<typeof formatQuery>[0],
-  expectedResult: SuperUser[]
+  expectedResult: SuperUser[],
+  fqOptions?: TestSQLParams['fqOptions']
 ) => {
-  const where = formatQuery(query, { format: 'cypher', parseNumbers: true });
+  const where = formatQuery(query, { format: 'cypher', parseNumbers: true, ...fqOptions });
   const cypher = `MATCH (su:SuperUser)\nWHERE ${where}\n${returnClause}`;
   // oxlint-disable-next-line typescript/no-explicit-any
   const result = await (db as any).executeCypher(cypher);
   expect(result.toArray()).toEqual(expectedResult.map(toCypherRow));
 };
 
-const testCypher = ({ query, expectedResult }: TestSQLParams) => {
+const testCypher = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
   test('cypher', async () => {
     const newQuery = transformQuery(query, {
       ruleProcessor: r => ({
@@ -67,7 +68,7 @@ const testCypher = ({ query, expectedResult }: TestSQLParams) => {
         ...(r.valueSource === 'field' ? { value: `su.${r.value}` } : {}),
       }),
     });
-    await expectCypher(newQuery, expectedResult);
+    await expectCypher(newQuery, expectedResult, fqOptions);
   });
 };
 
@@ -79,7 +80,6 @@ describe('Cypher (Grafeo)', () => {
   //    for the same operator. Cypher is strongly typed.
   //  - 'between/notBetween': Same mixed-type issue.
   //  - 'bigint': Cypher/Grafeo does not support BigInt literals.
-  //  - 'manipulateValueOrder': SQL-specific format option.
   for (const [name, t] of Object.entries(dbTests(superUsers)).filter(
     ([k]) =>
       ![
@@ -89,7 +89,6 @@ describe('Cypher (Grafeo)', () => {
         'less than or equal to',
         'between/notBetween',
         'bigint',
-        'manipulateValueOrder',
       ].includes(k)
   )) {
     describe(name, () => {

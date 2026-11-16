@@ -47,7 +47,7 @@ it('escapes quotes when appropriate', () => {
 
 it('independent combinators', () => {
   expect(formatQuery(queryIC, 'gremlin')).toBe(
-    `.has('firstName', 'Test').has('middleName', 'Test').has('lastName', 'Test')`
+    `.or(__.and(__.has('firstName', 'Test'), __.has('middleName', 'Test')), __.has('lastName', 'Test'))`
   );
 
   expect(
@@ -81,8 +81,8 @@ describe('validation', () => {
     'should invalidate gremlin outermost group': '',
     'should invalidate gremlin inner group': '',
     'should convert gremlin inner group with no rules to fallbackExpression': `.has('field', '')`,
-    'should invalidate gremlin following combinator of first rule': `.has('field2', '').has('field3', '')`,
-    'should invalidate gremlin preceding combinator of non-first rule': `.has('field', '').has('field3', '')`,
+    'should invalidate gremlin following combinator of first rule': `.or(__.has('field2', ''), __.has('field3', ''))`,
+    'should invalidate gremlin preceding combinator of non-first rule': `.or(__.has('field', ''), __.has('field3', ''))`,
   };
 
   for (const vtd of getValidationTestData('gremlin')) {
@@ -258,4 +258,33 @@ describe('regex', () => {
       `.has('f', containing(g)).has('f', notContaining(g))`
     );
   });
+});
+
+it('sorts numeric between values unless preserveValueOrder', () => {
+  const q = (operator: string, value: unknown) => ({
+    combinator: 'and',
+    rules: [{ field: 'n', operator, value }],
+  });
+  const fq = (operator: string, value: unknown, preserveValueOrder?: boolean) =>
+    formatQuery(q(operator, value), { format: 'gremlin', parseNumbers: true, preserveValueOrder });
+  expect(fq('between', '6,5')).toBe(fq('between', '5,6'));
+  expect(fq('notBetween', [6, 5])).toBe(fq('notBetween', [5, 6]));
+  expect(fq('between', '6,5', true)).not.toBe(fq('between', '5,6'));
+  expect(formatQuery(q('between', '6,5'), 'gremlin')).not.toBe(
+    formatQuery(q('between', '5,6'), 'gremlin')
+  );
+});
+
+it('honors top-level combinator and not', () => {
+  const rules = [
+    { field: 'a', operator: '=', value: 'x' },
+    { field: 'b', operator: '=', value: 'y' },
+  ];
+  expect(formatQuery({ combinator: 'or', rules }, 'gremlin')).toBe(
+    `.or(__.has('a', 'x'), __.has('b', 'y'))`
+  );
+  expect(formatQuery({ combinator: 'and', not: true, rules }, 'gremlin')).toBe(
+    `.not(__.and(__.has('a', 'x'), __.has('b', 'y')))`
+  );
+  expect(formatQuery({ combinator: 'or', rules: [] }, 'gremlin')).toBe('');
 });

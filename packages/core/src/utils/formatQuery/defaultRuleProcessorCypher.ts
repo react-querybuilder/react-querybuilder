@@ -1,5 +1,6 @@
 import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
+import { orderBetweenValues } from './internalUtils';
 import {
   quoteCypherIdentifier,
   regexFallbackRule,
@@ -20,7 +21,7 @@ export const defaultRuleProcessorCypher: RuleProcessor = (
   // v8 ignore next
   opts = {}
 ) => {
-  const { escapeQuotes, parseNumbers } = opts;
+  const { escapeQuotes, parseNumbers, preserveValueOrder } = opts;
   const { operator, value, valueSource } = rule;
   const field = quoteCypherIdentifier(rule.field);
   const valueIsField = valueSource === 'field';
@@ -83,7 +84,10 @@ export const defaultRuleProcessorCypher: RuleProcessor = (
     case 'notbetween': {
       const arr = toArray(value);
       if (arr.length < 2) return '';
-      const [low, high] = [fmtVal(arr[0]), fmtVal(arr[1])];
+      const [lo, hi] = valueIsField
+        ? arr
+        : orderBetweenValues(arr, { parseNumbers: !!parseNumbers, preserveValueOrder });
+      const [low, high] = [fmtVal(lo), fmtVal(hi)];
       const expr = `${low} <= ${field} AND ${field} <= ${high}`;
       return operatorTL === 'notbetween' ? `NOT (${expr})` : expr;
     }

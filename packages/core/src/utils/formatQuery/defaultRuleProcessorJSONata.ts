@@ -54,6 +54,8 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
   } = options;
 
   const valueIsField = valueSource === 'field';
+  const isNumeric = (v: unknown) =>
+    typeof v === 'number' || typeof v === 'bigint' || shouldRenderAsNumber(v, parseNumbers);
   const useBareValue =
     typeof value === 'number' ||
     typeof value === 'boolean' ||
@@ -168,7 +170,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
           .map(val =>
             valueIsField
               ? `${qfn(trimIfString(val))}`
-              : shouldRenderAsNumber(val, parseNumbers)
+              : isNumeric(val)
                 ? `${trimIfString(val)}`
                 : quote(val, escapeQuotes)
           )
@@ -212,8 +214,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
         firstValue = tempNum;
       }
 
-      const renderAsNumbers =
-        shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers);
+      const renderAsNumbers = isNumeric(first) && isNumeric(second);
       const getValueString = (raw: unknown, val: string | number) =>
         valueIsField ? qfn(raw) : renderAsNumbers ? val : quote(val, escapeQuotes);
 

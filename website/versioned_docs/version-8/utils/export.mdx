@@ -1109,6 +1109,26 @@ This can create conditions that always evaluate to false. SQL's `X BETWEEN Y AND
 
 :::
 
+### Escape `LIKE` wildcards
+
+By default, values for "contains", "beginsWith", "endsWith" (and their negations) are inserted into `LIKE` patterns as-is, so `%` and `_` in values act as wildcards. Set `escapeLikeWildcards: true` (SQL formats only: `sql`, `parameterized`, `parameterized_named`) to escape `%`, `_`, and `\` (plus `[` for the `mssql` preset) with a backslash and append an `escape '\'` clause, so values match literally. The `mysql` preset emits `escape '\\'` to account for backslash escaping in string literals; this assumes the default `sql_mode` (not `NO_BACKSLASH_ESCAPES`). Applies to inline literals and bound parameters, but not to rules with `valueSource: 'field'` or `valueSource: 'parameter'`.
+
+```ts
+const query = {
+  rules: [{ field: 'discount', operator: 'contains', value: '50%' }],
+};
+
+formatQuery(query, 'sql');
+/*
+"(discount like '%50%')"
+*/
+
+formatQuery(query, { format: 'sql', escapeLikeWildcards: true });
+/*
+"(discount like '%50\%%' escape '\')"
+*/
+```
+
 ### Rule processor
 
 Customize individual rule output using `ruleProcessor`. Only validated rules reach this function:

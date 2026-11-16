@@ -6,6 +6,7 @@ import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultOperatorProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
+import { getLikeEscapeClause, orderBetweenValues } from './internalUtils';
 import { buildSQLRegex, getSQLRegexPatternValue, isSQLRegexPreset } from './sqlRegex';
 import {
   getQuotedFieldName,
@@ -161,6 +162,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     concatOperator,
     fieldData,
     format,
+    escapeLikeWildcards: opts?.escapeLikeWildcards,
     // For MySQL `LIKE` backslash escaping
     preset: opts?.preset,
   });
@@ -241,9 +243,12 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     return finalize(`${ruleField} ${sqlOperator} (${inParams.join(', ')})`);
   } else if (sqlOperatorLowerCase === 'between' || sqlOperatorLowerCase === 'not between') {
     const valueAsArray = toArray(rule.value, { retainEmptyStrings: true });
-    const [first, second] = valueAsArray
-      .slice(0, 2)
-      .map(v => (shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v));
+    const [first, second] = orderBetweenValues(
+      valueAsArray
+        .slice(0, 2)
+        .map(v => (shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v)),
+      { parseNumbers: !!parseNumbers, preserveValueOrder: opts?.preserveValueOrder }
+    );
     if (parameterized) {
       params.push(first, second);
       return finalize(
@@ -289,6 +294,6 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
           ? `${paramPrefix}${processedParams.length + 1}`
           : '?'
         : `${paramPrefix}${paramName}`
-    }`.trim()
+    }${getLikeEscapeClause(rule, opts)}`.trim()
   );
 };

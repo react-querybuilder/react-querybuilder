@@ -1,12 +1,15 @@
-import type { RuleGroupProcessor, RuleGroupType, RuleGroupTypeAny } from '../../types';
-import { isRuleGroup } from '../isRuleGroup';
+import type { RuleGroupProcessor, RuleGroupTypeAny } from '../../types';
+import { convertFromIC } from '../convertQuery';
+import { isRuleGroup, isRuleGroupTypeIC } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { lc } from '../misc';
 import { getOption } from '../optGroupUtils';
 
 /**
  * Rule group processor used by {@link formatQuery} for "gremlin" format.
  *
- * At the top level, filter rules produce chained `.has()` steps (implicit AND).
+ * At the top level, filter rules produce chained `.has()` steps (implicit AND) unless the group
+ * is negated, uses "or", or uses independent combinators (then nested form is used).
  * Nested groups use `.and()` / `.or()` / `.not()` compound traversals with
  * `__` anonymous traversal prefixes. Since `not()` accepts exactly one
  * traversal, negated groups with multiple predicates wrap them in a single
@@ -56,7 +59,8 @@ export const defaultRuleGroupProcessorGremlin: RuleGroupProcessor<string> = (
   };
 
   /** Recursively processes a nested group into `.and()`/`.or()`/`.not()` form. */
-  const processNested = (rg: RuleGroupTypeAny): string => {
+  const processNested = (rgAny: RuleGroupTypeAny): string => {
+    const rg = convertFromIC(rgAny);
     if (
       !isRuleOrGroupValid(
         rg,
@@ -85,7 +89,7 @@ export const defaultRuleGroupProcessorGremlin: RuleGroupProcessor<string> = (
 
     if (predicates.length === 0) return '';
 
-    const combinator = (rg as RuleGroupType).combinator ?? 'and';
+    const combinator = lc(rg.combinator);
 
     if (predicates.length === 1 && !rg.not) return predicates[0];
 
@@ -111,6 +115,10 @@ export const defaultRuleGroupProcessorGremlin: RuleGroupProcessor<string> = (
     )
   ) {
     return fallbackExpression;
+  }
+
+  if (ruleGroup.not || isRuleGroupTypeIC(ruleGroup) || lc(ruleGroup.combinator) !== 'and') {
+    return processNested(ruleGroup) || fallbackExpression;
   }
 
   const steps: string[] = [];

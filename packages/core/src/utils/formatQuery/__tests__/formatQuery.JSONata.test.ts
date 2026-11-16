@@ -27,7 +27,7 @@ it('formats JSONata correctly', () => {
       { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
       'jsonata'
     )
-  ).toBe('(f >= "12" and f <= "14")');
+  ).toBe('(f >= 12 and f <= 14)');
 });
 
 it('handles operator case variations', () => {
@@ -246,4 +246,14 @@ it('handles matches/doesNotMatch', () => {
   expect(defaultRuleProcessorJSONata({ field: 'f', operator: 'matches', value: '' }, {})).toBe(
     '$contains(f, /(?:)/)'
   );
+});
+
+it('renders numeric values unquoted for in/between', () => {
+  const fq = (operator: string, value: unknown) =>
+    formatQuery({ combinator: 'and', rules: [{ field: 'n', operator, value }] }, 'jsonata');
+  expect(fq('in', [5, 6])).toBe('n in [5, 6]');
+  expect(fq('notIn', [5n, '6'])).toBe('$not(n in [5, "6"])');
+  expect(fq('between', [4, 6])).toBe('(n >= 4 and n <= 6)');
+  expect(fq('notBetween', [6, 4])).toBe('$not(n >= 4 and n <= 6)');
+  expect(fq('between', '4,6')).toBe('(n >= "4" and n <= "6")');
 });
