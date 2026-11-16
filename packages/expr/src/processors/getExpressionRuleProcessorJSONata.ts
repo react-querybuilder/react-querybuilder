@@ -25,6 +25,10 @@ const factory = makeStringExprProcessor({
           : `$substring(${lhs}, $length(${lhs}) - $length(${rhs})) = ${rhs}`;
     return negate ? `$not(${clause})` : clause;
   },
+  renderIn: (lhs, values, negate) => {
+    const clause = `${lhs} in [${values.join(', ')}]`;
+    return negate ? `$not(${clause})` : clause;
+  },
 });
 
 /**

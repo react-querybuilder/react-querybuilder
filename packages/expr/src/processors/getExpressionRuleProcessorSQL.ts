@@ -33,14 +33,13 @@ export const getExpressionRuleProcessorSQL =
     const serial = serializers
       ? { ...defaultSQLSerializers, ...serializers }
       : defaultSQLSerializers;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorSQL(rule, opts);
 
     const operator = lc(mapSQLOperator(rule.operator));
     const unary = operator === 'is null' || operator === 'is not null';
-    // `between`/`not between` are supported only when the range bounds are expression-sourced;
-    // a plain-value between (even with an LHS expression) defers to the stock processor, which
-    // already handles number parsing, ordering, and field-source nuances.
+    // Between needs resolved bounds (expression-sourced, or plain values w/ an lhs; see
+    // `getRuleExpressions`); otherwise defers to the stock processor.
     const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
     if (
       !unary &&

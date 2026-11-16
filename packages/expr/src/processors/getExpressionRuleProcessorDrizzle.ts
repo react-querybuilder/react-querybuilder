@@ -54,7 +54,7 @@ export const getExpressionRuleProcessorDrizzle =
     const serial = serializers
       ? { ...defaultDrizzleSerializers, ...serializers }
       : defaultDrizzleSerializers;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorDrizzle(rule, opts);
 
     const { columns, drizzleOperators } = (opts.context ?? {}) as {

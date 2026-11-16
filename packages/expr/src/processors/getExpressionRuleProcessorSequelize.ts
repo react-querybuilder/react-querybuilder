@@ -64,7 +64,7 @@ export const getExpressionRuleProcessorSequelize =
     const serial = serializers
       ? { ...defaultSQLSerializers, ...serializers }
       : defaultSQLSerializers;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorSequelize(rule, opts);
 
     const {

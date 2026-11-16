@@ -164,14 +164,24 @@ describe('MongoDBQuery processor', () => {
     expect(JSON.stringify(out)).not.toContain('bogus');
   });
 
-  it('defers to stock processor without expressions and for plain-value between', () => {
+  it('defers to stock processor without expressions; applies plain-value between to lhs', () => {
     const plain = group({ field: 'x', operator: '=', value: '1' } as RuleType);
     expect(mq(plain)).toEqual(formatQuery(plain, { format: 'mongodb_query' }));
-    // Between with plain-value bounds (no expression rhs) defers to the stock processor.
     const plainBetween = group(
       exprRule({ operator: 'between', value: ['1', '5'] }, { lhs: fn('abs', field('d')) })
     );
-    expect(mq(plainBetween)).toEqual(formatQuery(plainBetween, { format: 'mongodb_query' }));
+    expect(mq(plainBetween)).toEqual({
+      $expr: { $and: [{ $gte: [{ $abs: '$d' }, 1] }, { $lte: [{ $abs: '$d' }, 5] }] },
+    });
+    // Unsupported operator w/ lhs defers to the stock processor (lhs ignored).
+    const unsupported = group(
+      exprRule({ field: 'd', operator: 'in', value: [1, 2] }, { lhs: fn('abs', field('d')) })
+    );
+    expect(mq(unsupported)).toEqual(formatQuery(unsupported, { format: 'mongodb_query' }));
+    const partial = group(
+      exprRule({ field: 'd', operator: 'between', value: [1] }, { lhs: fn('abs', field('d')) })
+    );
+    expect(mq(partial)).toEqual(formatQuery(partial, { format: 'mongodb_query' }));
   });
 
   it('uses plain-field lhs when only rhs is an expression', () => {

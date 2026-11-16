@@ -39,7 +39,7 @@ export const getExpressionRuleProcessorTanStackDB =
     const serial = serializers
       ? { ...defaultTanStackDbSerializers, ...serializers }
       : defaultTanStackDbSerializers;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorTanStackDB(rule, opts);
 
     const context = (opts.context ?? {}) as {

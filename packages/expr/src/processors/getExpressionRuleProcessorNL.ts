@@ -39,7 +39,7 @@ export const getExpressionRuleProcessorNL =
   (rule, options) => {
     const opts = options ?? {};
     const serial = serializers ? { ...defaultNLSerializers, ...serializers } : defaultNLSerializers;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorNL(rule, opts);
 
     const operator = lc(rule.operator);

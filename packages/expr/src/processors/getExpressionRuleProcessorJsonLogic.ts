@@ -69,15 +69,15 @@ export const getExpressionRuleProcessorJsonLogic =
     const serial = serializers
       ? { ...defaultJsonLogicSerializers, ...serializers }
       : defaultJsonLogicSerializers;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorJsonLogic(rule, opts);
 
     const operator = lc(rule.operator);
     const unary = operator === 'null' || operator === 'notnull';
     const jlOp = OPERATOR_MAP[operator];
     const stringOp = STRING_OPERATORS.has(operator as DefaultOperatorName);
-    // Between is supported only with expression-sourced bounds; a plain-value between defers
-    // to the stock processor (which handles number parsing/ordering/field sources).
+    // Between needs resolved bounds (expression-sourced, or plain values w/ an lhs; see
+    // `getRuleExpressions`); otherwise defers to the stock processor.
     const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
     if (!unary && !jlOp && !stringOp && !betweenExpr)
       return defaultRuleProcessorJsonLogic(rule, opts);

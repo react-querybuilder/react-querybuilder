@@ -88,14 +88,14 @@ export const getExpressionRuleProcessorMongoDBQuery =
     const serial = serializers
       ? { ...defaultMongoDBSerializers, ...serializers }
       : defaultMongoDBSerializers;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorMongoDBQuery(rule, opts);
 
     const operator = lc(rule.operator);
     const unary = operator === 'null' || operator === 'notnull';
     const mongoOp = OPERATOR_MAP[operator];
-    // Between is supported only with expression-sourced bounds; a plain-value between defers
-    // to the stock processor (which handles number parsing/ordering/field sources).
+    // Between needs resolved bounds (expression-sourced, or plain values w/ an lhs; see
+    // `getRuleExpressions`); otherwise defers to the stock processor.
     const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
     const stringMatch = STRING_MATCH[operator];
     if (!unary && !mongoOp && !betweenExpr && !stringMatch)

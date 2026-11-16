@@ -22,6 +22,7 @@ const factory = makeStringExprProcessor({
     const clause = `${lhs} ${op} ${rhs}`;
     return negate ? `NOT (${clause})` : clause;
   },
+  renderIn: (lhs, values, negate) => `${negate ? 'NOT ' : ''}(${lhs} IN [${values.join(', ')}])`,
 });
 
 /**
