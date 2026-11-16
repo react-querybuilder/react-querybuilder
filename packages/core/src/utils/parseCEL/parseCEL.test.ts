@@ -1321,6 +1321,9 @@ describe('string escapes (#1135)', () => {
       '\\',
       "a'b",
       String.raw`\u0041`,
+      'a\nb',
+      'a\rb',
+      'a\r\nb',
     ]) {
       for (const operator of ['=', 'contains', 'beginsWith', 'endsWith', 'in'] as const) {
         const q = wrapRule({ field: 's', operator, value });

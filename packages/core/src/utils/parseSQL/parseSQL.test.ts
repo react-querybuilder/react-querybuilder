@@ -862,5 +862,13 @@ describe('quotes adjacent to wildcards (#1135)', () => {
     expect(parseSQL(`s like '%' || t`)).toEqual(
       wrapRule({ field: 's', operator: 'endsWith', value: 't', valueSource: 'field' })
     );
+    for (const c of ['/* c */', '-- c\n', '# c\n']) {
+      expect(parseSQL(`s like '%' ${c} || t`)).toEqual(
+        wrapRule({ field: 's', operator: 'endsWith', value: 't', valueSource: 'field' })
+      );
+      expect(parseSQL(`s like t || ${c} '%'`)).toEqual(
+        wrapRule({ field: 's', operator: 'beginsWith', value: 't', valueSource: 'field' })
+      );
+    }
   });
 });

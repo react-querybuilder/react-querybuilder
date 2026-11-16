@@ -752,7 +752,7 @@ export class SQLLexer extends JisonLexer implements JisonLexerApi {
       break;
     case 113:return 8
       break;
-    case 114:return /^\s*[|][|]/.test(`${this._input}`) || /[|][|]\s*['](\%)+[']$/.test(`${this.matched}`) ? 'WILDCARD' : 'STRING'
+    case 114:return /^(?:\s+|[/][*][\s\S]*?[*][/]|[-][-]\s.*\n|[#]\s.*\n)*[|][|]/.test(`${this._input}`) || /[|][|](?:\s+|[/][*][\s\S]*?[*][/]|[-][-]\s.*\n|[#]\s.*\n)*['](\%)+[']$/.test(`${this.matched}`) ? 'WILDCARD' : 'STRING'
       break;
     case 115:return 53
       break;
