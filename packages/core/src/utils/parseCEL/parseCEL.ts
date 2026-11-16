@@ -301,7 +301,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
             : null;
         }
         const [, regexFlags, value] = /^(?:\(\?([a-z]+)\))?(.*)$/s.exec(
-          evalCELLiteralValue(valueObj).replaceAll(/\\(["'\\])/g, '$1')
+          evalCELLiteralValue(valueObj)
         )!;
         if (!fieldIsValid(field, operator)) return null;
         return regexFlags ? { field, operator, value, regexFlags } : { field, operator, value };

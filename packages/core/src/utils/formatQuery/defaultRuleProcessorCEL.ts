@@ -14,7 +14,11 @@ import {
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
 const escapeDoubleQuotes = (v: unknown, escapeQuotes?: boolean) =>
-  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(/(["\\])/g, '\\$1');
+  typeof v !== 'string'
+    ? `${v}`
+    : (escapeQuotes ? v.replaceAll(/(["\\])/g, '\\$1') : v)
+        .replaceAll('\n', '\\n')
+        .replaceAll('\r', '\\r');
 
 /**
  * Default rule processor used by {@link formatQuery} for "cel" format.

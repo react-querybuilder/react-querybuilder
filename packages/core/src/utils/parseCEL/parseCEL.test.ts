@@ -1285,3 +1285,50 @@ describe('grammar precedence', () => {
     expect(p('a < b == c')).toBe('((a < b) == c)');
   });
 });
+
+describe('string escapes (#1135)', () => {
+  const v = (cel: string) => (parseCEL(`s == ${cel}`).rules[0] as DefaultRuleType).value;
+
+  it('lexes escaped quotes and unescapes', () => {
+    expect(v(String.raw`"a\"b"`)).toBe('a"b');
+    expect(v(String.raw`'a\'b'`)).toBe("a'b");
+    expect(v(String.raw`"a\\b"`)).toBe(String.raw`a\b`);
+    expect(v(String.raw`"a\\"`)).toBe('a\\');
+    expect(v(String.raw`"""a\"""b"""`)).toBe('a"""b');
+    expect(v(String.raw`'''a\'''b'''`)).toBe("a'''b");
+    expect(v(`"""a"b""c"""`)).toBe('a"b""c');
+    expect(v(`'''a'b''c'''`)).toBe("a'b''c");
+  });
+
+  it('unescapes all CEL escape sequences', () => {
+    expect(v('"\\a\\b\\f\\n\\r\\t\\v\\?\\`"')).toBe('\u0007\b\f\n\r\t\v?`');
+    expect(v(String.raw`"\x41\X42\u0043\U0001F600\101"`)).toBe('ABC\u{1F600}A');
+    expect(v(String.raw`"\UFFFFFFFF"`)).toBe(String.raw`\UFFFFFFFF`);
+  });
+
+  it('does not unescape raw strings', () => {
+    expect(v(String.raw`r"a\nb"`)).toBe(String.raw`a\nb`);
+    expect(v(String.raw`R'a\'`)).toBe('a\\');
+    expect(v(String.raw`r"""a\"b"""`)).toBe(String.raw`a\"b`);
+    expect(v(String.raw`r'''a\'b'''`)).toBe(String.raw`a\'b`);
+  });
+
+  it('round-trips values with quotes and backslashes', () => {
+    for (const value of [
+      'a"b',
+      String.raw`a\b`,
+      String.raw`a\"b`,
+      '\\',
+      "a'b",
+      String.raw`\u0041`,
+      'a\nb',
+      'a\rb',
+      'a\r\nb',
+    ]) {
+      for (const operator of ['=', 'contains', 'beginsWith', 'endsWith', 'in'] as const) {
+        const q = wrapRule({ field: 's', operator, value });
+        expect(parseCEL(formatQuery(q, 'cel'))).toEqual(q);
+      }
+    }
+  });
+});

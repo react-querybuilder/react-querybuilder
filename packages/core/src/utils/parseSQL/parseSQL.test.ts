@@ -827,3 +827,48 @@ describe('regex', () => {
     expect(parseSQL(formatQuery(query, { preset: 'oracle' }), pr)).toEqual(query);
   });
 });
+
+describe('quotes adjacent to wildcards (#1135)', () => {
+  // LIKE wildcards in values aren't escaped by formatQuery, so only quotes here
+  const values = ["'s", "s'", "'", "''", "a'b", "''s''"];
+  for (const operator of [
+    'contains',
+    'beginsWith',
+    'endsWith',
+    'doesNotContain',
+    'doesNotBeginWith',
+    'doesNotEndWith',
+  ] as const) {
+    it(`round-trips ${operator}`, () => {
+      for (const value of values) {
+        const q = wrapRule({ field: 's', operator, value });
+        expect(parseSQL(formatQuery(q, 'sql'))).toEqual(q);
+      }
+    });
+  }
+
+  it('parses specific string forms', () => {
+    expect(parseSQL(`s like '%''s%'`)).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: "'s" })
+    );
+    expect(parseSQL(`s = '%'`)).toEqual(wrapRule({ field: 's', operator: '=', value: '%' }));
+    expect(parseSQL(`s = ''`)).toEqual(wrapRule({ field: 's', operator: '=', value: '' }));
+    expect(parseSQL(`s like '%' || t || '%'`)).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: 't', valueSource: 'field' })
+    );
+    expect(parseSQL(`s like t || '%'`)).toEqual(
+      wrapRule({ field: 's', operator: 'beginsWith', value: 't', valueSource: 'field' })
+    );
+    expect(parseSQL(`s like '%' || t`)).toEqual(
+      wrapRule({ field: 's', operator: 'endsWith', value: 't', valueSource: 'field' })
+    );
+    for (const c of ['/* c */', '-- c\n', '# c\n']) {
+      expect(parseSQL(`s like '%' ${c} || t`)).toEqual(
+        wrapRule({ field: 's', operator: 'endsWith', value: 't', valueSource: 'field' })
+      );
+      expect(parseSQL(`s like t || ${c} '%'`)).toEqual(
+        wrapRule({ field: 's', operator: 'beginsWith', value: 't', valueSource: 'field' })
+      );
+    }
+  });
+});
