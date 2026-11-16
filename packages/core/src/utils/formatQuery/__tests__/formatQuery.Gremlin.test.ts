@@ -1,5 +1,5 @@
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../../defaults';
-import type { RuleGroupType, RuleProcessor } from '../../../types';
+import type { RuleGroupType, RuleGroupTypeIC, RuleProcessor } from '../../../types';
 import { add } from '../../queryTools';
 import { defaultRuleProcessorGremlin } from '../defaultRuleProcessorGremlin';
 import { formatQuery } from '../formatQuery';
@@ -47,7 +47,7 @@ it('escapes quotes when appropriate', () => {
 
 it('independent combinators', () => {
   expect(formatQuery(queryIC, 'gremlin')).toBe(
-    `.has('firstName', 'Test').has('middleName', 'Test').has('lastName', 'Test')`
+    `.or(__.and(__.has('firstName', 'Test'), __.has('middleName', 'Test')), __.has('lastName', 'Test'))`
   );
 
   expect(
@@ -81,8 +81,8 @@ describe('validation', () => {
     'should invalidate gremlin outermost group': '',
     'should invalidate gremlin inner group': '',
     'should convert gremlin inner group with no rules to fallbackExpression': `.has('field', '')`,
-    'should invalidate gremlin following combinator of first rule': `.has('field2', '').has('field3', '')`,
-    'should invalidate gremlin preceding combinator of non-first rule': `.has('field', '').has('field3', '')`,
+    'should invalidate gremlin following combinator of first rule': `.or(__.has('field2', ''), __.has('field3', ''))`,
+    'should invalidate gremlin preceding combinator of non-first rule': `.or(__.has('field', ''), __.has('field3', ''))`,
   };
 
   for (const vtd of getValidationTestData('gremlin')) {
@@ -258,4 +258,54 @@ describe('regex', () => {
       `.has('f', containing(g)).has('f', notContaining(g))`
     );
   });
+});
+
+it('sorts numeric between values unless preserveValueOrder', () => {
+  const q = (operator: string, value: unknown) => ({
+    combinator: 'and',
+    rules: [{ field: 'n', operator, value }],
+  });
+  const fq = (operator: string, value: unknown, preserveValueOrder?: boolean) =>
+    formatQuery(q(operator, value), { format: 'gremlin', parseNumbers: true, preserveValueOrder });
+  expect(fq('between', '6,5')).toBe(fq('between', '5,6'));
+  expect(fq('notBetween', [6, 5])).toBe(fq('notBetween', [5, 6]));
+  expect(fq('between', '6,5', true)).not.toBe(fq('between', '5,6'));
+  expect(formatQuery(q('between', '6,5'), 'gremlin')).not.toBe(
+    formatQuery(q('between', '5,6'), 'gremlin')
+  );
+});
+
+it('honors top-level combinator and not', () => {
+  const rules = [
+    { field: 'a', operator: '=', value: 'x' },
+    { field: 'b', operator: '=', value: 'y' },
+  ];
+  expect(formatQuery({ combinator: 'or', rules }, 'gremlin')).toBe(
+    `.or(__.has('a', 'x'), __.has('b', 'y'))`
+  );
+  expect(formatQuery({ combinator: 'and', not: true, rules }, 'gremlin')).toBe(
+    `.not(__.and(__.has('a', 'x'), __.has('b', 'y')))`
+  );
+  expect(formatQuery({ combinator: 'or', rules: [] }, 'gremlin')).toBe('');
+});
+
+it('drops invalid IC rules w/ their preceding combinator before grouping', () => {
+  const a = { field: 'a', operator: '=', value: 'x' };
+  const b = { field: 'b', operator: '=', value: 'y' };
+  const c = { field: 'c', operator: '=', value: 'z' };
+  const rules: RuleGroupTypeIC['rules'] = [a, 'or', b, 'and', c];
+  const fields = [
+    { name: 'a', label: 'a' },
+    { name: 'b', label: 'b', validator: () => false },
+    { name: 'c', label: 'c' },
+  ];
+  expect(formatQuery({ rules }, { format: 'gremlin', fields })).toBe(
+    `.and(__.has('a', 'x'), __.has('c', 'z'))`
+  );
+  expect(
+    formatQuery({ rules: [{ rules: [b] }, 'or', ...rules] }, { format: 'gremlin', fields })
+  ).toBe(`.and(__.has('a', 'x'), __.has('c', 'z'))`);
+  expect(formatQuery({ rules: [a, 'OR', b, 'and', c] }, 'gremlin')).toBe(
+    `.or(__.has('a', 'x'), __.and(__.has('b', 'y'), __.has('c', 'z')))`
+  );
 });

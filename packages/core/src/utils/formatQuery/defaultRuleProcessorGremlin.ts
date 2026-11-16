@@ -1,5 +1,6 @@
 import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
+import { orderBetweenValues } from './internalUtils';
 import {
   escapeSingleQuotedString,
   regexFallbackRule,
@@ -22,7 +23,7 @@ export const defaultRuleProcessorGremlin: RuleProcessor = (
   // v8 ignore next
   opts = {}
 ) => {
-  const { escapeQuotes, parseNumbers } = opts;
+  const { escapeQuotes, parseNumbers, preserveValueOrder } = opts;
   const { field, operator, value, valueSource } = rule;
   const valueIsField = valueSource === 'field';
   const operatorTL = operator.toLowerCase();
@@ -89,12 +90,18 @@ export const defaultRuleProcessorGremlin: RuleProcessor = (
     case 'between': {
       const arr = toArray(value);
       if (arr.length < 2) return '';
-      return `.has('${prop}', between(${fmtVal(arr[0])}, ${fmtVal(arr[1])}))`;
+      const [lo, hi] = valueIsField
+        ? arr
+        : orderBetweenValues(arr, { parseNumbers: !!parseNumbers, preserveValueOrder });
+      return `.has('${prop}', between(${fmtVal(lo)}, ${fmtVal(hi)}))`;
     }
     case 'notbetween': {
       const arr = toArray(value);
       if (arr.length < 2) return '';
-      return `.has('${prop}', outside(${fmtVal(arr[0])}, ${fmtVal(arr[1])}))`;
+      const [lo, hi] = valueIsField
+        ? arr
+        : orderBetweenValues(arr, { parseNumbers: !!parseNumbers, preserveValueOrder });
+      return `.has('${prop}', outside(${fmtVal(lo)}, ${fmtVal(hi)}))`;
     }
     default:
       return `.has('${prop}', ${fmtVal(value)})`;

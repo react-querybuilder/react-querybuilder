@@ -1193,3 +1193,97 @@ describe('regex operators', () => {
     expect(formatQuery(q, { format: 'sql', preset })).toBe(expected);
   });
 });
+
+describe('escapeLikeWildcards', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'a', operator: 'contains', value: '5_0%\\' },
+      { field: 'b', operator: 'doesNotBeginWith', value: 'x_' },
+      { field: 'c', operator: 'endsWith', value: '%' },
+      { field: 'd', operator: 'contains', value: 'e', valueSource: 'field' },
+      { field: 'f', operator: '=', value: '_' },
+    ],
+  };
+
+  it('is off by default', () => {
+    expect(formatQuery(q, 'sql')).toBe(
+      `(a like '%5_0%\\%' and b not like 'x_%' and c like '%%' and d like '%' || e || '%' and f = '_')`
+    );
+  });
+
+  it('escapes wildcards and appends escape clause', () => {
+    expect(formatQuery(q, { format: 'sql', escapeLikeWildcards: true })).toBe(
+      `(a like '%5\\_0\\%\\\\%' escape '\\' and b not like 'x\\_%' escape '\\' and c like '%\\%' escape '\\' and d like '%' || e || '%' and f = '_')`
+    );
+    expect(formatQuery(q, { format: 'sql', preset: 'mysql', escapeLikeWildcards: true })).toBe(
+      "(`a` like '%5\\\\_0\\\\%\\\\\\\\%' escape '\\\\' and `b` not like 'x\\\\_%' escape '\\\\' and `c` like '%\\\\%' escape '\\\\' and `d` like CONCAT('%', `e`, '%') and `f` = '_')"
+    );
+  });
+
+  it('escapes `[` for mssql', () => {
+    expect(
+      formatQuery(
+        { combinator: 'and', rules: [{ field: 'a', operator: 'contains', value: '[a]%' }] },
+        { format: 'sql', preset: 'mssql', escapeLikeWildcards: true }
+      )
+    ).toBe(`([a] like '%\\[a]\\%%' escape '\\')`);
+    expect(
+      formatQuery(
+        { combinator: 'and', rules: [{ field: 'a', operator: 'contains', value: '[a]' }] },
+        { format: 'sql', escapeLikeWildcards: true }
+      )
+    ).toBe(`(a like '%[a]%' escape '\\')`);
+  });
+
+  it('escapes bound params', () => {
+    expect(formatQuery(q, { format: 'parameterized', escapeLikeWildcards: true })).toEqual({
+      sql: `(a like ? escape '\\' and b not like ? escape '\\' and c like ? escape '\\' and d like '%' || e || '%' and f = ?)`,
+      params: ['%5\\_0\\%\\\\%', 'x\\_%', '%\\%', '_'],
+    });
+    expect(
+      formatQuery(q, { format: 'parameterized_named', preset: 'mysql', escapeLikeWildcards: true })
+    ).toEqual({
+      sql: "(`a` like :a_1 escape '\\\\' and `b` not like :b_1 escape '\\\\' and `c` like :c_1 escape '\\\\' and `d` like CONCAT('%', `e`, '%') and `f` = :f_1)",
+      params: { a_1: '%5\\_0\\%\\\\%', b_1: 'x\\_%', c_1: '%\\%', f_1: '_' },
+    });
+  });
+
+  it('ignores parameter value sources', () => {
+    expect(
+      formatQuery(
+        {
+          combinator: 'and',
+          rules: [{ field: 'a', operator: 'contains', value: 'p', valueSource: 'parameter' }],
+        },
+        { format: 'parameterized_named', escapeLikeWildcards: true }
+      )
+    ).toEqual({ sql: `(a like '%' || :p || '%')`, params: { p: null } });
+  });
+});
+
+describe('between value order (parameterized)', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'n', operator: 'between', value: '6,5' }],
+  };
+  it('sorts numeric values', () => {
+    expect(formatQuery(q, { format: 'parameterized', parseNumbers: true })).toEqual({
+      sql: '(n between ? and ?)',
+      params: [5, 6],
+    });
+    expect(formatQuery(q, { format: 'parameterized_named', parseNumbers: true })).toEqual({
+      sql: '(n between :n_1 and :n_2)',
+      params: { n_1: 5, n_2: 6 },
+    });
+  });
+  it('respects preserveValueOrder and non-numeric values', () => {
+    expect(
+      formatQuery(q, { format: 'parameterized', parseNumbers: true, preserveValueOrder: true })
+    ).toEqual({ sql: '(n between ? and ?)', params: [6, 5] });
+    expect(formatQuery(q, 'parameterized')).toEqual({
+      sql: '(n between ? and ?)',
+      params: ['6', '5'],
+    });
+  });
+});

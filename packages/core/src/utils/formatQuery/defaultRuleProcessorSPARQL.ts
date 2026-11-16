@@ -1,5 +1,6 @@
 import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
+import { orderBetweenValues } from './internalUtils';
 import { regexFallbackRule, sanitizeRegexFlags, shouldRenderAsNumber } from './utils';
 
 const escapeDoubleQuotes = (v: unknown, escapeQuotes?: boolean) =>
@@ -22,7 +23,7 @@ export const defaultRuleProcessorSPARQL: RuleProcessor = (
   // v8 ignore next
   opts = {}
 ) => {
-  const { escapeQuotes, parseNumbers } = opts;
+  const { escapeQuotes, parseNumbers, preserveValueOrder } = opts;
   const { field: rawField, operator, value, valueSource } = rule;
   const valueIsField = valueSource === 'field';
   const operatorTL = operator.toLowerCase();
@@ -91,12 +92,18 @@ export const defaultRuleProcessorSPARQL: RuleProcessor = (
     case 'between': {
       const arr = toArray(value);
       if (arr.length < 2) return '';
-      return `${field} >= ${fmtVal(arr[0])} && ${field} <= ${fmtVal(arr[1])}`;
+      const [lo, hi] = valueIsField
+        ? arr
+        : orderBetweenValues(arr, { parseNumbers: !!parseNumbers, preserveValueOrder });
+      return `${field} >= ${fmtVal(lo)} && ${field} <= ${fmtVal(hi)}`;
     }
     case 'notbetween': {
       const arr = toArray(value);
       if (arr.length < 2) return '';
-      return `(${field} < ${fmtVal(arr[0])} || ${field} > ${fmtVal(arr[1])})`;
+      const [lo, hi] = valueIsField
+        ? arr
+        : orderBetweenValues(arr, { parseNumbers: !!parseNumbers, preserveValueOrder });
+      return `(${field} < ${fmtVal(lo)} || ${field} > ${fmtVal(hi)})`;
     }
     default:
       return `${field} ${operator} ${fmtVal(value)}`;

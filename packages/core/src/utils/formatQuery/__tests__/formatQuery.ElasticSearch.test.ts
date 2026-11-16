@@ -34,7 +34,7 @@ const elasticSearchQueryObject = {
               should: [
                 { term: { gender: 'M' } },
                 { bool: { must_not: { term: { job: 'Programmer' } } } },
-                { regexp: { email: { value: '.*@.*' } } },
+                { regexp: { email: { value: '.*\\@.*' } } },
               ],
             },
           },
@@ -669,4 +669,16 @@ describe('regex', () => {
       },
     });
   });
+});
+
+it('escapes Lucene regexp reserved chars in string-match values', () => {
+  const rx = (operator: string) =>
+    formatQuery(
+      { combinator: 'and', rules: [{ field: 's', operator, value: 'a.b*c?(d)\\' }] },
+      'elasticsearch'
+    );
+  const esc = 'a\\.b\\*c\\?\\(d\\)\\\\';
+  expect(rx('contains')).toEqual({ bool: { must: [{ regexp: { s: { value: `.*${esc}.*` } } }] } });
+  expect(rx('beginsWith')).toEqual({ bool: { must: [{ regexp: { s: { value: `${esc}.*` } } }] } });
+  expect(rx('endsWith')).toEqual({ bool: { must: [{ regexp: { s: { value: `.*${esc}` } } }] } });
 });

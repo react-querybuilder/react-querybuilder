@@ -80,6 +80,9 @@ const valueRenderer = (v: unknown, parseNumbers?: boolean) =>
       ? parseNumber(v, { parseNumbers })
       : v;
 
+// Lucene regexp reserved chars
+const escapeLuceneRegex = (v: unknown) => `${v}`.replaceAll(/[.?+*|{}[\]()"\\#@&<>~]/g, '\\$&');
+
 /**
  * Wraps a pattern for Lucene regexp (always anchored) w/ "find" semantics. Lucene has no
  * `^`/`$` anchors, so a leading `^`/trailing `$` drops the corresponding `.*`. Returns
@@ -354,15 +357,21 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
 
     case 'contains':
     case 'doesnotcontain':
-      return negateIfNotOp(operatorLC, { regexp: { [field]: { value: `.*${value}.*` } } });
+      return negateIfNotOp(operatorLC, {
+        regexp: { [field]: { value: `.*${escapeLuceneRegex(value)}.*` } },
+      });
 
     case 'beginswith':
     case 'doesnotbeginwith':
-      return negateIfNotOp(operatorLC, { regexp: { [field]: { value: `${value}.*` } } });
+      return negateIfNotOp(operatorLC, {
+        regexp: { [field]: { value: `${escapeLuceneRegex(value)}.*` } },
+      });
 
     case 'endswith':
     case 'doesnotendwith':
-      return negateIfNotOp(operatorLC, { regexp: { [field]: { value: `.*${value}` } } });
+      return negateIfNotOp(operatorLC, {
+        regexp: { [field]: { value: `.*${escapeLuceneRegex(value)}` } },
+      });
   }
   return false;
 };

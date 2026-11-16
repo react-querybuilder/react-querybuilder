@@ -21,8 +21,7 @@ const generateRuleGroupICWithConsistentCombinators = (
 ): RuleGroupTypeIC => {
   const baseCombinator = combinatorLevels[baseCombinatorLevel];
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  if (!rg.rules.includes(baseCombinator as any)) {
+  if (!rg.rules.some(r => isSameString(r, baseCombinator))) {
     // No instances of this combinator, so group based on the next
     // combinator level if at least two levels remain
     return baseCombinatorLevel < combinatorLevels.length - 2

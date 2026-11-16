@@ -243,6 +243,15 @@ export interface FormatQueryOptions {
    */
   preserveValueOrder?: boolean;
   /**
+   * Escapes `LIKE` wildcards (`%`, `_`, + `[` for "mssql" preset) and the escape character (`\`)
+   * in values for "contains", "beginsWith", "endsWith" (and negations) rules, and appends `ESCAPE '\'`
+   * to the `LIKE` expression, so values match literally. Applies only to SQL formats
+   * ("sql", "parameterized", "parameterized_named") and only when `valueSource` is "value".
+   *
+   * @default false
+   */
+  escapeLikeWildcards?: boolean;
+  /**
    * Renders values as either `number`-types or unquoted strings, as
    * appropriate and when possible. Each `string`-type value is evaluated
    * against {@link numericRegex} to determine if it can be represented as a

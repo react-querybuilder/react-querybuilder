@@ -231,6 +231,7 @@ const defaultFormatQueryOptions = {
   paramsKeepPrefix: false,
   numberedParams: false,
   preserveValueOrder: false,
+  escapeLikeWildcards: false,
   placeholderFieldName: defaultPlaceholderFieldName,
   placeholderOperatorName: defaultPlaceholderOperatorName,
   quoteValuesWith: "'",

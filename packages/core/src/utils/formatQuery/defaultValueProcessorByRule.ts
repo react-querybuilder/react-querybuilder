@@ -37,6 +37,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
 ) => {
   const {
     escapeQuotes,
+    escapeLikeWildcards,
     parseNumbers,
     preserveValueOrder,
     quoteFieldNamesWith,
@@ -100,9 +101,16 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     `${wrapValueWith[0]}${quoteChar}${v}${quoteChar}${wrapValueWith[1]}`;
   const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes, preset);
   // MySQL `LIKE` treats `\` as escape char; double for LIKE (also applies to bound params), then
-  // again for string literal if `escapeQuotes`
+  // again for string literal if `escapeQuotes`. `escapeLikeWildcards` also escapes `%`/`_` (+ `[` for MSSQL).
   const escapeLikeValue = (v: unknown) =>
-    escapeValue(preset === 'mysql' && typeof v === 'string' ? v.replaceAll('\\', '\\\\') : v);
+    escapeValue(
+      typeof v === 'string' && (escapeLikeWildcards || preset === 'mysql')
+        ? v.replaceAll(
+            escapeLikeWildcards ? (preset === 'mssql' ? /[\\%_[]/g : /[\\%_]/g) : /\\/g,
+            '\\$&'
+          )
+        : v
+    );
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: unknown) =>
     getQuotedFieldName(v as string, { quoteFieldNamesWith, fieldIdentifierSeparator });
