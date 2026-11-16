@@ -27,6 +27,7 @@ import {
   getOption,
   QueryBuilder,
   QueryBuilderContext,
+  toArray,
   toFullOptionList,
   ValueEditor,
 } from 'react-querybuilder';
@@ -162,7 +163,16 @@ const SliderDemo = () => {
 const sqlValueProcessor: ValueProcessorByRule = (rule: RuleType, opts) => {
   const val = defaultValueProcessorByRule(rule, opts);
   // Unary ops (e.g. "null") yield ''; skip prefix
-  return val && getOption(fields, rule.field)?.inputType === 'date' ? `DATE ${val}` : val;
+  if (!val || getOption(fields, rule.field)?.inputType !== 'date') return val;
+  const op = rule.operator.toLowerCase();
+  if (rule.valueSource !== 'field' && (op === 'in' || op === 'notin')) {
+    // Prefix each list element, not the whole list
+    const els = toArray(rule.value).map(
+      v => `DATE ${defaultValueProcessorByRule({ ...rule, operator: '=', value: v }, opts)}`
+    );
+    return `(${els.join(', ')})`;
+  }
+  return `DATE ${val}`;
 };
 
 const showcaseFormats: [ExportFormat, string][] = [
