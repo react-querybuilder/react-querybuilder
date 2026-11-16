@@ -275,3 +275,56 @@ describe('regex', () => {
     ]);
   });
 });
+
+describe('literal-on-left comparisons (#1135)', () => {
+  it('flips operators', () => {
+    expect(
+      parseCypher("20 < age AND 'x' = n AND 1 <> a AND 2 >= b AND 3 > c AND 4 <= d").rules
+    ).toEqual([
+      { field: 'age', operator: '>', value: 20 },
+      { field: 'n', operator: '=', value: 'x' },
+      { field: 'a', operator: '!=', value: 1 },
+      { field: 'b', operator: '<=', value: 2 },
+      { field: 'c', operator: '<', value: 3 },
+      { field: 'd', operator: '>=', value: 4 },
+    ]);
+    expect(parseCypher('null = a OR true = b OR false = c').rules).toEqual([
+      {
+        combinator: 'or',
+        rules: [
+          { field: 'a', operator: '=', value: null },
+          { field: 'b', operator: '=', value: true },
+          { field: 'c', operator: '=', value: false },
+        ],
+      },
+    ]);
+  });
+
+  it('round-trips between/notBetween', () => {
+    for (const operator of ['between', 'notBetween'] as const) {
+      const query: DefaultRuleGroupType = {
+        combinator: 'and',
+        rules: [
+          { field: 'age', operator, value: [20, 30] },
+          { field: 'n', operator: '=', value: 'x' },
+        ],
+      };
+      expect(parseCypher(formatQuery(query, 'cypher'))).toEqual(query);
+    }
+  });
+
+  it('does not merge non-between pairs', () => {
+    expect(parseCypher('1 <= a AND b <= 2').rules).toEqual([
+      { field: 'a', operator: '>=', value: 1 },
+      { field: 'b', operator: '<=', value: 2 },
+    ]);
+    expect(parseCypher('a >= 1 AND a <= 2').rules).toEqual([
+      { field: 'a', operator: '>=', value: 1 },
+      { field: 'a', operator: '<=', value: 2 },
+    ]);
+    expect(parseCypher('1 <= a AND 3 <= a').rules).toHaveLength(2);
+    expect(parseCypher('1 <= a AND a IS NULL').rules).toHaveLength(2);
+    expect(parseCypher('1 <= a AND (a <= 2 OR a = 5)').rules).toHaveLength(2);
+    expect(parseCypher('(1 <= a OR b = 1) AND a <= 2').rules).toHaveLength(2);
+  });
+});

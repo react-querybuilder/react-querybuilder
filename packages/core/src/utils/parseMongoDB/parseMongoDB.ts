@@ -439,6 +439,20 @@ function parseMongoDB(
       )[];
 
       return rules.length > 0 ? { combinator: 'or', rules } : false;
+    } else if (key === '$nor') {
+      if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(v => isPojo(v))) {
+        return false;
+      }
+      const rules = keyValue.map(l => processMongoDbQueryObject(l)).filter(Boolean) as (
+        | DefaultRuleType
+        | DefaultRuleGroupType
+      )[];
+      if (rules.length === 0) return false;
+      if (rules.length > 1) return { combinator: 'or', not: true, rules };
+      const [only] = rules;
+      return isRuleGroupType(only) && !only.not
+        ? { ...only, not: true }
+        : { combinator: 'and', not: true, rules: [only] };
     } else if (key === '$not' && isPojo(keyValue)) {
       const ruleOrGroup = processMongoDbQueryObject(keyValue);
       if (ruleOrGroup) {

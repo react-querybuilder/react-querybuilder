@@ -1,4 +1,5 @@
 import type { DefaultRuleType } from '../../types';
+import { formatQuery } from '../formatQuery';
 import { parseGremlin } from './parseGremlin';
 
 describe('parseGremlin', () => {
@@ -148,6 +149,35 @@ describe('regex', () => {
     expect(parseGremlin(".has('f', regex('(?i)a')).has('g', notRegex('b'))").rules).toEqual([
       { field: 'f', operator: 'contains', value: '(?i)a' },
       { field: 'g', operator: 'doesNotContain', value: 'b' },
+    ]);
+  });
+});
+
+describe('quote/escape-aware parsing (#1135)', () => {
+  const tricky = ['a,b', 'a)', '(c', "it's", String.raw`back\slash`, 'x.y'];
+
+  it('round-trips values w/ special chars', () => {
+    for (const operator of ['in', 'notIn', 'between']) {
+      const value = operator === 'between' ? tricky.slice(0, 2) : tricky;
+      const query = { combinator: 'and', rules: [{ field: 's', operator, value }] };
+      expect(parseGremlin(formatQuery(query, 'gremlin'))).toEqual(query);
+    }
+    for (const value of tricky) {
+      const query = { combinator: 'and', rules: [{ field: 's', operator: '=', value }] };
+      expect(parseGremlin(formatQuery(query, 'gremlin'))).toEqual(query);
+    }
+  });
+
+  it('handles escaped props and double-quoted args', () => {
+    expect(parseGremlin(String.raw`.has('it\'s').hasNot('a\'b').has("x", "y")`)).toEqual({
+      combinator: 'and',
+      rules: [
+        { field: "it's", operator: 'notNull', value: null },
+        { field: "a'b", operator: 'null', value: null },
+      ],
+    });
+    expect(parseGremlin(`.has('s', within("a,b", 'c'))`).rules).toEqual([
+      { field: 's', operator: 'in', value: ['a,b', 'c'] },
     ]);
   });
 });
