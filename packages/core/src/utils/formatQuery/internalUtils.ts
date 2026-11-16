@@ -33,9 +33,11 @@ export const orderBetweenValues = (
 ): [unknown, unknown] => {
   const [first, second] = values;
   if (preserveValueOrder) return [first, second];
-  const toNum = (v: unknown) =>
-    typeof v === 'number' || typeof v === 'bigint' || shouldRenderAsNumber(v, parseNumbers)
-      ? Number(trimIfString(v))
-      : Number.NaN;
+  const toNum = (v: unknown): number | bigint =>
+    typeof v === 'bigint'
+      ? v
+      : typeof v === 'number' || shouldRenderAsNumber(v, parseNumbers)
+        ? Number(trimIfString(v))
+        : Number.NaN;
   return toNum(second) < toNum(first) ? [second, first] : [first, second];
 };

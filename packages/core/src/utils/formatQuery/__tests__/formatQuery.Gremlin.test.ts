@@ -1,5 +1,5 @@
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../../defaults';
-import type { RuleGroupType, RuleProcessor } from '../../../types';
+import type { RuleGroupType, RuleGroupTypeIC, RuleProcessor } from '../../../types';
 import { add } from '../../queryTools';
 import { defaultRuleProcessorGremlin } from '../defaultRuleProcessorGremlin';
 import { formatQuery } from '../formatQuery';
@@ -287,4 +287,25 @@ it('honors top-level combinator and not', () => {
     `.not(__.and(__.has('a', 'x'), __.has('b', 'y')))`
   );
   expect(formatQuery({ combinator: 'or', rules: [] }, 'gremlin')).toBe('');
+});
+
+it('drops invalid IC rules w/ their preceding combinator before grouping', () => {
+  const a = { field: 'a', operator: '=', value: 'x' };
+  const b = { field: 'b', operator: '=', value: 'y' };
+  const c = { field: 'c', operator: '=', value: 'z' };
+  const rules: RuleGroupTypeIC['rules'] = [a, 'or', b, 'and', c];
+  const fields = [
+    { name: 'a', label: 'a' },
+    { name: 'b', label: 'b', validator: () => false },
+    { name: 'c', label: 'c' },
+  ];
+  expect(formatQuery({ rules }, { format: 'gremlin', fields })).toBe(
+    `.and(__.has('a', 'x'), __.has('c', 'z'))`
+  );
+  expect(
+    formatQuery({ rules: [{ rules: [b] }, 'or', ...rules] }, { format: 'gremlin', fields })
+  ).toBe(`.and(__.has('a', 'x'), __.has('c', 'z'))`);
+  expect(formatQuery({ rules: [a, 'OR', b, 'and', c] }, 'gremlin')).toBe(
+    `.or(__.has('a', 'x'), __.and(__.has('b', 'y'), __.has('c', 'z')))`
+  );
 });

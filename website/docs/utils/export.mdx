@@ -1115,6 +1115,7 @@ By default, values for "contains", "beginsWith", "endsWith" (and their negations
 
 ```ts
 const query = {
+  combinator: 'and',
   rules: [{ field: 'discount', operator: 'contains', value: '50%' }],
 };
 

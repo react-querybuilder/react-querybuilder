@@ -233,3 +233,11 @@ it('sorts numeric between values unless preserveValueOrder', () => {
     formatQuery(q('between', '5,6'), 'cypher')
   );
 });
+
+it('sorts adjacent bigint between values beyond MAX_SAFE_INTEGER', () => {
+  const bigQuery = {
+    combinator: 'and',
+    rules: [{ field: 'n', operator: 'between', value: [9007199254740993n, 9007199254740992n] }],
+  };
+  expect(formatQuery(bigQuery, 'cypher')).toBe('9007199254740992 <= n AND n <= 9007199254740993');
+});

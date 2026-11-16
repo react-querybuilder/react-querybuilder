@@ -194,12 +194,14 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
       // For backwards compatibility, default to parsing numbers for between operators
       // unless parseNumbers is explicitly set to false
       const shouldParseNumbers = !(parseNumbers === false);
-      const firstNum = shouldRenderAsNumber(first, shouldParseNumbers)
-        ? parseNumber(first, { parseNumbers: shouldParseNumbers })
-        : Number.NaN;
-      const secondNum = shouldRenderAsNumber(second, shouldParseNumbers)
-        ? parseNumber(second, { parseNumbers: shouldParseNumbers })
-        : Number.NaN;
+      const toNum = (v: unknown) =>
+        typeof v === 'number'
+          ? v
+          : shouldRenderAsNumber(v, shouldParseNumbers)
+            ? parseNumber(v, { parseNumbers: shouldParseNumbers })
+            : Number.NaN;
+      const firstNum = toNum(first);
+      const secondNum = toNum(second);
       let firstValue = Number.isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
       let secondValue = Number.isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
 

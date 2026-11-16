@@ -257,3 +257,16 @@ it('renders numeric values unquoted for in/between', () => {
   expect(fq('notBetween', [6, 4])).toBe('$not(n >= 4 and n <= 6)');
   expect(fq('between', '4,6')).toBe('(n >= "4" and n <= "6")');
 });
+
+it('sorts numeric primitive between values when parseNumbers is false', () => {
+  const q = (operator: string) => ({
+    combinator: 'and',
+    rules: [{ field: 'n', operator, value: [6, 4] }],
+  });
+  expect(formatQuery(q('between'), { format: 'jsonata', parseNumbers: false })).toBe(
+    '(n >= 4 and n <= 6)'
+  );
+  expect(formatQuery(q('notBetween'), { format: 'jsonata', parseNumbers: false })).toBe(
+    '$not(n >= 4 and n <= 6)'
+  );
+});

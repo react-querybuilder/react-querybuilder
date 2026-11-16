@@ -1,4 +1,4 @@
-import type { RuleGroupProcessor, RuleGroupTypeAny } from '../../types';
+import type { RuleGroupProcessor, RuleGroupTypeAny, RuleGroupTypeIC } from '../../types';
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupTypeIC } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
@@ -58,9 +58,25 @@ export const defaultRuleGroupProcessorGremlin: RuleGroupProcessor<string> = (
     });
   };
 
+  /** Drops invalid/empty IC entries before grouping; keeps combinator preceding each kept entry. */
+  const dropInvalidIC = (rg: RuleGroupTypeIC): RuleGroupTypeIC => {
+    const rules: RuleGroupTypeIC['rules'][number][] = [];
+    let precedingCombinator = '';
+    for (const r of rg.rules) {
+      if (typeof r === 'string') {
+        precedingCombinator = r;
+        continue;
+      }
+      if (isRuleGroup(r) ? !processNested(r) : !validateAndProcess(r)) continue;
+      if (rules.length > 0) rules.push(precedingCombinator);
+      rules.push(r);
+    }
+    return { ...rg, rules: rules as RuleGroupTypeIC['rules'] };
+  };
+
   /** Recursively processes a nested group into `.and()`/`.or()`/`.not()` form. */
   const processNested = (rgAny: RuleGroupTypeAny): string => {
-    const rg = convertFromIC(rgAny);
+    const rg = convertFromIC(isRuleGroupTypeIC(rgAny) ? dropInvalidIC(rgAny) : rgAny);
     if (
       !isRuleOrGroupValid(
         rg,
