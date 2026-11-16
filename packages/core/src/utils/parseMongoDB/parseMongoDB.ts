@@ -349,6 +349,21 @@ function parseMongoDB(
     return false;
   }
 
+  // `{}`, `{$expr:true}` (formatter's empty-group output), or `$and` of only those
+  const isMatchAll = (obj: Record<string, unknown>): boolean => {
+    const keys = objectKeys(obj);
+    if (keys.length === 0) return true;
+    if (keys.length !== 1) return false;
+    if (keys[0] === '$expr') return obj.$expr === true;
+    const v = obj.$and;
+    return (
+      keys[0] === '$and' &&
+      Array.isArray(v) &&
+      v.length > 0 &&
+      v.every(c => isPojo(c) && isMatchAll(c))
+    );
+  };
+
   function processMongoDbQueryObjectKey(
     key: string,
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -443,8 +458,8 @@ function parseMongoDB(
       if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(v => isPojo(v))) {
         return false;
       }
-      // Empty clause matches all docs, so `$nor` matches none: NOT(empty group)
-      if (keyValue.some(v => objectKeys(v).length === 0)) {
+      // Match-all clause => `$nor` matches none: NOT(empty group)
+      if (keyValue.some(v => isMatchAll(v))) {
         return { combinator: 'and', not: true, rules: [] };
       }
       const rules = keyValue.map(l => processMongoDbQueryObject(l)).filter(Boolean) as (

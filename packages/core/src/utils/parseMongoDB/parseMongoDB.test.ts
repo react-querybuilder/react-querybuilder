@@ -614,6 +614,14 @@ describe('$nor (#1135)', () => {
     const matchNone = { combinator: 'and', not: true, rules: [] };
     expect(parseMongoDB({ $nor: [{}, { b: 'y' }] })).toEqual(matchNone);
     expect(parseMongoDB({ $nor: [{}] })).toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $expr: true }] })).toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $and: [{ $expr: true }, {}] }] })).toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $expr: false }, { b: 'y' }] })).not.toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $and: [] }, { b: 'y' }] })).not.toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $expr: true, b: 'y' }] })).not.toEqual(matchNone);
+    // parse-format-parse
+    const once = parseMongoDB({ $nor: [{}] });
+    expect(parseMongoDB(formatQuery(once, 'mongodb_query'))).toEqual(matchNone);
   });
 
   it('drops unparseable $nor clauses', () => {
