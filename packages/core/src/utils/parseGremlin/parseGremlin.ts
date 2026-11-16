@@ -68,24 +68,32 @@ export function parseGremlin(
     if (/^[VE]\(/.test(step)) continue;
 
     // .hasNot('prop') — null check
-    const hasNotMatch = step.match(/^hasNot\('([^']+)'\)$/);
+    const hasNotMatch = step.match(/^hasNot\('((?:[^'\\]|\\.)+)'\)$/);
     if (hasNotMatch) {
-      rules.push({ field: hasNotMatch[1], operator: 'null', value: null } as DefaultRuleType);
+      rules.push({
+        field: unescape(hasNotMatch[1]),
+        operator: 'null',
+        value: null,
+      } as DefaultRuleType);
       continue;
     }
 
     // .has('prop') — property exists
-    const hasExistsMatch = step.match(/^has\('([^']+)'\)$/);
+    const hasExistsMatch = step.match(/^has\('((?:[^'\\]|\\.)+)'\)$/);
     if (hasExistsMatch) {
-      rules.push({ field: hasExistsMatch[1], operator: 'notNull', value: null } as DefaultRuleType);
+      rules.push({
+        field: unescape(hasExistsMatch[1]),
+        operator: 'notNull',
+        value: null,
+      } as DefaultRuleType);
       continue;
     }
 
     // .has('prop', value) — equality or predicate
-    const hasEqMatch = step.match(/^has\('([^']+)',\s*(.+)\)$/);
+    const hasEqMatch = step.match(/^has\('((?:[^'\\]|\\.)+)',\s*(.+)\)$/);
     if (hasEqMatch) {
       const [, prop, rawValue] = hasEqMatch;
-      const parsed = parseGremlinPredicate(prop, rawValue.trim(), options);
+      const parsed = parseGremlinPredicate(unescape(prop), rawValue.trim(), options);
       if (parsed) {
         rules.push(parsed);
       }
@@ -98,8 +106,6 @@ export function parseGremlin(
 
 /** Tokenizes a Gremlin traversal string into individual step strings. */
 const tokenizeGremlinSteps = (gremlin: string): string[] => {
-  const steps: string[] = [];
-
   // Remove leading source (e.g., "g.V().")
   let str = gremlin.trim();
   const sourceMatch = str.match(/^\w+\.V\(\)\./);
@@ -110,25 +116,40 @@ const tokenizeGremlinSteps = (gremlin: string): string[] => {
     str = str.slice(1);
   }
 
-  // Split on top-level dots
+  return splitTopLevel(str, '.');
+};
+
+/** Unescapes backslash sequences (`\\x` → `x`) */
+const unescape = (s: string) => s.replaceAll(/\\(.)/g, '$1');
+
+/** Splits on `sep` outside parens and quoted strings (quote/escape-aware); trims, drops empties. */
+const splitTopLevel = (str: string, sep: string): string[] => {
+  const parts: string[] = [];
   let depth = 0;
+  let quote = '';
   let current = '';
 
   for (let i = 0; i < str.length; i++) {
     const ch = str[i];
-    if (ch === '(') depth++;
+    if (quote) {
+      if (ch === '\\') {
+        current += ch + (str[++i] ?? '');
+        continue;
+      }
+      if (ch === quote) quote = '';
+    } else if (ch === "'" || ch === '"') quote = ch;
+    else if (ch === '(') depth++;
     else if (ch === ')') depth--;
-
-    if (ch === '.' && depth === 0) {
-      if (current.trim()) steps.push(current.trim());
+    else if (ch === sep && depth === 0) {
+      if (current.trim()) parts.push(current.trim());
       current = '';
       continue;
     }
     current += ch;
   }
-  if (current.trim()) steps.push(current.trim());
+  if (current.trim()) parts.push(current.trim());
 
-  return steps;
+  return parts;
 };
 
 /** Parses a Gremlin predicate (the second argument of `.has()`). */
@@ -216,30 +237,12 @@ const parseGremlinPredicate = (
 };
 
 /** Parses a comma-separated argument list. */
-const parseGremlinArgs = (args: string): unknown[] => {
-  const result: unknown[] = [];
-  let depth = 0;
-  let current = '';
-
-  for (const ch of args) {
-    if (ch === '(') depth++;
-    else if (ch === ')') depth--;
-    if (ch === ',' && depth === 0) {
-      result.push(parseGremlinLiteral(current.trim()));
-      current = '';
-      continue;
-    }
-    current += ch;
-  }
-  if (current.trim()) result.push(parseGremlinLiteral(current.trim()));
-  return result;
-};
+const parseGremlinArgs = (args: string): unknown[] =>
+  splitTopLevel(args, ',').map(parseGremlinLiteral);
 
 /** Parses a Gremlin literal value. */
 const parseGremlinLiteral = (raw: string): unknown => {
-  if (raw.startsWith("'") && raw.endsWith("'")) {
-    return raw.slice(1, -1).replace(/\\'/g, "'");
-  }
+  if (/^'[\s\S]*'$|^"[\s\S]*"$/.test(raw)) return unescape(raw.slice(1, -1));
   if (raw === 'null') return null;
   if (raw === 'true') return true;
   if (raw === 'false') return false;

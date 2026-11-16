@@ -255,8 +255,36 @@ class CypherCstParser extends CstParser {
     ]);
   });
 
-  /** Single condition: field op value */
+  /** Single condition: field op value, or literal cmp field */
   public condition = this.RULE('condition', () => {
+    this.OR([
+      { ALT: () => this.SUBRULE(this.reversedCondition) },
+      { ALT: () => this.SUBRULE(this.fieldCondition) },
+    ]);
+  });
+
+  /** literal cmp field (e.g. `20 <= age`) */
+  public reversedCondition = this.RULE('reversedCondition', () => {
+    this.OR([
+      { ALT: () => this.CONSUME(StringLiteral, { LABEL: 'lit' }) },
+      { ALT: () => this.CONSUME(NumberLiteral, { LABEL: 'lit' }) },
+      { ALT: () => this.CONSUME(NullLit, { LABEL: 'lit' }) },
+      { ALT: () => this.CONSUME(TrueLit, { LABEL: 'lit' }) },
+      { ALT: () => this.CONSUME(FalseLit, { LABEL: 'lit' }) },
+    ]);
+    this.OR1([
+      { ALT: () => this.CONSUME(Equal, { LABEL: 'op' }) },
+      { ALT: () => this.CONSUME(NotEqual, { LABEL: 'op' }) },
+      { ALT: () => this.CONSUME(LessEqual, { LABEL: 'op' }) },
+      { ALT: () => this.CONSUME(GreaterEqual, { LABEL: 'op' }) },
+      { ALT: () => this.CONSUME(Less, { LABEL: 'op' }) },
+      { ALT: () => this.CONSUME(Greater, { LABEL: 'op' }) },
+    ]);
+    this.SUBRULE(this.propertyRef, { LABEL: 'field' });
+  });
+
+  /** field op value */
+  public fieldCondition = this.RULE('fieldCondition', () => {
     this.SUBRULE(this.propertyRef, { LABEL: 'field' });
     this.OR([
       {
@@ -475,7 +503,27 @@ const visitAndExpression = (node: CstNode): RuleOrGroup[] => {
   const all = [lhsNodes[0], ...rhsNodes];
   const rules: RuleOrGroup[] = [];
   for (const item of all) {
-    rules.push(...visitNotExpression(item));
+    const next = visitNotExpression(item);
+    const prev = rules.at(-1);
+    // `a <= f AND f <= b` (formatQuery's between output) → between
+    if (
+      next.length === 1 &&
+      prev &&
+      !('rules' in prev) &&
+      reversedLTE.has(prev) &&
+      !('rules' in next[0]) &&
+      !reversedLTE.has(next[0]) &&
+      next[0].operator === '<=' &&
+      next[0].field === prev.field
+    ) {
+      rules[rules.length - 1] = {
+        ...prev,
+        operator: 'between',
+        value: [prev.value, next[0].value],
+      };
+      continue;
+    }
+    rules.push(...next);
   }
   return rules;
 };
@@ -496,6 +544,10 @@ const visitNotExpression = (node: CstNode): RuleOrGroup[] => {
   if (atomic.children.condition && (atomicRules[0] as DefaultRuleType).operator === 'matches') {
     return [{ ...(atomicRules[0] as DefaultRuleType), operator: 'doesNotMatch' }];
   }
+  // `NOT (a <= f AND f <= b)` → notBetween
+  if (atomicRules.length === 1 && (atomicRules[0] as DefaultRuleType).operator === 'between') {
+    return [{ ...(atomicRules[0] as DefaultRuleType), operator: 'notBetween' }];
+  }
 
   return [{ combinator: 'and', not: true, rules: atomicRules }];
 };
@@ -511,8 +563,30 @@ const visitAtomicExpression = (node: CstNode): RuleOrGroup[] => {
   return [];
 };
 
+/** Rules parsed from `literal <= field` (candidate between lower bounds) */
+const reversedLTE = new WeakSet<RuleOrGroup>();
+
+const flippedOps: Record<string, string> = {
+  Equal: '=',
+  NotEqual: '!=',
+  LessEqual: '>=',
+  GreaterEqual: '<=',
+  Less: '>',
+  Greater: '<',
+};
+
 /** Visits a condition CST node and returns a DefaultRuleType (no meta). */
-const visitCondition = (node: CstNode): DefaultRuleType => {
+const visitCondition = (cond: CstNode): DefaultRuleType => {
+  const rev = (cond.children.reversedCondition as CstNode[] | undefined)?.[0];
+  if (rev) {
+    const field = extractPropertyRef((rev.children.field as CstNode[])[0]);
+    const value = tokenToValue((rev.children.lit as IToken[])[0]);
+    const opTok = (rev.children.op as IToken[])[0];
+    const rule = { field, operator: flippedOps[opTok.tokenType.name], value } as DefaultRuleType;
+    if (opTok.tokenType === LessEqual) reversedLTE.add(rule);
+    return rule;
+  }
+  const node = (cond.children.fieldCondition as CstNode[])[0];
   const field = extractPropertyRef((node.children.field as CstNode[])[0]);
 
   if (node.children.IsNull) {

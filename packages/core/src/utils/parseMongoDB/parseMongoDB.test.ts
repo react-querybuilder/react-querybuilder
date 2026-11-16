@@ -560,3 +560,75 @@ describe('matches/doesNotMatch', () => {
     }
   });
 });
+
+describe('$nor (#1135)', () => {
+  it('round-trips negated groups', () => {
+    const query: DefaultRuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'a', operator: '=', value: 'x' },
+        {
+          combinator: 'or',
+          not: true,
+          rules: [
+            { field: 'b', operator: '=', value: 'y' },
+            { field: 'c', operator: '=', value: 'z' },
+          ],
+        },
+      ],
+    };
+    expect(parseMongoDB(formatQuery(query, 'mongodb_query'))).toEqual(query);
+  });
+
+  it('parses $nor variants', () => {
+    const b = { field: 'b', operator: '=', value: 'y' };
+    const c = { field: 'c', operator: '=', value: 'z' };
+    expect(parseMongoDB({ $nor: [{ b: 'y' }] })).toEqual({
+      combinator: 'and',
+      not: true,
+      rules: [b],
+    });
+    expect(parseMongoDB({ a: 'x', $nor: [{ b: 'y' }] })).toEqual({
+      combinator: 'and',
+      rules: [
+        { field: 'a', operator: '=', value: 'x' },
+        { combinator: 'and', not: true, rules: [b] },
+      ],
+    });
+    expect(parseMongoDB({ $nor: [{ b: 'y' }, { c: 'z' }] })).toEqual({
+      combinator: 'or',
+      not: true,
+      rules: [b, c],
+    });
+    expect(parseMongoDB({ $nor: [{ $nor: [{ b: 'y' }, { c: 'z' }] }] })).toEqual({
+      combinator: 'and',
+      not: true,
+      rules: [{ combinator: 'or', not: true, rules: [b, c] }],
+    });
+    for (const $nor of [[], {}, [1], [{ $bogus: 1 }]]) {
+      expect(parseMongoDB({ $nor })).toEqual({ combinator: 'and', rules: [] });
+    }
+  });
+
+  it('treats empty $nor clause as match-all', () => {
+    const matchNone = { combinator: 'and', not: true, rules: [] };
+    expect(parseMongoDB({ $nor: [{}, { b: 'y' }] })).toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{}] })).toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $expr: true }] })).toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $and: [{ $expr: true }, {}] }] })).toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $expr: false }, { b: 'y' }] })).not.toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $and: [] }, { b: 'y' }] })).not.toEqual(matchNone);
+    expect(parseMongoDB({ $nor: [{ $expr: true, b: 'y' }] })).not.toEqual(matchNone);
+    // parse-format-parse
+    const once = parseMongoDB({ $nor: [{}] });
+    expect(parseMongoDB(formatQuery(once, 'mongodb_query'))).toEqual(matchNone);
+  });
+
+  it('drops unparseable $nor clauses', () => {
+    expect(parseMongoDB({ $nor: [{ $bogus: 1 }, { b: 'y' }] })).toEqual({
+      combinator: 'and',
+      not: true,
+      rules: [{ field: 'b', operator: '=', value: 'y' }],
+    });
+  });
+});
