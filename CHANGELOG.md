@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [#1134] New `formatQuery` option `nlPostProcessor` for the "natural_language" format. It receives the complete output string and returns the final result, enabling context-dependent grammar that static translations can't express (e.g. Korean particle allomorphs like 이/가 and 을/를, or Spanish `y` → `e` and `o` → `u`). Called once per `formatQuery` call, including when match-mode subqueries are present.
+- [#1140] New `formatQuery` option `escapeLikeWildcards` for "sql", "parameterized", and "parameterized_named" formats. When `true`, `\`, `%`, and `_` (plus `[` for the "mssql" preset) in `contains`/`beginsWith`/`endsWith` (and negated) values are escaped with a backslash and an `escape '\'` clause is appended (`escape '\\'` for the "mysql" preset), so they match literally. Applies to inline literals and bound params, not `valueSource: "field"`/`"parameter"`. Default `false` (no output change).
 
 ### Fixed
 
@@ -19,6 +20,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - All relation operators (`==`, `!=`, `<`, `<=`, `>`, `>=`, `in`) share one left-associative precedence level, so `a == b in [x]` parses as `(a == b) in [x]`.
   - With `getExpression`, `expr in [literals]` (e.g. `(a * 2) in [1, 2]`) imports as an `in` rule with `lhs` set.
 - [#1137] `@react-querybuilder/expr`: rule processors no longer ignore a rule's `lhs` for `between`/`notBetween` with plain-value (or field) bounds. For example, the "cel" format now produces `((a * 2) >= 1 && (a * 2) <= 5)` instead of `(a >= 1 && a <= 5)`. Applies to every expression rule processor. The "cel", "spel", "cypher", "sparql", and "jsonata" processors also apply `lhs` to `in`/`notIn`. Other operators that a processor doesn't support still fall back to the stock processor, which ignores `lhs`.
+- [#1140] `formatQuery` export fixes:
+  - "elasticsearch": `contains`/`beginsWith`/`endsWith` (and negated) values are escaped for Lucene `regexp`, so metacharacters like `.` and `*` match literally.
+  - "jsonata": `number`/`bigint` elements of `in`/`notIn` and `between`/`notBetween` values are emitted unquoted even without `parseNumbers` (previously `n in ["5", "6"]` never matched and `n >= "4"` threw).
+  - "parameterized", "parameterized_named", "cypher", "gremlin", and "sparql" sort numeric `between`/`notBetween` bounds ascending unless `preserveValueOrder` is set, matching "sql".
+  - "gremlin": top-level `combinator: "or"`, `not: true`, and independent combinators (at any level) are no longer ignored. Such groups now emit nested `.or()`/`.not()`/`.and()` steps. Plain top-level AND groups still emit the `.has().has()` chain.
+- [#1141] `parseSQL` no longer throws on string literals that start with `'%'` followed by an escaped quote (e.g. `(s like '%''s%')` from `formatQuery`'s `contains "'s"`). Plain `s = '%'` also parses now.
+- [#1141] `parseCEL` handles string escapes: `\"` no longer ends a string early (dropping the rule), escape sequences (`\\`, `\n`, `\xHH`, `\uHHHH`, octal, etc.) are unescaped per the CEL spec, raw strings (`r"..."`) are returned verbatim, and triple-quoted strings may contain quotes. The "cel" format now encodes CR/LF in string values, so values with `"`, `\`, and newlines round-trip.
+- [#1142] `parseCypher` parses literal-on-left comparisons (`20 < age` → `age > 20`) instead of returning no rules, and `a <= f AND f <= b` / `NOT (a <= f AND f <= b)` (the "cypher" format's `between`/`notBetween` output) parse as `between`/`notBetween`.
+- [#1142] `parseMongoDB` no longer drops `$nor` clauses. They import as negated groups, so `not: true` groups from "mongodb_query" round-trip. Empty `$nor` is treated as match-all.
+- [#1142] `parseGremlin` respects quotes and escapes when splitting steps and arguments, so values containing `,`, `(`, `)`, or `.` (e.g. `within('a,b', 'c')`) parse correctly. String literals and property names are unescaped, and double-quoted strings are accepted.
 - `@react-querybuilder/dnd`: With the pragmatic-drag-and-drop adapter, drops no longer get handled more than once when several `QueryBuilderDnD` providers are on the same page. Before, each drop was applied once per provider, so moves could cancel each other out.
 
 ## [v8.26.0] - 2026-10-26
@@ -2651,6 +2662,9 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1134]: https://github.com/react-querybuilder/react-querybuilder/pull/1134
 [#1136]: https://github.com/react-querybuilder/react-querybuilder/issues/1136
 [#1137]: https://github.com/react-querybuilder/react-querybuilder/issues/1137
+[#1140]: https://github.com/react-querybuilder/react-querybuilder/pull/1140
+[#1141]: https://github.com/react-querybuilder/react-querybuilder/pull/1141
+[#1142]: https://github.com/react-querybuilder/react-querybuilder/pull/1142
 
 <!-- #endregion -->
 
