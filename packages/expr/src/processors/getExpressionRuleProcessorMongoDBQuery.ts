@@ -10,6 +10,7 @@ import { defaultFunctionMeta } from '../functions/meta';
 import { defaultMongoDBSerializers } from '../functions/mongodb';
 import { getRuleExpressions } from '../registry';
 import type { MongoAggSerializerRegistry } from '../types';
+import { coerceLeafValue } from '../utils/leafValue';
 import { serializeMongoAgg } from '../utils/serializeMongoAgg';
 import { validateExpression } from '../utils/validateExpression';
 
@@ -125,7 +126,7 @@ export const getExpressionRuleProcessorMongoDBQuery =
       // Both bounds are required; an incomplete expression between omits the rule.
       if (!expr.rhs || !expr.rhs2) return '';
       const bound = (n: NonNullable<typeof expr.rhs>) =>
-        n.kind === 'value' ? literal(n.value) : serializeMongoAgg(n, serial, opts);
+        n.kind === 'value' ? literal(coerceLeafValue(n)) : serializeMongoAgg(n, serial, opts);
       const from = bound(expr.rhs);
       const to = bound(expr.rhs2);
       return operator === 'notbetween'

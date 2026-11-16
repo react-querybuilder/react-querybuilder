@@ -180,6 +180,16 @@ describe('MongoDBQuery processor', () => {
     expect(mq(strBetween)).toEqual({
       $expr: { $and: [{ $gte: ['$d', { $literal: '$a' }] }, { $lte: ['$d', 'z'] }] },
     });
+    // Numeric-typed string expression bounds coerced to numbers
+    const typedBetween = group(
+      exprRule(
+        { operator: 'between' },
+        { lhs: field('d'), rhs: value('1', 'number'), rhs2: value('5', 'number') }
+      )
+    );
+    expect(mq(typedBetween)).toEqual({
+      $expr: { $and: [{ $gte: ['$d', 1] }, { $lte: ['$d', 5] }] },
+    });
     // Scalar `$` strings wrapped too
     expect(mq(group(exprRule({ operator: '=', value: '$a' }, { lhs: field('d') })))).toEqual({
       $expr: { $eq: ['$d', { $literal: '$a' }] },
