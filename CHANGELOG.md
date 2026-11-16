@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.27.0] - 2026-11-16
+
 ### Added
 
 - [#1134] New `formatQuery` option `nlPostProcessor` for the "natural_language" format. It receives the complete output string and returns the final result, enabling context-dependent grammar that static translations can't express (e.g. Korean particle allomorphs like 이/가 and 을/를, or Spanish `y` → `e` and `o` → `u`). Called once per `formatQuery` call, including when match-mode subqueries are present.
@@ -2670,7 +2672,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.26.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.27.0...HEAD
+[v8.27.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.26.0...v8.27.0
 [v8.26.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.25.0...v8.26.0
 [v8.25.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.4...v8.25.0
 [v8.24.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.3...v8.24.4
