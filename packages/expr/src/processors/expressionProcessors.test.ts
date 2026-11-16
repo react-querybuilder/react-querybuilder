@@ -253,10 +253,49 @@ describe('SQL processor', () => {
 
   it('falls back to the default processor for unsupported operators', () => {
     const expressions: ResolvedExpressions = { lhs: fn('multiply', field('price'), field('qty')) };
-    const q = group(exprRule({ field: 'price', operator: 'between', value: '1,2' }, expressions));
+    const q = group(exprRule({ field: 'price', operator: 'in', value: '1,2' }, expressions));
     expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
       formatQuery(q, { format: 'sql' })
     );
+  });
+
+  it('applies plain-value between bounds to the lhs expression', () => {
+    const expressions: ResolvedExpressions = { lhs: fn('multiply', field('price'), field('qty')) };
+    const sql = (
+      rule: Partial<RuleType> & { operator: string },
+      opts: Record<string, unknown> = {}
+    ) =>
+      formatQuery(group(exprRule({ field: 'price', ...rule }, expressions)), {
+        format: 'sql',
+        ruleProcessor: expressionRuleProcessorSQL,
+        ...opts,
+      });
+    expect(sql({ operator: 'between', value: '5,1' }, { parseNumbers: true })).toBe(
+      '((price * qty) between 1 and 5)'
+    );
+    // Plain bounds go through the (custom) value processor
+    expect(sql({ operator: 'between', value: '5,1' }, { valueProcessor: () => 'LO and HI' })).toBe(
+      '((price * qty) between LO and HI)'
+    );
+    expect(sql({ operator: 'between', value: '5,1' }, { valueProcessor: () => '' })).toBe(
+      '(1 = 1)'
+    );
+    expect(
+      expressionRuleProcessorSQL(exprRule({ operator: 'between', value: [1, 5] }, expressions))
+    ).toBe("(price * qty) between '1' and '5'");
+    expect(sql({ operator: 'notBetween', value: [1, 5] })).toBe(
+      "((price * qty) not between '1' and '5')"
+    );
+    expect(
+      sql({ operator: 'between', value: '5,1' }, { parseNumbers: true, preserveValueOrder: true })
+    ).toBe('((price * qty) between 5 and 1)');
+    expect(sql({ operator: 'between', value: ['1', '5'] }, { parseNumbers: false })).toBe(
+      "((price * qty) between '1' and '5')"
+    );
+    expect(sql({ operator: 'between', value: ['a', 'b'], valueSource: 'field' })).toBe(
+      '((price * qty) between a and b)'
+    );
+    expect(sql({ operator: 'between', value: ['1', ''] })).toBe('(1 = 1)');
   });
 
   it('falls back when there are no expressions', () => {
@@ -594,7 +633,7 @@ describe('Parameterized processor', () => {
 
   it('falls back for unsupported operators', () => {
     const expressions: ResolvedExpressions = { lhs: fn('multiply', field('price'), field('qty')) };
-    const q = group(exprRule({ field: 'price', operator: 'between', value: '1,2' }, expressions));
+    const q = group(exprRule({ field: 'price', operator: 'in', value: '1,2' }, expressions));
     expect(
       formatQuery(q, {
         format: 'parameterized',
@@ -846,7 +885,7 @@ describe('JsonLogic processor', () => {
 
   it('falls back for unsupported operators', () => {
     const expressions: ResolvedExpressions = { lhs: fn('multiply', field('price'), field('qty')) };
-    const q = group(exprRule({ field: 'price', operator: 'between', value: '1,2' }, expressions));
+    const q = group(exprRule({ field: 'price', operator: 'in', value: '1,2' }, expressions));
     expect(
       formatQuery(q, { format: 'jsonlogic', ruleProcessor: expressionRuleProcessorJsonLogic })
     ).toEqual(formatQuery(q, { format: 'jsonlogic' }));
@@ -890,5 +929,38 @@ describe('JsonLogic processor', () => {
       { lhs: fn('pow', field('x'), value(2, 'number')), rhs: value(9, 'number') }
     );
     expect(proc(rule, {})).toEqual({ '==': [{ pow: [{ var: 'x' }, 2] }, 9] });
+  });
+});
+
+// #1137
+describe('lhs w/ plain-value between (structured formats)', () => {
+  const lhs = fn('multiply', field('a'), value(2, 'number'));
+  const q = group(exprRule({ field: 'a', operator: 'between', value: [1, 5] }, { lhs }));
+
+  it('JsonLogic', () => {
+    expect(
+      formatQuery(q, { format: 'jsonlogic', ruleProcessor: expressionRuleProcessorJsonLogic })
+    ).toEqual({ and: [{ '<=': [1, { '*': [{ var: 'a' }, 2] }, 5] }] });
+  });
+
+  it('Parameterized', () => {
+    expect(
+      formatQuery(q, {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: '((a * ?) between ? and ?)', params: [2, 1, 5] });
+  });
+
+  it('defers to stock processor when a bound is missing', () => {
+    const partial = group(exprRule({ field: 'a', operator: 'between', value: ['1'] }, { lhs }));
+    for (const [format, ruleProcessor] of [
+      ['jsonlogic', expressionRuleProcessorJsonLogic],
+      ['parameterized', expressionRuleProcessorParameterized],
+    ] as const) {
+      expect(formatQuery(partial, { format, ruleProcessor })).toEqual(
+        formatQuery(partial, { format })
+      );
+    }
   });
 });

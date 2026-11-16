@@ -37,7 +37,7 @@ export const getExpressionRuleProcessorParameterized =
     const serial = serializers
       ? { ...defaultParameterizedSerializers, ...serializers }
       : defaultParameterizedSerializers;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     const parameterized = opts.format !== 'parameterized_named';
     const empty = () => ({ sql: '', params: parameterized ? [] : {} });
 
@@ -47,8 +47,8 @@ export const getExpressionRuleProcessorParameterized =
 
     const operator = lc(mapSQLOperator(rule.operator));
     const unary = operator === 'is null' || operator === 'is not null';
-    // Between is supported only with expression-sourced bounds; a plain-value between defers
-    // to the stock processor (which handles number parsing/ordering/field sources).
+    // Between needs resolved bounds (expression-sourced, or plain values w/ an lhs; see
+    // `getRuleExpressions`); otherwise defers to the stock processor.
     const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
     if (
       !unary &&

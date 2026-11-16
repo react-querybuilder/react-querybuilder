@@ -22,6 +22,7 @@ const factory = makeStringExprProcessor({
       kind === 'contains' ? 'contains' : kind === 'beginswith' ? 'startsWith' : 'endsWith';
     return `${negate ? '!' : ''}${lhs}.${method}(${rhs})`;
   },
+  renderIn: (lhs, values, negate) => `${negate ? '!' : ''}(${lhs} in [${values.join(', ')}])`,
 });
 
 /**

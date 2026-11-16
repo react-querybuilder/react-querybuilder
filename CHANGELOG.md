@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- [#1136] `parseCEL` now gives arithmetic operators higher precedence than comparisons, as CEL does. With `getExpression` (e.g. `expressionParserCEL`), `a >= 1.5 * b` parses to the same rule as `a >= (1.5 * b)` instead of being dropped. Related grammar fixes:
+  - The ternary operator (`? :`) now has the lowest precedence and groups from the right, so `a && b ? x : y` parses as `(a && b) ? x : y` and `x ? y : z ? u : v` as `x ? y : (z ? u : v)`.
+  - Subtraction without spaces (`b-1`) no longer fails to parse.
+  - All relation operators (`==`, `!=`, `<`, `<=`, `>`, `>=`, `in`) share one left-associative precedence level, so `a == b in [x]` parses as `(a == b) in [x]`.
+  - With `getExpression`, `expr in [literals]` (e.g. `(a * 2) in [1, 2]`) imports as an `in` rule with `lhs` set.
+- [#1137] `@react-querybuilder/expr`: rule processors no longer ignore a rule's `lhs` for `between`/`notBetween` with plain-value (or field) bounds. For example, the "cel" format now produces `((a * 2) >= 1 && (a * 2) <= 5)` instead of `(a >= 1 && a <= 5)`. Applies to every expression rule processor. The "cel", "spel", "cypher", "sparql", and "jsonata" processors also apply `lhs` to `in`/`notIn`. Other operators that a processor doesn't support still fall back to the stock processor, which ignores `lhs`.
 - `@react-querybuilder/dnd`: With the pragmatic-drag-and-drop adapter, drops no longer get handled more than once when several `QueryBuilderDnD` providers are on the same page. Before, each drop was applied once per provider, so moves could cancel each other out.
 
 ## [v8.26.0] - 2026-10-26
@@ -2643,6 +2649,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1122]: https://github.com/react-querybuilder/react-querybuilder/pull/1122
 [#1124]: https://github.com/react-querybuilder/react-querybuilder/pull/1124
 [#1134]: https://github.com/react-querybuilder/react-querybuilder/pull/1134
+[#1136]: https://github.com/react-querybuilder/react-querybuilder/issues/1136
+[#1137]: https://github.com/react-querybuilder/react-querybuilder/issues/1137
 
 <!-- #endregion -->
 

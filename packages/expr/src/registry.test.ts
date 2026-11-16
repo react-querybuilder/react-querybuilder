@@ -108,6 +108,29 @@ describe('getRuleExpressions', () => {
     expect(getRuleExpressions(rule)).toEqual({ lhs, rhs: lower, rhs2: upper });
   });
 
+  it('normalizes plain-value between bounds w/ an lhs', () => {
+    const b = (value: unknown, extra: Partial<RuleType> = {}, opts = {}) =>
+      getRuleExpressions({ field: 'a', operator: 'between', value, lhs, ...extra }, opts);
+    const v = (value: unknown): ExpressionNode => ({ kind: 'value', value });
+    // Reversed bigint pair reordered unless preserveValueOrder
+    expect(b([20n, 10n])).toEqual({ lhs, rhs: v(10n), rhs2: v(20n) });
+    expect(b([20n, 10n], {}, { preserveValueOrder: true })).toEqual({
+      lhs,
+      rhs: v(20n),
+      rhs2: v(10n),
+    });
+    // parseNumbers false: no parsing, no reordering
+    expect(b([20, 10], {}, { parseNumbers: false })).toEqual({ lhs, rhs: v(20), rhs2: v(10) });
+    // Mixed pair keeps original types/order
+    expect(b(['10', 'x'])).toEqual({ lhs, rhs: v('10'), rhs2: v('x') });
+    // Parameter bounds stay parameter refs
+    expect(b(['p1', 'p2'], { valueSource: 'parameter' })).toEqual({
+      lhs,
+      rhs: { kind: 'parameter', parameter: 'p1' },
+      rhs2: { kind: 'parameter', parameter: 'p2' },
+    });
+  });
+
   it('returns undefined for a between with no bounds and no lhs', () => {
     const rule = {
       field: 'a',

@@ -125,22 +125,21 @@ false                                                             return 'BOOL_L
 [rR]?["]["]["](\.|[^"])*["]["]["]                                 return 'STRING_LIT'
 [rR]?['](\.|[^'\n\r])*[']                                         return 'STRING_LIT'
 [rR]?["](\.|[^"\n\r])*["]                                         return 'STRING_LIT'
-[-]?([0-9]+|0x[0-9a-fA-F]+)                                       return 'INT_LIT'
+([0-9]+|0x[0-9a-fA-F]+)                                           return 'INT_LIT'
 ([0-9]+|0x[0-9a-fA-F]+)[uU]                                       return 'UINT_LIT'
-[-]?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+(\.[0-9]+)?)?                return 'FLOAT_LIT'
+[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+(\.[0-9]+)?)?                   return 'FLOAT_LIT'
 // Misc
 <<EOF>>                                                           return 'EOF'
 .                                                                 return 'INVALID'
 
 /lex
 
+%right '?' ':'
 %left '||'
 %left '&&'
-%left '==' '!='
-%left '>' '>=' '<' '<='
+%left '==' '!=' '>' '>=' '<' '<=' 'in'
 %left '+' '-'
 %left '/' '%' '*'
-%left '?' ':'
 %left IDENT
 %left INT_LIT UINT_LIT
 
@@ -162,6 +161,8 @@ number_literal
   : INT_LIT -> { type: 'IntegerLiteral', value: parseInt($1, /x/.test($1) ? 16 : 10) }
   | UINT_LIT = -> { type: 'UnsignedIntegerLiteral', value: parseInt($1.replace(/u$/i, ''), /^0x/.test($1) ? 16 : 10) }
   | FLOAT_LIT = -> { type: 'FloatLiteral', value: parseFloat($1) }
+  | '-' INT_LIT -> { type: 'IntegerLiteral', value: -parseInt($2, /x/.test($2) ? 16 : 10) }
+  | '-' FLOAT_LIT -> { type: 'FloatLiteral', value: -parseFloat($2) }
   ;
 boolean_literal
   : BOOL_LIT -> { type: 'BooleanLiteral', value: $1 === 'true' }
@@ -179,18 +180,15 @@ literal
 ident
   : IDENT -> { type: 'Identifier', value: $1 }
   ;
-relop
-  : '==' -> $1
-  | '>=' -> $1
-  | '>' -> $1
-  | '<=' -> $1
-  | '<' -> $1
-  | '!=' -> $1
-  ;
 relation
-  : member relop member -> { type: 'Relation', left: $1, operator: $2, right: $3 }
-  | member 'in' list -> { type: 'Relation', left: $1, operator: $2, right: $3 }
-  | member 'in' map -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  : expr '==' expr -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  | expr '!=' expr -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  | expr '>=' expr -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  | expr '>' expr -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  | expr '<=' expr -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  | expr '<' expr -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  | expr 'in' list -> { type: 'Relation', left: $1, operator: $2, right: $3 }
+  | expr 'in' map -> { type: 'Relation', left: $1, operator: $2, right: $3 }
   ;
 negation
   : '!' -> 1

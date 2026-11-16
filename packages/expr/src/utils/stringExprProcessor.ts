@@ -6,6 +6,7 @@ import {
   nullOperators,
   relationalOperators,
   substringOperators,
+  toArray,
 } from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
 import { getRuleExpressions } from '../registry';
@@ -18,6 +19,7 @@ import { validateExpression } from './validateExpression';
 const SCALAR_OPERATORS = new Set<string>(relationalOperators);
 const NULL_OPERATORS = new Set<string>([...nullOperators].map(lc));
 const BETWEEN_OPERATORS = new Set<string>([...betweenOperators].map(lc));
+const IN_OPERATORS = new Set<string>(['in', 'notin']);
 
 /** Canonical string-match category emitted by a {@link StringExprConfig.renderStringMatch}. */
 export type StringMatchKind = 'contains' | 'beginswith' | 'endswith';
@@ -57,13 +59,19 @@ export interface StringExprConfig {
    * around serialized `lhs`/`rhs` fragments.
    */
   renderStringMatch: (kind: StringMatchKind, negate: boolean, lhs: string, rhs: string) => string;
+  /**
+   * Renders an `in` (or negated `notIn`) list check around a serialized `lhs` expression and
+   * rendered list items. Only used when the rule has an `lhs` and a non-expression value.
+   */
+  renderIn: (lhs: string, values: string[], negate: boolean) => string;
 }
 
 /**
  * Builds a `getExpressionRuleProcessor…` factory for a string-output format. The returned
  * factory accepts optional serializers merged over the format's built-ins. Supports scalar
- * comparisons, `is null`/`is not null`, and expression-sourced `between`/`notBetween`;
- * rules without expressions (or with any other operator) defer to the stock processor.
+ * comparisons, `is null`/`is not null`, `between`/`notBetween`, string matching, and (with an
+ * `lhs`) `in`/`notIn`; rules without expressions (or with any other operator) defer to the
+ * stock processor.
  */
 export const makeStringExprProcessor =
   (config: StringExprConfig) =>
@@ -72,7 +80,7 @@ export const makeStringExprProcessor =
     const opts = options ?? {};
     const serial = serializers ? { ...config.serializers, ...serializers } : config.serializers;
     const { dialect, fallback } = config;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     if (!expr || (!expr.lhs && !expr.rhs)) return fallback(rule, opts);
 
     const operator = lc(rule.operator);
@@ -80,7 +88,15 @@ export const makeStringExprProcessor =
     const scalarOp = config.compare[operator];
     const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
     const stringMatch = STRING_MATCH_OPERATORS[operator];
-    if (!unary && !scalarOp && !SCALAR_OPERATORS.has(operator) && !betweenExpr && !stringMatch) {
+    const inList = IN_OPERATORS.has(operator) && !!expr.lhs && rule.valueSource !== 'expression';
+    if (
+      !unary &&
+      !scalarOp &&
+      !SCALAR_OPERATORS.has(operator) &&
+      !betweenExpr &&
+      !stringMatch &&
+      !inList
+    ) {
       return fallback(rule, opts);
     }
 
@@ -101,6 +117,20 @@ export const makeStringExprProcessor =
     if (betweenExpr) {
       if (!expr.rhs || !expr.rhs2) return '';
       return config.renderBetween(lhs, ser(expr.rhs), ser(expr.rhs2), operator === 'notbetween');
+    }
+
+    if (inList) {
+      // Empty strings are valid alternatives; empty list still renders (`in []`)
+      const items = toArray(rule.value)
+        .filter(v => v !== null && v !== undefined)
+        .map(v =>
+          rule.valueSource === 'field'
+            ? dialect.renderField(`${v}`, opts)
+            : rule.valueSource === 'parameter'
+              ? ser({ kind: 'parameter', parameter: `${v}` })
+              : dialect.renderLeaf({ kind: 'value', value: v }, opts)
+        );
+      return config.renderIn(lhs, items, operator === 'notin');
     }
 
     const rhs = expr.rhs

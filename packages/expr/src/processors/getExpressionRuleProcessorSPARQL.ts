@@ -25,6 +25,7 @@ const factory = makeStringExprProcessor({
     const fn = kind === 'contains' ? 'CONTAINS' : kind === 'beginswith' ? 'STRSTARTS' : 'STRENDS';
     return `${negate ? '!' : ''}${fn}(${lhs}, ${rhs})`;
   },
+  renderIn: (lhs, values, negate) => `${lhs} ${negate ? 'NOT IN' : 'IN'} (${values.join(', ')})`,
 });
 
 /**

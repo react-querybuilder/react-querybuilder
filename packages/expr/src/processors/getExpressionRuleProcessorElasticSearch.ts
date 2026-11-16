@@ -62,7 +62,7 @@ export const getExpressionRuleProcessorElasticSearch =
     const serial = serializers
       ? { ...defaultPainlessSerializers, ...serializers }
       : defaultPainlessSerializers;
-    const expr = getRuleExpressions(rule);
+    const expr = getRuleExpressions(rule, opts);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorElasticSearch(rule, opts);
 
     const operator = lc(rule.operator);

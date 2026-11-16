@@ -372,7 +372,13 @@ const sqlProcessor = getExpressionRuleProcessorSQL({
 
 ### Supported operators and fallback
 
-The processors handle the scalar comparison operators (`=`, `!=`, `<`, `<=`, `>`, `>=`), the unary `null` / `notNull` operators, and `between` / `notBetween` (with expression bounds). A rule with any other operator—or with no expression at all—falls back to the corresponding stock rule processor, so mixing expression and non-expression rules in one query works transparently. Rules whose expressions fail [validation](#validation) are omitted from the output (an empty string for SQL, `false` for JSONLogic, `undefined` for the library-backed formats).
+The processors handle the scalar comparison operators (`=`, `!=`, `<`, `<=`, `>`, `>=`), the unary `null` / `notNull` operators, and `between` / `notBetween`. `between` / `notBetween` bounds may be expressions, or plain values (or fields, with `valueSource: 'field'`) when the rule has an `lhs`—e.g. `((a * 2) >= 1 && (a * 2) <= 5)`. Plain bounds follow the stock processors' `parseNumbers` and `preserveValueOrder` handling. The `cel`, `spel`, `cypher`, `sparql`, and `jsonata` processors also apply an `lhs` to `in` / `notIn`. A rule with any other operator—or with no expression at all—falls back to the corresponding stock rule processor, so mixing expression and non-expression rules in one query works transparently. Rules whose expressions fail [validation](#validation) are omitted from the output (an empty string for SQL, `false` for JSONLogic, `undefined` for the library-backed formats).
+
+:::caution
+
+The stock processors know nothing about `lhs`, so a rule with an `lhs` and an otherwise unsupported operator (for example, `in` / `notIn` in the `sql` format) is formatted against the plain `field`, ignoring the `lhs`.
+
+:::
 
 String-match operators (`contains`, `beginsWith`, `endsWith`, and their negations) support expression operands—including an expression RHS (search term) and/or LHS—for every export format except `tanstack_db`, each emitting its dialect's native construct (e.g. SQL `LIKE`, CEL `.startsWith()`, Cypher `STARTS WITH`, SPARQL `STRSTARTS`, JSONata `$substring`/`$contains`, Painless `.startsWith()` for `elasticsearch`, `$indexOfCP`/`$substrCP` aggregation for `mongodb_query`). The `tanstack_db` format omits string-match rules with an expression operand, since its `like` requires a static pattern. The `sequelize` format omits a string-match rule whose search term is a bare field reference (`valueSource: 'field'`).
 

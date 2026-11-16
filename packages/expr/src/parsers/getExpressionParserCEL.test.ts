@@ -199,3 +199,23 @@ describe('parseCELExpression via handler directly', () => {
     });
   });
 });
+
+// #1136
+describe('unparenthesized arithmetic operands', () => {
+  it.each([
+    ['a >= 1.5 * b', 'a >= (1.5 * b)'],
+    ['price > cost + quantity * 2', 'price > (cost + (quantity * 2))'],
+    ['price - 1 < cost', '(price - 1) < cost'],
+    ['price * 2 > 100 && x == 1', '(price * 2) > 100 && x == 1'],
+  ])('%s', (bare, grouped) => {
+    const parsed = parseCEL(bare, opt);
+    expect(parsed.rules.length).toBeGreaterThan(0);
+    expect(parsed).toEqual(parseCEL(grouped, opt));
+  });
+
+  it('round-trips through formatQuery', () => {
+    const q = parseCEL('a >= 1.5 * b', opt);
+    const cel = formatQuery(q, { format: 'cel', ruleProcessor: expressionRuleProcessorCEL });
+    expect(parseCEL(cel, opt)).toEqual(q);
+  });
+});

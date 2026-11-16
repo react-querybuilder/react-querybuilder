@@ -204,11 +204,30 @@ describe('CEL processor', () => {
       { rhs: value(1, 'number') }
     );
     expect(f(group(incompleteBetween, plain))).toBe(`x == "1"`);
-    // Unsupported operator with an expression defers to the stock processor.
+    // Unsupported operator with an expression defers to the stock processor (lhs ignored).
     const unsupported = group(
-      exprRule({ field: 'q', operator: 'in', value: '1,2' }, { lhs: fn('abs', field('q')) })
+      exprRule({ field: 'q', operator: 'matches', value: 'x' }, { lhs: fn('abs', field('q')) })
     );
     expect(f(unsupported)).toBe(formatQuery(unsupported, { format: 'cel' }));
+    // Between w/ an lhs but missing bound omits the rule
+    const emptyBetween = exprRule({ operator: 'between', value: ['1'] }, { lhs: field('q') });
+    expect(f(group(emptyBetween, plain))).toBe(`x == "1"`);
+    // Empty in/notIn list still renders
+    const emptyIn = exprRule({ operator: 'in', value: [] }, { lhs: field('q') });
+    const emptyNotIn = exprRule({ operator: 'notIn', value: [] }, { lhs: field('q') });
+    expect(f(group(emptyIn, plain))).toBe(`(q in []) && x == "1"`);
+    expect(f(group(emptyNotIn, plain))).toBe(`!(q in []) && x == "1"`);
+    // Empty strings kept as alternatives; parameter values render as parameter refs
+    expect(f(group(exprRule({ operator: 'in', value: ['', 'a'] }, { lhs: field('q') })))).toBe(
+      `(q in ["", "a"])`
+    );
+    expect(
+      f(
+        group(
+          exprRule({ operator: 'in', value: ['p1'], valueSource: 'parameter' }, { lhs: field('q') })
+        )
+      )
+    ).toBe(`(q in [p1])`);
   });
 
   it('supports custom serializers and default options', () => {
@@ -600,4 +619,55 @@ describe('string-match operators with expression operands', () => {
       '$not($substring(name, 0, $length($uppercase(b))) = $uppercase(b))'
     );
   });
+});
+
+// #1137
+describe('lhs w/ plain-value between/notBetween/in/notIn', () => {
+  const lhs = fn('multiply', field('a'), value(2, 'number'));
+  const procs = {
+    cel: expressionRuleProcessorCEL,
+    spel: expressionRuleProcessorSpEL,
+    cypher: expressionRuleProcessorCypher,
+    sparql: expressionRuleProcessorSPARQL,
+    jsonata: expressionRuleProcessorJSONata,
+  } as const;
+  const fmt = (format: keyof typeof procs, rule: Partial<RuleType> & { operator: string }) =>
+    formatQuery(group(exprRule({ field: 'a', ...rule }, { lhs })), {
+      format,
+      ruleProcessor: procs[format],
+    });
+
+  it.each([
+    ['cel', '((a * 2) >= 1 && (a * 2) <= 5)', '((a * 2) < 1 || (a * 2) > 5)'],
+    ['spel', '((a * 2) >= 1 and (a * 2) <= 5)', '((a * 2) < 1 or (a * 2) > 5)'],
+    ['cypher', '((a * 2) >= 1 AND (a * 2) <= 5)', '((a * 2) < 1 OR (a * 2) > 5)'],
+    ['sparql', '((?a * 2) >= 1 && (?a * 2) <= 5)', '((?a * 2) < 1 || (?a * 2) > 5)'],
+    ['jsonata', '((a * 2) >= 1 and (a * 2) <= 5)', '((a * 2) < 1 or (a * 2) > 5)'],
+  ] as const)('%s between/notBetween', (format, between, notBetween) => {
+    expect(fmt(format, { operator: 'between', value: [1, 5] })).toBe(between);
+    expect(fmt(format, { operator: 'notBetween', value: '5,1' })).toBe(notBetween);
+  });
+
+  it.each([
+    ['cel', '((a * 2) in [1, "x"])', '!((a * 2) in [b, c])'],
+    ['spel', "((a * 2) == 1 or (a * 2) == 'x')", '((a * 2) != b and (a * 2) != c)'],
+    ['cypher', "((a * 2) IN [1, 'x'])", 'NOT ((a * 2) IN [b, c])'],
+    ['sparql', '(?a * 2) IN (1, "x")', '(?a * 2) NOT IN (?b, ?c)'],
+    ['jsonata', '(a * 2) in [1, "x"]', '$not((a * 2) in [b, c])'],
+  ] as const)('%s in/notIn', (format, inList, notInFields) => {
+    expect(fmt(format, { operator: 'in', value: [1, 'x'] })).toBe(inList);
+    expect(fmt(format, { operator: 'notIn', value: 'b,c', valueSource: 'field' })).toBe(
+      notInFields
+    );
+  });
+});
+
+it('spel renders empty in/notIn as constant', () => {
+  const r = (operator: string) =>
+    formatQuery(group(exprRule({ field: 'a', operator, value: [] }, { lhs: field('a') })), {
+      format: 'spel',
+      ruleProcessor: expressionRuleProcessorSpEL,
+    });
+  expect(r('in')).toBe('false');
+  expect(r('notIn')).toBe('true');
 });

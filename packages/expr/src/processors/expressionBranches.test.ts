@@ -71,6 +71,14 @@ describe('NL processor branches', () => {
     expect(out).toBe('');
   });
 
+  it('passes plain between bounds w/ lhs through valueProcessor', () => {
+    const r = rule({ operator: 'between', value: [1, 5], lhs: fn('abs', field('d')) });
+    expect(p(r, { valueProcessor: () => 'LO and HI' })).toBe(
+      'the absolute value of d is between LO and HI'
+    );
+    expect(p(r, { valueProcessor: () => '' })).toBe('');
+  });
+
   it('renders a string-match with an expression RHS', () => {
     const out = p(
       rule({
