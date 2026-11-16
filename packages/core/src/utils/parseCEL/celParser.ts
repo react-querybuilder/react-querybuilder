@@ -216,10 +216,14 @@ export class CELLexer extends JisonLexer implements JisonLexerApi {
         /^(?:&&)/,
         /^(?:\|\|)/,
         /^(?:[_a-zA-Z][_a-zA-Z0-9]*)/,
-        /^(?:[rR]?['][']['](?:\.|[^'])*['][']['])/,
-        /^(?:[rR]?["]["]["](?:\.|[^"])*["]["]["])/,
-        /^(?:[rR]?['](?:\.|[^'\n\r])*['])/,
-        /^(?:[rR]?["](?:\.|[^"\n\r])*["])/,
+        /^(?:[rR]['][']['](?:'(?!'')|[^'])*['][']['])/,
+        /^(?:[rR]["]["]["](?:"(?!"")|[^"])*["]["]["])/,
+        /^(?:[rR]['][^'\n\r]*['])/,
+        /^(?:[rR]["][^"\n\r]*["])/,
+        /^(?:['][']['](?:\\.|'(?!'')|[^'\\])*['][']['])/,
+        /^(?:["]["]["](?:\\.|"(?!"")|[^"\\])*["]["]["])/,
+        /^(?:['](?:\\.|[^'\\\n\r])*['])/,
+        /^(?:["](?:\\.|[^"\\\n\r])*["])/,
         /^(?:[0-9]+|0x[0-9a-fA-F]+)/,
         /^(?:(?:[0-9]+|0x[0-9a-fA-F]+)[uU])/,
         /^(?:[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+(?:\.[0-9]+)?)?)/,
@@ -227,7 +231,7 @@ export class CELLexer extends JisonLexer implements JisonLexerApi {
         /^(?:.)/,
         /^(?:.)/
     ];
-    conditions: any = {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57],"inclusive":true}}
+    conditions: any = {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61],"inclusive":true}}
     performAction (yy:any,yy_:any,$avoiding_name_collisions:any,YY_START:any): any {
           var YYSTATE=YY_START;
         switch($avoiding_name_collisions) {
@@ -335,17 +339,25 @@ export class CELLexer extends JisonLexer implements JisonLexerApi {
       break;
     case 51:return 7
       break;
-    case 52:return 12
+    case 52:return 7
       break;
-    case 53:return 13
+    case 53:return 7
       break;
-    case 54:return 14
+    case 54:return 7
       break;
-    case 55:return 5
+    case 55:return 7
       break;
-    case 56:return 'INVALID'
+    case 56:return 12
       break;
-    case 57:console.log(yy_.yytext);
+    case 57:return 13
+      break;
+    case 58:return 14
+      break;
+    case 59:return 5
+      break;
+    case 60:return 'INVALID'
+      break;
+    case 61:console.log(yy_.yytext);
       break;
         }
     }

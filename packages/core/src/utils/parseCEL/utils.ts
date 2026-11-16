@@ -280,6 +280,30 @@ export const getCELIdentifierFromNegatedChain = (
   return `${getCELIdentifierFromNegatedChain(expr.left)}.${expr.right.value}`;
 };
 
+const celSimpleEscapes: Record<string, string> = {
+  a: '\u0007',
+  b: '\b',
+  f: '\f',
+  n: '\n',
+  r: '\r',
+  t: '\t',
+  v: '\v',
+};
+
+/** Unescapes CEL string literal body (non-raw) per CEL spec escape sequences. */
+export const unescapeCELString = (s: string): string =>
+  s.replaceAll(
+    /\\(?:([xX][\dA-Fa-f]{2}|u[\dA-Fa-f]{4}|U[\dA-Fa-f]{8})|([0-3][0-7]{2})|([\S\s]))/g,
+    (m, hex: string | undefined, oct: string | undefined, ch: string | undefined) => {
+      if (hex) {
+        const cp = Number.parseInt(hex.slice(1), 16);
+        return cp > 0x10_ff_ff ? m : String.fromCodePoint(cp);
+      }
+      if (oct) return String.fromCodePoint(Number.parseInt(oct, 8));
+      return celSimpleEscapes[ch!] ?? ch!;
+    }
+  );
+
 export function evalCELLiteralValue(literal: CELStringLiteral): string;
 export function evalCELLiteralValue(literal: CELBooleanLiteral): boolean;
 export function evalCELLiteralValue(literal: CELNumericLiteral): number | null;
@@ -289,7 +313,8 @@ export function evalCELLiteralValue(literal: CELLiteral): string | boolean | num
 export function evalCELLiteralValue(literal: CELLiteral) {
   switch (literal.type) {
     case 'StringLiteral': {
-      return literal.value.replaceAll(/^((?:'''|"""|'|")?)([\S\s]*?)\1$/gm, '$2');
+      const [, raw, , body] = /^([rR]?)('''|"""|'|")([\S\s]*)\2$/.exec(literal.value)!;
+      return raw ? body : unescapeCELString(body);
     }
     case 'BooleanLiteral': {
       return literal.value;

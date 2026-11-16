@@ -123,7 +123,7 @@ UNION                                                             return 'UNION'
 "}"                                                               return '}'
 ";"                                                               return ';'
 
-['](\%)+[']                                                       return 'WILDCARD'
+['](\%)+['](?!['])                                                return /^\s*[|][|]/.test(`${this._input}`) || /[|][|]\s*['](\%)+[']$/.test(`${this.matched}`) ? 'WILDCARD' : 'STRING'
 (['][^']*['])+                                                    return 'STRING'
 [0][x][0-9a-fA-F]+                                                return 'HEX_NUMERIC'
 [-]?[0-9]+(\.[0-9]+)?                                             return 'NUMERIC'
