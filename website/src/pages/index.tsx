@@ -159,8 +159,11 @@ const SliderDemo = () => {
   );
 };
 
-const sqlValueProcessor: ValueProcessorByRule = (rule: RuleType) =>
-  `${getOption(fields, rule.field)?.inputType === 'date' ? `DATE ` : ''}${defaultValueProcessorByRule(rule)}`;
+const sqlValueProcessor: ValueProcessorByRule = (rule: RuleType, opts) => {
+  const val = defaultValueProcessorByRule(rule, opts);
+  // Unary ops (e.g. "null") yield ''; skip prefix
+  return val && getOption(fields, rule.field)?.inputType === 'date' ? `DATE ${val}` : val;
+};
 
 const showcaseFormats: [ExportFormat, string][] = [
   ['sql', 'SQL'],

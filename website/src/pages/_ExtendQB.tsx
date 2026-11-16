@@ -10,7 +10,7 @@ import { loading } from './_utils';
 import { fields } from './demo/_constants/fields';
 
 const fieldsWithExpressions = fields.map(f =>
-  f.value === 'firstName' ? Object.assign(f, { valueSources: ['value', 'expression'] }) : f
+  f.value === 'firstName' ? Object.assign({}, f, { valueSources: ['value', 'expression'] }) : f
 );
 
 const exprOperators = defaultOperators.filter(o => !o.value.startsWith('doesNot'));
@@ -37,7 +37,7 @@ const initialExtendQuery: RuleGroupType = {
       value: 'vaughan',
       lhs: { kind: 'func', fn: 'lower', args: [{ kind: 'field', field: 'lastName' }] },
     },
-    { field: 'instrument', operator: '=', value: 'Guitar' },
+    { field: 'instrument', operator: '=', value: 'guitar' },
     { field: 'birthdate', operator: '<', value: thirtyYearsAgo },
   ],
 };
