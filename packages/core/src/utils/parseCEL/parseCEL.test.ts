@@ -12,8 +12,10 @@ import type {
 import type { Except } from '../../types/typeUtils';
 import { formatQuery } from '../formatQuery';
 import { toFullOption } from '../optGroupUtils';
+import { CELParser } from './celParser';
 import type { ParseCELOptionsIC, ParseCELOptionsStandard } from './parseCEL';
 import { parseCEL } from './parseCEL';
+import type { CELExpression } from './types';
 import { isCELIdentifier, isCELMember, isCELNumericLiteral, isCELStringLiteral } from './utils';
 
 const wrapRule = (
@@ -1239,4 +1241,38 @@ it('rejects matches on invalid field', () => {
   expect(
     parseCEL(`f.matches("a")`, { parseRegex: true, fields: [{ name: 'g', label: 'G' }] })
   ).toEqual({ combinator: 'and', rules: [] });
+});
+
+describe('grammar precedence', () => {
+  const parser = new CELParser();
+  // Renders the AST w/ explicit grouping
+  const show = (n: CELExpression): string => {
+    const x = n as CELExpression & Record<string, CELExpression & { value?: unknown }>;
+    if (n.type === 'Relation') return `(${show(x.left)} ${x.operator} ${show(x.right)})`;
+    if (n.type === 'ConditionalExpr')
+      return `(${show(x.condition)} ? ${show(x.valueIfTrue)} : ${show(x.valueIfFalse)})`;
+    if (n.type === 'ConditionalAnd') return `(${show(x.left)} && ${show(x.right)})`;
+    if (n.type === 'ConditionalOr') return `(${show(x.left)} || ${show(x.right)})`;
+    if (n.type === 'Multiplication') return `(${show(x.left)} * ${show(x.right)})`;
+    if (n.type === 'Subtraction') return `(${show(x.left)} - ${show(x.right)})`;
+    return `${(n as CELExpression & { value: unknown }).value}`;
+  };
+  const p = (cel: string) => show(parser.parse(cel).value);
+
+  it('binds arithmetic tighter than relations', () => {
+    expect(p('a >= 1.5 * b')).toBe('(a >= (1.5 * b))');
+    expect(p('a * 2 > b - 1 && c == d')).toBe('(((a * 2) > (b - 1)) && (c == d))');
+  });
+
+  it('binds ternary loosest, right-associative', () => {
+    expect(p('a > 1 ? b : c')).toBe('((a > 1) ? b : c)');
+    expect(p('a && b ? x : y')).toBe('((a && b) ? x : y)');
+    expect(p('x ? y : z ? u : v')).toBe('(x ? y : (z ? u : v))');
+  });
+
+  it('distinguishes subtraction from negative literals', () => {
+    expect(p('a >= b-1')).toBe('(a >= (b - 1))');
+    expect(p('a - -2.5 > -3')).toBe('((a - -2.5) > -3)');
+    expect(p('a == - 4')).toBe('(a == -4)');
+  });
 });

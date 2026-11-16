@@ -200,6 +200,56 @@ describe('getExpression wiring', () => {
       value: 5,
     });
   });
+
+  // #1136: arithmetic binds tighter than relational ops
+  it('parses unparenthesized arithmetic operands', () => {
+    const multiply = { kind: 'func', fn: 'multiply' };
+    expect(parseCEL('price >= 1.5 * cost', opt).rules[0]).toMatchObject({
+      field: 'price',
+      operator: '>=',
+      valueSource: 'expression',
+      value: {
+        ...multiply,
+        args: [
+          { kind: 'value', value: 1.5 },
+          { kind: 'field', field: 'cost' },
+        ],
+      },
+    });
+    expect(parseCEL('price >= 1.5 * cost', opt)).toEqual(parseCEL('price >= (1.5 * cost)', opt));
+    expect(parseCEL('a + 1 >= b', opt).rules[0]).toMatchObject({
+      field: 'b',
+      operator: '<=',
+      value: { kind: 'func', fn: 'add' },
+    });
+    expect(parseCEL('price * 2 > 100', opt).rules[0]).toMatchObject({
+      field: '',
+      lhs: multiply,
+      value: 100,
+    });
+    expect(parseCEL('a + b > c - d', opt).rules[0]).toMatchObject({
+      lhs: { kind: 'func', fn: 'add' },
+      value: { kind: 'func', fn: 'subtract' },
+    });
+    expect(parseCEL('price >= cost * 2 && a == 1', opt).rules).toMatchObject([
+      { field: 'price', operator: '>=', value: multiply },
+      { field: 'a', operator: '=', value: 1 },
+    ]);
+  });
+
+  it('parses subtraction without whitespace', () => {
+    expect(parseCEL('price > cost-1', opt).rules[0]).toMatchObject({
+      field: 'price',
+      value: {
+        kind: 'func',
+        fn: 'subtract',
+        args: [
+          { kind: 'field', field: 'cost' },
+          { kind: 'value', value: 1 },
+        ],
+      },
+    });
+  });
 });
 
 describe('isCELExpressionOperand', () => {
