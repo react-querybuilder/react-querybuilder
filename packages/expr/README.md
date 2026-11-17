@@ -1,4 +1,4 @@
-## @react-querybuilder/expr
+# @react-querybuilder/expr
 
 Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with arithmetic and function expression support, letting _either side_ of a rule be a computed operand built from fields, literals, and functions—e.g. `(price * quantity) > 100` or `ABS(discount) >= 5`.
 

@@ -34,7 +34,7 @@ If the `rqb` MCP server (`@react-querybuilder/mcp`) is available, use its tools 
 - Pass `fields` whenever you have them; they make parsing, formatting, and validation more accurate. Only the JSON-serializable subset of `Field` works (no `validator` or other functions).
 - ORM formats (`drizzle`, `prisma`, `sequelize`, `tanstack_db`) aren't available over MCP. See [export-formats](references/export-formats.md).
 - Resources: `rqb://docs/{slug}`, `rqb://types/{name}` (e.g. `RuleGroupType`, `FormatQueryOptions`, `QueryBuilderProps`).
-- Not configured? Suggest adding it (e.g. `claude mcp add rqb -- npx -y @react-querybuilder/mcp`). Setup for other clients: https://react-querybuilder.js.org/docs/ai
+- Not configured? Suggest adding it (e.g. `claude mcp add rqb -- npx -y @react-querybuilder/mcp`). [Setup for other clients](https://react-querybuilder.js.org/docs/ai).
 
 ## Decision tree
 
@@ -92,7 +92,7 @@ Full list: [pitfalls](references/pitfalls.md).
 
 ## Docs
 
-- Full docs: https://react-querybuilder.js.org/docs/intro
-- LLM-friendly docs: https://react-querybuilder.js.org/llms.txt
-- Exact output of every format/parser: https://react-querybuilder.js.org/docs/tips/recipes.md
-- Condensed API index (every export): https://react-querybuilder.js.org/llms-api.txt
+- [Full docs](https://react-querybuilder.js.org/docs/intro)
+- [LLM-friendly docs](https://react-querybuilder.js.org/llms.txt)
+- [Exact output of every format/parser](https://react-querybuilder.js.org/docs/tips/recipes.md)
+- [Condensed API index (every export)](https://react-querybuilder.js.org/llms-api.txt)

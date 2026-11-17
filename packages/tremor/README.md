@@ -1,4 +1,4 @@
-## @react-querybuilder/tremor
+# @react-querybuilder/tremor
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Tremor](https://www.tremor.so/).
 

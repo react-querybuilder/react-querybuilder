@@ -6,11 +6,11 @@ labels: ''
 assignees: ''
 ---
 
-**Description of the feature**
+## Description of the feature
 
 <!-- A clear and concise description of the feature you are requesting. -->
 
-**Use case**
+## Use case
 
 <!-- Description of the use cases driving this request. -->
 

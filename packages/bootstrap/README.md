@@ -1,4 +1,4 @@
-## @react-querybuilder/bootstrap
+# @react-querybuilder/bootstrap
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Bootstrap](https://getbootstrap.com/).
 

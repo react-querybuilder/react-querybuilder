@@ -67,7 +67,7 @@ bun run build
 
 ### Structure
 
-```
+```txt
 packages/core/src/           # Non-React utilities
 packages/react-querybuilder/src/
 ├── components/        # React components (PascalCase.tsx)

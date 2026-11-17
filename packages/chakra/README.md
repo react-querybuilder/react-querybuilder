@@ -1,4 +1,4 @@
-## @react-querybuilder/chakra
+# @react-querybuilder/chakra
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Chakra UI](https://chakra-ui.com/).
 

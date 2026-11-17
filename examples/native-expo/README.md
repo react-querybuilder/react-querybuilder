@@ -1,4 +1,4 @@
-## React Query Builder Expo Example
+# React Query Builder Expo Example
 
 [![Open in Expo Snack](https://img.shields.io/badge/Open_in-Expo_Snack-000020?logo=expo)](https://react-querybuilder.js.org/sandbox?p=snack&t=native-expo)
 

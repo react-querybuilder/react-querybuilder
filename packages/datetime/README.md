@@ -1,4 +1,4 @@
-## @react-querybuilder/datetime
+# @react-querybuilder/datetime
 
 Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with enhanced date/time functionality.
 

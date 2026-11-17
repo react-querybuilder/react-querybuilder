@@ -1,4 +1,4 @@
-## React Query Builder Continuous Integration Example
+# React Query Builder Continuous Integration Example
 
 [![Open in CodeSandbox](https://img.shields.io/badge/Open_in-CodeSandbox-000000?logo=codesandbox)](https://react-querybuilder.js.org/sandbox?t=ci) [![Open in StackBlitz](https://img.shields.io/badge/Open_in-StackBlitz-1269D3?logo=stackblitz)](https://react-querybuilder.js.org/sandbox?p=sb&t=ci)
 

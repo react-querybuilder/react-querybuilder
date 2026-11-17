@@ -1036,21 +1036,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The minimum React version is now 18, due to the new `react-redux` v9 dependency.
 - [#654] The minimum TypeScript version is now 5.1.
 - [#595] The parser functions have been removed from the main export, and are _only_ available as separate exports. This change reduces the main bundle size by roughly 50%.
-  <!-- prettier-ignore -->
+
   | Function         | New `import` requirement                                             |
   | ---------------- | -------------------------------------------------------------------- |
   | `parseCEL`       | `import { parseCEL } from "react-querybuilder/parseCEL"`             |
   | `parseJsonLogic` | `import { parseJsonLogic } from "react-querybuilder/parseJsonLogic"` |
   | `parseMongoDB`   | `import { parseMongoDB } from "react-querybuilder/parseMongoDB"`     |
   | `parseSQL`       | `import { parseSQL } from "react-querybuilder/parseSQL"`             |
+
 - [#537] Some of the default labels have been updated per the table below.
-  <!-- prettier-ignore -->
+
   | Key                              | Old        | New         | Notes                               |
   | -------------------------------- | ---------- | ----------- | ----------------------------------- |
   | `translations.addRule.label`     | `"+Rule"`  | `"+ Rule"`  | Space added between "+" and "Rule"  |
   | `translations.addGroup.label`    | `"+Group"` | `"+ Group"` | Space added between "+" and "Group" |
   | `translations.removeRule.label`  | `"x"`      | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
   | `translations.removeGroup.label` | `"x"`      | `"⨯"`       | HTML entity `&cross;` / `&#x2A2F;`  |
+
 - [#589] The `independentCombinators` prop has been deprecated and will be ignored if used. To enable the independent combinators functionality, use `RuleGroupTypeIC` for the `query` or `defaultQuery` prop. The query builder will detect the query type and behave accordingly. If the `independentCombinators` prop is present, a warning will be logged to the console (in "development" mode only).
 - [#523] `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a group with `not: true`, it will now generate a rule with a inverted/negated operator (`"="` inverted is `"!="`, `"contains"` inverted is `"doesNotContain"`, etc.). To prevent this behavior, set the `preventOperatorNegation` option to `true` ([#653]).
 - [#589] The `disabled` prop has been un-deprecated. Disabling the entire query with the prop and setting `disabled: true` as a property of the root group now produce different behaviors. Specifically, the root group's lock/unlock button will always be enabled if the `disabled` prop is not `true`.
@@ -1093,11 +1095,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - [#654] Relatedly, field identifier types (`name`/`value` properties) will now be inferred from the `fields` prop if they have been narrowed from `string`. These narrowed types will be applied to subcomponents and other props that take fields or field identifiers as arguments/props.
   - [#663] The `Field`, `Operator`, and `Combinator` interfaces each have corresponding `Full*` and `*ByValue` counterparts. Both `name` and `value` are required in the `Full*` interfaces; only `value` is required in the `*ByValue` interfaces.
 - [#595] Two "bulk override" properties have been added to the `controlElements` prop: `actionElement` and `valueSelector`. When `actionElement` is defined, it will be used for each component that defaults to `ActionElement` (as long as that component is not explicitly overridden in the `controlElements` prop). Same for `valueSelector` and components that default to `ValueSelector` (including `ValueEditor` in cases where it renders a value selector). This makes it possible to define replacement components for all buttons and selectors at once instead of one-by-one.
-  <!-- prettier-ignore -->
+
   | `controlElements` property | Sets default for                                                                                                                                       |
   | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
   | `valueSelector`            | `combinatorSelector`, `fieldSelector`, `operatorSelector`, `valueSourceSelector`, `valueEditor` (when rendering a value selector)                      |
   | `actionElement`            | `addGroupAction`, `addRuleAction`, `cloneGroupAction`, `cloneRuleAction`, `lockGroupAction`, `lockRuleAction`, `removeGroupAction`, `removeRuleAction` |
+
 - [#577] A new `showShiftActions` prop provides first-class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. Pressing the modifier key (<kbd>Alt</kbd> on Windows/Linux, <kbd>⌥ Option</kbd> on Mac) while clicking a shift action will clone the rule or group instead of just moving it. A `ShiftActions` component has been added, along with a corresponding component for each compatibility package. New `translations` properties `shiftActionUp` and `shiftActionDown` allow configuration of the label and title of each button within the new component.
 - [#512] Accessibility is improved with the addition of a `title` attribute to the outermost `<div>` of each rule group. The text of this attribute can be customized with the `accessibleDescriptionGenerator` function prop.
 - [#537]/[#589] Three new methods make it easier to manage arbitrary query updates from custom components. (Previously we recommended including the query object as a property of the `context` prop, but that workaround is no longer necessary.) The first two methods are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
@@ -1113,7 +1116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#589] New utility function `uniqByIdentifier` replaces `uniqByName`, which has been deprecated. `uniqByIdentifier` will remove duplicates based on the `value` property, or `name` if `value` is undefined (see [#586]).
 - [#526] Experimental support for ElasticSearch export format in `formatQuery`.
 - [#606] New compatibility package for [Tremor](https://www.tremor.so/), `@react-querybuilder/tremor`.
-- [#537] New API documentation, generated directly from the source code, at https://react-querybuilder.js.org/api. In support of this, many types and functions now have better JSDoc comments which should provide a better developer experience in modern IDEs.
+- [#537] [New API documentation](https://react-querybuilder.js.org/api), generated directly from the source code. In support of this, many types and functions now have better JSDoc comments which should provide a better developer experience in modern IDEs.
 - [#638] Value selectors now respect the `disabled` property of individual options in option lists.
 - [#663] The `format` option set during a call to `formatQuery` will be passed to custom rule processors as a property of the options object in the second parameter.
 - [#663] `parseSpEL` method for importing [SpEL](https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html) expressions.
@@ -1461,6 +1464,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - In order to make the `react-dnd` dependency completely optional when the `enableDragAndDrop` prop was not set to `true`, drag-and-drop functionality was extracted from `react-querybuilder` into a new package called [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).
   - The new package has `peerDependencies` of `react-dnd` and `react-dnd-html5-backend` (each of which can be any version >= 14, as long as they match), but no hard `dependencies`. The only external dependencies in the main package now are `immer` and `clsx`.
   - **Upgrade path:** To enable drag-and-drop functionality in v5, nest `<QueryBuilder />` within a `<QueryBuilderDnD />` element. The `enableDragAndDrop` prop is implicitly `true` when using `QueryBuilderDnD`, so you no longer need to set it explicitly unless it should be `false` (which can be set on `QueryBuilderDnD` _or_ `QueryBuilder`).
+
     ```diff
      export function App() {
        return (
@@ -1471,6 +1475,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
        );
      }
     ```
+
   - If your application already uses `react-dnd` and renders `DndProvider` higher in the component tree, replace `QueryBuilderDnD` with `QueryBuilderDndWithoutProvider`.
 
 ### Fixed
@@ -1588,7 +1593,7 @@ _TL;DR: These are probably not breaking changes._
 
 ### Changed
 
-_(This list may look long, but the breaking changes should only affect a small minority of users.)_
+(This list may look long, but the breaking changes should only affect a small minority of users.)
 
 - Several utility functions that were trivial or only really useful internal to this package are no longer exported from `react-querybuilder`. To see which ones, check [the `internal` folder](https://github.com/react-querybuilder/react-querybuilder/tree/v4.4.0/packages/react-querybuilder/src/internal). All exports from that folder were previously exported from [the `utils` folder](https://github.com/react-querybuilder/react-querybuilder/tree/v4.4.0/packages/react-querybuilder/src/utils), which is re-exported in its entirety from the [main entry point](https://github.com/react-querybuilder/react-querybuilder/blob/v4.4.0/packages/react-querybuilder/src/index.ts#L8).
 - The `RuleProps` and `RuleGroupProps` interfaces have deprecated the props that were individual properties of rules/groups, and have added a prop containing the full rule or group object. This should only affect users that implement a custom `<RuleGroup />` component but use the default `<Rule />` component, since `<Rule />` now expects a `rule` prop.
@@ -1624,6 +1629,7 @@ _(This list may look long, but the breaking changes should only affect a small m
   - Corresponding options were also added to [`formatQuery`](https://react-querybuilder.js.org/docs/api/export#placeholder-values), which will now ignore rules where the `field` or `operator` match the placeholder values for most export formats.
 - [#303] Added support for wildcards concatenated to field names in `parseSQL`. Examples:
   - SQL `"lastName LIKE firstName || '%'"` would generate `RuleType` object:
+
     ```json
     {
       "field": "lastName",
@@ -1632,7 +1638,9 @@ _(This list may look long, but the breaking changes should only affect a small m
       "valueSource": "field"
     }
     ```
+
   - SQL `"lastName NOT LIKE '%' || firstName || '%'"` would generate `RuleType` object:
+
     ```json
     {
       "field": "lastName",
@@ -1775,7 +1783,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 ### Added
 
-- Shiny new documentation site! https://react-querybuilder.js.org
+- Shiny new documentation site! [react-querybuilder.js.org](https://react-querybuilder.js.org)
 - We now provide official compatibility components for several popular style frameworks (as seen in the [demo](https://react-querybuilder.js.org/react-querybuilder)), with more to come! Check out the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder).
 - All props on the `<QueryBuilder />` component are now optional
 - `<QueryBuilder />` is now a properly controlled or uncontrolled component depending on which props are passed in. If you pass a `query` prop, the query will not change until a new `query` is passed in. You should use the parameter of the `onQueryChange` callback to update the `query` prop. Typically this involves using React's `useState` hook. To render an _uncontrolled_ component, don't pass a `query` prop. You can set the initial query by using the new `defaultQuery` prop, and you can still listen for changes with `onQueryChange`.
@@ -2530,7 +2538,6 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#632]: https://github.com/react-querybuilder/react-querybuilder/pull/632
 [#637]: https://github.com/react-querybuilder/react-querybuilder/pull/637
 [#638]: https://github.com/react-querybuilder/react-querybuilder/pull/638
-[#646]: https://github.com/react-querybuilder/react-querybuilder/pull/646
 [#653]: https://github.com/react-querybuilder/react-querybuilder/pull/653
 [#654]: https://github.com/react-querybuilder/react-querybuilder/pull/654
 [#663]: https://github.com/react-querybuilder/react-querybuilder/pull/663

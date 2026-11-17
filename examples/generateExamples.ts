@@ -206,9 +206,8 @@ const generateExampleFromTemplate = async (exampleID: string) => {
 
   // #region README.md
   const exampleREADMEmd =
-    `## ${exampleTitle}` +
-    '\n\n' +
     templateREADMEmd
+      .replace(/^# .*$/m, `# ${exampleTitle}`)
       .replaceAll(/(\/?examples?[/-])?_template/g, `$1${exampleID}`)
       .replaceAll('App.tsx', exampleConfig.compileToJS ? 'App.jsx' : '$&') +
     '\n\n' +

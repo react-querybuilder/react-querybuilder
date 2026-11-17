@@ -1,4 +1,4 @@
-## @react-querybuilder/antd
+# @react-querybuilder/antd
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Ant Design](https://ant.design/).
 

@@ -1,4 +1,4 @@
-## React Query Builder Expressions Example
+# React Query Builder Expressions Example
 
 [![Open in CodeSandbox](https://img.shields.io/badge/Open_in-CodeSandbox-000000?logo=codesandbox)](https://react-querybuilder.js.org/sandbox?t=expr) [![Open in StackBlitz](https://img.shields.io/badge/Open_in-StackBlitz-1269D3?logo=stackblitz)](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=expr)
 

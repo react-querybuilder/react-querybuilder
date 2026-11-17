@@ -1,4 +1,4 @@
-## @react-querybuilder/bulma
+# @react-querybuilder/bulma
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Bulma](https://bulma.io/).
 

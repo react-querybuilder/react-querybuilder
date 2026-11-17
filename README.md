@@ -5,13 +5,12 @@
 [![Docs][badge-docs]](https://react-querybuilder.js.org/)
 [![Learn from the maintainer][badge-training]](https://www.newline.co/courses/building-advanced-admin-reporting-in-react)
 [![Chat][badge-discord]](https://react-querybuilder.js.org/discord)
-
 [![CI][badge-ci]](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/main.yml)
 [![codecov.io][badge-codecov]][codecov-link]
 [![All Contributors][badge-all-contributors]](#contributors-)
 [![pkg.pr.new][badge-pkg-pr-new]][pkg-pr-new-link]
 
-**React Query Builder** is a fully customizable query builder component for React, along with a collection of utility functions for [importing from](https://react-querybuilder.js.org/docs/utils/import), and [exporting to](https://react-querybuilder.js.org/docs/utils/export), various query languages like SQL, MongoDB, and more. Demo is [here](https://react-querybuilder.js.org/demo).
+**React Query Builder** is a fully customizable query builder component for React, along with a collection of utility functions for [importing from](https://react-querybuilder.js.org/docs/utils/import), and [exporting to](https://react-querybuilder.js.org/docs/utils/export), various query languages like SQL, MongoDB, and more. See the [live demo](https://react-querybuilder.js.org/demo).
 
 _**Complete documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org)**._
 
@@ -55,7 +54,7 @@ _For instructions on migrating from earlier versions of `react-querybuilder`, se
 [![Bootstrap](https://img.shields.io/badge/RQB-Bootstrap-blue?logo=bootstrap&color=712cf9)](https://www.npmjs.com/package/@react-querybuilder/bootstrap)
 [![Bulma](https://img.shields.io/badge/RQB-Bulma-blue?logo=bulma&color=00d1b2)](https://www.npmjs.com/package/@react-querybuilder/bulma)
 [![Chakra UI](https://img.shields.io/badge/RQB-Chakra%20UI-blue?logo=chakraui&color=81e6d9)](https://www.npmjs.com/package/@react-querybuilder/chakra)
-[![Fluent UI](https://img.shields.io/badge/RQB-Fluent%20UI-blue?logo=fluentui&color=7fba00)](https://www.npmjs.com/package/@react-querybuilder/fluent)<br />
+[![Fluent UI](https://img.shields.io/badge/RQB-Fluent%20UI-blue?logo=fluentui&color=7fba00)](https://www.npmjs.com/package/@react-querybuilder/fluent)
 [![Mantine](https://img.shields.io/badge/RQB-Mantine-blue?logo=mantine&color=339af0)](https://www.npmjs.com/package/@react-querybuilder/mantine)
 [![MUI](https://img.shields.io/badge/RQB-MUI-blue?logo=mui&color=007FFF)](https://www.npmjs.com/package/@react-querybuilder/material)
 [![PrimeReact](https://img.shields.io/badge/RQB-PrimeReact-blue?logo=primereact&color=03c4e8)](https://www.npmjs.com/package/@react-querybuilder/prime)
@@ -66,9 +65,9 @@ In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/rea
 
 ## Other frameworks
 
-[![Solid](https://img.shields.io/badge/QB-Solid-blue?logo=solid&color=2c4f7c)](https://www.npmjs.com/package/solid-querybuilder)
-[![Svelte](https://img.shields.io/badge/QB-Svelte-blue?logo=svelte&color=ff3e00)](https://www.npmjs.com/package/svelte-querybuilder)
-[![Vue](https://img.shields.io/badge/QB-Vue-blue?logo=vuedotjs&color=42b883)](https://www.npmjs.com/package/@react-querybuilder/vue)
+[![Solid](https://img.shields.io/badge/Solid-Query_Builder-2c4f7c?logo=solid)](https://www.npmjs.com/package/solid-querybuilder)
+[![Svelte](https://img.shields.io/badge/Svelte-Query_Builder-ff3e00?logo=svelte)](https://www.npmjs.com/package/svelte-querybuilder)
+[![Vue](https://img.shields.io/badge/Vue-Query_Builder-42b883?logo=vuedotjs)](https://www.npmjs.com/package/@react-querybuilder/vue)
 
 Official ports of the query builder component to other frameworks are maintained in separate repos. Each one shares the same query object format and uses [`@react-querybuilder/core`](./packages/core) under the hood, so the import/export utilities (SQL, MongoDB, CEL, JsonLogic, etc.) and most configuration options work identically across frameworks.
 

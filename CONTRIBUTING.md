@@ -132,7 +132,7 @@ Generated folders:
 #### Manual
 
 1. Run `npx lerna version [major|minor|patch|prerelease]` (this automatically runs the `version` script in [`./package.json`](./package.json) before committing and tagging).
-2. Run `npx lerna publish from-git` (add ` --dist-tag next` if version was `prerelease` in previous step).
+2. Run `npx lerna publish from-git` (add `--dist-tag next` if version was `prerelease` in previous step).
 3. Publish a [new release on GitHub](https://github.com/react-querybuilder/react-querybuilder/releases). (When publishing [from GitHub](#from-github), the "Version" workflow does this automatically.)
 
 [new-issue]: https://github.com/react-querybuilder/react-querybuilder/issues/new
