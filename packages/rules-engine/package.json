@@ -76,7 +76,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
-    "rulepilot": "^1.4.9",
+    "rulepilot": "^1.4.21",
     "sass": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
