@@ -85,7 +85,6 @@ jobs:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
       - run: bun --bun run build
-      - run: bun ./utils/decatalog.ts # temp workaround for lerna-lite catalog issue
       - name: Publish to npm
         run: npx lerna publish from-package --yes --no-git-reset --dist-tag ${{ needs.resolve.outputs.dist-tag }}
       - name: Publish to pkg.pr.new

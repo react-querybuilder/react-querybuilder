@@ -5,11 +5,10 @@
  *
  * The output is committed to this repo but deliberately not distributed — not through core's
  * `dist`, and not as its own package. A package under `packages/*` would be swept into lerna's
- * fixed versioning and `forcePublish`, `version.ts`, the website's TypeDoc `entryPoints`,
- * `pkg-pr-new`, and `decatalog`, and would be republished every release despite changing on its
- * own schedule. More to the point, nothing can consume it yet: the first port repo does not
- * exist. Choosing a distribution channel is a Phase 1 decision, made when there is a real
- * consumer to shape it.
+ * fixed versioning and `forcePublish`, `version.ts`, the website's TypeDoc `entryPoints`, and
+ * `pkg-pr-new`, and would be republished every release despite changing on its own schedule.
+ * More to the point, nothing can consume it yet: the first port repo does not exist. Choosing
+ * a distribution channel is a Phase 1 decision, made when there is a real consumer to shape it.
  *
  * What *is* live today is the drift check (`bun conformance:check`, wired into `bun check:all`),
  * which is also the Phase 0.3 regression guard: this module imports the core substrate exports by

@@ -3,7 +3,7 @@
     "packages/*"
   ],
   "version": "8.27.0",
-  "npmClient": "npm",
+  "npmClient": "bun",
   "forcePublish": true,
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json"
 }
