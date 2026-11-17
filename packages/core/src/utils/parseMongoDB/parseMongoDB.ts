@@ -440,9 +440,9 @@ function parseMongoDB(
             rule1[ruleKey1].$gt ?? rule1[ruleKey1].$lt,
             rule2[ruleKey2].$lt ?? rule2[ruleKey2].$gt,
           ];
-          let value = listsAsArrays ? [val1, val2] : `${val1},${val2}`;
+          let value = listsAsArrays ? [val1, val2] : joinWith([val1, val2], ',');
           if (val1 > val2) {
-            value = listsAsArrays ? [val2, val1] : `${val2},${val1}`;
+            value = listsAsArrays ? [val2, val1] : joinWith([val2, val1], ',');
           }
           return { field: ruleKey1, operator: 'notBetween', value };
         }
@@ -579,7 +579,7 @@ function parseMongoDB(
             operator: 'between',
             value: listsAsArrays
               ? [keyValue.$gte, keyValue.$lte]
-              : `${keyValue.$gte},${keyValue.$lte}`,
+              : joinWith([keyValue.$gte, keyValue.$lte], ','),
           };
         }
 
