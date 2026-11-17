@@ -12,18 +12,28 @@ import { defaultJoinChar } from '../defaults';
  * // would return
  * ['this,,that', '', 'the other', '', '', ',']
  */
-export const splitBy = (str?: string, splitChar: string = defaultJoinChar): string[] =>
-  typeof str === 'string'
-    ? str
-        .split(`\\${splitChar}`)
-        .map(c => c.split(splitChar))
-        .reduce((prev, curr, idx) => {
-          if (idx === 0) {
-            return curr;
-          }
-          return [...prev.slice(0, -1), `${prev.at(-1)}${splitChar}${curr[0]}`, ...curr.slice(1)];
-        }, [])
-    : [];
+export const splitBy = (str?: string, splitChar: string = defaultJoinChar): string[] => {
+  if (typeof str !== 'string') return [];
+  const result: string[] = [];
+  let current = '';
+  let i = 0;
+  while (i < str.length) {
+    // Only `\\` and `\<first char of splitChar>` are escapes; other backslashes are literal (compat)
+    if (str[i] === '\\' && (str[i + 1] === '\\' || str[i + 1] === splitChar[0])) {
+      current += str[i + 1];
+      i += 2;
+    } else if (str.startsWith(splitChar, i)) {
+      result.push(current);
+      current = '';
+      i += splitChar.length;
+    } else {
+      current += str[i];
+      i++;
+    }
+  }
+  result.push(current);
+  return result;
+};
 
 /**
  * Joins an array of strings using the given character (see {@link defaultJoinChar}). When
@@ -38,8 +48,17 @@ export const splitBy = (str?: string, splitChar: string = defaultJoinChar): stri
  * // would return
  * 'this\\,\\,that, , the other, , , \\,'
  */
-export const joinWith = (strArr: unknown[], joinChar: string = defaultJoinChar): string =>
-  strArr.map(str => `${str ?? ''}`.replaceAll(joinChar[0], `\\${joinChar[0]}`)).join(joinChar);
+export const joinWith = (strArr: unknown[], joinChar: string = defaultJoinChar): string => {
+  const jc = joinChar[0];
+  // Escape backslashes only where ambiguous (before `\`, join char, or end of element)
+  const ambiguousBackslash = new RegExp(
+    `\\\\(?=\\\\|${jc.replace(/[$()*+.?[\\\]^{|}-]/g, '\\$&')}|$)`,
+    'g'
+  );
+  return strArr
+    .map(str => `${str ?? ''}`.replace(ambiguousBackslash, '\\\\').replaceAll(jc, `\\${jc}`))
+    .join(joinChar);
+};
 
 type IsUnknown<T> = unknown extends T ? true : false;
 type Trimmed<T> = IsUnknown<T> extends true ? string : T;

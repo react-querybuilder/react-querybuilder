@@ -21,6 +21,24 @@ it('joins with a character', () => {
   expect(joinWith([undefined])).toBe('');
 });
 
+it('round-trips backslashes', () => {
+  const arrays = [
+    ['a\\', 'b'],
+    ['a\\,b', 'c'],
+    ['\\\\', '\\', ''],
+    [String.raw`C:\path`, 'x\\y\\'],
+  ];
+  for (const arr of arrays) {
+    expect(splitBy(joinWith(arr))).toEqual(arr);
+    expect(splitBy(joinWith(arr, '+'), '+')).toEqual(arr);
+    expect(splitBy(joinWith(arr, ', '), ', ')).toEqual(arr);
+  }
+  // Non-ambiguous backslashes left as-is (compat w/ previously stored values)
+  expect(joinWith([String.raw`C:\path`, 'b'])).toBe(String.raw`C:\path,b`);
+  expect(splitBy(String.raw`C:\path,b`)).toEqual([String.raw`C:\path`, 'b']);
+  expect(joinWith(['a\\', 'b'])).toBe(String.raw`a\\,b`);
+});
+
 it('converts stuff to an array', () => {
   expect(toArray([])).toEqual([]);
   expect(toArray({})).toEqual([]);

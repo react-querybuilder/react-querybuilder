@@ -638,3 +638,9 @@ describe('$nor (#1135)', () => {
     });
   });
 });
+
+it('round-trips "between" values ending in a backslash (#1146)', () => {
+  const q = parseMongoDB({ name: { $gte: 'a\\', $lte: 'b' } });
+  expect(q.rules[0]).toMatchObject({ operator: 'between', value: String.raw`a\\,b` });
+  expect(formatQuery(q, 'sql')).toBe(String.raw`(name between 'a\' and 'b')`);
+});
