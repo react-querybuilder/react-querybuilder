@@ -44,4 +44,4 @@ This command generates static content into the `build` directory and can be serv
 
 A preview of the website will be available on Netlify when a PR is submitted.
 
-The production website, [react-querybuilder.js.com](https://react-querybuilder.js.com/), is deployed on every push to the `main` branch on GitHub.
+The production website, [react-querybuilder.js.org](https://react-querybuilder.js.org/), is deployed on every push to the `main` branch on GitHub.
