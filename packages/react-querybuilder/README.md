@@ -1,6 +1,6 @@
 # react-querybuilder
 
-_The Query Builder component for React_
+> **_The Query Builder component for React_**
 
 **React Query Builder** is a fully [customizable](https://react-querybuilder.js.org/docs/tips/custom-with-fallback) query builder component for React, along with a collection of utility functions for [importing from](#import), and [exporting to](#export), various query languages like SQL, MongoDB, and more.
 

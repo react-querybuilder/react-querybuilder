@@ -1,4 +1,4 @@
-## @react-querybuilder/fluent
+# @react-querybuilder/fluent
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Fluent UI](https://github.com/microsoft/fluentui).
 

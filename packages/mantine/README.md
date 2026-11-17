@@ -1,4 +1,4 @@
-## @react-querybuilder/mantine
+# @react-querybuilder/mantine
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Mantine](https://mantine.dev/).
 

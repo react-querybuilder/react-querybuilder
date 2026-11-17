@@ -1,4 +1,6 @@
-## Examples
+# Examples
+
+## Usage
 
 ### Cloning locally
 

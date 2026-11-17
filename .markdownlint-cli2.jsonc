@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/markdownlint-cli2/schema/markdownlint-cli2-config-schema.json",
+  "showFound": false,
+  "globs": ["**/*.md"],
+  "ignores": ["LICENSE.md", "website/{api,docs,src,versioned_docs}"],
+  "gitignore": true,
+  "config": {
+    "MD013": false, // line-length
+    "MD033": false // inline-html
+  },
+  "overrides": [
+    {
+      "filter": [ "CHANGELOG.md" ],
+      "config": {
+        "MD024": false // no-duplicate-heading
+      },
+      "combine": "merge"
+    }
+  ]
+}

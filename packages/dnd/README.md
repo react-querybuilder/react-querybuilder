@@ -1,4 +1,4 @@
-## @react-querybuilder/dnd
+# @react-querybuilder/dnd
 
 Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with drag-and-drop functionality.
 

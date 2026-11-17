@@ -1,4 +1,4 @@
-## @react-querybuilder/material
+# @react-querybuilder/material
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [MUI](https://mui.com/)/[Material Design](https://material.io/design).
 
@@ -65,6 +65,8 @@ export function App() {
 > ```tsx
 > <QueryBuilderMaterial translations={defaultTranslations}>
 > ```
+
+<!-- markdownlint-disable-line -->
 
 > [!IMPORTANT]
 >

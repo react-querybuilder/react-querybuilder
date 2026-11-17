@@ -1,4 +1,4 @@
-## @react-querybuilder/prime
+# @react-querybuilder/prime
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [PrimeReact](https://primereact.org/).
 

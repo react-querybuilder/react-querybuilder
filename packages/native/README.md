@@ -1,4 +1,4 @@
-## @react-querybuilder/native
+# @react-querybuilder/native
 
 Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [React Native](https://reactnative.dev/).
 

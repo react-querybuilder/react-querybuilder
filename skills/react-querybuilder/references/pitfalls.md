@@ -1,5 +1,7 @@
 # Pitfalls
 
+<!-- markdownlint-disable MD029 -->
+
 Checked against v8 source. Each entry gives the symptom, the cause, and the fix.
 
 ## Imports and setup

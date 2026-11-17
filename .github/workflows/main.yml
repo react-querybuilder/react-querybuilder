@@ -58,7 +58,8 @@ jobs:
           > ./website/api/typedoc-sidebar.cjs
       - parallel:
           - run: bun run typecheck
-          - run: bun run lint --format=github
+          - run: bunx oxlint --format=github
+          - uses: DavidAnson/markdownlint-cli2-action@v25
           - run: bun run are-the-types-wrong
           - run: bun run check-dts-peer-leaks
           - run: bun run skills:check

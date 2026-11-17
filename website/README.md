@@ -4,13 +4,13 @@ This website is built using [Docusaurus](https://docusaurus.io/), a modern stati
 
 **All commands below should be run in the repo root directory** (this directory's parent, i.e. `../` from here).
 
-### Installation
+## Installation
 
 ```sh
 bun install
 ```
 
-### Local Development
+## Local Development
 
 First build the packages.
 
@@ -32,7 +32,7 @@ bun web:skiptypedoc
 
 This command starts a local development server and opens up a browser window. Most changes to the website code are reflected live without having to restart the server, but any changes to the packages would require a rebuild of any updated packages and a restart of the website server.
 
-### Build
+## Build
 
 ```sh
 bun website:build
@@ -40,8 +40,8 @@ bun website:build
 
 This command generates static content into the `build` directory and can be served using any static content hosting service.
 
-### Deployment
+## Deployment
 
 A preview of the website will be available on Netlify when a PR is submitted.
 
-The production website, https://react-querybuilder.js.com/, is deployed on every push to the `main` branch on GitHub.
+The production website, [react-querybuilder.js.com](https://react-querybuilder.js.com/), is deployed on every push to the `main` branch on GitHub.

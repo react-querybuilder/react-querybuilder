@@ -25,13 +25,13 @@ Also provides:
 
 Requires Node.js 20+.
 
-**Claude Code**
+### Claude Code
 
 ```bash
 claude mcp add rqb -- npx -y @react-querybuilder/mcp
 ```
 
-**opencode** (`opencode.json`)
+### opencode (`opencode.json`)
 
 ```json
 {
@@ -45,7 +45,7 @@ claude mcp add rqb -- npx -y @react-querybuilder/mcp
 }
 ```
 
-**Cursor** (`.cursor/mcp.json`)
+### Cursor (`.cursor/mcp.json`)
 
 ```json
 {
@@ -55,7 +55,7 @@ claude mcp add rqb -- npx -y @react-querybuilder/mcp
 }
 ```
 
-**VS Code** (`.vscode/mcp.json`)
+### VS Code (`.vscode/mcp.json`)
 
 ```json
 {
