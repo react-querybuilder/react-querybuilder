@@ -13,6 +13,12 @@ test('format', () => {
   expect(apiFnsLuxon.format('2002-12-14', `YYYY-MM-DD 'a.d.'`)).toBe('2002-12-14 a.d.');
 });
 
+test('date-fns toISOStringDateOnly keeps signed extended years', () => {
+  expect(apiFnsDateFns.toISOStringDateOnly('-000001-01-01')).toBe('-000001-01-01');
+  expect(apiFnsDateFns.toISOStringDateOnly('+010000-01-01')).toBe('+010000-01-01');
+  expect(apiFnsDateFns.toISOStringDateOnly('0099-06-11')).toBe('0099-06-11');
+});
+
 test('JS Date toDate timestamp parsing', () => {
   const iso = (s: string) => apiFnsJS.toDate(s).toISOString();
   const local = (...a: [number, number, number, number, number, number?, number?]) =>

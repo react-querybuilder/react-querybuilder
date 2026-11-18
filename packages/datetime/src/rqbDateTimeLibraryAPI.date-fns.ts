@@ -70,7 +70,12 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   },
   toISOStringDateOnly: d => {
     const dToDate = toDate(d);
-    return isValid(dToDate) ? format(dToDate, iso8601DateOnly) : '';
+    if (!isValid(dToDate)) return '';
+    // ISO 8601: 4 digits for 0000-9999, else signed 6-digit extended year (`yyyy` drops sign)
+    const y = dToDate.getFullYear();
+    return y >= 0 && y <= 9999
+      ? format(dToDate, iso8601DateOnly)
+      : `${y < 0 ? '-' : '+'}${`${Math.abs(y)}`.padStart(6, '0')}-${format(dToDate, 'MM-dd')}`;
   },
   startOf: (d, unit) => startOfMap[unit](toDate(d)),
   endOf: (d, unit) => endOfMap[unit](toDate(d)),
