@@ -6,10 +6,11 @@ import { processMatchMode, regexFallbackRule, shouldRenderAsNumber } from './uti
 
 const negateIf = (clause: string, negate: boolean) => (negate ? `(!${clause})` : `${clause}`);
 
+// RFC 4515 requires `*`, `(`, `)`, `\` and NUL to be escaped as `\XX` (two hex digits).
 const ldapEscape = (s: unknown) =>
   `${trimIfString(s)}`.replaceAll(
-    /[()&|=<>~*\\/]/g,
-    (m: string) => `\\${m.codePointAt(0)!.toString(16)}`
+    /[\0()&|=<>~*\\/]/g,
+    (m: string) => `\\${m.codePointAt(0)!.toString(16).padStart(2, '0')}`
   );
 
 /**
@@ -43,11 +44,16 @@ export const defaultRuleProcessorLDAP: RuleProcessor = (
     case '!=':
       return negateIf(`(${field}=${ldapEscape(value)})`, operatorLC === '!=');
 
+    // LDAP only has `>=` and `<=`, so strict comparisons also exclude equality
     case '>':
+      return `(&(${field}>=${ldapEscape(value)})(!(${field}=${ldapEscape(value)})))`;
+
     case '>=':
       return `(${field}>=${ldapEscape(value)})`;
 
     case '<':
+      return `(&(${field}<=${ldapEscape(value)})(!(${field}=${ldapEscape(value)})))`;
+
     case '<=':
       return `(${field}<=${ldapEscape(value)})`;
 
