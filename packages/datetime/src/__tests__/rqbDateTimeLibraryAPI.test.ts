@@ -17,6 +17,7 @@ test('date-fns toISOStringDateOnly keeps signed extended years', () => {
   expect(apiFnsDateFns.toISOStringDateOnly('-000001-01-01')).toBe('-000001-01-01');
   expect(apiFnsDateFns.toISOStringDateOnly('+010000-01-01')).toBe('+010000-01-01');
   expect(apiFnsDateFns.toISOStringDateOnly('0099-06-11')).toBe('0099-06-11');
+  expect(apiFnsDateFns.toISOStringDateOnly('0000-01-01')).toBe('0000-01-01');
 });
 
 test('JS Date toDate timestamp parsing', () => {
