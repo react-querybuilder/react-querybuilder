@@ -35,7 +35,12 @@ const isValid = (d: string | Date) => {
 
 const toISOStringDateOnly = (d: string | Date) => {
   const dToDate = toDate(d);
-  return isValid(dToDate) ? dToDate.toISOString().slice(0, 10) : '';
+  if (!isValid(dToDate)) return '';
+  // Local calendar date (matches other adapters); `toISOString` would shift to UTC
+  const yyyy = `${dToDate.getFullYear()}`.padStart(4, '0');
+  const mm = `${dToDate.getMonth() + 1}`.padStart(2, '0');
+  const dd = `${dToDate.getDate()}`.padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 };
 
 // Week starts on Sunday (matching Day.js/date-fns defaults).

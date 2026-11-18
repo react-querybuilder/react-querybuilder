@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#1145] `parseMongoDB` escapes commas in `between`/`notBetween` bounds parsed from the compact `{ f: { $gte, $lte } }` form (also under `$not`) and the `$or: [{ f: { $lt } }, { f: { $gt } }]` form, so "mongodb_query" output with comma-containing bounds round-trips. Previously `['Smith, A', 'Smith, Z']` became bounds `'Smith'` and `'A'`.
 - [#1147] `joinWith` escapes backslashes that precede `\`, the join character, or the end of an element, and `splitBy` unescapes `\\` and `\<join char>`, so lists with elements ending in `\` round-trip (e.g. `['a\', 'b']` → `'a\\,b'` instead of `'a\,b'`, which split to `['a,b']`). Other backslashes (e.g. `C:\path`) are still emitted and read verbatim, so previously stored values parse the same unless they contain a literal `\\`. `splitBy` now also treats `\` + the first character of a multi-character separator (e.g. `', '`) as an escape, matching `joinWith`. With a `\` separator (or any separator starting with `\`), the escape character is `/` instead of `\`, so all lists round-trip (e.g. `['a', '', 'b']` and `['\a', 'b']`). Empty separators keep their previous behavior: `joinWith(arr, '')` concatenates and `splitBy(str, '')` splits per character.
 - [#1149] "ldap" export: `>`/`<` no longer match the boundary value. LDAP filters only have `>=`/`<=`, so strict comparisons are now emitted as `(&(f>=v)(!(f=v)))`/`(&(f<=v)(!(f=v)))` instead of `(f>=v)`/`(f<=v)`. NUL characters in values are now escaped as `\00` (RFC 4515).
+- [#1151] `@react-querybuilder/datetime`: the JS `Date` plugin's `toISOStringDateOnly` now formats the local calendar date, matching the other plugins. Previously, in time zones ahead of UTC, date-only values were shifted back a day (e.g. `'1957-01-01'` → `'1956-12-31'`).
 
 ## [v8.27.0] - 2026-11-16
 
@@ -2683,6 +2684,7 @@ _TL;DR: These are probably not breaking changes._
 [#1145]: https://github.com/react-querybuilder/react-querybuilder/pull/1145
 [#1147]: https://github.com/react-querybuilder/react-querybuilder/pull/1147
 [#1149]: https://github.com/react-querybuilder/react-querybuilder/pull/1149
+[#1151]: https://github.com/react-querybuilder/react-querybuilder/pull/1151
 
 <!-- #endregion -->
 

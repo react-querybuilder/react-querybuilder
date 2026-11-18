@@ -12,6 +12,12 @@ A date/time processor library with parsing and formatting capabilities must be u
 
 > _A plugin using only native JavaScript `Date` and `String` functionality is available, but we don't recommend it except as a last resort since it has limited formatting capability (full ISO strings in UTC only) and hasn't passed rigorous testing like the popular libraries._
 
+:::note
+
+All plugins interpret date-only values (`YYYY-MM-DD`) in the local time zone. Full timestamps without an offset are treated as UTC by the JS `Date` plugin.
+
+:::
+
 The documentation below assumes the use of the Day.js plugin. To use one of the others, replace `@react-querybuilder/datetime/dayjs` with `@react-querybuilder/datetime/date-fns` or `@react-querybuilder/datetime/luxon`.
 
 ## Export
