@@ -88,7 +88,7 @@ export const getDatetimeRuleProcessorCypher =
       case 'notbetween': {
         if (valueAsDateArray.length < 2) return '';
         const [first, second] = valueAsDateArray;
-        const [lo, hi] = apiFns.isBefore(first[1], second[1]) ? [first, second] : [second, first];
+        const [lo, hi] = apiFns.isBefore(first[0], second[0]) ? [first, second] : [second, first];
         const expr = `${fmtDate(lo[0])} <= ${field} AND ${field} <= ${fmtDate(hi[0])}`;
         return operatorTL === 'notbetween' ? `NOT (${expr})` : expr;
       }

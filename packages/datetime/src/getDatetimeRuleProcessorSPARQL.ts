@@ -84,7 +84,7 @@ export const getDatetimeRuleProcessorSPARQL =
       case 'notbetween': {
         if (valueAsDateArray.length < 2) return '';
         const [first, second] = valueAsDateArray;
-        const [lo, hi] = apiFns.isBefore(first[1], second[1]) ? [first, second] : [second, first];
+        const [lo, hi] = apiFns.isBefore(first[0], second[0]) ? [first, second] : [second, first];
         if (operatorTL === 'notbetween') {
           return `(${field} < ${fmtDate(lo[0])} || ${field} > ${fmtDate(hi[0])})`;
         }

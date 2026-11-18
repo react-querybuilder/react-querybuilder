@@ -4,6 +4,7 @@ import { rqbDateTimeLibraryAPI as apiFnsJS } from '../rqbDateTimeLibraryAPI.jsda
 import type { RelativeDateTimeValue } from '../types';
 import {
   isDateOnlyDatatype,
+  isISOStringDateOnly,
   isRelativeDateTimeValue,
   materializeRelativeValues,
   resolveRelativeDateTime,
@@ -32,6 +33,20 @@ describe('isRelativeDateTimeValue', () => {
     expect(isRelativeDateTimeValue({ mode: 'absolute' })).toBe(false);
     expect(isRelativeDateTimeValue({ mode: 'relative' })).toBe(false);
     expect(isRelativeDateTimeValue({ mode: 'relative', anchor: 5 })).toBe(false);
+  });
+});
+
+describe('isISOStringDateOnly', () => {
+  test('date-only strings', () => {
+    expect(isISOStringDateOnly('2025-06-11')).toBe(true);
+    expect(isISOStringDateOnly('2025-06-11 ')).toBe(true);
+    expect(isISOStringDateOnly('+010000-01-01')).toBe(true);
+    expect(isISOStringDateOnly('-000001-01-01')).toBe(true);
+  });
+  test('non-date-only values', () => {
+    expect(isISOStringDateOnly('2025-06-11T00:00')).toBe(false);
+    expect(isISOStringDateOnly('10000-01-01')).toBe(false);
+    expect(isISOStringDateOnly(new Date())).toBe(false);
   });
 });
 

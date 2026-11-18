@@ -53,8 +53,8 @@ const durationKeyMap: Record<RelativeDateTimeUnit, keyof Duration> = {
  */
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   format: (d, fmt) => format(toDate(d), fmt.replace('YYYY-MM-DD', iso8601DateOnly)),
-  isAfter,
-  isBefore,
+  isAfter: (a, b) => isAfter(toDate(a), toDate(b)),
+  isBefore: (a, b) => isBefore(toDate(a), toDate(b)),
   isSame: (a, b) => {
     const aToDate = toDate(a);
     const bToDate = toDate(b);
@@ -70,7 +70,15 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   },
   toISOStringDateOnly: d => {
     const dToDate = toDate(d);
-    return isValid(dToDate) ? format(dToDate, iso8601DateOnly) : '';
+    if (!isValid(dToDate)) return '';
+    // ISO 8601: 4 digits for 0000-9999, else signed 6-digit extended year (`yyyy` drops sign,
+    // maps 0 -> 0001)
+    const y = dToDate.getFullYear();
+    const yyyy =
+      y >= 0 && y <= 9999
+        ? `${y}`.padStart(4, '0')
+        : `${y < 0 ? '-' : '+'}${`${Math.abs(y)}`.padStart(6, '0')}`;
+    return `${yyyy}-${format(dToDate, 'MM-dd')}`;
   },
   startOf: (d, unit) => startOfMap[unit](toDate(d)),
   endOf: (d, unit) => endOfMap[unit](toDate(d)),
