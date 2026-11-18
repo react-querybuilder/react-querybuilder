@@ -7,8 +7,9 @@ import { isISOStringDateOnly } from './utils';
 
 const invalidDate = new Date(Number.NaN);
 
+// Full match only; trailing garbage = invalid
 const dateRegExp =
-  /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?\s*(?:Z|([+-])(\d{2}):?(\d{2}))?)?/i;
+  /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?\s*(?:Z|([+-])(\d{2}):?(\d{2}))?)?\s*$/i;
 
 const toDate = (d: string | Date) => {
   if (d instanceof Date) return d;
@@ -20,14 +21,23 @@ const toDate = (d: string | Date) => {
   const [_all, yyyy, mm, dd, hh, mi, ss = '0', frac = '0', sign, oh = '0', om = '0'] = reMatch;
   const [year, monthIndex, day] = [+yyyy, +mm - 1, +dd];
 
-  if (!hh) return new Date(year, monthIndex, day);
+  // `setFullYear`/`setUTCFullYear` avoid the Date ctor's 0-99 → 1900-1999 mapping
+  if (!hh) {
+    const r = new Date(2000, 0, 1);
+    r.setFullYear(year, monthIndex, day);
+    return r;
+  }
+
+  if (+oh > 23 || +om > 59) return invalidDate;
 
   // Fractional seconds -> ms ('.5' = 500ms; extra digits truncated)
   const ms = +frac.slice(0, 3).padEnd(3, '0');
   // No offset (or `Z`) = UTC
   const offsetMinutes = (sign === '-' ? -1 : 1) * (+oh * 60 + +om);
 
-  return new Date(Date.UTC(year, monthIndex, day, +hh, +mi, +ss, ms) - offsetMinutes * 60_000);
+  const r = new Date(Date.UTC(2000, 0, 1, +hh, +mi, +ss, ms));
+  r.setUTCFullYear(year, monthIndex, day);
+  return new Date(r.getTime() - offsetMinutes * 60_000);
 };
 
 const isValid = (d: string | Date) => {

@@ -25,6 +25,15 @@ test('JS Date toDate timestamp parsing', () => {
   expect(iso('2025-06-11T12:30:00Z')).toBe('2025-06-11T12:30:00.000Z');
   expect(iso('2025-06-11T12:30:00+05:30')).toBe('2025-06-11T07:00:00.000Z');
   expect(iso('2025-06-11T12:30-0800')).toBe('2025-06-11T20:30:00.000Z');
+  expect(iso('2025-06-11T12:30:00+01:00')).toBe('2025-06-11T11:30:00.000Z');
+  // Years 0-99 kept literal
+  expect(iso('0099-06-11T12:30Z')).toBe('0099-06-11T12:30:00.000Z');
+  expect(apiFnsJS.toISOStringDateOnly('0099-06-11')).toBe('0099-06-11');
+  // Invalid: trailing garbage, out-of-range offset
+  expect(apiFnsJS.isValid('2025-06-11T12:30:00+05:300')).toBe(false);
+  expect(apiFnsJS.isValid('2025-06-11x')).toBe(false);
+  expect(apiFnsJS.isValid('2025-06-11T12:30:00+00:60')).toBe(false);
+  expect(apiFnsJS.isValid('2025-06-11T12:30:00+24:00')).toBe(false);
 });
 
 for (const [libName, apiFns] of dateLibraryFunctions) {
