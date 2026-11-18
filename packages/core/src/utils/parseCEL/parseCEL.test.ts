@@ -10,6 +10,7 @@ import type {
   ValueSources,
 } from '../../types';
 import type { Except } from '../../types/typeUtils';
+import { joinWith, splitBy } from '../arrayUtils';
 import { formatQuery } from '../formatQuery';
 import { toFullOption } from '../optGroupUtils';
 import { CELParser } from './celParser';
@@ -1327,7 +1328,12 @@ describe('string escapes (#1135)', () => {
     ]) {
       for (const operator of ['=', 'contains', 'beginsWith', 'endsWith', 'in'] as const) {
         const q = wrapRule({ field: 's', operator, value });
-        expect(parseCEL(formatQuery(q, 'cel'))).toEqual(q);
+        // `in` values are serialized lists; compare against canonical (re-joined) form
+        const expected =
+          operator === 'in'
+            ? wrapRule({ field: 's', operator, value: joinWith(splitBy(value)) })
+            : q;
+        expect(parseCEL(formatQuery(q, 'cel'))).toEqual(expected);
       }
     }
   });
