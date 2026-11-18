@@ -4,11 +4,15 @@ import { defaultJoinChar } from '../defaults';
 const getEscapeChar = (sepFirstChar: string) => (sepFirstChar === '\\' ? '/' : '\\');
 
 /**
- * Splits a string by a given character (see {@link defaultJoinChar}). Escaped characters
- * (characters preceded by a backslash) will not apply to the split, and the backslash will
- * be removed in the array element. Inverse of {@link joinWith}.
+ * Splits a string by a given character (see {@link defaultJoinChar}). A backslash escapes
+ * the split character's first character or another backslash; escaped characters don't
+ * apply to the split, and the escaping backslash is removed. Other backslashes are preserved
+ * (e.g. `C:\path`). Inverse of {@link joinWith} for non-empty split characters.
  *
  * When the split character starts with a backslash, the escape character is `/` instead.
+ *
+ * With an empty split character, the string is split into individual characters. Since
+ * {@link joinWith} concatenates elements in that case, original boundaries can't be recovered.
  *
  * @example
  * splitBy('this\\,\\,that,,the other,,,\\,')
