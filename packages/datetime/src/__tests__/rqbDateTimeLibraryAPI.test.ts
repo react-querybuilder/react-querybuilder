@@ -34,6 +34,22 @@ test('JS Date toDate timestamp parsing', () => {
   expect(apiFnsJS.isValid('2025-06-11x')).toBe(false);
   expect(apiFnsJS.isValid('2025-06-11T12:30:00+00:60')).toBe(false);
   expect(apiFnsJS.isValid('2025-06-11T12:30:00+24:00')).toBe(false);
+  // `24:00` rolls into next day
+  expect(iso('2025-12-31T24:00:00Z')).toBe('2026-01-01T00:00:00.000Z');
+  // Negative/extended years formatted per ISO 8601
+  const negYear = new Date(0);
+  negYear.setFullYear(-1, 11, 15);
+  expect(apiFnsJS.toISOStringDateOnly(negYear)).toBe('-000001-12-15');
+  const bigYear = new Date(0);
+  bigYear.setFullYear(10000, 0, 1);
+  expect(apiFnsJS.toISOStringDateOnly(bigYear)).toBe('+010000-01-01');
+  // Failed parses don't share mutable state
+  apiFnsJS.toDate('invalid').setTime(0);
+  expect(apiFnsJS.isValid('invalid')).toBe(false);
+  // No quadratic backtracking on long whitespace runs
+  const start = performance.now();
+  expect(apiFnsJS.isValid(`2025-06-11T12:30${' '.repeat(50_000)}x`)).toBe(false);
+  expect(performance.now() - start).toBeLessThan(500);
 });
 
 for (const [libName, apiFns] of dateLibraryFunctions) {

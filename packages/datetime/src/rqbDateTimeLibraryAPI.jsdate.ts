@@ -5,18 +5,18 @@ import type {
 } from './types';
 import { isISOStringDateOnly } from './utils';
 
-const invalidDate = new Date(Number.NaN);
+const newInvalidDate = () => new Date(Number.NaN);
 
 // Full match only; trailing garbage = invalid
 const dateRegExp =
-  /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?\s*(?:Z|([+-])(\d{2}):?(\d{2}))?)?\s*$/i;
+  /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?(?:\s*(?:Z|([+-])(\d{2}):?(\d{2})))?)?\s*$/i;
 
 const toDate = (d: string | Date) => {
   if (d instanceof Date) return d;
 
   const reMatch = dateRegExp.exec(d);
 
-  if (!reMatch) return invalidDate;
+  if (!reMatch) return newInvalidDate();
 
   const [_all, yyyy, mm, dd, hh, mi, ss = '0', frac = '0', sign, oh = '0', om = '0'] = reMatch;
   const [year, monthIndex, day] = [+yyyy, +mm - 1, +dd];
@@ -28,15 +28,17 @@ const toDate = (d: string | Date) => {
     return r;
   }
 
-  if (+oh > 23 || +om > 59) return invalidDate;
+  if (+oh > 23 || +om > 59) return newInvalidDate();
 
   // Fractional seconds -> ms ('.5' = 500ms; extra digits truncated)
   const ms = +frac.slice(0, 3).padEnd(3, '0');
   // No offset (or `Z`) = UTC
   const offsetMinutes = (sign === '-' ? -1 : 1) * (+oh * 60 + +om);
 
-  const r = new Date(Date.UTC(2000, 0, 1, +hh, +mi, +ss, ms));
+  // Date first, then time, so overflow (e.g. `24:00`) rolls into next day
+  const r = new Date(0);
   r.setUTCFullYear(year, monthIndex, day);
+  r.setUTCHours(+hh, +mi, +ss, ms);
   return new Date(r.getTime() - offsetMinutes * 60_000);
 };
 
@@ -45,14 +47,28 @@ const isValid = (d: string | Date) => {
   return dToDate instanceof Date && !Number.isNaN(dToDate.getTime());
 };
 
+const pad = (n: number, len: number) => `${n}`.padStart(len, '0');
+
+// ISO 8601: 4 digits for 0000-9999, else signed 6-digit extended year
+const formatYear = (y: number) =>
+  y >= 0 && y <= 9999 ? pad(y, 4) : `${y < 0 ? '-' : '+'}${pad(Math.abs(y), 6)}`;
+
+const formatDateOnly = (y: number, monthIndex: number, day: number) =>
+  `${formatYear(y)}-${pad(monthIndex + 1, 2)}-${pad(day, 2)}`;
+
 const toISOStringDateOnly = (d: string | Date) => {
+  // Date-only strings: resolve calendar fields in UTC so local-zone gaps (e.g. skipped days)
+  // can't shift the date; out-of-range fields still roll over like `toDate`
+  if (isISOStringDateOnly(d)) {
+    const [yyyy, mm, dd] = d.split('-');
+    const r = new Date(0);
+    r.setUTCFullYear(+yyyy, +mm - 1, +dd);
+    return formatDateOnly(r.getUTCFullYear(), r.getUTCMonth(), r.getUTCDate());
+  }
   const dToDate = toDate(d);
   if (!isValid(dToDate)) return '';
   // Local calendar date (matches other adapters); `toISOString` would shift to UTC
-  const yyyy = `${dToDate.getFullYear()}`.padStart(4, '0');
-  const mm = `${dToDate.getMonth() + 1}`.padStart(2, '0');
-  const dd = `${dToDate.getDate()}`.padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
+  return formatDateOnly(dToDate.getFullYear(), dToDate.getMonth(), dToDate.getDate());
 };
 
 // Week starts on Sunday (matching Day.js/date-fns defaults).

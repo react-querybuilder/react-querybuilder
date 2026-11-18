@@ -1,78 +1,70 @@
-import type { FullField } from '@react-querybuilder/core';
-import { dateLibraryFunctions } from '../dbqueryTestUtils';
-import type { RelativeDateTimeValue } from '../types';
-import { materializeRelativeValues } from '../utils';
+import { spawnSync } from 'node:child_process';
+import path from 'node:path';
+import { dateOnlyStrings, type TimezoneResults } from './timezoneTestUtils';
 
-// Extremes on both sides of UTC, plus UTC itself
-const timeZones = ['Pacific/Kiritimati', 'Asia/Tokyo', 'UTC', 'America/Los_Angeles', 'Etc/GMT+12'];
+// Extremes on both sides of UTC, UTC, and Apia (skipped 2011-12-30) w/ Jan 1 2025 offsets
+const timeZones: Record<string, number> = {
+  'Pacific/Kiritimati': -840,
+  'Asia/Tokyo': -540,
+  UTC: 0,
+  'America/Los_Angeles': 480,
+  'Etc/GMT+12': 720,
+  'Pacific/Apia': -780,
+};
 
-const originalTZ = process.env.TZ;
-afterAll(() => {
-  if (originalTZ === undefined) delete process.env.TZ;
-  else process.env.TZ = originalTZ;
-});
+// Vitest worker threads ignore runtime `process.env.TZ` changes; run in a child process instead
+const runInTimeZone = (tz: string): Record<string, TimezoneResults> => {
+  const { stdout, stderr, status } = spawnSync(
+    'bun',
+    [path.join(import.meta.dirname, 'timezoneTestUtils.ts')],
+    { env: { ...process.env, TZ: tz }, encoding: 'utf8' }
+  );
+  if (status !== 0) throw new Error(stderr);
+  return JSON.parse(stdout);
+};
 
-const dateField: FullField = { name: 'd', value: 'd', label: 'd', datatype: 'date' };
-
-const rel = (v: Partial<RelativeDateTimeValue>): RelativeDateTimeValue => ({
-  mode: 'relative',
-  anchor: 'now',
-  offset: 0,
-  unit: 'day',
-  ...v,
-});
-
-for (const tz of timeZones) {
+for (const [tz, offset] of Object.entries(timeZones)) {
   describe(`TZ=${tz}`, () => {
-    beforeAll(() => {
-      process.env.TZ = tz;
+    const results = runInTimeZone(tz);
+
+    test('child process uses the requested time zone', () => {
+      for (const r of Object.values(results)) expect(r.tz).toBe(offset);
     });
 
-    for (const [libName, apiFns] of dateLibraryFunctions) {
+    for (const [libName, r] of Object.entries(results)) {
       describe(libName, () => {
         test('date-only strings round-trip as local dates', () => {
-          for (const d of ['1957-01-01', '1969-12-31', '2002-12-14', '2024-02-29']) {
-            expect(apiFns.toISOStringDateOnly(d)).toBe(d);
-          }
+          expect(r.dateOnly).toEqual(dateOnlyStrings);
         });
 
         test('local Date objects format as local calendar date', () => {
-          expect(apiFns.toISOStringDateOnly(new Date(1957, 0, 1))).toBe('1957-01-01');
-          expect(apiFns.toISOStringDateOnly(new Date(1957, 0, 1, 23, 59, 59, 999))).toBe(
-            '1957-01-01'
-          );
+          expect(r.localDate).toEqual(['1957-01-01', '1957-01-01']);
         });
 
         test('isSame compares date-only values by local date', () => {
-          expect(apiFns.isSame('1957-01-01', '1957-01-01')).toBe(true);
-          expect(apiFns.isSame('1957-01-01', new Date(1957, 0, 1, 12))).toBe(true);
-          expect(apiFns.isSame('1957-01-01', '1957-01-02')).toBe(false);
+          expect(r.isSame).toEqual([true, true, false]);
         });
 
         test('startOf/endOf/add stay on local calendar', () => {
-          const base = new Date(2025, 5, 11, 12, 30);
-          expect(apiFns.toISOStringDateOnly(apiFns.startOf(base, 'day'))).toBe('2025-06-11');
-          expect(apiFns.toISOStringDateOnly(apiFns.endOf(base, 'day'))).toBe('2025-06-11');
-          expect(apiFns.toISOStringDateOnly(apiFns.startOf(base, 'month'))).toBe('2025-06-01');
-          expect(apiFns.toISOStringDateOnly(apiFns.endOf(base, 'year'))).toBe('2025-12-31');
-          expect(apiFns.toISOStringDateOnly(apiFns.add('2025-06-11', 1, 'day'))).toBe('2025-06-12');
+          expect(r.startEndAdd).toEqual([
+            '2025-06-11',
+            '2025-06-11',
+            '2025-06-01',
+            '2025-12-31',
+            '2025-06-12',
+          ]);
         });
 
         test('materializes relative date-only values as local dates', () => {
-          const now = new Date(2025, 5, 11, 0, 30);
-          expect(
-            materializeRelativeValues(apiFns, rel({ anchor: 'startOfMonth' }), {
-              fieldData: dateField,
-              context: { relativeDateTimeBase: now },
-            })
-          ).toBe('2025-06-01');
-          expect(
-            materializeRelativeValues(apiFns, rel({ anchor: 'startOfDay' }), {
-              fieldData: dateField,
-              context: { relativeDateTimeBase: now },
-            })
-          ).toBe('2025-06-11');
+          expect(r.materialize).toEqual(['2025-06-01', '2025-06-11']);
         });
+
+        // Third-party libs resolve skipped local days to the next day; JS Date keeps the input
+        if (libName === 'JS Date') {
+          test('keeps date-only string on a skipped local day', () => {
+            expect(r.skippedDay).toBe('2011-12-30');
+          });
+        }
       });
     }
   });
