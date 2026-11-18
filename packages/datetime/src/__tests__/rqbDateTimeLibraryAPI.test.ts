@@ -13,6 +13,20 @@ test('format', () => {
   expect(apiFnsLuxon.format('2002-12-14', `YYYY-MM-DD 'a.d.'`)).toBe('2002-12-14 a.d.');
 });
 
+test('JS Date toDate timestamp parsing', () => {
+  const iso = (s: string) => apiFnsJS.toDate(s).toISOString();
+  // Seconds optional
+  expect(iso('2025-06-11T12:30')).toBe('2025-06-11T12:30:00.000Z');
+  expect(iso('2025-06-11 12:30')).toBe('2025-06-11T12:30:00.000Z');
+  // Fractional seconds
+  expect(iso('2025-06-11T12:30:45.5')).toBe('2025-06-11T12:30:45.500Z');
+  expect(iso('2025-06-11T12:30:45.123456')).toBe('2025-06-11T12:30:45.123Z');
+  // Offsets
+  expect(iso('2025-06-11T12:30:00Z')).toBe('2025-06-11T12:30:00.000Z');
+  expect(iso('2025-06-11T12:30:00+05:30')).toBe('2025-06-11T07:00:00.000Z');
+  expect(iso('2025-06-11T12:30-0800')).toBe('2025-06-11T20:30:00.000Z');
+});
+
 for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
     test('toISOStringDateOnly', () => {

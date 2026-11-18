@@ -7,7 +7,8 @@ import { isISOStringDateOnly } from './utils';
 
 const invalidDate = new Date(Number.NaN);
 
-const dateRegExp = /^(\d{4})-(\d{2})-(\d{2})([T ](\d{2}):(\d{2}):(\d{2})(\.(\d{1,3}))?)?/;
+const dateRegExp =
+  /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?\s*(?:Z|([+-])(\d{2}):?(\d{2}))?)?/i;
 
 const toDate = (d: string | Date) => {
   if (d instanceof Date) return d;
@@ -16,16 +17,17 @@ const toDate = (d: string | Date) => {
 
   if (!reMatch) return invalidDate;
 
-  const [_all, yyyy, mm, dd, _time, hh, mi, ss, _decimal, sss] = reMatch;
-  const [year, month, day, hours, minutes, seconds, ms] = [yyyy, mm, dd, hh, mi, ss, sss ?? '0']
-    .filter(Boolean)
-    .map(Number);
+  const [_all, yyyy, mm, dd, hh, mi, ss = '0', frac = '0', sign, oh = '0', om = '0'] = reMatch;
+  const [year, monthIndex, day] = [+yyyy, +mm - 1, +dd];
 
-  const monthIndex = month - 1;
+  if (!hh) return new Date(year, monthIndex, day);
 
-  return hh
-    ? new Date(Date.UTC(year, monthIndex, day, hours, minutes, seconds, ms))
-    : new Date(year, monthIndex, day);
+  // Fractional seconds -> ms ('.5' = 500ms; extra digits truncated)
+  const ms = +frac.slice(0, 3).padEnd(3, '0');
+  // No offset (or `Z`) = UTC
+  const offsetMinutes = (sign === '-' ? -1 : 1) * (+oh * 60 + +om);
+
+  return new Date(Date.UTC(year, monthIndex, day, +hh, +mi, +ss, ms) - offsetMinutes * 60_000);
 };
 
 const isValid = (d: string | Date) => {
