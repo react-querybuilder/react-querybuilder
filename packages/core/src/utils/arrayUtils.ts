@@ -14,6 +14,7 @@ import { defaultJoinChar } from '../defaults';
  */
 export const splitBy = (str?: string, splitChar: string = defaultJoinChar): string[] => {
   if (typeof str !== 'string') return [];
+  if (!splitChar) return str.split('');
   const result: string[] = [];
   let current = '';
   let i = 0;
@@ -50,13 +51,17 @@ export const splitBy = (str?: string, splitChar: string = defaultJoinChar): stri
  */
 export const joinWith = (strArr: unknown[], joinChar: string = defaultJoinChar): string => {
   const jc = joinChar[0];
+  const strs = strArr.map(str => `${str ?? ''}`);
+  if (!jc) return strs.join('');
+  // Backslash separator: escape every `\` once
+  if (jc === '\\') return strs.map(s => s.replaceAll('\\', '\\\\')).join(joinChar);
   // Escape backslashes only where ambiguous (before `\`, join char, or end of element)
   const ambiguousBackslash = new RegExp(
     `\\\\(?=\\\\|${jc.replace(/[$()*+.?[\\\]^{|}-]/g, '\\$&')}|$)`,
     'g'
   );
-  return strArr
-    .map(str => `${str ?? ''}`.replace(ambiguousBackslash, '\\\\').replaceAll(jc, `\\${jc}`))
+  return strs
+    .map(s => s.replace(ambiguousBackslash, '\\\\').replaceAll(jc, `\\${jc}`))
     .join(joinChar);
 };
 

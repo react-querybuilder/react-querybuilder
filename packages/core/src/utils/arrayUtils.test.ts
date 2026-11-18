@@ -39,6 +39,15 @@ it('round-trips backslashes', () => {
   expect(joinWith(['a\\', 'b'])).toBe(String.raw`a\\,b`);
 });
 
+it('handles edge-case separators', () => {
+  expect(splitBy('ab', '')).toEqual(['a', 'b']);
+  expect(joinWith(['a', 'b'], '')).toBe('ab');
+  // `\` separator is inherently ambiguous w/ `\` escapes; only simple cases round-trip
+  for (const arr of [['\\'], ['\\', 'b'], ['a\\b', 'c']]) {
+    expect(splitBy(joinWith(arr, '\\'), '\\')).toEqual(arr);
+  }
+});
+
 it('converts stuff to an array', () => {
   expect(toArray([])).toEqual([]);
   expect(toArray({})).toEqual([]);
