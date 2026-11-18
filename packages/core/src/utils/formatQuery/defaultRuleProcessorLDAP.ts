@@ -46,13 +46,13 @@ export const defaultRuleProcessorLDAP: RuleProcessor = (
 
     // LDAP only has `>=` and `<=`, so strict comparisons also exclude equality
     case '>':
-      return `(&(${field}>=${ldapEscape(value)})(!(${field}=${ldapEscape(value)})))`;
+    case '<': {
+      const v = ldapEscape(value);
+      return `(&(${field}${operatorLC}=${v})(!(${field}=${v})))`;
+    }
 
     case '>=':
       return `(${field}>=${ldapEscape(value)})`;
-
-    case '<':
-      return `(&(${field}<=${ldapEscape(value)})(!(${field}=${ldapEscape(value)})))`;
 
     case '<=':
       return `(${field}<=${ldapEscape(value)})`;
