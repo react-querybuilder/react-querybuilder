@@ -27,6 +27,7 @@ export interface TimezoneResults {
   skippedDay: string;
   skippedDayTrailingSpace: string;
   skippedDayOrder: boolean[];
+  dateOnlyVsLocalTimeOrder: boolean[];
 }
 
 /** Results per library; values must not depend on the local time zone. */
@@ -75,6 +76,11 @@ export const getTimezoneResults = (): Record<string, TimezoneResults> =>
           skippedDayOrder: [
             apiFns.isBefore('2011-12-30', '2011-12-31'),
             apiFns.isAfter('2011-12-31', '2011-12-30'),
+          ],
+          // Date-only = local midnight, so it precedes local 00:30 the same day
+          dateOnlyVsLocalTimeOrder: [
+            apiFns.isBefore('2025-06-11', '2025-06-11T00:30:00'),
+            apiFns.isAfter('2025-06-11T00:30:00', '2025-06-11'),
           ],
         },
       ];

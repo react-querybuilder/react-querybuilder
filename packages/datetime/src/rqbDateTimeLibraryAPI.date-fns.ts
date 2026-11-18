@@ -53,8 +53,8 @@ const durationKeyMap: Record<RelativeDateTimeUnit, keyof Duration> = {
  */
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   format: (d, fmt) => format(toDate(d), fmt.replace('YYYY-MM-DD', iso8601DateOnly)),
-  isAfter,
-  isBefore,
+  isAfter: (a, b) => isAfter(toDate(a), toDate(b)),
+  isBefore: (a, b) => isBefore(toDate(a), toDate(b)),
   isSame: (a, b) => {
     const aToDate = toDate(a);
     const bToDate = toDate(b);
