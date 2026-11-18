@@ -161,6 +161,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/RoKra99"><img src="https://avatars.githubusercontent.com/u/40492443?v=4&size=100" width="100px" height="100px" alt="Robert Krause"/><br /><sub><b>Robert Krause</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=RoKra99" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=RoKra99" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/bardrop"><img src="https://avatars.githubusercontent.com/u/100354790?v=4&size=100" width="100px" height="100px" alt="bardrop"/><br /><sub><b>bardrop</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=bardrop" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=bardrop" title="Tests">⚠️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/hekystyle"><img src="https://avatars.githubusercontent.com/u/24366574?v=4&size=100" width="100px" height="100px" alt="Tomas Heky Hekrla"/><br /><sub><b>Tomas Heky Hekrla</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=hekystyle" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
@@ -173,7 +176,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-49-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-50-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
