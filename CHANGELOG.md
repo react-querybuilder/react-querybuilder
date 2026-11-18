@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.27.1] - 2026-11-18
+
 ### Fixed
 
 - [#1145] `parseMongoDB` escapes commas in `between`/`notBetween` bounds parsed from the compact `{ f: { $gte, $lte } }` form (also under `$not`) and the `$or: [{ f: { $lt } }, { f: { $gt } }]` form, so "mongodb_query" output with comma-containing bounds round-trips. Previously `['Smith, A', 'Smith, Z']` became bounds `'Smith'` and `'A'`.
@@ -2690,7 +2692,8 @@ _TL;DR: These are probably not breaking changes._
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.27.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.27.1...HEAD
+[v8.27.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.27.0...v8.27.1
 [v8.27.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.26.0...v8.27.0
 [v8.26.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.25.0...v8.26.0
 [v8.25.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.24.4...v8.25.0
