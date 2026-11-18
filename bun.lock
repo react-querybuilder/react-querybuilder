@@ -56,7 +56,7 @@
     },
     "packages/antd": {
       "name": "@react-querybuilder/antd",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@ant-design/icons": "catalog:",
         "@testing-library/dom": "catalog:test",
@@ -82,7 +82,7 @@
     },
     "packages/bootstrap": {
       "name": "@react-querybuilder/bootstrap",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@popperjs/core": "^2.11.8",
         "@testing-library/dom": "catalog:test",
@@ -107,7 +107,7 @@
     },
     "packages/bulma": {
       "name": "@react-querybuilder/bulma",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@testing-library/dom": "catalog:test",
         "@testing-library/react": "catalog:test",
@@ -129,7 +129,7 @@
     },
     "packages/chakra": {
       "name": "@react-querybuilder/chakra",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@chakra-ui/react": "catalog:",
         "@emotion/react": "catalog:",
@@ -161,7 +161,7 @@
     },
     "packages/core": {
       "name": "@react-querybuilder/core",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "dependencies": {
         "@ts-jison/lexer": "0.4.1-alpha.4",
         "@ts-jison/parser": "0.4.1-alpha.4",
@@ -223,7 +223,7 @@
     },
     "packages/datetime": {
       "name": "@react-querybuilder/datetime",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "dependencies": {
         "@react-querybuilder/core": "8.27.0",
       },
@@ -276,7 +276,7 @@
     },
     "packages/dnd": {
       "name": "@react-querybuilder/dnd",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@atlaskit/pragmatic-drag-and-drop": "catalog:",
         "@dnd-kit/core": "^6.3.1",
@@ -317,7 +317,7 @@
     },
     "packages/expr": {
       "name": "@react-querybuilder/expr",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "dependencies": {
         "@react-querybuilder/core": "8.27.0",
       },
@@ -356,7 +356,7 @@
     },
     "packages/fluent": {
       "name": "@react-querybuilder/fluent",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons-mdl2": "catalog:",
@@ -382,7 +382,7 @@
     },
     "packages/mantine": {
       "name": "@react-querybuilder/mantine",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@mantine/core": "catalog:",
         "@mantine/dates": "catalog:",
@@ -410,7 +410,7 @@
     },
     "packages/material": {
       "name": "@react-querybuilder/material",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@emotion/react": "catalog:",
         "@emotion/styled": "catalog:",
@@ -438,7 +438,7 @@
     },
     "packages/mcp": {
       "name": "@react-querybuilder/mcp",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "bin": {
         "rqb-mcp": "./dist/cli.mjs",
       },
@@ -458,7 +458,7 @@
     },
     "packages/native": {
       "name": "@react-querybuilder/native",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@testing-library/react-native": "^14.1.0",
         "@types/react": "catalog:",
@@ -481,7 +481,7 @@
     },
     "packages/prime": {
       "name": "@react-querybuilder/prime",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@testing-library/dom": "catalog:test",
         "@testing-library/react": "catalog:test",
@@ -505,7 +505,7 @@
     },
     "packages/react-querybuilder": {
       "name": "react-querybuilder",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "dependencies": {
         "@react-querybuilder/core": "^8.27.0",
         "@reduxjs/toolkit": "catalog:",
@@ -533,7 +533,7 @@
     },
     "packages/rules-engine": {
       "name": "@react-querybuilder/rules-engine",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "dependencies": {
         "@reduxjs/toolkit": "catalog:",
         "immer": "catalog:",
@@ -572,7 +572,7 @@
     },
     "packages/tremor": {
       "name": "@react-querybuilder/tremor",
-      "version": "8.27.0",
+      "version": "8.27.1",
       "devDependencies": {
         "@headlessui/tailwindcss": "^0.2.2",
         "@tailwindcss/forms": "^0.5.11",
