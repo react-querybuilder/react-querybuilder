@@ -42,9 +42,18 @@ it('round-trips backslashes', () => {
 it('handles edge-case separators', () => {
   expect(splitBy('ab', '')).toEqual(['a', 'b']);
   expect(joinWith(['a', 'b'], '')).toBe('ab');
-  // `\` separator is inherently ambiguous w/ `\` escapes; only simple cases round-trip
-  for (const arr of [['\\'], ['\\', 'b'], ['a\\b', 'c']]) {
+  // `\` separator uses `/` as escape char
+  for (const arr of [
+    ['\\'],
+    ['\\', 'b'],
+    ['a\\b', 'c'],
+    ['a', '', 'b'],
+    ['', '', ''],
+    ['\\a', '\\\\', ''],
+    ['a/', '/', '//', '/\\', 'x'],
+  ]) {
     expect(splitBy(joinWith(arr, '\\'), '\\')).toEqual(arr);
+    expect(splitBy(joinWith(arr, '\\t'), '\\t')).toEqual(arr);
   }
 });
 
