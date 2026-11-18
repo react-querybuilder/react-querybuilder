@@ -45,6 +45,27 @@ it('escapes special characters', () => {
   ).toEqual(`(f1=\\28\\29\\26\\7c\\3d\\3e\\3c\\7e\\2a\\2f\\5c)`);
 });
 
+it('escapes NUL with two hex digits', () => {
+  expect(formatQuery({ rules: [{ field: 'f1', operator: '=', value: 'a\0b' }] }, 'ldap')).toBe(
+    '(f1=a\\00b)'
+  );
+});
+
+it('excludes equal values for strict comparisons', () => {
+  const ops = (operator: string) =>
+    formatQuery({ rules: [{ field: 'age', operator, value: 30 }] }, 'ldap');
+  expect(ops('>')).toBe('(&(age>=30)(!(age=30)))');
+  expect(ops('>=')).toBe('(age>=30)');
+  expect(ops('<')).toBe('(&(age<=30)(!(age=30)))');
+  expect(ops('<=')).toBe('(age<=30)');
+  expect(
+    formatQuery(
+      { combinator: 'and', not: true, rules: [{ field: 'f', operator: '>', value: 'a*' }] },
+      'ldap'
+    )
+  ).toBe('(!(&(f>=a\\2a)(!(f=a\\2a))))');
+});
+
 it('independent combinators', () => {
   expect(formatQuery(queryIC, 'ldap')).toBe(
     `(|(&(firstName=Test)(middleName=Test))(lastName=Test))`
@@ -94,7 +115,7 @@ it('ruleProcessor', () => {
 
 it('parseNumbers', () => {
   const allNumbersParsed =
-    '(&(f>=NaN)(f=0)(f=0)(f=0)(|(f<=1.5)(f>=1.5))(|(f=0)(f=1)(f=2))(|(f=0)(f=1)(f=2))(|(f=0)(f=abc)(f=2))(&(f>=0)(f<=1))(&(f>=0)(f<=1))(&(f>=0)(f<=abc))(&(f>=[object Object])(f<=[object Object])))';
+    '(&(&(f>=NaN)(!(f=NaN)))(f=0)(f=0)(f=0)(|(&(f<=1.5)(!(f=1.5)))(&(f>=1.5)(!(f=1.5))))(|(f=0)(f=1)(f=2))(|(f=0)(f=1)(f=2))(|(f=0)(f=abc)(f=2))(&(f>=0)(f<=1))(&(f>=0)(f<=1))(&(f>=0)(f<=abc))(&(f>=[object Object])(f<=[object Object])))';
   for (const opts of [
     { parseNumbers: true },
     { parseNumbers: 'strict' },
