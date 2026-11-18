@@ -123,7 +123,7 @@ export const getDatetimeRuleProcessorNL =
         {
           if (valueAsDateArray.length < 2) return '';
           const [first, second] = valueAsDateArray;
-          const orderedArray = apiFns.isBefore(first[1], second[1])
+          const orderedArray = apiFns.isBefore(first[0], second[0])
             ? [first, second]
             : [second, first];
           finalValue = orderedArray

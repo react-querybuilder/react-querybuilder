@@ -18,6 +18,14 @@ import {
   resolveDatetimeOperator,
 } from './utils';
 
+type VPParams = Parameters<ValueProcessorByRule>;
+
+// Date-only original string avoids local-zone shifts (e.g. skipped days) in parsed `Date`
+const dateOnlySource = (rule: VPParams[0], opts: VPParams[1]) => {
+  const originalValue = opts?.context?.originalValue;
+  return isISOStringDateOnly(originalValue) ? originalValue : rule.value;
+};
+
 /**
  * Generates a value processor with date/time features for use by
  * {@link @react-querybuilder/core!formatQuery formatQuery} with the "sql" format and "ansi" preset.
@@ -26,7 +34,10 @@ export const getDatetimeValueProcessorANSI =
   ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     if (isISOStringDateOnly(opts?.context?.originalValue)) {
-      return defaultValueProcessorByRule({ ...rule, value: toISOStringDateOnly(rule.value) }, opts);
+      return defaultValueProcessorByRule(
+        { ...rule, value: toISOStringDateOnly(dateOnlySource(rule, opts)) },
+        opts
+      );
     }
     return defaultValueProcessorByRule({ ...rule, value: toISOString(rule.value as Date) }, opts);
   };
@@ -42,7 +53,9 @@ export const getDatetimeValueProcessorMSSQL =
       ? 'datetimeoffset'
       : 'date';
     const value =
-      datatype === 'datetimeoffset' ? toISOString(rule.value) : toISOStringDateOnly(rule.value);
+      datatype === 'datetimeoffset'
+        ? toISOString(rule.value)
+        : toISOStringDateOnly(dateOnlySource(rule, opts));
     return defaultValueProcessorByRule(
       { ...rule, value },
       { ...opts, wrapValueWith: [`cast(`, ` as ${datatype})`] }
@@ -60,7 +73,9 @@ export const getDatetimeValueProcessorMySQL =
       ? 'datetime'
       : 'date';
     const value =
-      datatype === 'datetime' ? toISOString(rule.value) : toISOStringDateOnly(rule.value);
+      datatype === 'datetime'
+        ? toISOString(rule.value)
+        : toISOStringDateOnly(dateOnlySource(rule, opts));
     return defaultValueProcessorByRule(
       { ...rule, value },
       { ...opts, wrapValueWith: [`cast(`, ` as ${datatype})`] }
@@ -79,7 +94,7 @@ export const getDatetimeValueProcessorOracle =
     const value =
       datatype === 'timestamp'
         ? toISOString(rule.value).replaceAll('T', ' ').replace('Z', ' UTC')
-        : toISOStringDateOnly(rule.value);
+        : toISOStringDateOnly(dateOnlySource(rule, opts));
     return defaultValueProcessorByRule(
       { ...rule, value },
       { ...opts, wrapValueWith: [datatype, ``] }
@@ -95,7 +110,9 @@ export const getDatetimeValueProcessorPostgreSQL =
   (rule, opts) => {
     const datatype = /^timestamp/i.test(opts?.fieldData?.datatype as string) ? 'timestamp' : 'date';
     const value =
-      datatype === 'timestamp' ? toISOString(rule.value) : toISOStringDateOnly(rule.value);
+      datatype === 'timestamp'
+        ? toISOString(rule.value)
+        : toISOStringDateOnly(dateOnlySource(rule, opts));
     return defaultValueProcessorByRule(
       { ...rule, value },
       { ...opts, wrapValueWith: [datatype, ``] }
@@ -224,7 +241,7 @@ export const getDatetimeRuleProcessorSQL =
         {
           if (valueAsDateArray.length < 2) return '';
           const [first, second] = valueAsDateArray;
-          const orderedArray = apiFns.isBefore(first[1], second[1])
+          const orderedArray = apiFns.isBefore(first[0], second[0])
             ? [first, second]
             : [second, first];
           finalValue = orderedArray

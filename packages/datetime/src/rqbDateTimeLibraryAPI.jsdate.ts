@@ -3,41 +3,67 @@ import type {
   RelativeDateTimeUnit,
   RQBDateTimeLibraryAPI,
 } from './types';
-import { isISOStringDateOnly } from './utils';
 
 const newInvalidDate = () => new Date(Number.NaN);
 
-// Full match only; trailing garbage = invalid
+// Full match only; trailing garbage = invalid. Year: 4 digits or signed 6-digit extended.
 const dateRegExp =
-  /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?(?:\s*(?:Z|([+-])(\d{2}):?(\d{2})))?)?\s*$/i;
+  /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?(?:\s*(?:Z|([+-])(\d{2}):?(\d{2})))?)?\s*$/i;
+
+type DateParts = [year: number, monthIndex: number, day: number];
+
+// Calendar date at UTC midnight (UTC has no skipped days), or null if fields don't round-trip
+const utcCalendarDate = ([year, monthIndex, day]: DateParts) => {
+  const r = new Date(0);
+  r.setUTCFullYear(year, monthIndex, day);
+  return r.getUTCFullYear() === year && r.getUTCMonth() === monthIndex && r.getUTCDate() === day
+    ? r
+    : null;
+};
+
+/** Calendar fields of a valid date-only string (trailing whitespace allowed), else null */
+const parseDateOnly = (d: unknown): DateParts | null => {
+  if (typeof d !== 'string') return null;
+  const reMatch = dateRegExp.exec(d);
+  if (!reMatch || reMatch[4] || reMatch[1] === '-000000') return null;
+  const parts: DateParts = [+reMatch[1], +reMatch[2] - 1, +reMatch[3]];
+  return utcCalendarDate(parts) ? parts : null;
+};
+
+const compareDateParts = (a: DateParts, b: DateParts) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
 
 const toDate = (d: string | Date) => {
   if (d instanceof Date) return d;
 
   const reMatch = dateRegExp.exec(d);
 
-  if (!reMatch) return newInvalidDate();
+  if (!reMatch || reMatch[1] === '-000000') return newInvalidDate();
 
   const [_all, yyyy, mm, dd, hh, mi, ss = '0', frac = '0', sign, oh = '0', om = '0'] = reMatch;
-  const [year, monthIndex, day] = [+yyyy, +mm - 1, +dd];
+  const parts: DateParts = [+yyyy, +mm - 1, +dd];
+  const utcDate = utcCalendarDate(parts);
+
+  if (!utcDate) return newInvalidDate();
 
   // `setFullYear`/`setUTCFullYear` avoid the Date ctor's 0-99 → 1900-1999 mapping
   if (!hh) {
     const r = new Date(2000, 0, 1);
-    r.setFullYear(year, monthIndex, day);
+    r.setFullYear(...parts);
     return r;
   }
 
   if (+oh > 23 || +om > 59) return newInvalidDate();
+  // `24:00` only as end-of-day (all-zero minutes/seconds/fraction)
+  if (+hh > 24 || +mi > 59 || +ss > 59) return newInvalidDate();
+  if (+hh === 24 && (+mi > 0 || +ss > 0 || /[1-9]/.test(frac))) return newInvalidDate();
 
   // Fractional seconds -> ms ('.5' = 500ms; extra digits truncated)
   const ms = +frac.slice(0, 3).padEnd(3, '0');
   // No offset (or `Z`) = UTC
   const offsetMinutes = (sign === '-' ? -1 : 1) * (+oh * 60 + +om);
 
-  // Date first, then time, so overflow (e.g. `24:00`) rolls into next day
-  const r = new Date(0);
-  r.setUTCFullYear(year, monthIndex, day);
+  // Date first, then time, so `24:00` rolls into next day
+  const r = utcDate;
   r.setUTCHours(+hh, +mi, +ss, ms);
   return new Date(r.getTime() - offsetMinutes * 60_000);
 };
@@ -57,18 +83,21 @@ const formatDateOnly = (y: number, monthIndex: number, day: number) =>
   `${formatYear(y)}-${pad(monthIndex + 1, 2)}-${pad(day, 2)}`;
 
 const toISOStringDateOnly = (d: string | Date) => {
-  // Date-only strings: resolve calendar fields in UTC so local-zone gaps (e.g. skipped days)
-  // can't shift the date; out-of-range fields still roll over like `toDate`
-  if (isISOStringDateOnly(d)) {
-    const [yyyy, mm, dd] = d.split('-');
-    const r = new Date(0);
-    r.setUTCFullYear(+yyyy, +mm - 1, +dd);
-    return formatDateOnly(r.getUTCFullYear(), r.getUTCMonth(), r.getUTCDate());
-  }
+  // Date-only strings: use parsed calendar fields directly so local-zone gaps (e.g. skipped
+  // days) can't shift the date
+  const parts = parseDateOnly(d);
+  if (parts) return formatDateOnly(...parts);
   const dToDate = toDate(d);
   if (!isValid(dToDate)) return '';
   // Local calendar date (matches other adapters); `toISOString` would shift to UTC
   return formatDateOnly(dToDate.getFullYear(), dToDate.getMonth(), dToDate.getDate());
+};
+
+// Both date-only: compare calendar fields; else compare instants (NaN if either invalid)
+const compare = (a: string | Date, b: string | Date) => {
+  const [pa, pb] = [parseDateOnly(a), parseDateOnly(b)];
+  if (pa && pb) return compareDateParts(pa, pb);
+  return toDate(a).getTime() - toDate(b).getTime();
 };
 
 // Week starts on Sunday (matching Day.js/date-fns defaults).
@@ -139,20 +168,12 @@ const add = (d: string | Date, amount: number, unit: RelativeDateTimeUnit): Date
  */
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   format: d => toDate(d).toISOString(),
-  isAfter: (a, b) => {
-    const dateA = toDate(a).getTime();
-    const dateB = toDate(b).getTime();
-    return !Number.isNaN(dateA) && !Number.isNaN(dateB) && dateA > dateB;
-  },
-  isBefore: (a, b) => {
-    const dateA = toDate(a).getTime();
-    const dateB = toDate(b).getTime();
-    return !Number.isNaN(dateA) && !Number.isNaN(dateB) && dateA < dateB;
-  },
+  isAfter: (a, b) => compare(a, b) > 0,
+  isBefore: (a, b) => compare(a, b) < 0,
   isSame: (a, b) => {
     const aToDate = toDate(a);
     const bToDate = toDate(b);
-    return isISOStringDateOnly(a) || isISOStringDateOnly(b)
+    return parseDateOnly(a) || parseDateOnly(b)
       ? toISOStringDateOnly(a) === toISOStringDateOnly(b)
       : aToDate.getTime() === bToDate.getTime();
   },

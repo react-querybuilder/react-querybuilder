@@ -47,9 +47,41 @@ test('JS Date toDate timestamp parsing', () => {
   apiFnsJS.toDate('invalid').setTime(0);
   expect(apiFnsJS.isValid('invalid')).toBe(false);
   // No quadratic backtracking on long whitespace runs
-  const start = performance.now();
   expect(apiFnsJS.isValid(`2025-06-11T12:30${' '.repeat(50_000)}x`)).toBe(false);
-  expect(performance.now() - start).toBeLessThan(500);
+  // Impossible calendar dates, out-of-range clock fields
+  expect(apiFnsJS.isValid('2025-02-29')).toBe(false);
+  expect(apiFnsJS.toISOStringDateOnly('2025-02-29')).toBe('');
+  expect(apiFnsJS.isValid('2025-02-29T12:30:00+01:00')).toBe(false);
+  expect(apiFnsJS.isValid('2024-02-29T12:30:00+01:00')).toBe(true);
+  expect(apiFnsJS.isValid('2025-06-11T25:00Z')).toBe(false);
+  expect(apiFnsJS.isValid('2025-06-11T12:60Z')).toBe(false);
+  expect(apiFnsJS.isValid('2025-06-11T12:30:60Z')).toBe(false);
+  expect(apiFnsJS.isValid('2025-12-31T24:01+01:00')).toBe(false);
+  expect(apiFnsJS.isValid('2025-12-31T24:00:00.001Z')).toBe(false);
+  expect(iso('2025-12-31T24:00:00.000Z')).toBe('2026-01-01T00:00:00.000Z');
+  // Crossing midnight via offset stays valid
+  expect(iso('2025-06-11T00:30+01:00')).toBe('2025-06-10T23:30:00.000Z');
+  // Extended years round-trip
+  expect(apiFnsJS.toISOStringDateOnly('+010000-01-01')).toBe('+010000-01-01');
+  expect(apiFnsJS.toISOStringDateOnly('-000001-12-15')).toBe('-000001-12-15');
+  expect(apiFnsJS.isValid('-000000-01-01')).toBe(false);
+  expect(apiFnsJS.isBefore('-000001-12-15', '0000-01-01')).toBe(true);
+  // Trailing whitespace on date-only strings
+  expect(apiFnsJS.toISOStringDateOnly('2025-06-11 ')).toBe('2025-06-11');
+});
+
+test('JS Date parser rejection time grows ~linearly w/ whitespace run length', () => {
+  const time = (n: number) => {
+    const input = `2025-06-11T12:30${' '.repeat(n)}x`;
+    const start = performance.now();
+    for (let i = 0; i < 5; i++) apiFnsJS.isValid(input);
+    return performance.now() - start;
+  };
+  time(10_000); // warm-up
+  const small = time(20_000);
+  const large = time(200_000);
+  // 10x input: linear ≈ 10x, quadratic ≈ 100x; generous margin for noise
+  expect(large / Math.max(small, 0.1)).toBeLessThan(40);
 });
 
 for (const [libName, apiFns] of dateLibraryFunctions) {

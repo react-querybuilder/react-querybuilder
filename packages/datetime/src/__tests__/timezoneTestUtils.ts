@@ -25,6 +25,8 @@ export interface TimezoneResults {
   startEndAdd: string[];
   materialize: unknown[];
   skippedDay: string;
+  skippedDayTrailingSpace: string;
+  skippedDayOrder: boolean[];
 }
 
 /** Results per library; values must not depend on the local time zone. */
@@ -59,9 +61,21 @@ export const getTimezoneResults = (): Record<string, TimezoneResults> =>
             apiFns.toISOStringDateOnly(apiFns.endOf(base, 'year')),
             apiFns.toISOStringDateOnly(apiFns.add('2025-06-11', 1, 'day')),
           ],
-          materialize: [materialize('startOfMonth'), materialize('startOfDay')],
+          materialize: [
+            materialize('startOfMonth'),
+            materialize('startOfDay'),
+            materializeRelativeValues(apiFns, [rel({ anchor: 'startOfMonth' }), '2025-06-11'], {
+              fieldData: dateField,
+              context: { relativeDateTimeBase: now },
+            }),
+          ],
           // Pacific/Apia skipped 2011-12-30
           skippedDay: apiFns.toISOStringDateOnly('2011-12-30'),
+          skippedDayTrailingSpace: apiFns.toISOStringDateOnly('2011-12-30 '),
+          skippedDayOrder: [
+            apiFns.isBefore('2011-12-30', '2011-12-31'),
+            apiFns.isAfter('2011-12-31', '2011-12-30'),
+          ],
         },
       ];
     })

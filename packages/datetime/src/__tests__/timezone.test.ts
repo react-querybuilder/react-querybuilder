@@ -14,12 +14,15 @@ const timeZones: Record<string, number> = {
 
 // Vitest worker threads ignore runtime `process.env.TZ` changes; run in a child process instead
 const runInTimeZone = (tz: string): Record<string, TimezoneResults> => {
-  const { stdout, stderr, status } = spawnSync(
+  const { stdout, stderr, status, signal, error } = spawnSync(
     'bun',
     [path.join(import.meta.dirname, 'timezoneTestUtils.ts')],
     { env: { ...process.env, TZ: tz }, encoding: 'utf8' }
   );
-  if (status !== 0) throw new Error(stderr);
+  if (error || status !== 0) {
+    const exit = signal ? `signal ${signal}` : `status ${status}`;
+    throw new Error(`TZ=${tz} child failed (${exit}): ${stderr}`, { cause: error });
+  }
   return JSON.parse(stdout);
 };
 
@@ -56,13 +59,15 @@ for (const [tz, offset] of Object.entries(timeZones)) {
         });
 
         test('materializes relative date-only values as local dates', () => {
-          expect(r.materialize).toEqual(['2025-06-01', '2025-06-11']);
+          expect(r.materialize).toEqual(['2025-06-01', '2025-06-11', ['2025-06-01', '2025-06-11']]);
         });
 
         // Third-party libs resolve skipped local days to the next day; JS Date keeps the input
         if (libName === 'JS Date') {
           test('keeps date-only string on a skipped local day', () => {
             expect(r.skippedDay).toBe('2011-12-30');
+            expect(r.skippedDayTrailingSpace).toBe('2011-12-30');
+            expect(r.skippedDayOrder).toEqual([true, true]);
           });
         }
       });
