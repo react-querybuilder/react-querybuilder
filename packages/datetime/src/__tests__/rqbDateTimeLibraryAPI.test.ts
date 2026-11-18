@@ -15,12 +15,22 @@ test('format', () => {
 
 test('JS Date toDate timestamp parsing', () => {
   const iso = (s: string) => apiFnsJS.toDate(s).toISOString();
-  // Seconds optional
-  expect(iso('2025-06-11T12:30')).toBe('2025-06-11T12:30:00.000Z');
-  expect(iso('2025-06-11 12:30')).toBe('2025-06-11T12:30:00.000Z');
+  const local = (...a: [number, number, number, number, number, number?, number?]) =>
+    new Date(...a).toISOString();
+  // No offset = local time; seconds optional
+  expect(iso('2025-06-11T12:30')).toBe(local(2025, 5, 11, 12, 30));
+  expect(iso('2025-06-11 12:30')).toBe(local(2025, 5, 11, 12, 30));
   // Fractional seconds
-  expect(iso('2025-06-11T12:30:45.5')).toBe('2025-06-11T12:30:45.500Z');
-  expect(iso('2025-06-11T12:30:45.123456')).toBe('2025-06-11T12:30:45.123Z');
+  expect(iso('2025-06-11T12:30:45.5')).toBe(local(2025, 5, 11, 12, 30, 45, 500));
+  expect(iso('2025-06-11T12:30:45.123456')).toBe(local(2025, 5, 11, 12, 30, 45, 123));
+  expect(iso('2025-06-11T12:30:45.5Z')).toBe('2025-06-11T12:30:45.500Z');
+  expect(iso('2025-06-11T12:30z ')).toBe('2025-06-11T12:30:00.000Z');
+  // Local `24:00` rolls into next day; local years 0-99 kept literal
+  expect(iso('2025-12-31T24:00')).toBe(local(2026, 0, 1, 0, 0));
+  const y99 = new Date(2000, 0, 1);
+  y99.setFullYear(99, 5, 11);
+  y99.setHours(12, 30, 0, 0);
+  expect(iso('0099-06-11T12:30')).toBe(y99.toISOString());
   // Offsets
   expect(iso('2025-06-11T12:30:00Z')).toBe('2025-06-11T12:30:00.000Z');
   expect(iso('2025-06-11T12:30:00+05:30')).toBe('2025-06-11T07:00:00.000Z');

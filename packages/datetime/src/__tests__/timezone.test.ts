@@ -62,12 +62,9 @@ for (const [tz, offset] of Object.entries(timeZones)) {
           expect(r.materialize).toEqual(['2025-06-01', '2025-06-11', ['2025-06-01', '2025-06-11']]);
         });
 
-        // JS Date treats offset-less timestamps as UTC, so local-time ordering N/A
-        if (libName !== 'JS Date') {
-          test('orders date-only before same-day local time', () => {
-            expect(r.dateOnlyVsLocalTimeOrder).toEqual([true, true]);
-          });
-        }
+        test('orders date-only before same-day local time', () => {
+          expect(r.dateOnlyVsLocalTimeOrder).toEqual([true, true]);
+        });
 
         // Third-party libs resolve skipped local days to the next day; JS Date keeps the input
         if (libName === 'JS Date') {

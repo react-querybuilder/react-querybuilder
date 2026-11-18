@@ -59,7 +59,16 @@ const toDate = (d: string | Date) => {
 
   // Fractional seconds -> ms ('.5' = 500ms; extra digits truncated)
   const ms = +frac.slice(0, 3).padEnd(3, '0');
-  // No offset (or `Z`) = UTC
+  // No offset = local time (like native `Date` parsing and other adapters)
+  if (!sign && !/z\s*$/i.test(d)) {
+    const r = new Date(2000, 0, 1);
+    r.setFullYear(...parts);
+    // Date first, then time, so `24:00` rolls into next day
+    r.setHours(+hh, +mi, +ss, ms);
+    return r;
+  }
+
+  // `Z` = UTC
   const offsetMinutes = (sign === '-' ? -1 : 1) * (+oh * 60 + +om);
 
   // Date first, then time, so `24:00` rolls into next day
