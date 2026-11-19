@@ -43,7 +43,19 @@ describe('inferOperators', () => {
   it('does not filter array/object/unknown', () => {
     for (const datatype of ['array', 'json', 'unknown', 'string|json']) {
       expect(inferOperators(f({ datatype }))).toEqual(defaultOperators);
+      // incl. multiselect
+      expect(inferOperators(f({ datatype, valueEditorType: 'multiselect' }))).toEqual(
+        defaultOperators
+      );
     }
+    expect(inferOperators(f({ datatype: 'text[]', valueEditorType: 'multiselect' }))).toEqual(
+      defaultOperators
+    );
+  });
+
+  it('ignores non-string datatypes', () => {
+    expect(inferOperators(f({ datatype: 1 }))).toBe(defaultOperators);
+    expect(inferOperators(f({ datatype: { sql: 'int' } }))).toBe(defaultOperators);
   });
 
   it('unions multi-type categories', () => {
@@ -95,7 +107,7 @@ describe('inferOperators', () => {
     expect(
       names(inferOperators(f({ datatype: 'varchar(100)', valueEditorType: 'multiselect' })))
     ).toEqual(['null', 'notNull', 'in', 'notIn']);
-    for (const datatype of ['boolean', 'json', 'unknown', 'string|json']) {
+    for (const datatype of ['boolean', 'int']) {
       expect(names(inferOperators(f({ datatype, valueEditorType: 'multiselect' })))).toEqual([
         'null',
         'notNull',
@@ -181,6 +193,23 @@ describe('inferOperators', () => {
     expect(defaultDatatypeOperatorLabels.time?.['<=']).toBe('on or before');
   });
 
+  it('returns stable relabeled operators', () => {
+    const a = inferOperators(f({ datatype: 'date' }), { labels: true }) as FullOperator[];
+    const b = inferOperators(f({ datatype: 'date' }), { labels: true }) as FullOperator[];
+    expect(a.find(o => o.name === '<')).toBe(b.find(o => o.name === '<'));
+    const strOps = ['<'] as unknown as FullOperator[];
+    expect(inferOperators(f({ datatype: 'date' }), { labels: true, operators: strOps })[0]).toBe(
+      inferOperators(f({ datatype: 'date' }), { labels: true, operators: strOps })[0]
+    );
+    // different label → different object
+    expect(
+      inferOperators(f({ datatype: 'date' }), {
+        labels: { date: { '<': 'earlier' } },
+        operators: strOps,
+      })[0]
+    ).toMatchObject({ label: 'earlier' });
+  });
+
   it('does not mutate inputs', () => {
     const operators = defaultOperators.map(o => ({ ...o }));
     const snapshot = structuredClone(operators);
@@ -249,6 +278,27 @@ describe('inferOperators', () => {
       inferOperators(f({ datatype: 'number', operators: ['contains'] }), { warn: true });
       process.env.NODE_ENV = env;
       expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('does not warn without process', () => {
+      const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      vi.stubGlobal('process', undefined);
+      try {
+        inferOperators(f({ name: 'np', datatype: 'number', operators: ['contains'] }), {
+          warn: true,
+        });
+      } finally {
+        vi.unstubAllGlobals();
+      }
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('uses category in warning when datatype is not a string', () => {
+      const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      inferOperators(f({ name: 'ns', datatype: 1, inputType: 'number', operators: ['contains'] }), {
+        warn: true,
+      });
+      expect(spy.mock.calls.at(-1)?.[0]).toMatch(/datatype "number"/);
     });
   });
 });

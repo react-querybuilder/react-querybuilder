@@ -153,6 +153,12 @@ Since the [date/time package](../datetime) keys off `inputType: "date" | "dateti
 
 Ready-made `comparator` for field-to-field comparisons that lists only fields with a compatible datatype category. See [Filtering the field list](../components/valueeditor#filtering-the-field-list).
 
+`getDatatypeCategoryComparator(options?)` creates an equivalent comparator with options. Currently the only option is `datatypeMap` (custom raw type → category; see [`getDatatypeCategory`](#getdatatypecategory)). Create it once, outside render:
+
+```ts
+const comparator = getDatatypeCategoryComparator({ datatypeMap: { geography: 'object' } });
+```
+
 ### `datatypeOperatorValidator`
 
 Query validator that checks operators (and optionally values) against each field's datatype category. See [Datatype validation](./validation#datatype-validation).

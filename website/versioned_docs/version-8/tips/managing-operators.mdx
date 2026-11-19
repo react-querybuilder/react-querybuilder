@@ -191,7 +191,7 @@ Rules:
 - `null`/`notNull` are always retained.
 - Only operators named in `defaultOperators` are filtered. Custom operators pass through unless `dropUnknownOperators` is `true`.
 - Multi-type fields (`datatype: "string|number"`) get the union of each category's operators. If any member category is unfiltered (`array`/`object`/`unknown`), nothing is filtered.
-- Fields with `valueEditorType: "multiselect"` are limited to `in`/`notIn` (plus `null`/`notNull`) regardless of category, since the value is always a list. Explicit `map` entries for the field's categories narrow this further.
+- Fields with `valueEditorType: "multiselect"` are limited to `in`/`notIn` (plus `null`/`notNull`), since the value is always a list. Fields with any `array`/`object`/`unknown` category (or a category without a `map` entry) are still not filtered. Explicit `map` entries for the field's categories narrow this further.
 - Option groups and the input order are preserved; empty groups are removed.
 - A field's own `operators` property still takes precedence over `getOperators`.
 

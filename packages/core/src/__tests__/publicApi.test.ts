@@ -16,6 +16,7 @@ const publicApi: string[] = [
   'defaultDatatypeOperatorLabels',
   'defaultInferOperatorsMap',
   'getDatatypeCategory',
+  'getDatatypeCategoryComparator',
   'getOperatorsByDatatype',
   'inferFieldDefaults',
   'inferOperators',

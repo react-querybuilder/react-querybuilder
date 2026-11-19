@@ -19,11 +19,11 @@ const categoryNames: ReadonlySet<string> = new Set<FieldDatatypeCategory>([
 const categoryMatchers: [RegExp, FieldDatatypeCategory][] = [
   [/\[\]$|^array\b|^set$/, 'array'],
   [/^(json\w*|object|map|struct|record)$/, 'object'],
-  [/^(bool(ean)?|bit)$/, 'boolean'],
+  [/^bool(ean)?$/, 'boolean'],
   [/^(datetime\w*|smalldatetime|timestamp\w*)\b/, 'datetime'],
   [/^date(string)?$/, 'date'],
   [/^time(tz)?\b/, 'time'],
-  [/^(bigint\w*|int8|u?int64|long|bigserial|serial8)(\s+unsigned)?$/, 'bigint'],
+  [/^(bigint\w*|int8|u?int64|bigserial|serial8)(\s+unsigned)?$/, 'bigint'],
   [
     /^(u?int(eger)?\d*|tinyint|smallint|mediumint|number|numeric|decimal|dec|float\d*|double(\s*precision)?|real|small(money|serial)|money|serial\d?)(\s+(unsigned|signed|zerofill))*$/,
     'number',
@@ -122,4 +122,6 @@ export const categoryFamily = (c: FieldDatatypeCategory): FieldDatatypeCategory 
 /** Dedup set for dev warnings. */
 export const warnedFields: Set<string> = new Set();
 
-export const isDev = (): boolean => process.env.NODE_ENV !== 'production';
+// `typeof` guard: core may run w/o `process` (edge runtimes, unbundled browser ESM) → no warnings
+export const isDev = (): boolean =>
+  typeof process !== 'undefined' && process.env.NODE_ENV !== 'production';

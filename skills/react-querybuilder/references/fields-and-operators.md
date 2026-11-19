@@ -20,7 +20,7 @@
 | `matchModes`      | For array-valued fields (`all`/`some`/`none`/`atLeast`/`atMost`/`exactly`), with `subproperties`                                                                   |
 | `className`       | Extra class on rules using this field                                                                                                                              |
 
-`datatype` is an official `Field` property (any string; raw DB types normalized to categories by `getDatatypeCategory`, custom mapping via `datatypeMap` option). Used by `inferOperators`, `inferFieldDefaults`, `datatypeCategoryComparator`, `datatypeOperatorValidator`, and `@react-querybuilder/datetime`. `Field` also allows extra arbitrary properties; all show up in custom components as `fieldData`.
+`datatype` is an official `Field` property (typed `unknown`; only strings recognized, others ignored; raw DB types normalized to categories by `getDatatypeCategory`, custom mapping via `datatypeMap` option). Used by `inferOperators`, `inferFieldDefaults`, `datatypeCategoryComparator`, `datatypeOperatorValidator`, and `@react-querybuilder/datetime`. `Field` also allows extra arbitrary properties; all show up in custom components as `fieldData`.
 
 ```ts
 import type { Field } from 'react-querybuilder';

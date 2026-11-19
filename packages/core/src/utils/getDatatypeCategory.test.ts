@@ -20,7 +20,6 @@ describe('getDatatypeCategory', () => {
     ['bigint', 'bigint'],
     ['int8', 'bigint'],
     ['Int64', 'bigint'],
-    ['long', 'bigint'],
     ['bigserial', 'bigint'],
     ['PgBigInt53', 'bigint'],
     ['bigint unsigned', 'bigint'],
@@ -42,7 +41,6 @@ describe('getDatatypeCategory', () => {
     ['MySqlInt', 'number'],
     ['boolean', 'boolean'],
     ['bool', 'boolean'],
-    ['bit', 'boolean'],
     ['PgBoolean', 'boolean'],
     ['date', 'date'],
     ['PgDateString', 'date'],
@@ -79,6 +77,16 @@ describe('getDatatypeCategory', () => {
     expect(getDatatypeCategory(f({ datatype: 'geometry', inputType: 'number' }))).toBe('number');
     expect(getDatatypeCategory(f({ datatype: '  ' }))).toBeNull();
     expect(getDatatypeCategory(f({ datatype: 'interval' }))).toBeNull();
+    // Ambiguous: Oracle `LONG` is text; `bit(n)` is a bit string
+    expect(getDatatypeCategory(f({ datatype: 'long' }))).toBeNull();
+    expect(getDatatypeCategory(f({ datatype: 'bit' }))).toBeNull();
+    expect(getDatatypeCategory(f({ datatype: 'bit(8)' }))).toBeNull();
+  });
+
+  it('ignores non-string datatypes', () => {
+    expect(getDatatypeCategory(f({ datatype: 1 }))).toBeNull();
+    expect(getDatatypeCategory(f({ datatype: ['string', 'number'] }))).toBeNull();
+    expect(getDatatypeCategory(f({ datatype: { sql: 'int' }, inputType: 'date' }))).toBe('date');
   });
 
   it('uses datatypeMap', () => {

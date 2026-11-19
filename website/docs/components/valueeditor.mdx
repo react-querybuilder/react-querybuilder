@@ -337,6 +337,7 @@ Exact `datatype` matching fails when types are equivalent but spelled differentl
 - `number` and `bigint` are compatible, as are `date` and `datetime` (`time` is only compatible with itself).
 - Multi-type fields (e.g. `datatype: "string|number"`) match when any category overlaps.
 - Fields with no determinable category are excluded.
+- For custom types, use `getDatatypeCategoryComparator({ datatypeMap })` instead (see [`datatypeCategoryComparator`](../utils/misc#datatypecategorycomparator)).
 
 ```tsx
 import { datatypeCategoryComparator } from 'react-querybuilder';

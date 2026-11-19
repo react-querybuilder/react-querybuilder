@@ -123,6 +123,25 @@ const toCategoryArray = (
   c: FieldDatatypeCategory | FieldDatatypeCategory[] | null
 ): FieldDatatypeCategory[] | null => (c === null ? null : Array.isArray(c) ? c : [c]);
 
+// Relabeled op cache (stable refs across calls for memoization)
+const relabeledObjects = new WeakMap<object, Map<string, unknown>>();
+const relabeledStrings = new Map<string, Map<string, unknown>>();
+
+const relabel = <Op>(op: Op, label: string): Op => {
+  const byLabel =
+    typeof op === 'string' ? relabeledStrings.get(op) : relabeledObjects.get(op as object);
+  if (byLabel?.has(label)) return byLabel.get(label) as Op;
+  const result =
+    typeof op === 'string' ? { name: op, value: op, label } : { ...(op as object), label };
+  const map = byLabel ?? new Map<string, unknown>();
+  map.set(label, result);
+  if (!byLabel) {
+    if (typeof op === 'string') relabeledStrings.set(op, map);
+    else relabeledObjects.set(op as object, map);
+  }
+  return result as Op;
+};
+
 /**
  * Computes the operator whitelist for a field (`null` = no filtering). Internal.
  */
@@ -133,6 +152,9 @@ export const getDatatypeOperatorWhitelist = (
   const categories = toCategoryArray(getDatatypeCategory(fieldData, { datatypeMap }));
   if (!categories) return { categories, whitelist: null };
   const whitelist = new Set<string>();
+  const fullMap: InferOperatorsMap = { ...defaultInferOperatorsMap, ...map };
+  // Unfiltered category (array/object/unknown or unmapped) → no filtering, even for multiselect
+  if (categories.some(c => !fullMap[c])) return { categories, whitelist: null };
   if (fieldData.valueEditorType === 'multiselect') {
     // Multiselect stores a list; only list ops export correctly. Explicit `map` entries (own
     // keys) narrow further; defaults ignored (scalar whitelists may lack in/notIn).
@@ -140,12 +162,7 @@ export const getDatatypeOperatorWhitelist = (
     const ops = explicit.length > 0 ? explicit.flatMap(c => map![c]!) : multiselectOps;
     for (const op of ops) if (multiselectOps.includes(op)) whitelist.add(op);
   } else {
-    const fullMap: InferOperatorsMap = { ...defaultInferOperatorsMap, ...map };
-    for (const c of categories) {
-      const ops = fullMap[c];
-      if (!ops) return { categories, whitelist: null };
-      for (const op of ops) whitelist.add(op);
-    }
+    for (const c of categories) for (const op of fullMap[c]!) whitelist.add(op);
   }
   for (const op of nullOps) whitelist.add(op);
   return { categories, whitelist };
@@ -168,7 +185,7 @@ const warnIncompatible = (
   whitelist: Set<string>
 ) => {
   const fieldName = fieldData.value ?? fieldData.name;
-  const dt = fieldData.datatype ?? categories.join('|');
+  const dt = typeof fieldData.datatype === 'string' ? fieldData.datatype : categories.join('|');
   if (fieldData.operators && !warnedFields.has(`ops:${fieldName}`)) {
     const flat = isFlexibleOptionGroupArray(fieldData.operators)
       ? fieldData.operators.flatMap(og => og.options)
@@ -227,8 +244,8 @@ export const inferOperators = <O extends FullOperator = FullOperator>(
     const newLabel = labelTable![labelCat]?.[name] ?? labelTable![categoryFamily(labelCat)]?.[name];
     const defLabel = defaultOperatorLabelMap[name as keyof typeof defaultOperatorLabelMap];
     if (!newLabel || defLabel === undefined) return op;
-    if (typeof op === 'string') return { name: op, value: op, label: newLabel } as Op;
-    return (op as FlexibleOption).label === defLabel ? { ...op, label: newLabel } : op;
+    if (typeof op !== 'string' && (op as FlexibleOption).label !== defLabel) return op;
+    return relabel(op, newLabel);
   };
 
   const filterList = <Op>(list: Op[]) =>

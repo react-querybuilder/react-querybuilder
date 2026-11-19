@@ -1,15 +1,31 @@
-// Type-only assertions for `Field#datatype`.
-import type { FieldDatatypeCategory, FullField } from '.';
+// Type-only assertions for `Field#datatype` (must stay `unknown`; non-breaking)
+import type { Field, FieldDatatypeCategory, FullField } from '.';
 
 type Expect<T extends true> = T;
 type Extends<A, B> = A extends B ? true : false;
-type Datatype = NonNullable<FullField['datatype']>;
+type IsUnknown<T> = unknown extends T ? ([T] extends [unknown] ? true : false) : false;
+type Datatype = FullField['datatype'];
+
+enum DT {
+  Int,
+}
+
+// Interfaces may redeclare `datatype` w/ any type
+export interface NumberDatatypeField extends Field {
+  datatype: number;
+}
+export interface ObjectDatatypeField extends FullField {
+  datatype?: { sql: string };
+}
 
 export type DatatypeTests = [
-  // Known categories accepted (autocomplete)
+  Expect<IsUnknown<Datatype>>,
   Expect<Extends<FieldDatatypeCategory, Datatype>>,
-  // Arbitrary strings accepted (raw DB types)
   Expect<Extends<'VARCHAR(50)', Datatype>>,
-  // Non-strings rejected
-  Expect<Extends<number, Datatype> extends false ? true : false>,
+  Expect<Extends<DT, Datatype>>,
+  Expect<Extends<string[], Datatype>>,
 ];
+
+// `comparator` callable w/o `meta`
+export const callComparator = (fd: FullField, f: FullField): boolean =>
+  typeof fd.comparator === 'function' && fd.comparator(f, '=');

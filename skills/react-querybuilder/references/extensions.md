@@ -58,7 +58,7 @@ formatQuery(query, {
 ```
 
 - Rule processors: `datetimeRuleProcessor{SQL, Parameterized, MongoDBQuery, MongoDB, CEL, SpEL, JSONata, NL, Cypher, SPARQL, LDAP, Gremlin, Prisma, Sequelize, Drizzle, ElasticSearch, TanStackDB}`. JsonLogic uses `jsonLogicDateTimeOperations` instead.
-- A field is treated as a date if its (official `Field` property) `datatype` starts with `date`/`datetime`/`datetimeoffset`/`timestamp` (word boundary; e.g. `datetime2`/`timestamptz` don't match). Override with `context.isDateField` (boolean, `(rule, opts) => boolean`, a property-match object, or an array of them).
+- A field is treated as a date if its (official `Field` property) `datatype` starts with `date`/`datetime`/`datetimeoffset`/`timestamp` (word boundary) or normalizes to the `date`/`datetime` category via core `getDatatypeCategory` (e.g. `datetime2`, `timestamptz`). Override with `context.isDateField` (boolean, `(rule, opts) => boolean`, a property-match object, or an array of them).
 - Non-date rules fall through to the default processor.
 - UI: `QueryBuilderDateTime` from `@react-querybuilder/datetime/ui` enables date pickers and relative dates ("3 months ago") for fields with `inputType: 'date' | 'datetime-local'` or a date-like `datatype`. Relative values are stored as objects, so export them with the datetime processors.
 

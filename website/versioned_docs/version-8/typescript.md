@@ -28,8 +28,8 @@ interface Field {
   placeholder?: string; // Placeholder text for the value editor when this field is selected
   validator?: RuleValidator; // Validation function for rules that specify this field
   valueSources?: ValueSources | ((operator: string) => ValueSources); // List of allowed value sources (must contain "value", "field", or both)
-  comparator?: string | ((f: Field, operator: string, meta: { fieldData: Field }) => boolean); // Determines which (other) fields to include in the list when the rule's valueSource is "field"
-  datatype?: FieldDatatypeCategory | (string & {}); // Data type of the field (any string, e.g. raw DB types like "VARCHAR(50)"; see below)
+  comparator?: string | ((f: Field, operator: string, meta?: { fieldData: Field }) => boolean); // Determines which (other) fields to include in the list when the rule's valueSource is "field"
+  datatype?: unknown; // Data type of the field (string category or raw DB type like "VARCHAR(50)"; non-strings ignored by datatype utilities; see below)
   className?: Classname; // Assigned to rules where this field is selected
   separator?: ReactNode; // Rendered between multiple value editors, e.g. when the operator is "between" or "notBetween"
 }
@@ -42,7 +42,7 @@ Notes:
 
 ### Data types
 
-`datatype` accepts any string. Utilities like [`inferOperators`](./tips/managing-operators#inferring-operators-from-datatype), [`inferFieldDefaults`](./utils/misc#inferfielddefaults), [`datatypeCategoryComparator`](./components/valueeditor#filtering-the-field-list), and [`datatypeOperatorValidator`](./utils/validation#datatype-validation) normalize it to a `FieldDatatypeCategory` via [`getDatatypeCategory`](./utils/misc#getdatatypecategory):
+`datatype` is typed `unknown` for backward compatibility, but only string values are recognized (others are ignored). Utilities like [`inferOperators`](./tips/managing-operators#inferring-operators-from-datatype), [`inferFieldDefaults`](./utils/misc#inferfielddefaults), [`datatypeCategoryComparator`](./components/valueeditor#filtering-the-field-list), and [`datatypeOperatorValidator`](./utils/validation#datatype-validation) normalize it to a `FieldDatatypeCategory` via [`getDatatypeCategory`](./utils/misc#getdatatypecategory):
 
 ```ts
 type FieldDatatypeCategory =
@@ -70,8 +70,8 @@ Normalization rules (case-insensitive):
 | ---------- | ------------------------------------------------------------------------------------------------------------------ |
 | `string`   | `text`, `varchar`, `nvarchar2`, `char`, `clob`, `uuid`, `uniqueidentifier`, `citext`                               |
 | `number`   | `int`, `integer`, `smallint`, `decimal`, `numeric`, `float`, `double precision`, `real`, `money`, `serial`         |
-| `bigint`   | `bigint`, `int8`, `int64`, `long`, `bigserial`                                                                     |
-| `boolean`  | `bool`, `boolean`, `bit`                                                                                           |
+| `bigint`   | `bigint`, `int8`, `int64`, `bigserial`                                                                             |
+| `boolean`  | `bool`, `boolean`                                                                                                  |
 | `date`     | `date`                                                                                                             |
 | `datetime` | `datetime`, `datetime2`, `datetimeoffset`, `smalldatetime`, `timestamp`, `timestamp with time zone`, `timestamptz` |
 | `time`     | `time`, `timetz`, `time with time zone`                                                                            |

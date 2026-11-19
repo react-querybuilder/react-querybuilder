@@ -1,5 +1,8 @@
 import type { Field, FullField } from '../types';
-import { datatypeCategoryComparator } from './datatypeCategoryComparator';
+import {
+  datatypeCategoryComparator,
+  getDatatypeCategoryComparator,
+} from './datatypeCategoryComparator';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { toFullOption } from './optGroupUtils';
 
@@ -49,5 +52,26 @@ describe('datatypeCategoryComparator', () => {
   it('excludes when category is null', () => {
     expect(names(filterFieldsByComparator(fields[8], fields, '='))).toEqual([]);
     expect(datatypeCategoryComparator(fields[0], '=')).toBe(false);
+  });
+});
+
+describe('getDatatypeCategoryComparator', () => {
+  it('applies datatypeMap', () => {
+    const comparator = getDatatypeCategoryComparator({ datatypeMap: { geography: 'object' } });
+    const fs = (
+      [
+        { name: 'loc', label: 'Loc', datatype: 'geography', comparator },
+        { name: 'area', label: 'Area', datatype: 'GEOGRAPHY' },
+        { name: 'j', label: 'J', datatype: 'jsonb' },
+        { name: 'name', label: 'Name', datatype: 'text' },
+      ] satisfies Field[]
+    ).map(o => toFullOption(o));
+    expect(names(filterFieldsByComparator(fs[0], fs, '='))).toEqual(['area', 'j']);
+    // default comparator doesn't know `geography`
+    expect(datatypeCategoryComparator(fs[1], '=', { fieldData: fs[0] })).toBe(false);
+  });
+
+  it('works without options', () => {
+    expect(getDatatypeCategoryComparator()(fields[1], '=', { fieldData: fields[0] })).toBe(true);
   });
 });
