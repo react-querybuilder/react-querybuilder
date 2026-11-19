@@ -41,7 +41,7 @@ export type DatatypeValidationReason =
   | { code: 'datatype-value-mismatch'; datatype: unknown; operator: string; value: unknown };
 
 const multiValueOps = new Set(['between', 'notBetween', 'in', 'notIn']);
-const timeRegex = /^\d{1,2}:\d{2}(:\d{2}(\.\d+)?)?$/;
+const timeRegex = /^([01]?\d|2[0-3]):[0-5]\d(:[0-5]\d(\.\d+)?)?$/;
 
 const isValidForCategory = (v: unknown, cat: FieldDatatypeCategory): boolean => {
   switch (cat) {

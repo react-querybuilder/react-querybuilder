@@ -90,6 +90,19 @@ describe('getDatatypeCategory', () => {
       'string',
       'number',
     ]);
+    expect(getDatatypeCategory(f({ datatype: 'VARCHAR(50)|int' }), { datatypeMap })).toEqual([
+      'enum',
+      'number',
+    ]);
+    expect(getDatatypeCategory(f({ datatype: 'constructor' }), { datatypeMap: {} })).toBeNull();
+  });
+
+  it('handles pathological/edge input', () => {
+    expect(getDatatypeCategory(f({ datatype: '('.repeat(50_000) }))).toBeNull();
+    expect(getDatatypeCategory(f({ datatype: 'enum(a|b)|int' }))).toEqual(['enum', 'number']);
+    expect(getDatatypeCategory(f({ datatype: 'pgint' }))).toBe('number');
+    expect(getDatatypeCategory(f({ inputType: 'constructor' }))).toBeNull();
+    expect(getDatatypeCategory(f({ valueEditorType: 'toString' as never }))).toBeNull();
   });
 
   it('uses hints', () => {

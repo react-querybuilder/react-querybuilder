@@ -139,11 +139,7 @@ export const getDatatypeOperatorWhitelist = (
     for (const op of ops) whitelist.add(op);
   }
   // Multiselect stores a list; only list operators export correctly
-  if (
-    categories.length === 1 &&
-    categories[0] === 'enum' &&
-    fieldData.valueEditorType === 'multiselect'
-  ) {
+  if (fieldData.valueEditorType === 'multiselect') {
     for (const op of whitelist) {
       if (op !== 'in' && op !== 'notIn') whitelist.delete(op);
     }

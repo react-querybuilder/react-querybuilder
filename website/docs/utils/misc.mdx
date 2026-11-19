@@ -104,10 +104,10 @@ function getDatatypeCategory(
 Normalizes a field's `datatype` (and, unless `hints` is `false`, other properties like `inputType` and `valueEditorType`) to a [datatype category](../typescript#data-types). Returns an array for multi-type fields (e.g. `"string|number"`) and `null` when the category can't be determined. `datatypeMap` maps custom raw types to categories (case-insensitive; checked before built-in rules).
 
 ```ts
-getDatatypeCategory({ name: 'f', label: 'F', datatype: 'VARCHAR(50)' }); // 'string'
-getDatatypeCategory({ name: 'f', label: 'F', datatype: 'int|text' }); // ['number', 'string']
-getDatatypeCategory({ name: 'f', label: 'F', inputType: 'date' }); // 'date'
-getDatatypeCategory({ name: 'f', label: 'F', inputType: 'date' }, { hints: false }); // null
+getDatatypeCategory({ name: 'f', value: 'f', label: 'F', datatype: 'VARCHAR(50)' }); // 'string'
+getDatatypeCategory({ name: 'f', value: 'f', label: 'F', datatype: 'int|text' }); // ['number', 'string']
+getDatatypeCategory({ name: 'f', value: 'f', label: 'F', inputType: 'date' }); // 'date'
+getDatatypeCategory({ name: 'f', value: 'f', label: 'F', inputType: 'date' }, { hints: false }); // null
 ```
 
 ### `inferOperators`

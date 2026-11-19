@@ -92,6 +92,9 @@ describe('inferOperators', () => {
       'in',
       'notIn',
     ]);
+    expect(
+      names(inferOperators(f({ datatype: 'varchar(100)', valueEditorType: 'multiselect' })))
+    ).toEqual(['null', 'notNull', 'in', 'notIn']);
     expect(names(inferOperators(f({ valueEditorType: 'multiselect' })))).toEqual([
       'null',
       'notNull',

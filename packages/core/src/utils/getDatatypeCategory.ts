@@ -14,7 +14,7 @@ export interface GetDatatypeCategoryOptions {
   hints?: boolean;
 }
 
-const inputTypeCategories: Partial<Record<string, FieldDatatypeCategory>> = {
+const inputTypeCategories: Record<string, FieldDatatypeCategory> = {
   number: 'number',
   range: 'number',
   date: 'date',
@@ -29,7 +29,7 @@ const inputTypeCategories: Partial<Record<string, FieldDatatypeCategory>> = {
   search: 'string',
 };
 
-const valueEditorTypeCategories: Partial<Record<string, FieldDatatypeCategory>> = {
+const valueEditorTypeCategories: Record<string, FieldDatatypeCategory> = {
   checkbox: 'boolean',
   switch: 'boolean',
   select: 'enum',
@@ -63,11 +63,14 @@ export const getDatatypeCategory = (
   ) {
     return 'array';
   }
-  if (typeof valueEditorType === 'string' && valueEditorTypeCategories[valueEditorType]) {
+  if (
+    typeof valueEditorType === 'string' &&
+    Object.hasOwn(valueEditorTypeCategories, valueEditorType)
+  ) {
     return valueEditorTypeCategories[valueEditorType];
   }
   if (Array.isArray(values) && values.length > 0) return 'enum';
-  if (typeof inputType === 'string' && inputTypeCategories[inputType]) {
+  if (typeof inputType === 'string' && Object.hasOwn(inputTypeCategories, inputType)) {
     return inputTypeCategories[inputType];
   }
   return null;

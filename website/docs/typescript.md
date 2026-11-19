@@ -79,7 +79,7 @@ Normalization rules (case-insensitive):
 | `array`    | `array`, `text[]`, `set` (MySQL)                                                                                   |
 | `object`   | `json`, `jsonb`, `object`, `map`, `struct`, `record`                                                               |
 
-Unrecognized types (and fields without `datatype`) fall back to hints: `matchModes`/`subproperties` → `array`; `valueEditorType` `checkbox`/`switch` → `boolean`, `select`/`radio`/`multiselect` → `enum`; non-empty `values` → `enum`; `inputType` (`number`/`range` → `number`, `date`/`month`/`week` → `date`, `datetime-local` → `datetime`, `time` → `time`, `text`/`email`/`url`/`tel`/`search` → `string`). No hints → no category (nothing is filtered). Custom mappings can be provided with the `datatypeMap` option (e.g. `{ geography: "object" }`), checked before the built-in rules.
+Unrecognized types (and fields without `datatype`) fall back to hints: `matchModes`/`subproperties` → `array`; `valueEditorType` `checkbox`/`switch` → `boolean`, `select`/`radio`/`multiselect` → `enum`; non-empty `values` → `enum`; `inputType` (`number`/`range` → `number`, `date`/`month`/`week` → `date`, `datetime-local` → `datetime`, `time` → `time`, `text`/`email`/`url`/`tel`/`search` → `string`). No hints → no category (`inferOperators` filters nothing; `datatypeCategoryComparator` excludes the field, whether candidate or the field declaring the `comparator`). Custom mappings can be provided with the `datatypeMap` option (e.g. `{ geography: "object" }`), checked (case-insensitively) against the whole value and each raw `|` member before the built-in rules.
 
 ## Rules and groups
 

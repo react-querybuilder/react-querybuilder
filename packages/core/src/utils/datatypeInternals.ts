@@ -1,6 +1,5 @@
 // Internal (not exported from barrel)
 import type { DatatypeCategoryMap, FieldDatatypeCategory } from '../types';
-import { toArray } from './arrayUtils';
 
 const categoryNames: ReadonlySet<string> = new Set<FieldDatatypeCategory>([
   'string',
@@ -34,25 +33,54 @@ const categoryMatchers: [RegExp, FieldDatatypeCategory][] = [
 ];
 
 // Drizzle-style class names (`PgVarchar`, `MySqlInt`, `SQLiteText`)
-const ormPrefix = /^(Pg|MySql|SQLite|SingleStore|Gel)(?=[A-Z])/;
+const ormPrefix = /^(pg|mysql|sqlite|singlestore|gel)(?=[a-z])/i;
 
 const lookupMap = (
   map: DatatypeCategoryMap | undefined,
   key: string
 ): FieldDatatypeCategory | undefined => {
   if (!map) return undefined;
-  if (map[key]) return map[key];
+  if (Object.hasOwn(map, key) && map[key]) return map[key];
   const lc = key.toLowerCase();
-  for (const k in map) {
-    if (k.toLowerCase() === lc) return map[k];
+  for (const k of Object.keys(map)) {
+    if (k.toLowerCase() === lc && map[k]) return map[k];
   }
   return undefined;
 };
 
+// Linear-time `(…)` stripping (regex alternative is polynomial on many `(`)
+const stripParens = (s: string): string => {
+  let out = '';
+  let depth = 0;
+  for (const ch of s) {
+    if (ch === '(') depth++;
+    else if (ch === ')' && depth > 0) depth--;
+    else if (depth === 0) out += ch;
+  }
+  return out.trim();
+};
+
+// Splits on `|` outside parens
+const splitUnion = (s: string): string[] => {
+  const parts: string[] = [];
+  let cur = '';
+  let depth = 0;
+  for (const ch of s) {
+    if (ch === '(') depth++;
+    else if (ch === ')' && depth > 0) depth--;
+    if (ch === '|' && depth === 0) {
+      parts.push(cur);
+      cur = '';
+    } else cur += ch;
+  }
+  parts.push(cur);
+  return parts.map(p => p.trim()).filter(Boolean);
+};
+
 const categorizePart = (part: string, map?: DatatypeCategoryMap) => {
-  const custom = lookupMap(map, part);
+  const custom = lookupMap(map, part) ?? lookupMap(map, stripParens(part));
   if (custom) return custom;
-  const norm = part.replace(ormPrefix, '').toLowerCase().replaceAll(/\s+/g, ' ');
+  const norm = stripParens(part).replace(ormPrefix, '').toLowerCase().replaceAll(/\s+/g, ' ');
   if (categoryNames.has(norm)) return norm as FieldDatatypeCategory;
   for (const [re, cat] of categoryMatchers) {
     if (re.test(norm)) return cat;
@@ -70,7 +98,7 @@ export const categorizeDatatype = (
   if (typeof datatype !== 'string' || !datatype.trim()) return null;
   const whole = lookupMap(map, datatype.trim());
   if (whole) return [whole];
-  const parts = toArray(datatype.replaceAll(/\([^)]*\)/g, ''), { splitChar: '|' });
+  const parts = splitUnion(datatype);
   const cats = new Set<FieldDatatypeCategory>();
   for (const p of parts) {
     const c = categorizePart(p, map);
