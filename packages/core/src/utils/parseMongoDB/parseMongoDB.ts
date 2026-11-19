@@ -105,6 +105,21 @@ export interface ParseMongoDbOptions extends ParserCommonOptions {
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 
+// `{}`, `{$expr:true}` (formatter's empty-group output), or `$and` of only those
+const isMatchAll = (obj: Record<string, unknown>): boolean => {
+  const keys = objectKeys(obj);
+  if (keys.length === 0) return true;
+  if (keys.length !== 1) return false;
+  if (keys[0] === '$expr') return obj.$expr === true;
+  const v = obj.$and;
+  return (
+    keys[0] === '$and' &&
+    Array.isArray(v) &&
+    v.length > 0 &&
+    v.every(c => isPojo(c) && isMatchAll(c))
+  );
+};
+
 /**
  * Converts a MongoDB query object or parseable string into a query suitable
  * for the {@link react-querybuilder!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
@@ -348,21 +363,6 @@ function parseMongoDB(
 
     return false;
   }
-
-  // `{}`, `{$expr:true}` (formatter's empty-group output), or `$and` of only those
-  const isMatchAll = (obj: Record<string, unknown>): boolean => {
-    const keys = objectKeys(obj);
-    if (keys.length === 0) return true;
-    if (keys.length !== 1) return false;
-    if (keys[0] === '$expr') return obj.$expr === true;
-    const v = obj.$and;
-    return (
-      keys[0] === '$and' &&
-      Array.isArray(v) &&
-      v.length > 0 &&
-      v.every(c => isPojo(c) && isMatchAll(c))
-    );
-  };
 
   function processMongoDbQueryObjectKey(
     key: string,
