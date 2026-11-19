@@ -1,5 +1,3 @@
-/* oxlint-disable prefer-global-this */
-
 import { userEventSetup } from '@rqb-testing';
 import { isHotkeyPressed } from './isHotkeyPressed';
 

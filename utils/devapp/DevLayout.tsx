@@ -1,5 +1,3 @@
-/* oxlint-disable prefer-global-this */
-
 import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/core';
 import { parseCEL } from '@rqb-parsecel';
 // import { parseJSONata } from '@rqb-parsejsonata';

@@ -21,7 +21,6 @@ if (typeof window !== 'undefined') {
   mockAnimationsApi();
   mockResizeObserver();
 
-  // oxlint-disable-next-line unicorn/prefer-global-this
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation((query: string) => ({

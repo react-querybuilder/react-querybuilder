@@ -51,7 +51,6 @@
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-new-array": "off",
     "unicorn/no-null": "off",
-    "unicorn/prefer-global-this": "error",
     "unicorn/prefer-module": "error",
     "unicorn/prefer-node-protocol": "error",
     "unicorn/prefer-number-properties": "error",
