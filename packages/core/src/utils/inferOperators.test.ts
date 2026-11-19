@@ -95,6 +95,21 @@ describe('inferOperators', () => {
     expect(
       names(inferOperators(f({ datatype: 'varchar(100)', valueEditorType: 'multiselect' })))
     ).toEqual(['null', 'notNull', 'in', 'notIn']);
+    for (const datatype of ['boolean', 'json', 'unknown', 'string|json']) {
+      expect(names(inferOperators(f({ datatype, valueEditorType: 'multiselect' })))).toEqual([
+        'null',
+        'notNull',
+        'in',
+        'notIn',
+      ]);
+    }
+    expect(
+      names(
+        inferOperators(f({ datatype: 'boolean', valueEditorType: 'multiselect' }), {
+          map: { boolean: ['=', 'in'] },
+        })
+      )
+    ).toEqual(['null', 'notNull', 'in']);
     expect(names(inferOperators(f({ valueEditorType: 'multiselect' })))).toEqual([
       'null',
       'notNull',

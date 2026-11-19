@@ -123,7 +123,7 @@ export const datatypeRuleValidator =
 export const datatypeOperatorValidator =
   ({ fields, ...opts }: DatatypeOperatorValidatorOptions): QueryValidator =>
   (query: RuleGroupTypeAny): ValidationMap => {
-    const result: ValidationMap = {};
+    const result: ValidationMap = Object.create(null);
     const walk = (rg: RuleGroupTypeAny) => {
       for (const r of rg.rules) {
         if (typeof r === 'string') continue;

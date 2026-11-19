@@ -114,6 +114,7 @@ export const defaultDatatypeOperatorLabels: Readonly<DatatypeOperatorLabels> = O
 
 const defaultOperatorNames: ReadonlySet<string> = new Set(defaultOperators.map(o => o.name));
 const nullOps: ReadonlySet<string> = new Set(['null', 'notNull']);
+const multiselectOps: readonly string[] = ['in', 'notIn'];
 
 const getOpName = (op: unknown): string =>
   typeof op === 'string' ? op : ((op as FlexibleOption).value ?? (op as FlexibleOption).name)!;
@@ -131,17 +132,19 @@ export const getDatatypeOperatorWhitelist = (
 ): { categories: FieldDatatypeCategory[] | null; whitelist: Set<string> | null } => {
   const categories = toCategoryArray(getDatatypeCategory(fieldData, { datatypeMap }));
   if (!categories) return { categories, whitelist: null };
-  const fullMap: InferOperatorsMap = { ...defaultInferOperatorsMap, ...map };
   const whitelist = new Set<string>();
-  for (const c of categories) {
-    const ops = fullMap[c];
-    if (!ops) return { categories, whitelist: null };
-    for (const op of ops) whitelist.add(op);
-  }
-  // Multiselect stores a list; only list operators export correctly
   if (fieldData.valueEditorType === 'multiselect') {
-    for (const op of whitelist) {
-      if (op !== 'in' && op !== 'notIn') whitelist.delete(op);
+    // Multiselect stores a list; only list ops export correctly. Explicit `map` entries (own
+    // keys) narrow further; defaults ignored (scalar whitelists may lack in/notIn).
+    const explicit = categories.filter(c => map && Object.hasOwn(map, c) && map[c]);
+    const ops = explicit.length > 0 ? explicit.flatMap(c => map![c]!) : multiselectOps;
+    for (const op of ops) if (multiselectOps.includes(op)) whitelist.add(op);
+  } else {
+    const fullMap: InferOperatorsMap = { ...defaultInferOperatorsMap, ...map };
+    for (const c of categories) {
+      const ops = fullMap[c];
+      if (!ops) return { categories, whitelist: null };
+      for (const op of ops) whitelist.add(op);
     }
   }
   for (const op of nullOps) whitelist.add(op);

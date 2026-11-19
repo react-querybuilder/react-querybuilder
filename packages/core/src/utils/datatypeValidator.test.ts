@@ -62,6 +62,17 @@ describe('datatypeOperatorValidator', () => {
     ).toEqual(mismatch('int', 'custom'));
   });
 
+  it('stores `__proto__` rule ids as own entries', () => {
+    const v = datatypeOperatorValidator({ fields });
+    const rule = (operator: string) => ({ id: '__proto__', field: 'age', operator, value: 1 });
+    const valid = v({ combinator: 'and', rules: [rule('=')] }) as ValidationMap;
+    expect(Object.hasOwn(valid, '__proto__')).toBe(true);
+    expect(valid['__proto__']).toBe(true);
+    const invalid = v({ combinator: 'and', rules: [rule('contains')] }) as ValidationMap;
+    expect(Object.hasOwn(invalid, '__proto__')).toBe(true);
+    expect(invalid['__proto__']).toEqual(mismatch('int', 'contains'));
+  });
+
   it('works with formatQuery', () => {
     const query: RuleGroupType = {
       combinator: 'and',
