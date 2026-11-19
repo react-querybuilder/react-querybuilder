@@ -109,28 +109,37 @@ const App = () => {
 
 `datatypeOperatorValidator` creates a query validator that marks rules invalid when their operator is incompatible with the field's [datatype category](../typescript#data-types), using the same rules as [`inferOperators`](../tips/managing-operators#inferring-operators-from-datatype). Rules for fields not found in `fields`, and rules without an `id`, are skipped (each rule needs a unique `id`; `QueryBuilder` assigns them automatically, but `formatQuery` does not).
 
-```ts
-import { datatypeOperatorValidator, formatQuery } from 'react-querybuilder';
+```tsx
+import type { Field, RuleGroupType } from 'react-querybuilder';
+import { datatypeOperatorValidator, formatQuery, QueryBuilder } from 'react-querybuilder';
+
+const fields: Field[] = [{ name: 'age', label: 'Age', datatype: 'int' }];
+
+const query: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { id: 'r1', field: 'age', operator: '>', value: 21 },
+    { id: 'r2', field: 'age', operator: 'contains', value: '2' }, // invalid for `int`
+  ],
+};
 
 const validator = datatypeOperatorValidator({ fields, checkValues: true });
 
 <QueryBuilder fields={fields} validator={validator} />;
 
-// Invalid rules (with `id`s) are dropped from export; rules without `id` are not validated
+// Invalid rules are dropped from export (rules without `id` are not validated)
 formatQuery(query, { format: 'sql', validator });
+// "(age > '21')"
 ```
 
 Options: `fields` (required), `map`, `datatypeMap`, `dropUnknownOperators` (same as `inferOperators`), and `checkValues`. When `checkValues` is `true`, values are also checked against the category (`number`: numeric; `bigint`: integer; `boolean`: boolean or `"true"`/`"false"`; `date`/`datetime`: parseable date; `time`: `HH:mm[:ss]`). Each value of `between`/`notBetween`/`in`/`notIn` is checked, multi-type fields accept a value valid for any member category, and value checks are skipped for rules with `valueSource` "field" or "parameter" (operators are still checked).
 
-Invalid rules get a `ValidationResult` with `reasons` of either form:
+Invalid rules get a `ValidationResult` whose `reasons` are of type `DatatypeValidationReason`:
 
 ```ts
-{
-  code: ('datatype-operator-mismatch', datatype, operator);
-}
-{
-  code: ('datatype-value-mismatch', datatype, operator, value);
-}
+type DatatypeValidationReason =
+  | { code: 'datatype-operator-mismatch'; datatype: unknown; operator: string }
+  | { code: 'datatype-value-mismatch'; datatype: unknown; operator: string; value: unknown };
 ```
 
 For a single field, `datatypeRuleValidator(fieldData, options)` returns a [field-level validator](#field-based-validation):
