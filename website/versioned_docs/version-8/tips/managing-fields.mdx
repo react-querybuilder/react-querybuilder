@@ -513,7 +513,7 @@ The following examples demonstrate database-specific queries to extract field in
 
 - Only `label` and at least one of `name` or `value` are required in the `fields` prop; other properties are optional.
 - `label` typically uses the same value as `name` and `value`, but consider using more user-friendly captions from other sources.
-- `datatype` (used by the [date/time package](../datetime), though not an official `Field` property) copies the column's declared type directly.
+- `datatype` copies the column's declared type directly. Raw types like `"VARCHAR(50)"`, `"timestamp with time zone"`, or `"PgVarchar"` are [normalized to categories](../typescript#data-types) by utilities like [`inferOperators`](./managing-operators#inferring-operators-from-datatype) and [`inferFieldDefaults`](../utils/misc#inferfielddefaults) (use the `datatypeMap` option for custom types). The [date/time package](../datetime) also uses `datatype`.
 - `inputType` gets normalized to HTML5 input types, or `null` when no reliable mapping exists.
 - These examples cast `defaultValue` as text; consider more sophisticated type conversions for your specific needs. `defaultValue` will be `null` when no default is configured.
 - [ORM](#orms) examples read the ORM's model metadata in TypeScript instead of querying the database.
@@ -678,6 +678,22 @@ const fields = Object.entries(getTableColumns(myTable)).map(([key, col]) => ({
   inputType: inputTypes[col.dataType] ?? null,
   ...(col.dataType === 'boolean' ? { valueEditorType: 'checkbox' } : {}),
 }));
+```
+
+Alternatively, [`inferFieldDefaults`](../utils/misc#inferfielddefaults) can fill `inputType`/`valueEditorType` from `datatype` instead of manual mapping (note: `bigint` columns get no `inputType`, and `date`/`datetime` depend on the column type rather than the JS-level `dataType`):
+
+```ts
+import { inferFieldDefaults } from 'react-querybuilder';
+
+const fields = Object.entries(getTableColumns(myTable)).map(([key, col]) =>
+  inferFieldDefaults({
+    name: key,
+    value: key,
+    label: key,
+    datatype: col.columnType,
+    defaultValue: col.default ?? null,
+  })
+);
 ```
 
 `name` uses the TypeScript property key, which is what the ["drizzle" format](../utils/export#drizzle-orm) expects. Use `col.name` instead for the database column name.

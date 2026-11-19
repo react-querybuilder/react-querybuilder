@@ -23,6 +23,8 @@ export * from './utils/arrayUtils';
 export * from './utils/clsx';
 export * from './utils/coalesce';
 export * from './utils/convertQuery';
+export * from './utils/datatypeCategoryComparator';
+export * from './utils/datatypeValidator';
 export * from './utils/defaultValidator';
 export * from './utils/deriveClassNames';
 export * from './utils/deriveRuleContext';
@@ -30,6 +32,7 @@ export * from './utils/deriveValueEditor';
 export * from './utils/filterFieldsByComparator';
 export * from './utils/generateAccessibleDescription';
 export * from './utils/generateID';
+export * from './utils/getDatatypeCategory';
 export * from './utils/getMatchModesUtil';
 export * from './utils/getParseNumberMethod';
 export * from './utils/getQueryJsonSchema';
@@ -37,6 +40,18 @@ export * from './utils/getRuleDefaultValue';
 export * from './utils/getValidationClassNames';
 export * from './utils/getValueSourcesUtil';
 export { setAutoFreeze } from './utils/immerInstances';
+export * from './utils/inferFieldDefaults';
+export {
+  defaultDatatypeOperatorLabels,
+  defaultInferOperatorsMap,
+  getOperatorsByDatatype,
+  inferOperators,
+} from './utils/inferOperators';
+export type {
+  DatatypeOperatorLabels,
+  InferOperatorsMap,
+  InferOperatorsOptions,
+} from './utils/inferOperators';
 export * from './utils/isRuleGroup';
 export * from './utils/isRuleOrGroupValid';
 export * from './utils/mergeAnyTranslations';

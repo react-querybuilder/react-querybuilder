@@ -3,6 +3,8 @@ export * from './arrayUtils';
 export * from './clsx';
 export * from './coalesce';
 export * from './convertQuery';
+export * from './datatypeCategoryComparator';
+export * from './datatypeValidator';
 export * from './deriveClassNames';
 export * from './defaultValidator';
 export * from './deriveRuleContext';
@@ -12,12 +14,25 @@ export * from './formatQuery';
 export * from './generateAccessibleDescription';
 export * from './generateID';
 export { setAutoFreeze } from './immerInstances';
+export * from './getDatatypeCategory';
 export * from './getMatchModesUtil';
 export * from './getParseNumberMethod';
 export * from './getRuleDefaultValue';
 export * from './getValidationClassNames';
 export * from './getQueryJsonSchema';
 export * from './getValueSourcesUtil';
+export * from './inferFieldDefaults';
+export {
+  defaultDatatypeOperatorLabels,
+  defaultInferOperatorsMap,
+  getOperatorsByDatatype,
+  inferOperators,
+} from './inferOperators';
+export type {
+  DatatypeOperatorLabels,
+  InferOperatorsMap,
+  InferOperatorsOptions,
+} from './inferOperators';
 export * from './isRuleGroup';
 export * from './isRuleOrGroupValid';
 export * from './mergeAnyTranslations';

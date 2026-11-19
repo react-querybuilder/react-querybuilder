@@ -105,6 +105,41 @@ const App = () => {
 };
 ```
 
+## Datatype validation
+
+`datatypeOperatorValidator` creates a query validator that marks rules invalid when their operator is incompatible with the field's [datatype category](../typescript#data-types), using the same rules as [`inferOperators`](../tips/managing-operators#inferring-operators-from-datatype). Rules for fields not found in `fields` are skipped.
+
+```ts
+import { datatypeOperatorValidator, formatQuery } from 'react-querybuilder';
+
+const validator = datatypeOperatorValidator({ fields, checkValues: true });
+
+<QueryBuilder fields={fields} validator={validator} />;
+
+// Invalid rules are dropped from export
+formatQuery(query, { format: 'sql', validator });
+```
+
+Options: `fields` (required), `map`, `datatypeMap`, `dropUnknownOperators` (same as `inferOperators`), and `checkValues`. When `checkValues` is `true`, values are also checked against the category (`number`: numeric; `bigint`: integer; `boolean`: boolean or `"true"`/`"false"`; `date`/`datetime`: parseable date; `time`: `HH:mm[:ss]`). Each value of `between`/`notBetween`/`in`/`notIn` is checked, multi-type fields accept a value valid for any member category, and rules with `valueSource` "field" or "parameter" are skipped.
+
+Invalid rules get a `ValidationResult` with `reasons` of either form:
+
+```ts
+{
+  code: ('datatype-operator-mismatch', datatype, operator);
+}
+{
+  code: ('datatype-value-mismatch', datatype, operator, value);
+}
+```
+
+For a single field, `datatypeRuleValidator(fieldData, options)` returns a [field-level validator](#field-based-validation):
+
+```ts
+const age: Field = { name: 'age', label: 'Age', datatype: 'int' };
+age.validator = datatypeRuleValidator(age, { checkValues: true });
+```
+
 ## Effect on HTML
 
 If you provide a query- or field-level validator function, the wrapper `<div>` for each evaluated query object (rule, group, or entire query) will be assigned one of two classes: `queryBuilder-valid` or `queryBuilder-invalid`. You can use these classes to style the elements with CSS.

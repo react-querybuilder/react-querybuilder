@@ -92,17 +92,20 @@ type ToArrayResult<T> =
           : never[];
 
 /**
- * Splits a string by comma then trims each element. Arrays are returned as is except
- * any string elements are trimmed.
+ * Splits a string by comma (or `splitChar`) then trims each element. Arrays are returned
+ * as is except any string elements are trimmed.
  */
 export const toArray = <T>(
   a: T,
-  { retainEmptyStrings }: { retainEmptyStrings?: boolean } = {}
+  {
+    retainEmptyStrings,
+    splitChar = defaultJoinChar,
+  }: { retainEmptyStrings?: boolean; splitChar?: string } = {}
 ): ToArrayResult<T> =>
   (Array.isArray(a)
     ? a.map(trimIfString)
     : typeof a === 'string'
-      ? splitBy(a, defaultJoinChar)
+      ? splitBy(a, splitChar)
           .filter(retainEmptyStrings ? () => true : s => !/^\s*$/.test(s))
           .map(s => s.trim())
       : typeof a === 'number'

@@ -33,7 +33,7 @@ The date/time package provides `formatQuery` rule processors that handle date/ti
 
 ### Conditional use
 
-By default, the date/time rule processors only treat a rule value as a date (or series of dates) if the `field` configuration has a `datatype` property starting with "date", "datetime", "datetimeoffset", or "timestamp" (using the `defaultIsDateField` function). Otherwise, rule processing is passed to the default rule processor for that export format.
+By default, the date/time rule processors only treat a rule value as a date (or series of dates) if the `field` configuration has a `datatype` property starting with "date", "datetime", "datetimeoffset", or "timestamp" (using the `defaultIsDateField` function). Otherwise, rule processing is passed to the default rule processor for that export format. This check is independent of (but largely aligned with) the `date`/`datetime` [datatype categories](./typescript#data-types). Some types in those categories, like `datetime2`, `smalldatetime`, and `timestamptz`, don't match the default check; use `isDateField` (below) to include them.
 
 You can customize this algorithm by passing a `context.isDateField` configuration in the `formatQuery` options. `isDateField` can be a `boolean`, a function that returns a `boolean`, an object matching `field` properties, or an array of objects matching `field` properties.
 

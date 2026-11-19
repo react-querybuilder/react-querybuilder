@@ -4,22 +4,23 @@
 
 `Field` requires `name` and `label`. Common optional properties:
 
-| Property          | Purpose                                                                                                                   |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `operators`       | Allowed operators: names (`['=', 'in']`), option objects, or option groups                                                |
-| `defaultOperator` | Operator selected when the field is chosen                                                                                |
-| `defaultValue`    | Value set when the field is chosen                                                                                        |
-| `valueEditorType` | `'text' \| 'select' \| 'checkbox' \| 'radio' \| 'textarea' \| 'switch' \| 'multiselect' \| null`, or `(operator) => type` |
-| `inputType`       | HTML input type for `text` editors (`'number'`, `'date'`, `'datetime-local'`, `'time'`, …), or `'bigint'`                 |
-| `values`          | Options for `select`/`radio`/`multiselect` (`{ name, label }[]` or option groups)                                         |
-| `valueSources`    | `['value']` (default), `['value', 'field']`, … or `(operator) => sources`                                                 |
-| `comparator`      | Limits `valueSource: 'field'` targets: a property name that must match, or `(f, operator) => boolean`                     |
-| `validator`       | `(rule) => boolean \| { valid, reasons? }` (see [validation](validation.md))                                              |
-| `placeholder`     | Text input placeholder                                                                                                    |
-| `matchModes`      | For array-valued fields (`all`/`some`/`none`/`atLeast`/`atMost`/`exactly`), with `subproperties`                          |
-| `className`       | Extra class on rules using this field                                                                                     |
+| Property          | Purpose                                                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `operators`       | Allowed operators: names (`['=', 'in']`), option objects, or option groups                                                                                         |
+| `defaultOperator` | Operator selected when the field is chosen                                                                                                                         |
+| `defaultValue`    | Value set when the field is chosen                                                                                                                                 |
+| `valueEditorType` | `'text' \| 'select' \| 'checkbox' \| 'radio' \| 'textarea' \| 'switch' \| 'multiselect' \| null`, or `(operator) => type`                                          |
+| `inputType`       | HTML input type for `text` editors (`'number'`, `'date'`, `'datetime-local'`, `'time'`, …), or `'bigint'`                                                          |
+| `values`          | Options for `select`/`radio`/`multiselect` (`{ name, label }[]` or option groups)                                                                                  |
+| `valueSources`    | `['value']` (default), `['value', 'field']`, … or `(operator) => sources`                                                                                          |
+| `comparator`      | Limits `valueSource: 'field'` targets: a property name that must match, `(f, operator, { fieldData }) => boolean`, or `datatypeCategoryComparator`                 |
+| `datatype`        | Data type: category (`string`/`number`/`bigint`/`boolean`/`date`/`datetime`/`time`/`enum`/`array`/`object`/`unknown`) or raw DB type (`'VARCHAR(50)'`, normalized) |
+| `validator`       | `(rule) => boolean \| { valid, reasons? }` (see [validation](validation.md))                                                                                       |
+| `placeholder`     | Text input placeholder                                                                                                                                             |
+| `matchModes`      | For array-valued fields (`all`/`some`/`none`/`atLeast`/`atMost`/`exactly`), with `subproperties`                                                                   |
+| `className`       | Extra class on rules using this field                                                                                                                              |
 
-`Field` allows extra arbitrary properties (e.g. `datatype: 'date'` for `@react-querybuilder/datetime`). They show up in custom components as `fieldData`.
+`datatype` is an official `Field` property (any string; raw DB types normalized to categories by `getDatatypeCategory`, custom mapping via `datatypeMap` option). Used by `inferOperators`, `inferFieldDefaults`, `datatypeCategoryComparator`, `datatypeOperatorValidator`, and `@react-querybuilder/datetime`. `Field` also allows extra arbitrary properties; all show up in custom components as `fieldData`.
 
 ```ts
 import type { Field } from 'react-querybuilder';
@@ -81,6 +82,8 @@ Default operator names (`defaultOperators`): `=`, `!=`, `<`, `>`, `<=`, `>=`, `c
 - `null`/`notNull` are unary: the value is ignored and no value editor renders.
 - `in`/`notIn` take a list; `between`/`notBetween` take exactly two values.
 - Customize globally with the `operators` prop, per field with `field.operators`, or dynamically with `getOperators(field, { fieldData })` (return `null` to fall back to defaults).
+- Narrow operators by datatype: `getOperators={getOperatorsByDatatype()}` (or `(_f, { fieldData }) => inferOperators(fieldData, opts)`). Options: `operators`, `map` (category → op names, merged over `defaultInferOperatorsMap`), `datatypeMap`, `dropUnknownOperators`, `labels` (`true` → `defaultDatatypeOperatorLabels`, e.g. dates "before"/"after"), `warn`. Only default op names filtered; `null`/`notNull` always kept; no hints → no filtering.
+- `inferFieldDefaults(field)` fills missing `inputType`/`valueEditorType` from `datatype` (number → `inputType: 'number'`, boolean → checkbox, date/datetime/time → matching `inputType`, enum w/ `values` → select).
 - Exporters only know the default operator names. Custom operator names need a custom `ruleProcessor`/`operatorProcessor` in `formatQuery`.
 
 ```ts

@@ -1,0 +1,257 @@
+import { defaultOperatorLabelMap, defaultOperators } from '../defaults';
+import type {
+  DatatypeCategoryMap,
+  FieldDatatypeCategory,
+  FlexibleOption,
+  FlexibleOptionList,
+  FullField,
+  FullOperator,
+} from '../types';
+import { categoryFamily, isDev, warnedFields } from './datatypeInternals';
+import { getDatatypeCategory } from './getDatatypeCategory';
+import { isFlexibleOptionGroupArray } from './optGroupUtils';
+
+/**
+ * Datatype category → whitelisted (default) operator names. Categories without an entry
+ * are not filtered.
+ */
+export type InferOperatorsMap = Partial<Record<FieldDatatypeCategory, string[]>>;
+
+/**
+ * Datatype category → operator name → label.
+ */
+export type DatatypeOperatorLabels = Partial<
+  Record<FieldDatatypeCategory, Partial<Record<string, string>>>
+>;
+
+/**
+ * Options for {@link inferOperators}.
+ */
+export interface InferOperatorsOptions<O extends FullOperator = FullOperator> {
+  /** Operator list to narrow. Default {@link defaultOperators}. */
+  operators?: FlexibleOptionList<O>;
+  /** Merged over {@link defaultInferOperatorsMap} (per-category replacement). */
+  map?: InferOperatorsMap;
+  /** Custom raw datatype → category map. */
+  datatypeMap?: DatatypeCategoryMap;
+  /**
+   * Drop operators whose names are not in {@link defaultOperators} (i.e. custom operators).
+   * Default `false`.
+   */
+  dropUnknownOperators?: boolean;
+  /**
+   * Dev-only `console.warn` when `fieldData.operators` lists operators incompatible with
+   * the field's datatype. Default `false`.
+   */
+  warn?: boolean;
+  /**
+   * Type-specific operator labels. `true` → {@link defaultDatatypeOperatorLabels}.
+   * Only labels still equal to the default label are replaced.
+   */
+  labels?: true | DatatypeOperatorLabels;
+}
+
+const numericOperators: readonly string[] = Object.freeze([
+  '=',
+  '!=',
+  '<',
+  '<=',
+  '>',
+  '>=',
+  'between',
+  'notBetween',
+  'in',
+  'notIn',
+]);
+
+/**
+ * Default datatype category → operator whitelist for {@link inferOperators}. `null`/`notNull`
+ * are always retained. `array`, `object`, and `unknown` are not filtered.
+ *
+ * @group Defaults
+ */
+export const defaultInferOperatorsMap: Readonly<InferOperatorsMap> = Object.freeze({
+  string: Object.freeze([
+    '=',
+    '!=',
+    'contains',
+    'beginsWith',
+    'endsWith',
+    'doesNotContain',
+    'doesNotBeginWith',
+    'doesNotEndWith',
+    'in',
+    'notIn',
+  ]),
+  number: numericOperators,
+  bigint: numericOperators,
+  date: numericOperators,
+  datetime: numericOperators,
+  time: numericOperators,
+  boolean: Object.freeze(['=', '!=']),
+  enum: Object.freeze(['=', '!=', 'in', 'notIn']),
+} as InferOperatorsMap);
+
+const temporalLabels = Object.freeze({
+  '<': 'before',
+  '<=': 'on or before',
+  '>': 'after',
+  '>=': 'on or after',
+  between: 'between',
+});
+
+/**
+ * Default type-specific operator labels for {@link inferOperators} (`labels: true`).
+ *
+ * @group Defaults
+ */
+export const defaultDatatypeOperatorLabels: Readonly<DatatypeOperatorLabels> = Object.freeze({
+  date: temporalLabels,
+  datetime: temporalLabels,
+  time: temporalLabels,
+  boolean: Object.freeze({ '=': 'is', '!=': 'is not' }),
+});
+
+const defaultOperatorNames: ReadonlySet<string> = new Set(defaultOperators.map(o => o.name));
+const nullOps: ReadonlySet<string> = new Set(['null', 'notNull']);
+
+const getOpName = (op: unknown): string =>
+  typeof op === 'string' ? op : ((op as FlexibleOption).value ?? (op as FlexibleOption).name)!;
+
+const toCategoryArray = (
+  c: FieldDatatypeCategory | FieldDatatypeCategory[] | null
+): FieldDatatypeCategory[] | null => (c === null ? null : Array.isArray(c) ? c : [c]);
+
+/**
+ * Computes the operator whitelist for a field (`null` = no filtering). Internal.
+ */
+export const getDatatypeOperatorWhitelist = (
+  fieldData: FullField,
+  { map, datatypeMap }: Pick<InferOperatorsOptions, 'map' | 'datatypeMap'> = {}
+): { categories: FieldDatatypeCategory[] | null; whitelist: Set<string> | null } => {
+  const categories = toCategoryArray(getDatatypeCategory(fieldData, { datatypeMap }));
+  if (!categories) return { categories, whitelist: null };
+  const fullMap: InferOperatorsMap = { ...defaultInferOperatorsMap, ...map };
+  const whitelist = new Set<string>();
+  for (const c of categories) {
+    const ops = fullMap[c];
+    if (!ops) return { categories, whitelist: null };
+    for (const op of ops) whitelist.add(op);
+  }
+  // Multiselect stores a list; only list operators export correctly
+  if (
+    categories.length === 1 &&
+    categories[0] === 'enum' &&
+    fieldData.valueEditorType === 'multiselect'
+  ) {
+    for (const op of whitelist) {
+      if (op !== 'in' && op !== 'notIn') whitelist.delete(op);
+    }
+  }
+  for (const op of nullOps) whitelist.add(op);
+  return { categories, whitelist };
+};
+
+/**
+ * Determines whether an operator name is allowed by a whitelist (see
+ * {@link getDatatypeOperatorWhitelist}). Internal.
+ */
+export const isOperatorAllowed = (
+  name: string,
+  whitelist: Set<string> | null,
+  dropUnknownOperators?: boolean
+): boolean =>
+  defaultOperatorNames.has(name) ? !whitelist || whitelist.has(name) : !dropUnknownOperators;
+
+const warnIncompatible = (
+  fieldData: FullField,
+  categories: FieldDatatypeCategory[],
+  whitelist: Set<string>
+) => {
+  const fieldName = fieldData.value ?? fieldData.name;
+  const dt = fieldData.datatype ?? categories.join('|');
+  if (fieldData.operators && !warnedFields.has(`ops:${fieldName}`)) {
+    const flat = isFlexibleOptionGroupArray(fieldData.operators)
+      ? fieldData.operators.flatMap(og => og.options)
+      : (fieldData.operators as unknown[]);
+    const bad = flat
+      .map(op => getOpName(op))
+      .filter(n => defaultOperatorNames.has(n) && !whitelist.has(n));
+    if (bad.length > 0) {
+      warnedFields.add(`ops:${fieldName}`);
+      console.warn(
+        `[RQB] Field "${fieldName}" (datatype "${dt}") lists operators incompatible w/ datatype: ${bad.join(', ')}`
+      );
+    }
+  }
+  if (
+    whitelist.size === nullOps.size &&
+    [...whitelist].every(op => nullOps.has(op)) &&
+    !warnedFields.has(`null:${fieldName}`)
+  ) {
+    warnedFields.add(`null:${fieldName}`);
+    console.warn(
+      `[RQB] Field "${fieldName}" (datatype "${dt}") has no inferred operators besides null/notNull`
+    );
+  }
+};
+
+/**
+ * Narrows an operator list for a field based on its `datatype` (or `inputType`,
+ * `valueEditorType`, `values`, etc. hints; see {@link getDatatypeCategory}). Fields without
+ * hints are not filtered. Only default operator names are filtered; custom operators pass
+ * through unless `dropUnknownOperators` is `true`. `null`/`notNull` are always retained.
+ * Option groups and input order are preserved.
+ *
+ * @example
+ * <QueryBuilder getOperators={(_f, { fieldData }) => inferOperators(fieldData)} />
+ *
+ * @group Option Lists
+ */
+export const inferOperators = <O extends FullOperator = FullOperator>(
+  fieldData: FullField,
+  opts: InferOperatorsOptions<O> = {}
+): FlexibleOptionList<O> => {
+  const operators = (opts.operators ?? defaultOperators) as FlexibleOptionList<O>;
+  const { categories, whitelist } = getDatatypeOperatorWhitelist(fieldData, opts);
+  if (!categories) return operators;
+
+  if (opts.warn && whitelist && isDev()) warnIncompatible(fieldData, categories, whitelist);
+
+  const labelTable = opts.labels === true ? defaultDatatypeOperatorLabels : opts.labels;
+  const labelCat = labelTable && categories.length === 1 ? categories[0] : null;
+
+  const transform = <Op>(op: Op): Op | null => {
+    const name = getOpName(op);
+    if (!isOperatorAllowed(name, whitelist, opts.dropUnknownOperators)) return null;
+    if (!labelCat) return op;
+    const newLabel = labelTable![labelCat]?.[name] ?? labelTable![categoryFamily(labelCat)]?.[name];
+    const defLabel = defaultOperatorLabelMap[name as keyof typeof defaultOperatorLabelMap];
+    if (!newLabel || defLabel === undefined) return op;
+    if (typeof op === 'string') return { name: op, value: op, label: newLabel } as Op;
+    return (op as FlexibleOption).label === defLabel ? { ...op, label: newLabel } : op;
+  };
+
+  const filterList = <Op>(list: Op[]) =>
+    list.map(op => transform(op)).filter((op): op is NonNullable<typeof op> => op !== null);
+
+  if (isFlexibleOptionGroupArray(operators)) {
+    return operators
+      .map(og => ({ ...og, options: filterList(og.options) }))
+      .filter(og => og.options.length > 0);
+  }
+  return filterList(operators as O[]) as FlexibleOptionList<O>;
+};
+
+/**
+ * Creates a `getOperators` function that calls {@link inferOperators} with the given options.
+ * Create outside render for a stable reference.
+ *
+ * @group Option Lists
+ */
+export const getOperatorsByDatatype =
+  <O extends FullOperator = FullOperator>(
+    opts?: InferOperatorsOptions<O>
+  ): ((field: string, misc: { fieldData: FullField }) => FlexibleOptionList<O>) =>
+  (_field, { fieldData }) =>
+    inferOperators(fieldData, opts);

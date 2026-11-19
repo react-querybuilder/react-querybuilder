@@ -75,6 +75,88 @@ function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 
 `convertToIC` and `convertFromIC` perform the same function as `convertQuery` but only in the directions indicated by their names.
 
+### `toArray`
+
+```ts
+function toArray(
+  a: unknown,
+  options?: { retainEmptyStrings?: boolean; splitChar?: string }
+): unknown[];
+```
+
+Converts a value to an array. Strings are split by `splitChar` (default `","`; escaped separators are respected, see `splitBy`) and each element is trimmed. Arrays are returned with string elements trimmed. Empty (or whitespace-only) strings from splitting are removed unless `retainEmptyStrings` is `true`. Numbers are wrapped in an array; other values return an empty array.
+
+```ts
+toArray('a, b, ,c'); // ['a', 'b', 'c']
+toArray('a | b', { splitChar: '|' }); // ['a', 'b']
+toArray('a,,b', { retainEmptyStrings: true }); // ['a', '', 'b']
+```
+
+### `getDatatypeCategory`
+
+```ts
+function getDatatypeCategory(
+  fieldData: FullField,
+  options?: { datatypeMap?: DatatypeCategoryMap; hints?: boolean }
+): FieldDatatypeCategory | FieldDatatypeCategory[] | null;
+```
+
+Normalizes a field's `datatype` (and, unless `hints` is `false`, other properties like `inputType` and `valueEditorType`) to a [datatype category](../typescript#data-types). Returns an array for multi-type fields (e.g. `"string|number"`) and `null` when the category can't be determined. `datatypeMap` maps custom raw types to categories (case-insensitive; checked before built-in rules).
+
+```ts
+getDatatypeCategory({ name: 'f', label: 'F', datatype: 'VARCHAR(50)' }); // 'string'
+getDatatypeCategory({ name: 'f', label: 'F', datatype: 'int|text' }); // ['number', 'string']
+getDatatypeCategory({ name: 'f', label: 'F', inputType: 'date' }); // 'date'
+getDatatypeCategory({ name: 'f', label: 'F', inputType: 'date' }, { hints: false }); // null
+```
+
+### `inferOperators`
+
+```ts
+function inferOperators(
+  fieldData: FullField,
+  options?: InferOperatorsOptions
+): FlexibleOptionList<FullOperator>;
+function getOperatorsByDatatype(options?: InferOperatorsOptions): GetOperatorsFunction;
+```
+
+Narrows an operator list based on the field's datatype category. `getOperatorsByDatatype` returns a ready-to-use [`getOperators`](../components/querybuilder#getoperators) function. See [Inferring operators from `datatype`](../tips/managing-operators#inferring-operators-from-datatype).
+
+### `inferFieldDefaults`
+
+```ts
+function inferFieldDefaults<F extends FullField>(
+  field: F,
+  options?: { datatypeMap?: DatatypeCategoryMap }
+): F;
+```
+
+Fills absent `inputType`/`valueEditorType` properties based on the field's `datatype` (the inverse of [`inferOperators`](#inferoperators)). Only `datatype` is considered (other properties are not used as hints), and explicit values are never overridden. Returns the same object if nothing was filled, otherwise a shallow copy.
+
+| Category                    | Fills                         |
+| --------------------------- | ----------------------------- |
+| `number`                    | `inputType: "number"`         |
+| `boolean`                   | `valueEditorType: "checkbox"` |
+| `date`                      | `inputType: "date"`           |
+| `datetime`                  | `inputType: "datetime-local"` |
+| `time`                      | `inputType: "time"`           |
+| `enum` (with `values`)      | `valueEditorType: "select"`   |
+| Others, multi-type, or none | (nothing)                     |
+
+```ts
+const fields = rawFields.map(f => inferFieldDefaults(f));
+```
+
+Since the [date/time package](../datetime) keys off `inputType: "date" | "datetime-local"`, date pickers are enabled automatically for `date`/`datetime` fields.
+
+### `datatypeCategoryComparator`
+
+Ready-made `comparator` for field-to-field comparisons that lists only fields with a compatible datatype category. See [Filtering the field list](../components/valueeditor#filtering-the-field-list).
+
+### `datatypeOperatorValidator`
+
+Query validator that checks operators (and optionally values) against each field's datatype category. See [Datatype validation](./validation#datatype-validation).
+
 ## Number parsing
 
 HTML `<input>` controls store values as strings (even for `type="number"`), but your requirements may call for true numeric values. The [`parseNumbers`](../components/querybuilder#parsenumbers) prop on the `QueryBuilder` component and the `formatQuery` function's [`parseNumbers`](./export#parse-numbers) option can be used to convert values to numeric types from the UI or during export, respectively. Both configuration options have the same valid values (per the type below) and behave similarly.
@@ -144,6 +226,7 @@ The default configuration objects are exported for convenience, including the fo
 
 - `defaultCombinators` (see [`combinators` prop](../components/querybuilder#combinators))
 - `defaultOperators` (see [`operators` prop](../components/querybuilder#operators))
+- `defaultInferOperatorsMap` and `defaultDatatypeOperatorLabels` (see [Inferring operators from `datatype`](../tips/managing-operators#inferring-operators-from-datatype))
 - `defaultTranslations` (see [`translations` prop](../components/querybuilder#translations))
 - `defaultValueProcessor` and variants for non-SQL formats (see [Export](./export) > [Value processor](./export#value-processor))
 - `defaultFields` (see [`fields` prop](../components/querybuilder#fields))

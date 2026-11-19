@@ -1,3 +1,4 @@
+import type { FieldDatatypeCategory } from './datatype';
 import type {
   BaseFullOption,
   FlexibleOption,
@@ -142,7 +143,19 @@ interface BaseFullField<
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;
-  comparator?: string | ((f: FullField, operator: string) => boolean);
+  /**
+   * Field-to-field comparison filter. String: property name that must match between fields.
+   * Function: receives each candidate field, the operator, and `meta.fieldData` (the field
+   * declaring this comparator).
+   */
+  comparator?:
+    | string
+    | ((f: FullField, operator: string, meta: { fieldData: FullField }) => boolean);
+  /**
+   * Field data type. Known categories drive operator inference; any string allowed (e.g. raw
+   * DB types like `'VARCHAR(50)'`), normalized by `getDatatypeCategory`.
+   */
+  datatype?: FieldDatatypeCategory | (string & {});
 }
 
 /**

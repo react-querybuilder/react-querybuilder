@@ -19,6 +19,7 @@ type RuleValidator = (rule: RuleType) => boolean | ValidationResult;
 - A query validator returning `false` means the whole query is invalid. Returning a `ValidationMap` marks individual rules/groups **by `id`**, so the query needs ids (`prepareRuleGroup`/`generateIDs`).
 - Precedence per rule: muted → invalid; else a `ValidationMap` entry for the id wins; else the field's `validator`; else valid.
 - `defaultValidator` (exported) checks **groups only**: empty groups, IC alternation, and invalid combinators. Use it as a query validator or a starting point.
+- `datatypeOperatorValidator({ fields, checkValues? })` (query) / `datatypeRuleValidator(fieldData, opts)` (field) flag rules whose operator (or value, w/ `checkValues`) doesn't fit the field's `datatype` category. Reason codes: `datatype-operator-mismatch`, `datatype-value-mismatch`.
 
 ```ts
 import type { Field } from 'react-querybuilder';
