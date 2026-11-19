@@ -282,13 +282,19 @@ describe('inferOperators', () => {
 
     it('does not warn without process', () => {
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      vi.stubGlobal('process', undefined);
+      // manual swap; `vi.stubGlobal` unimplemented in `bun:test`
+      const desc = Object.getOwnPropertyDescriptor(globalThis, 'process')!;
+      Object.defineProperty(globalThis, 'process', {
+        configurable: true,
+        writable: true,
+        value: undefined,
+      });
       try {
         inferOperators(f({ name: 'np', datatype: 'number', operators: ['contains'] }), {
           warn: true,
         });
       } finally {
-        vi.unstubAllGlobals();
+        Object.defineProperty(globalThis, 'process', desc);
       }
       expect(spy).not.toHaveBeenCalled();
     });
