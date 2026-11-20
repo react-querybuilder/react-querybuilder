@@ -188,7 +188,7 @@ See [`controlElements`](./querybuilder-controlelements) for a list of all contro
 
 `(field: string, misc: { fieldData: Field }) => OptionList<Operator> | null`
 
-Returns allowed operators for the given `field`. Returning `null` uses the [operators](#operators) prop (or defaults).
+Returns allowed operators for the given `field`. Returning `null` uses the [operators](#operators) prop (or defaults), narrowed by datatype when [`inferOperators`](#inferoperators) is enabled.
 
 `fieldData` provides the complete `Field` object for accessing custom properties.
 
