@@ -96,7 +96,7 @@ export const inferFieldListDefaults = <F extends FullField>(
     return r;
   };
   const list = (
-    isFlexibleOptionGroupArray(optionList)
+    isFlexibleOptionGroupArray(optionList, { allowEmpty: true })
       ? optionList.map(og => {
           const options = og.options.map(f => infer(f as F));
           return options.every((f, i) => f === og.options[i]) ? og : { ...og, options };

@@ -92,4 +92,19 @@ describe('inferFieldListDefaults', () => {
     expect(groups[0].options[0].inputType).toBe('number');
     expect(groups[1]).toBe((grouped.optionList as unknown[])[1]);
   });
+
+  it('handles option groups w/ empty groups', () => {
+    const fa = { ...fields[0], value: fields[0].name } as FullField;
+    const grouped = {
+      optionList: [
+        { label: 'G0', options: [] },
+        { label: 'G1', options: [fa] },
+      ] as unknown as FullField[],
+      optionsMap: { a: fa },
+    };
+    const r = inferFieldListDefaults(grouped, true);
+    const groups = r.optionList as unknown as { options: FullField[] }[];
+    expect(groups[0].options).toEqual([]);
+    expect(groups[1].options[0].inputType).toBe('number');
+  });
 });
