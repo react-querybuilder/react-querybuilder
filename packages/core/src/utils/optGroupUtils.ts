@@ -82,7 +82,7 @@ export function toFullOptionList<Opt extends BaseOption>(
 
   const list = optList as FlexibleOptionList<Opt>;
 
-  if (isFlexibleOptionGroupArray(list)) {
+  if (isFlexibleOptionGroupArray(list, { allowEmpty: true })) {
     return list.map(optGroup => ({
       ...optGroup,
       options: optGroup.options.map(opt => toFullOption(opt, baseProperties, labelMap)),
@@ -361,7 +361,7 @@ export const uniqOptGroups = <T extends BaseOption>(
 export const uniqOptList = <T extends BaseOption>(
   originalArray: FlexibleOptionList<T>
 ): WithUnknownIndex<BaseOption & FullOption>[] | OptionGroup<ToFullOption<T>>[] => {
-  if (isFlexibleOptionGroupArray(originalArray)) {
+  if (isFlexibleOptionGroupArray(originalArray, { allowEmpty: true })) {
     return uniqOptGroups(originalArray) as OptionGroup<ToFullOption<T>>[];
   }
   return uniqByIdentifier((originalArray as BaseOption[]).map(o => toFullOption(o)));
@@ -438,7 +438,7 @@ export const prepareOptionList = <O extends FullOption>(
           // oxlint-disable-next-line no-array-sort
           .sort((a, b) => a.label.localeCompare(b.label))
   ) as FullOptionList<O>;
-  if (isFlexibleOptionGroupArray(opts)) {
+  if (isFlexibleOptionGroupArray(opts, { allowEmpty: true })) {
     optionList = autoSelectOption
       ? (uniqOptGroups(opts) as FullOptionList<O>)
       : (uniqOptGroups([
@@ -459,7 +459,7 @@ export const prepareOptionList = <O extends FullOption>(
     const op = toFullOptionMap(optionsProp, baseOption) as FullOptionMap<O, OptionIdentifier>;
     optionsMap = autoSelectOption ? op : { ...op, [placeholderName]: defaultOption };
   } else {
-    if (isFlexibleOptionGroupArray(optionList)) {
+    if (isFlexibleOptionGroupArray(optionList, { allowEmpty: true })) {
       for (const og of optionList as OptionGroup<ToFullOption<O>>[]) {
         for (const opt of og.options) {
           optionsMap[

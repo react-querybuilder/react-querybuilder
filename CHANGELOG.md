@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#1152] `@react-querybuilder/datetime`: `defaultIsDateField`, the `QueryBuilderDateTime` editor check, and date-only precision detection now also accept any `datatype` that `getDatatypeCategory` normalizes to `date`/`datetime` (e.g. `datetime2`, `smalldatetime`, `timestamptz`, `PgTimestamp`; the editor check also gains `datetimeoffset`). Previously matching values are unaffected, but fields with these types are now processed as dates. Use `context.isDateField` to restore the previous behavior.
 
+### Fixed
+
+- [#1153] `prepareOptionList`, `toFullOptionList`, and `uniqOptList` recognize option group lists containing empty groups. Previously a leading empty group caused the list to be treated as flat, dropping all subsequent groups.
+
 ## [v8.27.1] - 2026-11-18
 
 ### Fixed

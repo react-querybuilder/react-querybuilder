@@ -94,14 +94,12 @@ describe('inferFieldListDefaults', () => {
   });
 
   it('handles option groups w/ empty groups', () => {
-    const fa = { ...fields[0], value: fields[0].name } as FullField;
-    const grouped = {
+    const grouped = prepareOptionList({
       optionList: [
         { label: 'G0', options: [] },
-        { label: 'G1', options: [fa] },
-      ] as unknown as FullField[],
-      optionsMap: { a: fa },
-    };
+        { label: 'G1', options: [fields[0]] },
+      ],
+    });
     const r = inferFieldListDefaults(grouped, true);
     const groups = r.optionList as unknown as { options: FullField[] }[];
     expect(groups[0].options).toEqual([]);

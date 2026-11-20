@@ -577,6 +577,20 @@ describe('prepareOptionList', () => {
         customProp: 'test',
       });
     });
+
+    it('keeps groups after a leading empty group', () => {
+      const result = prepareOptionList({
+        optionList: [
+          { label: 'G0', options: [] },
+          { label: 'G1', options: [{ name: 'a', label: 'A' }] },
+        ],
+      });
+      expect(result.optionList).toEqual([
+        { label: 'G0', options: [] },
+        { label: 'G1', options: [{ name: 'a', value: 'a', label: 'A' }] },
+      ]);
+      expect(result.optionsMap).toEqual({ a: { name: 'a', value: 'a', label: 'A' } });
+    });
   });
 
   describe('array-based option lists', () => {
