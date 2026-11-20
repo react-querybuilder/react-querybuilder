@@ -24,6 +24,11 @@
   justify-content: space-between;
 }
 
+.demoDefaultMarker {
+  margin-left: 0.15em;
+  text-decoration: none;
+}
+
 .demoOptionCommands {
   display: flex;
   gap: var(--ifm-global-spacing);

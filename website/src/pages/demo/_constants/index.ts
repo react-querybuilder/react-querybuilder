@@ -43,6 +43,8 @@ export const defaultOptions = {
   inferOperators: true,
 } satisfies DemoOptions;
 
+export const demoDefaultOverrides: ReadonlySet<DemoOption> = new Set(['inferOperators']);
+
 export const optionOrder: DemoOption[] = [
   'showCombinatorsBetweenRules',
   'showNotToggle',

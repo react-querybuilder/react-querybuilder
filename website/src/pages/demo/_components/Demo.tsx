@@ -59,6 +59,7 @@ import {
   initialQuery as defaultInitialQuery,
   initialQueryIC as defaultInitialQueryIC,
   defaultOptions,
+  demoDefaultOverrides,
   formatMap,
   optionOrderByLabel,
   optionsMetadata,
@@ -83,6 +84,7 @@ import {
   optionsReducer,
 } from '../_constants/utils';
 import styles from './Demo.module.css';
+import { demoAboutId } from './DemoAbout';
 import ImportTab from './ImportTab';
 import Nav from './Nav';
 import { ThemeBuilder } from './ThemeBuilder';
@@ -321,6 +323,7 @@ export default function Demo({
     ...initialOptionsFromHash,
   });
   const [parseNumbersInExport, setParseNumbersInExport] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [nlLanguage, setNLLanguage] = useState<NLLanguageCode>('en');
   const [sql, setSQL] = useState(initialSQL);
   const [sqlParseError, setSQLParseError] = useState('');
@@ -712,11 +715,20 @@ export default function Demo({
           </Link>
         </h3>
         <div className={styles.demoSidebar}>
-          {optionsInfo.map(({ checked, label, link, setter, title }) => (
+          {optionsInfo.map(({ checked, label, link, name, setter, title }) => (
             <div key={label} className={styles.demoOption}>
               <label>
                 <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
                 {` ${label}`}
+                {demoDefaultOverrides.has(name) && (
+                  <a
+                    href={`#${demoAboutId}`}
+                    title="Default differs from base QueryBuilder (see About this demo)"
+                    onClick={() => setAboutOpen(true)}
+                    className={styles.demoDefaultMarker}>
+                    *
+                  </a>
+                )}
               </label>
               {link ? (
                 <Link
@@ -1258,7 +1270,12 @@ export default function Demo({
             </TabItem>
           </Tabs>
         </div>
-        <Nav variant={variant} compressedState={getCompressedState()} />
+        <Nav
+          variant={variant}
+          compressedState={getCompressedState()}
+          aboutOpen={aboutOpen}
+          onAboutToggle={setAboutOpen}
+        />
       </div>
     </div>
   );

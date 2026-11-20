@@ -4,6 +4,7 @@ import type { Location } from 'history';
 import { useCallback, useId, useState } from 'react';
 import { styleNameArray, styleNameMap } from '../_constants';
 import type { StyleName } from '../_constants/types';
+import DemoAbout from './DemoAbout';
 import CodeSandboxLogo from './Logo-CodeSandbox';
 import StackBlitzLogo from './Logo-StackBlitz';
 import styles from './Nav.module.css';
@@ -11,6 +12,8 @@ import styles from './Nav.module.css';
 interface NavProps {
   variant: StyleName;
   compressedState?: string;
+  aboutOpen?: boolean;
+  onAboutToggle?: (open: boolean) => void;
 }
 
 const getLink = ({
@@ -26,7 +29,14 @@ const goToLink = (link: string) => {
   location.href = link;
 };
 
-export default function Nav({ variant, compressedState }: NavProps) {
+const noop = () => {};
+
+export default function Nav({
+  variant,
+  compressedState,
+  aboutOpen = false,
+  onAboutToggle = noop,
+}: NavProps) {
   const slId = useId();
   const siteLocation = useLocation();
   const [copyPermalinkStatus, setCopyPermalinkStatus] = useState('');
@@ -126,6 +136,7 @@ export default function Nav({ variant, compressedState }: NavProps) {
           </li>
         </ul>
       </nav>
+      <DemoAbout open={aboutOpen} onToggle={onAboutToggle} />
     </div>
   );
 }
