@@ -126,6 +126,18 @@ const toCategoryArray = (
 const ownLabel = (table: object | undefined, key: string): string | undefined =>
   table && Object.hasOwn(table, key) ? (table as Record<string, string>)[key] : undefined;
 
+const sameNonLabelProps = (src: object, copy: object): boolean => {
+  const srcKeys = Object.keys(src).filter(k => k !== 'label');
+  return (
+    srcKeys.length === Object.keys(copy).filter(k => k !== 'label').length &&
+    srcKeys.every(
+      k =>
+        Object.hasOwn(copy, k) &&
+        (copy as Record<string, unknown>)[k] === (src as Record<string, unknown>)[k]
+    )
+  );
+};
+
 // Relabeled op cache (stable refs across calls for memoization)
 const relabeledObjects = new WeakMap<object, Map<string, unknown>>();
 const relabeledStrings = new Map<string, Map<string, unknown>>();
@@ -134,14 +146,8 @@ const relabel = <Op>(op: Op, label: string): Op => {
   const byLabel =
     typeof op === 'string' ? relabeledStrings.get(op) : relabeledObjects.get(op as object);
   const cached = byLabel?.get(label);
-  // Reuse only if source props unchanged (source may be mutated)
-  if (
-    cached &&
-    (typeof op === 'string' ||
-      Object.entries(op as object).every(
-        ([k, v]) => k === 'label' || (cached as Record<string, unknown>)[k] === v
-      ))
-  ) {
+  // Reuse only if source props unchanged (source may be mutated: changed/added/deleted keys)
+  if (cached && (typeof op === 'string' || sameNonLabelProps(op as object, cached as object))) {
     return cached as Op;
   }
   const result =

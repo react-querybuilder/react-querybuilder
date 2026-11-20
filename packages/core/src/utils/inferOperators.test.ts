@@ -219,6 +219,11 @@ describe('inferOperators', () => {
     const b = inferOperators(f({ datatype: 'date' }), opts)[0];
     expect(b).not.toBe(a);
     expect(b).toMatchObject({ label: 'before', extra: 1 });
+    delete (op as FullOperator & { extra?: number }).extra;
+    const c = inferOperators(f({ datatype: 'date' }), opts)[0];
+    expect(c).not.toBe(b);
+    expect(c).not.toHaveProperty('extra');
+    expect(inferOperators(f({ datatype: 'date' }), opts)[0]).toBe(c);
   });
 
   it('ignores inherited label keys', () => {
