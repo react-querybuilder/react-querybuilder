@@ -386,6 +386,9 @@ export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
     enableDragAndDrop: false,
     disabled: r.disabled,
     fields: r.subproperties.fields,
+    inferFieldDefaults:
+      (r.subQueryBuilderProps.inferFieldDefaults as InferFieldDefaultsProp | undefined) ??
+      r.schema.inferFieldDefaults,
     // Update the value on first render if the value is not a valid rule group
     enableMountQueryChange: !isRuleGroup(r.rule.value) || !r.rule.value.id,
     query: isRuleGroup(r.rule.value) ? (r.rule.value as RuleGroupType) : initialQuery,

@@ -260,6 +260,42 @@ describe('inferOperators / inferFieldDefaults props', () => {
     );
     expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'number');
   });
+
+  describe('subqueries', () => {
+    const subFields: Field[] = [
+      { name: 'list', label: 'List', matchModes: true, subproperties: fields },
+    ];
+    const subQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        {
+          field: 'list',
+          operator: '=',
+          valueSource: 'value',
+          match: { mode: 'all' },
+          value: { combinator: 'and', rules: [{ field: 'age', operator: '=', value: '' }] },
+        },
+      ],
+    };
+    const nestedEditor = () => screen.getAllByTestId(TestID.valueEditor).at(-1)!;
+
+    it('inherits inferFieldDefaults', () => {
+      render(<QueryBuilder defaultQuery={subQuery} fields={subFields} inferFieldDefaults />);
+      expect(nestedEditor()).toHaveAttribute('type', 'number');
+    });
+
+    it('preserves explicit false from getSubQueryBuilderProps', () => {
+      render(
+        <QueryBuilder
+          defaultQuery={subQuery}
+          fields={subFields}
+          inferFieldDefaults
+          getSubQueryBuilderProps={() => ({ inferFieldDefaults: false })}
+        />
+      );
+      expect(nestedEditor()).not.toHaveAttribute('type', 'number');
+    });
+  });
 });
 
 describe('actions', () => {
