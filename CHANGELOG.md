@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `inferFieldDefaults` fills missing `inputType`/`valueEditorType` from `datatype`.
   - `datatypeCategoryComparator`, a `comparator` that lists only fields with a compatible datatype category for `valueSource: "field"` (`getDatatypeCategoryComparator` creates one with a custom `datatypeMap`). Function `comparator`s now receive an optional third `meta` argument (`{ fieldData }`, the field declaring the `comparator`).
   - `datatypeOperatorValidator` (query-level) and `datatypeRuleValidator` (field-level) flag rules whose operator (or, with `checkValues: true`, value) doesn't fit the field's datatype (reason codes `"datatype-operator-mismatch"`/`"datatype-value-mismatch"`).
+- [#1153] `inferOperators` and `inferFieldDefaults` props on `QueryBuilder` (and `QueryManager` options) enable the utilities above without custom `getOperators`/field mapping. `inferOperators` narrows the `operators` prop list per field (precedence: `field.operators` > `getOperators` > inference > `operators`); `inferFieldDefaults` fills missing `inputType`/`valueEditorType`. Both default to `false`. `resolveOperatorList` accepts an `inferOperators` option, and `inferFieldListDefaults` applies `inferFieldDefaults` to a prepared field list.
 - [#1152] `toArray` accepts a `splitChar` option (default `","`).
 
 ### Changed
@@ -2701,6 +2702,7 @@ _TL;DR: These are probably not breaking changes._
 [#1149]: https://github.com/react-querybuilder/react-querybuilder/pull/1149
 [#1151]: https://github.com/react-querybuilder/react-querybuilder/pull/1151
 [#1152]: https://github.com/react-querybuilder/react-querybuilder/pull/1152
+[#1153]: https://github.com/react-querybuilder/react-querybuilder/pull/1153
 
 <!-- #endregion -->
 

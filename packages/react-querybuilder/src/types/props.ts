@@ -19,6 +19,8 @@ import type {
   GenericizeRuleGroupType,
   GetOptionIdentifierType,
   GroupOptions,
+  InferFieldDefaultsProp,
+  InferOperatorsProp,
   InputType,
   MatchConfig,
   MatchMode,
@@ -703,6 +705,7 @@ export interface Schema<F extends FullField, O extends string> {
   showUngroupButtons: boolean;
   showLockButtons: boolean;
   showMuteButtons: boolean;
+  inferFieldDefaults?: InferFieldDefaultsProp;
   autoSelectField: boolean;
   autoSelectOperator: boolean;
   autoSelectValue: boolean;
@@ -999,6 +1002,22 @@ export type QueryBuilderProps<
         field: GetOptionIdentifierType<F>,
         misc: { fieldData: F }
       ): FlexibleOptionListProp<FullOperator> | null;
+      /**
+       * Narrows each field's operator list based on its `datatype` (or `inputType`,
+       * `valueEditorType`, `values` hints) via {@link inferOperators}. `true` uses default
+       * options. Precedence: `field.operators` > `getOperators` > inference > `operators`.
+       * Memoize option objects (inline objects cause re-resolution every render).
+       *
+       * @default false
+       */
+      inferOperators?: InferOperatorsProp;
+      /**
+       * Fills absent `inputType`/`valueEditorType` for each field based on its `datatype`
+       * via {@link inferFieldDefaults}. `true` uses default options. Memoize option objects.
+       *
+       * @default false
+       */
+      inferFieldDefaults?: InferFieldDefaultsProp;
       /**
        * This function should return the type of {@link ValueEditor} (see
        * {@link ValueEditorType}) for the given field `name` and operator `name`.

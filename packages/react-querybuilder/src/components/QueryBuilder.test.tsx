@@ -223,6 +223,34 @@ describe('get* callbacks', () => {
   });
 });
 
+describe('inferOperators / inferFieldDefaults props', () => {
+  const fields: Field[] = [{ name: 'age', label: 'Age', datatype: 'int' }];
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'age', operator: '=', value: '' }],
+  };
+  const opValues = () =>
+    within(screen.getByTestId(TestID.operators))
+      .getAllByRole('option')
+      .map(o => (o as HTMLOptionElement).value);
+
+  it('narrows operators', () => {
+    render(<QueryBuilder defaultQuery={query} fields={fields} inferOperators />);
+    expect(opValues()).not.toContain('contains');
+    expect(opValues()).toContain('between');
+  });
+
+  it('does not narrow by default', () => {
+    render(<QueryBuilder defaultQuery={query} fields={fields} />);
+    expect(opValues()).toContain('contains');
+  });
+
+  it('fills field defaults', () => {
+    render(<QueryBuilder defaultQuery={query} fields={fields} inferFieldDefaults />);
+    expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'number');
+  });
+});
+
 describe('actions', () => {
   const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },

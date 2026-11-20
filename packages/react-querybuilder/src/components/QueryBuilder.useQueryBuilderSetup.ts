@@ -144,6 +144,8 @@ export const useQueryBuilderSetup = <
     getDefaultValue,
     getMatchModes,
     getOperators,
+    inferOperators,
+    inferFieldDefaults,
     getSubQueryBuilderProps,
     getValueEditorType,
     getValueSources,
@@ -182,6 +184,7 @@ export const useQueryBuilderSetup = <
     fields: fieldsProp,
     baseField,
     autoSelectField,
+    inferFieldDefaults,
     translations,
   });
   // #endregion
@@ -231,11 +234,19 @@ export const useQueryBuilderSetup = <
         // The props use branded identifier types; the resolvers are identifier-agnostic.
         getOperators: getOperators as ResolveOperators<F, O>,
         operators,
+        inferOperators,
         placeholder: translations.operators,
         baseOption: baseOperator,
         autoSelectOption: autoSelectOperator,
       }),
-    [autoSelectOperator, baseOperator, getOperators, operators, translations.operators]
+    [
+      autoSelectOperator,
+      baseOperator,
+      getOperators,
+      inferOperators,
+      operators,
+      translations.operators,
+    ]
   );
 
   const getRuleDefaultOperator = useCallback(

@@ -4,6 +4,7 @@ import type {
   FullField,
   FullOperator,
   FullOption,
+  InferFieldDefaultsProp,
   InputType,
   MatchModeOptions,
   Option,
@@ -698,6 +699,9 @@ export const useRule = (props: RuleProps): UseRule => {
     translations: props.translations as TranslationsFull,
     fields: fieldData.subproperties ?? subQueryBuilderProps.fields ?? defaultSubproperties,
     autoSelectField: props.schema.autoSelectField || !!fieldData.subproperties,
+    inferFieldDefaults:
+      (subQueryBuilderProps.inferFieldDefaults as InferFieldDefaultsProp | undefined) ??
+      props.schema.inferFieldDefaults,
   });
 
   const validationResult = useMemo(

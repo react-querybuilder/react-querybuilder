@@ -10,6 +10,8 @@ import type {
   Placeholder,
   ValueEditorType,
 } from '../types';
+import type { InferOperatorsOptions } from './inferOperators';
+import { inferOperators } from './inferOperators';
 import { getFirstOption, prepareOptionList } from './optGroupUtils';
 
 /**
@@ -28,9 +30,17 @@ export interface ResolveOptionListOptions {
 }
 
 /**
+ * Value of the `inferOperators` prop/option. `true` → default {@link InferOperatorsOptions}.
+ * The `operators` property is ignored (the query-level operator list is narrowed).
+ */
+export type InferOperatorsProp<O extends FullOperator = FullOperator> =
+  | boolean
+  | Omit<InferOperatorsOptions<O>, 'operators'>;
+
+/**
  * Resolves the operator list for a field, applying the same precedence as the `QueryBuilder`
  * component: the field's own `operators`, then the `getOperators` callback, then the
- * query-level operator list.
+ * query-level operator list (narrowed by {@link inferOperators} when `inferOperators` is set).
  *
  * @group Option Lists
  */
@@ -42,6 +52,7 @@ export const resolveOperatorList = <
   fieldData,
   getOperators,
   operators,
+  inferOperators: inferOperatorsProp,
   placeholder,
   baseOption,
   autoSelectOption,
@@ -50,16 +61,32 @@ export const resolveOperatorList = <
   fieldData: F;
   getOperators?: (field: string, misc: { fieldData: F }) => FlexibleOptionList<O> | null;
   operators: FullOptionList<O>;
-} & ResolveOptionListOptions): FullOptionList<O> =>
-  prepareOptionList<O>({
-    optionList: (fieldData?.operators ??
-      getOperators?.(field, { fieldData }) ??
-      operators) as FlexibleOptionListProp<O>,
+  inferOperators?: InferOperatorsProp<O>;
+} & ResolveOptionListOptions): FullOptionList<O> => {
+  const inferOpts = inferOperatorsProp === true ? {} : inferOperatorsProp || null;
+  let optionList = fieldData?.operators ?? getOperators?.(field, { fieldData });
+  if (optionList != null) {
+    // Warning-only pass (dev) for conflicting `field.operators`
+    if (inferOpts?.warn && fieldData?.operators) {
+      inferOperators(fieldData, { ...inferOpts, operators: [] });
+    }
+  } else {
+    optionList =
+      inferOpts && fieldData
+        ? inferOperators<O>(fieldData, {
+            ...inferOpts,
+            operators: operators as FlexibleOptionList<O>,
+          })
+        : operators;
+  }
+  return prepareOptionList<O>({
+    optionList: optionList as FlexibleOptionListProp<O>,
     placeholder,
     baseOption,
     labelMap: defaultOperatorLabelMap,
     autoSelectOption,
   }).optionList;
+};
 
 /**
  * Resolves the default operator for a field, applying the same precedence as the `QueryBuilder`
