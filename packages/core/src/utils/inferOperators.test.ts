@@ -210,6 +210,24 @@ describe('inferOperators', () => {
     ).toMatchObject({ label: 'earlier' });
   });
 
+  it('rebuilds relabeled copy when source operator mutated', () => {
+    const op: FullOperator = { name: '<', value: '<', label: '<' };
+    const opts = { labels: true as const, operators: [op] };
+    const a = inferOperators(f({ datatype: 'date' }), opts)[0];
+    expect(inferOperators(f({ datatype: 'date' }), opts)[0]).toBe(a);
+    (op as FullOperator & { extra?: number }).extra = 1;
+    const b = inferOperators(f({ datatype: 'date' }), opts)[0];
+    expect(b).not.toBe(a);
+    expect(b).toMatchObject({ label: 'before', extra: 1 });
+  });
+
+  it('ignores inherited label keys', () => {
+    const ops = ['toString'] as unknown as FullOperator[];
+    expect(
+      inferOperators(f({ datatype: 'date' }), { labels: { date: {} }, operators: ops })
+    ).toEqual(ops);
+  });
+
   it('does not mutate inputs', () => {
     const operators = defaultOperators.map(o => ({ ...o }));
     const snapshot = structuredClone(operators);

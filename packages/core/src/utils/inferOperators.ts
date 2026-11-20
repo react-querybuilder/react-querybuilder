@@ -123,6 +123,9 @@ const toCategoryArray = (
   c: FieldDatatypeCategory | FieldDatatypeCategory[] | null
 ): FieldDatatypeCategory[] | null => (c === null ? null : Array.isArray(c) ? c : [c]);
 
+const ownLabel = (table: object | undefined, key: string): string | undefined =>
+  table && Object.hasOwn(table, key) ? (table as Record<string, string>)[key] : undefined;
+
 // Relabeled op cache (stable refs across calls for memoization)
 const relabeledObjects = new WeakMap<object, Map<string, unknown>>();
 const relabeledStrings = new Map<string, Map<string, unknown>>();
@@ -130,7 +133,17 @@ const relabeledStrings = new Map<string, Map<string, unknown>>();
 const relabel = <Op>(op: Op, label: string): Op => {
   const byLabel =
     typeof op === 'string' ? relabeledStrings.get(op) : relabeledObjects.get(op as object);
-  if (byLabel?.has(label)) return byLabel.get(label) as Op;
+  const cached = byLabel?.get(label);
+  // Reuse only if source props unchanged (source may be mutated)
+  if (
+    cached &&
+    (typeof op === 'string' ||
+      Object.entries(op as object).every(
+        ([k, v]) => k === 'label' || (cached as Record<string, unknown>)[k] === v
+      ))
+  ) {
+    return cached as Op;
+  }
   const result =
     typeof op === 'string' ? { name: op, value: op, label } : { ...(op as object), label };
   const map = byLabel ?? new Map<string, unknown>();
@@ -241,8 +254,10 @@ export const inferOperators = <O extends FullOperator = FullOperator>(
     const name = getOpName(op);
     if (!isOperatorAllowed(name, whitelist, opts.dropUnknownOperators)) return null;
     if (!labelCat) return op;
-    const newLabel = labelTable![labelCat]?.[name] ?? labelTable![categoryFamily(labelCat)]?.[name];
-    const defLabel = defaultOperatorLabelMap[name as keyof typeof defaultOperatorLabelMap];
+    const newLabel =
+      ownLabel(labelTable![labelCat], name) ??
+      ownLabel(labelTable![categoryFamily(labelCat)], name);
+    const defLabel = ownLabel(defaultOperatorLabelMap, name);
     if (!newLabel || defLabel === undefined) return op;
     if (typeof op !== 'string' && (op as FlexibleOption).label !== defLabel) return op;
     return relabel(op, newLabel);

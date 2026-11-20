@@ -27,8 +27,9 @@ import type { RelativeDateTimeEditorConfig } from './types';
  */
 const isDateTimeEditor = (props: ValueEditorProps, inputTypeCoerced: string | undefined): boolean =>
   !isNonDateValueSource(props.valueSource) &&
-  ((props.type === 'text' &&
-    (inputTypeCoerced === 'date' || inputTypeCoerced === 'datetime-local')) ||
+  props.type === 'text' &&
+  (inputTypeCoerced === 'date' ||
+    inputTypeCoerced === 'datetime-local' ||
     isDateLikeDatatype(props.fieldData?.datatype, /^(?:date|datetime|timestamp)\b/i));
 
 const pad2 = (n: number): string => `${n}`.padStart(2, '0');
