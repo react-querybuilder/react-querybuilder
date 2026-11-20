@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.28.0] - 2026-11-20
+
 ### Added
 
 - [#1152] `datatype` is now an official, documented `Field` property (typed `unknown` for backward compatibility; non-string values are ignored by the new utilities). Raw database types (e.g. `"VARCHAR(50)"`, `"timestamp with time zone"`, `"PgVarchar"`) are normalized to a category (`string`, `number`, `bigint`, `boolean`, `date`, `datetime`, `time`, `enum`, `array`, `object`, `unknown`) by the new `getDatatypeCategory` utility, with `inputType`/`valueEditorType`/`values`/`matchModes` hints as fallback and a `datatypeMap` option for custom types. `|` separates multiple types (`"string|number"`). New datatype-aware utilities (all opt-in; no behavior change for existing configurations):
@@ -2712,7 +2714,8 @@ _TL;DR: These are probably not breaking changes._
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.27.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.28.0...HEAD
+[v8.28.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.27.1...v8.28.0
 [v8.27.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.27.0...v8.27.1
 [v8.27.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.26.0...v8.27.0
 [v8.26.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.25.0...v8.26.0
