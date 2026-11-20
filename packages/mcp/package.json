@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/mcp",
   "description": "MCP server for React Query Builder: format, parse, convert, and validate queries; search docs",
-  "version": "8.27.1",
+  "version": "8.28.0",
   "type": "module",
   "publishConfig": {
     "access": "public"
@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/server": "^2.4.0",
-    "@react-querybuilder/core": "8.27.1",
+    "@react-querybuilder/core": "8.28.0",
     "@traqula/parser-sparql-1-2": "catalog:",
     "chevrotain": "catalog:",
     "jsonata": "catalog:",
