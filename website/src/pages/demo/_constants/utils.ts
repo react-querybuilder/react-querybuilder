@@ -468,6 +468,7 @@ export const getCodeString = (
     getPropText('autoSelectValue'),
     getPropText('debugMode'),
     getPropText('disabled'),
+    options.inferOperators ? 'inferOperators={{ labels: true }}' : '',
     getPropText('listsAsArrays'),
     getPropText('parseNumbers'),
     getPropText('resetOnFieldChange'),

@@ -196,7 +196,7 @@ For more information about option list props like `operators`, see [Working with
 
 ### `inferOperators`
 
-`boolean | InferOperatorsOptions` (default `false`)
+`boolean | InferOperatorsOptions` (default `false`) _<DemoLink option="inferOperators" />_
 
 Narrows each field's operator list to those compatible with its [`datatype`](../typescript#data-types) (falling back to `inputType`/`valueEditorType`/`values` hints) using [`inferOperators`](../utils/misc#inferoperators). `true` uses the default options; pass an object to configure `map`, `datatypeMap`, `dropUnknownOperators`, `labels`, or `warn` (the `operators` option is ignored; the [`operators`](#operators) prop is narrowed instead).
 

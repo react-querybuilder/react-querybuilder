@@ -40,6 +40,7 @@ export const defaultOptions = {
   useDateTimePackage: false,
   responsiveLayout: false,
   enableExpressions: false,
+  inferOperators: true,
 } satisfies DemoOptions;
 
 export const optionOrder: DemoOption[] = [
@@ -70,6 +71,7 @@ export const optionOrder: DemoOption[] = [
   'suppressStandardClassnames',
   'useDateTimePackage',
   'enableExpressions',
+  'inferOperators',
 ];
 
 export const optionsMetadata = {
@@ -152,7 +154,7 @@ export const optionsMetadata = {
   },
   enableDragAndDrop: {
     link: '/docs/components/querybuilder#enabledraganddrop',
-    label: 'Drag-and-drop enabled',
+    label: 'Enable drag-and-drop',
     title: 'Rules and groups can be reordered and dragged to different groups',
   },
   disabled: {
@@ -214,6 +216,12 @@ export const optionsMetadata = {
     label: 'Enable expressions',
     title:
       'Wrap the query builder with QueryBuilderExpressions to build arithmetic/function expressions (e.g. price * quantity): pick the "expression" value source on the right-hand side, or wrap a field in a function on the left',
+  },
+  inferOperators: {
+    link: '/docs/components/querybuilder#inferoperators',
+    label: 'Infer operators',
+    title:
+      'Narrow the operator list for each field based on its datatype (fields with explicit operators are unaffected) and use type-specific labels (e.g. "before"/"after" for dates, "is"/"is not" for booleans)',
   },
 } satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 

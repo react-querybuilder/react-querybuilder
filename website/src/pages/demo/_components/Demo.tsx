@@ -288,6 +288,8 @@ const getExpressionValueSources = (field: string): ValueSources => {
   return base.includes('expression') ? base : [...base, 'expression'];
 };
 
+const inferOperatorsOptions = { labels: true } as const;
+
 const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   const [_0, _1, formatInfo, exportDocsAnchorName] = formatMap.find(([fmt]) => fmt === format)!;
   return (
@@ -668,6 +670,7 @@ export default function Demo({
       validator: opts.validateQuery ? defaultValidator : undefined,
       parseNumbers: opts.parseNumbers ? 'strict-limited' : false,
       getValueSources: options.enableExpressions ? getExpressionValueSources : undefined,
+      inferOperators: opts.inferOperators ? inferOperatorsOptions : false,
     };
   }, [options]);
 

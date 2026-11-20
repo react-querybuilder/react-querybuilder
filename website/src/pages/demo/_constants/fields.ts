@@ -1,5 +1,5 @@
 import type { Field, FullField, RuleType } from 'react-querybuilder';
-import { defaultOperators, toFullOption } from 'react-querybuilder';
+import { toFullOption } from 'react-querybuilder';
 import { musicalInstruments } from './musicalInstruments';
 
 export const validator = (r: RuleType) => !!r.value;
@@ -27,7 +27,6 @@ export const fields: FullField[] = (
       label: 'Is a musician',
       datatype: 'boolean',
       valueEditorType: 'checkbox',
-      operators: defaultOperators.filter(op => op.name === '='),
       defaultValue: false,
     },
     {
@@ -38,7 +37,6 @@ export const fields: FullField[] = (
       values: musicalInstruments,
       // This must be commented out to properly demonstrate `autoSelectValue={false}`
       // defaultValue: 'Cowbell',
-      operators: defaultOperators.filter(op => op.name === '='),
     },
     {
       name: 'alsoPlays',
@@ -46,8 +44,7 @@ export const fields: FullField[] = (
       datatype: 'enum',
       valueEditorType: 'multiselect',
       values: musicalInstruments,
-      defaultValue: 'more_cowbell',
-      operators: defaultOperators.filter(op => op.name === 'in'),
+      defaultValue: ['more_cowbell'],
     },
     {
       name: 'tourStops',
@@ -65,7 +62,6 @@ export const fields: FullField[] = (
       name: 'gender',
       label: 'Gender',
       datatype: 'enum',
-      operators: defaultOperators.filter(op => op.name === '='),
       valueEditorType: 'radio',
       values: [
         { name: 'M', label: 'Male' },

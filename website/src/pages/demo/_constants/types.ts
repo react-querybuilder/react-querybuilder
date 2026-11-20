@@ -34,7 +34,8 @@ export type DemoOption =
   | 'showBranches'
   | 'suppressStandardClassnames'
   | 'useDateTimePackage'
-  | 'enableExpressions';
+  | 'enableExpressions'
+  | 'inferOperators';
 
 export type DemoOptions = Record<DemoOption, boolean>;
 
