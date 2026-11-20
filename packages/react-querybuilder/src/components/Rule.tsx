@@ -4,6 +4,8 @@ import type {
   FullField,
   FullOperator,
   FullOption,
+  InferFieldDefaultsProp,
+  InferOperatorsProp,
   InputType,
   MatchModeOptions,
   Option,
@@ -385,6 +387,12 @@ export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
     enableDragAndDrop: false,
     disabled: r.disabled,
     fields: r.subproperties.fields,
+    inferFieldDefaults:
+      (r.subQueryBuilderProps.inferFieldDefaults as InferFieldDefaultsProp | undefined) ??
+      r.schema.inferFieldDefaults,
+    inferOperators:
+      (r.subQueryBuilderProps.inferOperators as InferOperatorsProp | undefined) ??
+      r.schema.inferOperators,
     // Update the value on first render if the value is not a valid rule group
     enableMountQueryChange: !isRuleGroup(r.rule.value) || !r.rule.value.id,
     query: isRuleGroup(r.rule.value) ? (r.rule.value as RuleGroupType) : initialQuery,
@@ -698,6 +706,9 @@ export const useRule = (props: RuleProps): UseRule => {
     translations: props.translations as TranslationsFull,
     fields: fieldData.subproperties ?? subQueryBuilderProps.fields ?? defaultSubproperties,
     autoSelectField: props.schema.autoSelectField || !!fieldData.subproperties,
+    inferFieldDefaults:
+      (subQueryBuilderProps.inferFieldDefaults as InferFieldDefaultsProp | undefined) ??
+      props.schema.inferFieldDefaults,
   });
 
   const validationResult = useMemo(

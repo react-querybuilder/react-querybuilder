@@ -457,6 +457,12 @@ it('identifies flexible option group arrays', () => {
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: [] }], { allowEmpty: true })).toBe(
     true
   );
+  expect(
+    isFlexibleOptionGroupArray([{ name: 'n', label: 'l', options: [] }], { allowEmpty: true })
+  ).toBe(false);
+  expect(
+    isFlexibleOptionGroupArray([{ value: 'v', label: 'l', options: [] }], { allowEmpty: true })
+  ).toBe(false);
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: ['test'] }])).toBe(false);
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: [{ name: 'n', label: 'l' }] }])).toBe(
     true
@@ -497,6 +503,11 @@ it('identifies full option group arrays', () => {
   expect(isFullOptionGroupArray([{}])).toBe(false);
   expect(isFullOptionGroupArray([{ label: 'l', options: [] }])).toBe(false);
   expect(isFullOptionGroupArray([{ label: 'l', options: [] }], { allowEmpty: true })).toBe(true);
+  expect(
+    isFullOptionGroupArray([{ name: 'n', value: 'n', label: 'l', options: [] }], {
+      allowEmpty: true,
+    })
+  ).toBe(false);
   expect(isFullOptionGroupArray([{ label: 'l', options: ['test'] }])).toBe(false);
   expect(isFullOptionGroupArray([{ label: 'l', options: [{ name: 'n', label: 'l' }] }])).toBe(
     false
@@ -576,6 +587,20 @@ describe('prepareOptionList', () => {
         label: 'Original',
         customProp: 'test',
       });
+    });
+
+    it('keeps groups after a leading empty group', () => {
+      const result = prepareOptionList({
+        optionList: [
+          { label: 'G0', options: [] },
+          { label: 'G1', options: [{ name: 'a', label: 'A' }] },
+        ],
+      });
+      expect(result.optionList).toEqual([
+        { label: 'G0', options: [] },
+        { label: 'G1', options: [{ name: 'a', value: 'a', label: 'A' }] },
+      ]);
+      expect(result.optionsMap).toEqual({ a: { name: 'a', value: 'a', label: 'A' } });
     });
   });
 

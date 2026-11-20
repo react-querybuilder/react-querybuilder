@@ -19,6 +19,7 @@ const publicApi: string[] = [
   'getDatatypeCategoryComparator',
   'getOperatorsByDatatype',
   'inferFieldDefaults',
+  'inferFieldListDefaults',
   'inferOperators',
   'LogType',
   'QueryManager',

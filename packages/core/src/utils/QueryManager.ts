@@ -63,6 +63,8 @@ import { generateID } from './generateID';
 import { getMatchModesUtil } from './getMatchModesUtil';
 import { getRuleDefaultValue } from './getRuleDefaultValue';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
+import type { InferFieldDefaultsProp } from './inferFieldDefaults';
+import { inferFieldListDefaults } from './inferFieldDefaults';
 import { isRuleGroup, isRuleGroupTypeIC } from './isRuleGroup';
 import { prepareOptionList } from './optGroupUtils';
 import {
@@ -71,6 +73,7 @@ import {
   resolveValueEditorType,
   resolveValueList,
 } from './optionResolvers';
+import type { InferOperatorsProp } from './optionResolvers';
 import { optionsEqual } from './optionsEqual';
 import type { FindPathReturnType } from './pathUtils';
 import { findPath, getParentPath, pathIsDisabled } from './pathUtils';
@@ -209,6 +212,13 @@ export interface QueryManagerOptions<
   getDefaultOperator?: DefaultOperatorProp<F>;
   /** Overrides the computed default `value` for a new rule. */
   getDefaultValue?: (rule: RuleType, misc: { fieldData: F }) => unknown;
+  /**
+   * Narrow the operator list per field by `datatype` (see {@link inferOperators}). Applies only
+   * when neither `field.operators` nor `getOperators` provides a list.
+   */
+  inferOperators?: InferOperatorsProp<O>;
+  /** Fill absent `inputType`/`valueEditorType` by `datatype` (see {@link inferFieldDefaults}). */
+  inferFieldDefaults?: InferFieldDefaultsProp;
   /** The operators available for a given field. */
   getOperators?: (field: string, misc: { fieldData: F }) => FlexibleOptionList<O> | null;
   /** The value editor type for a given field/operator, which informs the default value. */
@@ -593,12 +603,15 @@ export class QueryManager<
     this.state.coalesceMs = historyOptions.coalesceMs ?? defaultCoalesceMs;
     this.state.now = options.now ?? Date.now;
 
-    const { optionList: fields, optionsMap: fieldMap } = prepareOptionList<F>({
-      optionList: options.fields,
-      baseOption: options.baseField,
-      autoSelectOption: options.autoSelectField,
-      placeholder: options.translations?.fields,
-    });
+    const { optionList: fields, optionsMap: fieldMap } = inferFieldListDefaults<F>(
+      prepareOptionList<F>({
+        optionList: options.fields,
+        baseOption: options.baseField,
+        autoSelectOption: options.autoSelectField,
+        placeholder: options.translations?.fields,
+      }),
+      options.inferFieldDefaults
+    );
     // Both are frozen (unless `freeze` is `false`) because `getFields` and `getFieldData` hand
     // their contents out directly. `prepareOptionList` builds the map's values as separate
     // objects from the list's, so freezing one does not freeze the other.
@@ -636,6 +649,7 @@ export class QueryManager<
       fieldData: this.fieldData(field),
       getOperators: this.state.options.getOperators,
       operators: this.state.operators,
+      inferOperators: this.state.options.inferOperators,
       baseOption: this.state.options.baseOperator,
       autoSelectOption: this.state.options.autoSelectOperator,
       placeholder: this.state.options.translations?.operators,

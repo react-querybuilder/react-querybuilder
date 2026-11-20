@@ -1,6 +1,6 @@
 import type { FullField } from '../types';
-import { inferFieldDefaults } from './inferFieldDefaults';
-import { toFullOption } from './optGroupUtils';
+import { inferFieldDefaults, inferFieldListDefaults } from './inferFieldDefaults';
+import { prepareOptionList, toFullOption } from './optGroupUtils';
 
 const f = (props: Partial<FullField>): FullField =>
   toFullOption({ name: 'f', label: 'F', ...props } as FullField);
@@ -53,5 +53,56 @@ describe('inferFieldDefaults', () => {
       inferFieldDefaults(f({ datatype: 'yesno' }), { datatypeMap: { yesno: 'boolean' } })
         .valueEditorType
     ).toBe('checkbox');
+  });
+});
+
+describe('inferFieldListDefaults', () => {
+  const fields = [
+    { name: 'a', label: 'A', datatype: 'int' },
+    { name: 'b', label: 'B' },
+  ];
+  const prepared = prepareOptionList({ optionList: fields });
+
+  it('returns same objects when disabled or unchanged', () => {
+    for (const opts of [undefined, false] as const) {
+      const r = inferFieldListDefaults(prepared, opts);
+      expect(r.optionList).toBe(prepared.optionList);
+      expect(r.optionsMap).toBe(prepared.optionsMap);
+    }
+    const noop = prepareOptionList({ optionList: [{ name: 'b', label: 'B' }] });
+    expect(inferFieldListDefaults(noop, true).optionList).toBe(noop.optionList);
+  });
+
+  it('fills list and map', () => {
+    const r = inferFieldListDefaults(prepared, true);
+    expect((r.optionList as FullField[]).map(fd => fd.inputType)).toEqual(['number', undefined]);
+    expect(r.optionsMap.a?.inputType).toBe('number');
+    expect(r.optionsMap.b).toBe(prepared.optionsMap.b);
+  });
+
+  it('handles option groups', () => {
+    const grouped = prepareOptionList({
+      optionList: [
+        { label: 'G1', options: [fields[0]] },
+        { label: 'G2', options: [fields[1]] },
+      ],
+    });
+    const r = inferFieldListDefaults(grouped, { datatypeMap: {} });
+    const groups = r.optionList as unknown as { options: FullField[] }[];
+    expect(groups[0].options[0].inputType).toBe('number');
+    expect(groups[1]).toBe((grouped.optionList as unknown[])[1]);
+  });
+
+  it('handles option groups w/ empty groups', () => {
+    const grouped = prepareOptionList({
+      optionList: [
+        { label: 'G0', options: [] },
+        { label: 'G1', options: [fields[0]] },
+      ],
+    });
+    const r = inferFieldListDefaults(grouped, true);
+    const groups = r.optionList as unknown as { options: FullField[] }[];
+    expect(groups[0].options).toEqual([]);
+    expect(groups[1].options[0].inputType).toBe('number');
   });
 });

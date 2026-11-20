@@ -2852,3 +2852,38 @@ describe('proxy safety', () => {
     expect(q.clone().getQuery()).toBe(q.getQuery());
   });
 });
+
+describe('inferOperators / inferFieldDefaults', () => {
+  const dtFields = [
+    { name: 'age', label: 'Age', datatype: 'int' },
+    { name: 'name', label: 'Name' },
+  ];
+
+  it('narrows operators and default operator', () => {
+    const q = new QueryManager(undefined, {
+      fields: dtFields,
+      inferOperators: { map: { number: ['>'] } },
+    });
+    expect(q.getOperators('age').map(o => (o as FullOption).name)).toEqual([
+      '>',
+      'null',
+      'notNull',
+    ]);
+    expect(
+      new QueryManager(undefined, {
+        fields: dtFields,
+        inferOperators: { map: { number: ['>'] } },
+      }).createRule().operator
+    ).toBe('>');
+    expect(q.getOperators('name').length).toBeGreaterThan(3);
+  });
+
+  it('fills field defaults', () => {
+    const q = new QueryManager(undefined, { fields: dtFields, inferFieldDefaults: true });
+    expect(q.getFieldData('age').inputType).toBe('number');
+    expect(q.getFields()[0]).toMatchObject({ inputType: 'number' });
+    expect(
+      new QueryManager(undefined, { fields: dtFields }).getFieldData('age').inputType
+    ).toBeUndefined();
+  });
+});

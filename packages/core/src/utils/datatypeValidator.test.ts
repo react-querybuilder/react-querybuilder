@@ -93,9 +93,9 @@ describe('datatypeOperatorValidator', () => {
 
 describe('datatypeRuleValidator checkValues', () => {
   const v = (field: string, operator: string, value: unknown, valueSource?: 'field') =>
-    datatypeRuleValidator(toFullOption(fields.find(f => f.name === field)!) as never, {
-      checkValues: true,
-    })({ field, operator, value, valueSource });
+    datatypeRuleValidator(toFullOption(fields.find(f => f.name === field)!), { checkValues: true })(
+      { field, operator, value, valueSource }
+    );
 
   it.each([
     ['age', '=', 1, true],

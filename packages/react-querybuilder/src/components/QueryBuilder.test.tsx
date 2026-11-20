@@ -49,7 +49,7 @@ import { ValueSelector } from './ValueSelector';
 
 const user = userEvent.setup();
 
-const { consoleError } = consoleMocks();
+const { consoleError, consoleWarn } = consoleMocks();
 
 describe('when rendered', () => {
   it('has the correct role', () => {
@@ -219,6 +219,204 @@ describe('get* callbacks', () => {
     it('handles invalid getInputType function', () => {
       render(<QueryBuilder query={query} fields={fields} getInputType={() => null} />);
       expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
+    });
+  });
+});
+
+describe('inferOperators / inferFieldDefaults props', () => {
+  const fields: Field[] = [{ name: 'age', label: 'Age', datatype: 'int' }];
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'age', operator: '=', value: '' }],
+  };
+  const opValues = () =>
+    within(screen.getByTestId(TestID.operators))
+      .getAllByRole('option')
+      .map(o => (o as HTMLOptionElement).value);
+
+  it('narrows operators', () => {
+    render(<QueryBuilder defaultQuery={query} fields={fields} inferOperators />);
+    expect(opValues()).not.toContain('contains');
+    expect(opValues()).toContain('between');
+  });
+
+  it('does not narrow by default', () => {
+    render(<QueryBuilder defaultQuery={query} fields={fields} />);
+    expect(opValues()).toContain('contains');
+  });
+
+  it('fills field defaults', () => {
+    render(<QueryBuilder defaultQuery={query} fields={fields} inferFieldDefaults />);
+    expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'number');
+  });
+
+  it('fills field defaults w/ options object', () => {
+    render(
+      <QueryBuilder
+        defaultQuery={{ combinator: 'and', rules: [{ field: 'qty', operator: '=', value: '' }] }}
+        fields={[{ name: 'qty', label: 'Qty', datatype: 'custom_num' }]}
+        inferFieldDefaults={{ datatypeMap: { custom_num: 'number' } }}
+      />
+    );
+    expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'number');
+  });
+
+  it('applies type-specific labels', () => {
+    render(
+      <QueryBuilder
+        defaultQuery={{ combinator: 'and', rules: [{ field: 'd', operator: '<', value: '' }] }}
+        fields={[{ name: 'd', label: 'D', datatype: 'date' }]}
+        inferOperators={{ labels: true }}
+      />
+    );
+    const lt = within(screen.getByTestId(TestID.operators)).getByRole('option', { name: 'before' });
+    expect(lt).toHaveValue('<');
+  });
+
+  it('warns for conflicting field.operators', () => {
+    consoleWarn.mockClear();
+    render(
+      <QueryBuilder
+        defaultQuery={{ combinator: 'and', rules: [{ field: 'qbWarn', operator: '=', value: '' }] }}
+        fields={[{ name: 'qbWarn', label: 'W', datatype: 'int', operators: ['=', 'contains'] }]}
+        inferOperators={{ warn: true }}
+      />
+    );
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('qbWarn'));
+    expect(opValues()).toContain('contains');
+  });
+
+  it('does not warn for getOperators results', () => {
+    consoleWarn.mockClear();
+    render(
+      <QueryBuilder
+        defaultQuery={{
+          combinator: 'and',
+          rules: [{ field: 'qbNoWarn', operator: '=', value: '' }],
+        }}
+        fields={[{ name: 'qbNoWarn', label: 'W', datatype: 'int' }]}
+        getOperators={() => ['=', 'contains']}
+        inferOperators={{ warn: true }}
+      />
+    );
+    expect(consoleWarn).not.toHaveBeenCalled();
+    expect(opValues()).toContain('contains');
+  });
+
+  it('keeps placeholder w/ autoSelectOperator={false} and dropUnknownOperators', () => {
+    render(
+      <QueryBuilder
+        defaultQuery={query}
+        fields={fields}
+        autoSelectOperator={false}
+        inferOperators={{ dropUnknownOperators: true }}
+      />
+    );
+    expect(opValues()[0]).toBe('~');
+    expect(opValues()).not.toContain('contains');
+  });
+
+  describe('subqueries', () => {
+    const subFields: Field[] = [
+      { name: 'list', label: 'List', matchModes: true, subproperties: fields },
+    ];
+    const subQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        {
+          field: 'list',
+          operator: '=',
+          valueSource: 'value',
+          match: { mode: 'all' },
+          value: { combinator: 'and', rules: [{ field: 'age', operator: '=', value: '' }] },
+        },
+      ],
+    };
+    const nestedEditor = () => screen.getAllByTestId(TestID.valueEditor).at(-1)!;
+
+    it('inherits inferFieldDefaults', () => {
+      render(<QueryBuilder defaultQuery={subQuery} fields={subFields} inferFieldDefaults />);
+      expect(nestedEditor()).toHaveAttribute('type', 'number');
+    });
+
+    it('forwards inferFieldDefaults through two nested levels', () => {
+      render(
+        <QueryBuilder
+          defaultQuery={{
+            combinator: 'and',
+            rules: [
+              {
+                field: 'list',
+                operator: '=',
+                valueSource: 'value',
+                match: { mode: 'all' },
+                value: {
+                  combinator: 'and',
+                  rules: [
+                    {
+                      field: 'lines',
+                      operator: '=',
+                      valueSource: 'value',
+                      match: { mode: 'all' },
+                      value: {
+                        combinator: 'and',
+                        rules: [{ field: 'age', operator: '=', value: '' }],
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          }}
+          fields={[
+            {
+              name: 'list',
+              label: 'List',
+              matchModes: true,
+              subproperties: [
+                { name: 'lines', label: 'Lines', matchModes: true, subproperties: fields },
+              ],
+            },
+          ]}
+          inferFieldDefaults
+        />
+      );
+      expect(nestedEditor()).toHaveAttribute('type', 'number');
+    });
+
+    it('preserves explicit false from getSubQueryBuilderProps', () => {
+      render(
+        <QueryBuilder
+          defaultQuery={subQuery}
+          fields={subFields}
+          inferFieldDefaults
+          getSubQueryBuilderProps={() => ({ inferFieldDefaults: false })}
+        />
+      );
+      expect(nestedEditor()).not.toHaveAttribute('type', 'number');
+    });
+
+    const nestedOpValues = () =>
+      within(screen.getAllByTestId(TestID.operators).at(-1)!)
+        .getAllByRole('option')
+        .map(o => (o as HTMLOptionElement).value);
+
+    it('inherits inferOperators', () => {
+      render(<QueryBuilder defaultQuery={subQuery} fields={subFields} inferOperators />);
+      expect(nestedOpValues()).not.toContain('contains');
+      expect(nestedOpValues()).toContain('between');
+    });
+
+    it('preserves explicit inferOperators false from getSubQueryBuilderProps', () => {
+      render(
+        <QueryBuilder
+          defaultQuery={subQuery}
+          fields={subFields}
+          inferOperators
+          getSubQueryBuilderProps={() => ({ inferOperators: false })}
+        />
+      );
+      expect(nestedOpValues()).toContain('contains');
     });
   });
 });

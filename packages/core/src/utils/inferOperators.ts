@@ -147,7 +147,7 @@ const relabel = <Op>(op: Op, label: string): Op => {
     typeof op === 'string' ? relabeledStrings.get(op) : relabeledObjects.get(op as object);
   const cached = byLabel?.get(label);
   // Reuse only if source props unchanged (source may be mutated: changed/added/deleted keys)
-  if (cached && (typeof op === 'string' || sameNonLabelProps(op as object, cached as object))) {
+  if (cached && (typeof op === 'string' || sameNonLabelProps(op as object, cached))) {
     return cached as Op;
   }
   const result =
@@ -272,7 +272,7 @@ export const inferOperators = <O extends FullOperator = FullOperator>(
   const filterList = <Op>(list: Op[]) =>
     list.map(op => transform(op)).filter((op): op is NonNullable<typeof op> => op !== null);
 
-  if (isFlexibleOptionGroupArray(operators)) {
+  if (isFlexibleOptionGroupArray(operators, { allowEmpty: true })) {
     return operators
       .map(og => ({ ...og, options: filterList(og.options) }))
       .filter(og => og.options.length > 0);

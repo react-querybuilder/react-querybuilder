@@ -1,4 +1,5 @@
 import type { FullCombinator, FullField, FullOperator, RuleType } from '../types';
+import { warnedFields } from './datatypeInternals';
 import { toFullOptionList } from './optGroupUtils';
 import {
   resolveDefaultOperator,
@@ -47,6 +48,79 @@ describe('resolveOperatorList', () => {
       getOperators: () => [{ name: 'beginsWith', label: 'begins with' }],
     });
     expect(values(result)).toEqual(['<']);
+  });
+
+  describe('inferOperators', () => {
+    const allOps = toFullOptionList<FullOperator>([
+      { name: '=', label: '=' },
+      { name: '<', label: '<' },
+      { name: 'contains', label: 'contains' },
+      { name: 'null', label: 'is null' },
+      { name: 'custom', label: 'custom' },
+    ]);
+    const num = { ...f1, datatype: 'int' } as FullField;
+
+    it('narrows the query-level list', () => {
+      const r = (inferOperators: boolean) =>
+        values(
+          resolveOperatorList({ field: 'f1', fieldData: num, operators: allOps, inferOperators })
+        );
+      expect(r(true)).toEqual(['=', '<', 'null', 'custom']);
+      expect(r(false)).toEqual(['=', '<', 'contains', 'null', 'custom']);
+    });
+
+    it('passes options through', () => {
+      const result = resolveOperatorList({
+        field: 'f1',
+        fieldData: num,
+        operators: allOps,
+        inferOperators: { dropUnknownOperators: true, map: { number: ['<'] } },
+      });
+      expect(values(result)).toEqual(['<', 'null']);
+    });
+
+    it('keeps placeholder', () => {
+      const result = resolveOperatorList({
+        field: 'f1',
+        fieldData: num,
+        operators: allOps,
+        inferOperators: { dropUnknownOperators: true },
+        autoSelectOption: false,
+      });
+      expect(values(result)).toEqual(['~', '=', '<', 'null']);
+    });
+
+    it('does not override getOperators or field.operators', () => {
+      const getOperators = () => [{ name: 'contains', label: 'contains' }];
+      expect(
+        values(
+          resolveOperatorList({
+            field: 'f1',
+            fieldData: num,
+            operators: allOps,
+            getOperators,
+            inferOperators: true,
+          })
+        )
+      ).toEqual(['contains']);
+    });
+
+    it('warns about conflicting field.operators', () => {
+      warnedFields.clear();
+      const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const fieldData = { ...num, operators: [{ name: 'contains', label: 'contains' }] };
+      const result = resolveOperatorList({
+        field: 'f1',
+        fieldData,
+        operators: allOps,
+        inferOperators: { warn: true },
+      });
+      expect(values(result)).toEqual(['contains']);
+      expect(spy).toHaveBeenCalledTimes(1);
+      resolveOperatorList({ field: 'f1', fieldData, operators: allOps, inferOperators: true });
+      expect(spy).toHaveBeenCalledTimes(1);
+      spy.mockRestore();
+    });
   });
 });
 
