@@ -272,7 +272,7 @@ export const inferOperators = <O extends FullOperator = FullOperator>(
   const filterList = <Op>(list: Op[]) =>
     list.map(op => transform(op)).filter((op): op is NonNullable<typeof op> => op !== null);
 
-  if (isFlexibleOptionGroupArray(operators)) {
+  if (isFlexibleOptionGroupArray(operators, { allowEmpty: true })) {
     return operators
       .map(og => ({ ...og, options: filterList(og.options) }))
       .filter(og => og.options.length > 0);

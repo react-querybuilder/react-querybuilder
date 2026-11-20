@@ -284,6 +284,51 @@ describe('inferOperators / inferFieldDefaults props', () => {
       expect(nestedEditor()).toHaveAttribute('type', 'number');
     });
 
+    it('forwards inferFieldDefaults through two nested levels', () => {
+      render(
+        <QueryBuilder
+          defaultQuery={{
+            combinator: 'and',
+            rules: [
+              {
+                field: 'list',
+                operator: '=',
+                valueSource: 'value',
+                match: { mode: 'all' },
+                value: {
+                  combinator: 'and',
+                  rules: [
+                    {
+                      field: 'lines',
+                      operator: '=',
+                      valueSource: 'value',
+                      match: { mode: 'all' },
+                      value: {
+                        combinator: 'and',
+                        rules: [{ field: 'age', operator: '=', value: '' }],
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          }}
+          fields={[
+            {
+              name: 'list',
+              label: 'List',
+              matchModes: true,
+              subproperties: [
+                { name: 'lines', label: 'Lines', matchModes: true, subproperties: fields },
+              ],
+            },
+          ]}
+          inferFieldDefaults
+        />
+      );
+      expect(nestedEditor()).toHaveAttribute('type', 'number');
+    });
+
     it('preserves explicit false from getSubQueryBuilderProps', () => {
       render(
         <QueryBuilder

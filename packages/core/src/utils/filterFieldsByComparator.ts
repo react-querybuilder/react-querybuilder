@@ -45,7 +45,7 @@ export const filterFieldsByComparator = (
       (f.value ?? /* v8 ignore start -- @preserve */ f.name) /* v8 ignore stop -- @preserve */ !==
       (field.value ??
         /* v8 ignore start -- @preserve */ field.name); /* v8 ignore stop -- @preserve */
-    if (isFlexibleOptionGroupArray(fields)) {
+    if (isFlexibleOptionGroupArray(fields, { allowEmpty: true })) {
       return fields.map(og => ({
         ...og,
         options: og.options.filter(v => filterOutSameField(v)),
@@ -54,7 +54,7 @@ export const filterFieldsByComparator = (
     return fields.filter(v => filterOutSameField(v));
   }
 
-  if (isFlexibleOptionGroupArray(fields)) {
+  if (isFlexibleOptionGroupArray(fields, { allowEmpty: true })) {
     return fields
       .map(og => ({
         ...og,

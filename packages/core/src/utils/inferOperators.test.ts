@@ -140,6 +140,16 @@ describe('inferOperators', () => {
     expect(result.map(og => og.label)).toEqual(['Eq', 'Null']);
   });
 
+  it('handles option groups w/ empty group', () => {
+    const operators: OptionGroup<FullOperator>[] = [
+      { label: 'Empty', options: [] },
+      { label: 'Text', options: defaultOperators.slice(6, 12) },
+      { label: 'Null', options: defaultOperators.slice(12, 14) },
+    ];
+    const result = inferOperators(f({ datatype: 'number' }), { operators }) as OptionGroup[];
+    expect(result.map(og => og.label)).toEqual(['Null']);
+  });
+
   it('applies labels', () => {
     const byName = (ops: unknown) =>
       Object.fromEntries((ops as FullOperator[]).map(o => [o.name, o.label]));

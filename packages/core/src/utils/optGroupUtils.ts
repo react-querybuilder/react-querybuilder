@@ -216,7 +216,11 @@ export const isFlexibleOptionGroupArray = (
         isPojo(og) &&
         'options' in og &&
         (isFlexibleOptionArray(og.options) ||
-          (allowEmpty && Array.isArray(og.options) && og.options.length === 0))
+          (allowEmpty &&
+            Array.isArray(og.options) &&
+            og.options.length === 0 &&
+            !('name' in og) &&
+            !('value' in og)))
       ) {
         isFOGA = true;
       } else {
@@ -243,7 +247,11 @@ export const isFullOptionGroupArray = (
         isPojo(og) &&
         'options' in og &&
         (isFullOptionArray(og.options) ||
-          (allowEmpty && Array.isArray(og.options) && og.options.length === 0))
+          (allowEmpty &&
+            Array.isArray(og.options) &&
+            og.options.length === 0 &&
+            !('name' in og) &&
+            !('value' in og)))
       ) {
         isFOGA = true;
       } else {

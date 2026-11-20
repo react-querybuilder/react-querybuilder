@@ -50,6 +50,16 @@ it('filters fields by comparator', () => {
   expect(filterFieldsByComparator(fields[9], optionGroups, '=')[0].options).toHaveLength(2);
 });
 
+it('handles option groups w/ empty group', () => {
+  const ogs: OptionGroup<FullField>[] = [{ label: 'e', options: [] }, ...optionGroups];
+  const r0 = filterFieldsByComparator(fields[0], ogs, '=');
+  expect(r0).toHaveLength(2);
+  expect(r0[1].options).toHaveLength(fields.length - 1);
+  const r4 = filterFieldsByComparator(fields[4], ogs, '=');
+  expect(r4).toHaveLength(1);
+  expect(r4[0].options).toHaveLength(1);
+});
+
 it('passes fieldData meta to comparator functions', () => {
   const comparator = vi.fn(() => true);
   const field = toFullOption({ name: 'x', label: 'x', comparator });
