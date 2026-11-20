@@ -110,6 +110,27 @@ it('DateTimeValueEditor leaves select editors for date-like datatypes unformatte
   expect(screen.getByTestId(TestID.valueEditor)).toHaveValue('2002-12-14T12:00:00Z');
 });
 
+it('keeps the relative editor for date-like select fields under the provider', () => {
+  render(
+    <QueryBuilderDateTime>
+      <QueryBuilder
+        fields={[
+          {
+            name: 'ts',
+            label: 'TS',
+            datatype: 'timestamp',
+            valueEditorType: 'select',
+            values: [{ name: '2002-12-14T12:00:00Z', label: 'Snapshot' }],
+          },
+        ]}
+        addRuleToNewGroups
+      />
+    </QueryBuilderDateTime>
+  );
+
+  expect(screen.getByRole('switch')).toBeInTheDocument();
+});
+
 it('passes relative editor config props through to the editor', async () => {
   render(
     <QueryBuilderDateTime toggleLabels={{ label: 'Switch mode' }}>

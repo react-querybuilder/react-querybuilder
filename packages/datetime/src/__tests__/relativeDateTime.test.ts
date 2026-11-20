@@ -87,6 +87,9 @@ describe('isDateLikeDatatype', () => {
       expect(isDateLikeDatatype(dt, re)).toBe(true);
     }
   });
+  test('unions of date-like categories', () => {
+    expect(isDateLikeDatatype('datetime2|date', /^$/)).toBe(true);
+  });
   test('non-date types', () => {
     for (const dt of ['time', 'varchar(10)', 'date|string', undefined, 1]) {
       expect(isDateLikeDatatype(dt, /^$/)).toBe(false);

@@ -76,12 +76,13 @@ export const isDateOnlyDatatype = (datatype: unknown): boolean =>
 
 /**
  * Whether a `datatype` is date-like: matches `pattern` (legacy check) or normalizes to the
- * `date`/`datetime` category (e.g. `datetime2`, `timestamptz`, `PgTimestamp`).
+ * `date`/`datetime` category (e.g. `datetime2`, `timestamptz`, `PgTimestamp`, `datetime2|date`).
  */
 export const isDateLikeDatatype = (datatype: unknown, pattern: RegExp): boolean => {
   if (pattern.test(datatype as string)) return true;
-  const cat = getDatatypeCategoryOnly(datatype);
-  return cat === 'date' || cat === 'datetime';
+  const cat = getDatatypeCategory({ datatype } as FullField, { hints: false });
+  const cats = Array.isArray(cat) ? cat : [cat];
+  return cats.length > 0 && cats.every(c => c === 'date' || c === 'datetime');
 };
 
 /**
