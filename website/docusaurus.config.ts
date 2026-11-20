@@ -343,7 +343,6 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
           items: [
             {
               label: 'Getting started',
@@ -368,7 +367,6 @@ const config: Config = {
           ],
         },
         {
-          title: 'External',
           items: [
             // {
             //   label: 'Blog',
