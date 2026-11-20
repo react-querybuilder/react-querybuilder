@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#1152] `datatype` is now an official, documented `Field` property (typed `unknown` for backward compatibility; non-string values are ignored by the new utilities). Raw database types (e.g. `"VARCHAR(50)"`, `"timestamp with time zone"`, `"PgVarchar"`) are normalized to a category (`string`, `number`, `bigint`, `boolean`, `date`, `datetime`, `time`, `enum`, `array`, `object`, `unknown`) by the new `getDatatypeCategory` utility, with `inputType`/`valueEditorType`/`values`/`matchModes` hints as fallback and a `datatypeMap` option for custom types. `|` separates multiple types (`"string|number"`). New datatype-aware utilities (all opt-in; no behavior change for existing configurations):
+  - `inferOperators` narrows an operator list to those compatible with a field's datatype category (`defaultInferOperatorsMap`, customizable via `map`). `getOperatorsByDatatype` returns a ready-made `getOperators` function. Optional type-specific labels (`labels: true` → `defaultDatatypeOperatorLabels`, e.g. "before"/"after" for dates) and a development-only `warn` option for fields whose `operators` conflict with their datatype.
+  - `inferFieldDefaults` fills missing `inputType`/`valueEditorType` from `datatype`.
+  - `datatypeCategoryComparator`, a `comparator` that lists only fields with a compatible datatype category for `valueSource: "field"` (`getDatatypeCategoryComparator` creates one with a custom `datatypeMap`). Function `comparator`s now receive an optional third `meta` argument (`{ fieldData }`, the field declaring the `comparator`).
+  - `datatypeOperatorValidator` (query-level) and `datatypeRuleValidator` (field-level) flag rules whose operator (or, with `checkValues: true`, value) doesn't fit the field's datatype (reason codes `"datatype-operator-mismatch"`/`"datatype-value-mismatch"`).
+- [#1152] `toArray` accepts a `splitChar` option (default `","`).
+
+### Changed
+
+- [#1152] `@react-querybuilder/datetime`: `defaultIsDateField`, the `QueryBuilderDateTime` editor check, and date-only precision detection now also accept any `datatype` that `getDatatypeCategory` normalizes to `date`/`datetime` (e.g. `datetime2`, `smalldatetime`, `timestamptz`, `PgTimestamp`; the editor check also gains `datetimeoffset`). Previously matching values are unaffected, but fields with these types are now processed as dates. Use `context.isDateField` to restore the previous behavior.
+
 ## [v8.27.1] - 2026-11-18
 
 ### Fixed
@@ -2687,6 +2700,7 @@ _TL;DR: These are probably not breaking changes._
 [#1147]: https://github.com/react-querybuilder/react-querybuilder/pull/1147
 [#1149]: https://github.com/react-querybuilder/react-querybuilder/pull/1149
 [#1151]: https://github.com/react-querybuilder/react-querybuilder/pull/1151
+[#1152]: https://github.com/react-querybuilder/react-querybuilder/pull/1152
 
 <!-- #endregion -->
 

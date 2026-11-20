@@ -49,3 +49,10 @@ it('filters fields by comparator', () => {
   expect(filterFieldsByComparator(fields[8], optionGroups, '=')[0].options).toHaveLength(1);
   expect(filterFieldsByComparator(fields[9], optionGroups, '=')[0].options).toHaveLength(2);
 });
+
+it('passes fieldData meta to comparator functions', () => {
+  const comparator = vi.fn(() => true);
+  const field = toFullOption({ name: 'x', label: 'x', comparator });
+  filterFieldsByComparator(field, [fields[0]], '=');
+  expect(comparator).toHaveBeenCalledWith(fields[0], '=', { fieldData: field });
+});

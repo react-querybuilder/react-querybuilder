@@ -7,7 +7,7 @@ import {
   useValueEditor,
   ValueEditor,
 } from 'react-querybuilder';
-import { isNonDateValueSource } from '../utils';
+import { isDateLikeDatatype, isNonDateValueSource } from '../utils';
 import {
   InheritedValueEditorContext,
   useInheritedValueEditor,
@@ -29,7 +29,7 @@ const isDateTimeEditor = (props: ValueEditorProps, inputTypeCoerced: string | un
   !isNonDateValueSource(props.valueSource) &&
   ((props.type === 'text' &&
     (inputTypeCoerced === 'date' || inputTypeCoerced === 'datetime-local')) ||
-    /^(?:date|datetime|timestamp)\b/i.test(props.fieldData?.datatype as string));
+    isDateLikeDatatype(props.fieldData?.datatype, /^(?:date|datetime|timestamp)\b/i));
 
 const pad2 = (n: number): string => `${n}`.padStart(2, '0');
 
@@ -63,7 +63,8 @@ export const DateTimeValueEditor = (props: ValueEditorProps): React.JSX.Element 
   // present, otherwise the default editor.
   const fallback = (p: ValueEditorProps) => <FallbackValueEditor editor={InheritedEditor} {...p} />;
 
-  if (!isDateTimeEditor(props, uVE.inputTypeCoerced)) {
+  // Non-text editors (e.g. select) keep configured values as-is
+  if (props.type !== 'text' || !isDateTimeEditor(props, uVE.inputTypeCoerced)) {
     return fallback(props);
   }
 

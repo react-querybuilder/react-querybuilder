@@ -256,7 +256,7 @@ Load operators that depend on the selected field type:
 const ValueSelectorAsync = (props: ValueSelectorProps) => {
   const asyncProps = useAsyncOptionList(props, {
     loadOptionList: async (value, { ruleOrGroup }) => {
-      const fieldType = props.fieldData.datatype; // custom field property
+      const fieldType = props.fieldData.datatype;
       return getOperatorsForType(fieldType);
     },
     getCacheKey: props => `operators-${props.fieldData.datatype}`,

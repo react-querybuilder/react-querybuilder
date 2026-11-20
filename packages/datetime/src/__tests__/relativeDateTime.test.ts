@@ -3,6 +3,8 @@ import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
 import { rqbDateTimeLibraryAPI as apiFnsJS } from '../rqbDateTimeLibraryAPI.jsdate';
 import type { RelativeDateTimeValue } from '../types';
 import {
+  defaultIsDateField,
+  isDateLikeDatatype,
   isDateOnlyDatatype,
   isISOStringDateOnly,
   isRelativeDateTimeValue,
@@ -54,12 +56,55 @@ describe('isDateOnlyDatatype', () => {
   test('date-only types', () => {
     expect(isDateOnlyDatatype('date')).toBe(true);
     expect(isDateOnlyDatatype('DATE')).toBe(true);
+    // via core category
+    expect(isDateOnlyDatatype('PgDate')).toBe(true);
+    expect(isDateOnlyDatatype('datestring')).toBe(true);
   });
   test('non-date-only types', () => {
     expect(isDateOnlyDatatype('datetime')).toBe(false);
     expect(isDateOnlyDatatype('datetimeoffset')).toBe(false);
     expect(isDateOnlyDatatype('timestamp')).toBe(false);
     expect(isDateOnlyDatatype(undefined)).toBe(false);
+    expect(isDateOnlyDatatype('PgTimestamp')).toBe(false);
+    expect(isDateOnlyDatatype({ sql: 'date' })).toBe(false);
+  });
+});
+
+describe('isDateLikeDatatype', () => {
+  const re = /^(?:date|datetime|timestamp)\b/i;
+  test('legacy regex matches retained', () => {
+    expect(isDateLikeDatatype('date not null', re)).toBe(true);
+    expect(isDateLikeDatatype('timestamp', re)).toBe(true);
+  });
+  test('core category matches added', () => {
+    for (const dt of [
+      'timestamptz',
+      'datetime2',
+      'smalldatetime',
+      'PgTimestamp',
+      'datetimeoffset',
+    ]) {
+      expect(isDateLikeDatatype(dt, re)).toBe(true);
+    }
+  });
+  test('unions of date-like categories', () => {
+    expect(isDateLikeDatatype('datetime2|date', /^$/)).toBe(true);
+  });
+  test('non-date types', () => {
+    for (const dt of ['time', 'varchar(10)', 'date|string', undefined, 1]) {
+      expect(isDateLikeDatatype(dt, /^$/)).toBe(false);
+    }
+  });
+});
+
+describe('defaultIsDateField', () => {
+  const opts = (datatype: unknown) =>
+    ({ fieldData: { name: 'f', value: 'f', label: 'f', datatype } }) as never;
+  test('category-based', () => {
+    expect(defaultIsDateField({ field: 'f', operator: '=', value: '' }, opts('timestamptz'))).toBe(
+      true
+    );
+    expect(defaultIsDateField({ field: 'f', operator: '=', value: '' }, opts('time'))).toBe(false);
   });
 });
 

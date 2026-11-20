@@ -142,7 +142,19 @@ interface BaseFullField<
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;
-  comparator?: string | ((f: FullField, operator: string) => boolean);
+  /**
+   * Field-to-field comparison filter. String: property name that must match between fields.
+   * Function: receives each candidate field, the operator, and `meta.fieldData` (the field
+   * declaring this comparator; may be `undefined` when called directly).
+   */
+  comparator?:
+    | string
+    | ((f: FullField, operator: string, meta?: { fieldData: FullField }) => boolean);
+  /**
+   * Field data type. String values (a `FieldDatatypeCategory` or raw DB types like
+   * `'VARCHAR(50)'`) are normalized by `getDatatypeCategory`; non-strings are ignored.
+   */
+  datatype?: unknown;
 }
 
 /**

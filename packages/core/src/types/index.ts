@@ -21,6 +21,7 @@ export type {
   JsonLogicVar,
 } from 'json-logic-js';
 export * from './basic';
+export * from './datatype';
 export * from './dnd';
 export * from './export';
 export * from './expression';

@@ -11,7 +11,7 @@ const filterByComparator = (field: FullField, operator: string, fieldToCompare: 
     return fullField[fullField.comparator] === fullFieldToCompare[fullField.comparator];
   }
   return (
-    fullField.comparator?.(fullFieldToCompare, operator) ??
+    fullField.comparator?.(fullFieldToCompare, operator, { fieldData: fullField }) ??
     /* v8 ignore start -- @preserve */ false /* v8 ignore stop -- @preserve */
   );
 };
@@ -22,7 +22,8 @@ const filterByComparator = (field: FullField, operator: string, fieldToCompare: 
  * one in question* will ever be included, even if `comparator` is `null`
  * or `undefined`. If `comparator` is a string, fields with the same value
  * for that property will be included. If `comparator` is a function, each
- * field will be passed to the function along with the `operator` and fields
+ * field will be passed to the function along with the `operator` and
+ * `{ fieldData: field }` (the field in question), and fields
  * for which the function returns `true` will be included.
  *
  * @group Option Lists

@@ -50,7 +50,7 @@ const MyValueEditor = (props: ValueEditorProps) => {
 // <QueryBuilder fields={fields} controlElements={{ valueEditor: MyValueEditor }} />
 ```
 
-Useful `ValueEditorProps`: `value`, `handleOnChange`, `field`, `fieldData` (full field object, including custom properties), `operator`, `valueSource`, `type`, `inputType`, `values`, `listsAsArrays`, `parseNumbers`, `rule`, `path`, `level`, `disabled`, `className`, `context`, `validation`, `schema`.
+Useful `ValueEditorProps`: `value`, `handleOnChange`, `field`, `fieldData` (full field object, including `datatype` and custom properties), `operator`, `valueSource`, `type`, `inputType`, `values`, `listsAsArrays`, `parseNumbers`, `rule`, `path`, `level`, `disabled`, `className`, `context`, `validation`, `schema`.
 
 ## With a UI package
 

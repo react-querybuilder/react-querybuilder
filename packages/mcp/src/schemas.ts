@@ -8,7 +8,8 @@ const bool = (description: string): Schema => ({ type: 'boolean', description })
 export const fieldsSchema: Schema = {
   description:
     'Field definitions: JSON subset of RQB `Field` — `name`, `label`, `operators`, `values`, ' +
-    '`inputType`, `valueEditorType`, `valueSources`, `datatype`, etc. Array (option groups ' +
+    '`inputType`, `valueEditorType`, `valueSources`, `datatype` (category like ' +
+    '`number`/`date`/`string` or raw DB type like `VARCHAR(50)`), etc. Array (option groups ' +
     '`{ label, options }` allowed) or object map keyed by field name. Function props ' +
     '(`validator`, etc.) are impossible over JSON. Strongly recommended: improves accuracy.',
   anyOf: [{ type: 'array', items: { type: 'object' } }, { type: 'object' }],

@@ -68,6 +68,6 @@ formatQuery(query, {
 });
 ```
 
-The date/time rule processors will fallback to using the default rule processors if the rule's field configuration does not have a `datatype` value of "date", "datetime", "datetimeoffset", or "timestamp", or if the `operator` is specific to string comparisons ("contains", "beginsWith", "endsWith", etc.). You can provide a custom `isDateField` function to override this behavior through the `context` option.
+The date/time rule processors will fallback to using the default rule processors if the rule's field configuration does not have a `datatype` value of "date", "datetime", "datetimeoffset", or "timestamp" (or one that normalizes to the `date`/`datetime` [datatype category](https://react-querybuilder.js.org/docs/typescript#data-types), like `datetime2` or `timestamptz`), or if the `operator` is specific to string comparisons ("contains", "beginsWith", "endsWith", etc.). You can provide a custom `isDateField` function to override this behavior through the `context` option.
 
 <!-- ## Notes -->

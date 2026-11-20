@@ -81,7 +81,7 @@ While the field `operators` property works well for individual field customizati
 
 `getOperators` receives two arguments: the field identifier and a meta object containing the complete field definition. Using this information, you can reference the `fields` array (or other data sources) to return appropriate operator lists with custom names and labels.
 
-This example demonstrates custom field properties for operator management. Each field includes a custom `datatype` property that determines operator selection and labeling. The `defaultOperators` export provides base functionality where needed. Note that when present, a field's `operators` property overrides `getOperators` results—observe how "Favorite Movie" shows only the "is" operator despite having `datatype: "text"`.
+This example demonstrates field properties for operator management. Each field includes a `datatype` property that determines operator selection and labeling. The `defaultOperators` export provides base functionality where needed. Note that when present, a field's `operators` property overrides `getOperators` results—observe how "Favorite Movie" shows only the "is" operator despite having `datatype: "text"`.
 
 <SandpackRQB rqbVersion={8} options={{ editorHeight: 444 }}>
 
@@ -161,6 +161,78 @@ export default () => (
 ```
 
 </SandpackRQB>
+
+## Inferring operators from `datatype`
+
+The `inferOperators` utility narrows an operator list to those compatible with a field's [datatype category](../typescript#data-types). The category comes from `datatype` (raw database types like `"VARCHAR(50)"` or `"timestamp with time zone"` are normalized), falling back to hints from `inputType`, `valueEditorType`, `values`, `matchModes`, and `subproperties`. Fields with no hints are not filtered.
+
+```tsx
+import { getOperatorsByDatatype, inferOperators } from 'react-querybuilder';
+
+<QueryBuilder fields={fields} getOperators={(_f, { fieldData }) => inferOperators(fieldData)} />;
+
+// Equivalent; create outside render for a stable reference
+const getOperators = getOperatorsByDatatype();
+<QueryBuilder fields={fields} getOperators={getOperators} />;
+```
+
+Default operators by category (`defaultInferOperatorsMap`):
+
+| Category                                       | Operators                                                                                                     |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `string`                                       | `=` `!=` `contains` `beginsWith` `endsWith` `doesNotContain` `doesNotBeginWith` `doesNotEndWith` `in` `notIn` |
+| `number`, `bigint`, `date`, `datetime`, `time` | `=` `!=` `<` `<=` `>` `>=` `between` `notBetween` `in` `notIn`                                                |
+| `boolean`                                      | `=` `!=`                                                                                                      |
+| `enum`                                         | `=` `!=` `in` `notIn`                                                                                         |
+| `array`, `object`, `unknown`                   | (not filtered)                                                                                                |
+
+Rules:
+
+- `null`/`notNull` are always retained.
+- Only operators named in `defaultOperators` are filtered. Custom operators pass through unless `dropUnknownOperators` is `true`.
+- Multi-type fields (`datatype: "string|number"`) get the union of each category's operators. If any member category is unfiltered (`array`/`object`/`unknown`), nothing is filtered.
+- Fields with `valueEditorType: "multiselect"` are limited to `in`/`notIn` (plus `null`/`notNull`), since the value is always a list. Fields with any category lacking a `map` entry (by default `array`/`object`/`unknown`) are still not filtered; an explicit entry (e.g. `map: { object: ["in"] }`) enables filtering for that category. Explicit `map` entries for the field's categories narrow the list ops further.
+- Option groups and the input order are preserved; empty groups are removed.
+- A field's own `operators` property still takes precedence over `getOperators`.
+
+Options:
+
+| Option                 | Description                                                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `operators`            | Operator list to narrow (default `defaultOperators`)                                                                                 |
+| `map`                  | Category → operator names, merged over `defaultInferOperatorsMap` (each category is replaced, not merged)                            |
+| `datatypeMap`          | Custom raw datatype → category map (case-insensitive), e.g. `{ geography: "object" }`                                                |
+| `dropUnknownOperators` | Remove operators not in `defaultOperators` (default `false`)                                                                         |
+| `labels`               | Type-specific operator labels; `true` uses `defaultDatatypeOperatorLabels` (see below)                                               |
+| `warn`                 | Development-only `console.warn` when a field's `operators` property lists operators incompatible with its datatype (default `false`) |
+
+```ts
+const getOperators = getOperatorsByDatatype({
+  operators: myOperators,
+  map: { boolean: ['='] },
+  datatypeMap: { geography: 'object' },
+});
+```
+
+### Type-specific labels
+
+With `labels: true`, `defaultDatatypeOperatorLabels` replaces labels for `date`/`datetime`/`time` fields (`<` "before", `<=` "on or before", `>` "after", `>=` "on or after") and `boolean` fields (`=` "is", `!=` "is not"). Pass an object to provide your own (e.g. translated) labels; spread `defaultDatatypeOperatorLabels` to extend the defaults.
+
+```ts
+const getOperators = getOperatorsByDatatype({
+  labels: { ...defaultDatatypeOperatorLabels, string: { contains: 'includes' } },
+});
+```
+
+- Lookup order: exact category, then family (`bigint` → `number`, `datetime` → `date`).
+- Only labels still equal to the default label are replaced, so explicit custom labels win.
+- Multi-type fields keep their original labels.
+
+:::tip
+
+To validate existing queries against the same rules (e.g. queries loaded from storage or parsed with `parseSQL`), use [`datatypeOperatorValidator`](../utils/validation#datatype-validation).
+
+:::
 
 ## Regular expression operators
 

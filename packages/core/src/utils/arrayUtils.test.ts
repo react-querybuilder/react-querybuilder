@@ -89,3 +89,16 @@ it('detects null-free arrays', () => {
   expect(nullFreeArray([true, false])).toBe(true);
   expect(nullFreeArray([true, null, false])).toBe(false);
 });
+
+it('splits by custom splitChar in toArray', () => {
+  expect(toArray('string | number', { splitChar: '|' })).toEqual(['string', 'number']);
+  expect(toArray('a::b:: ::c', { splitChar: '::' })).toEqual(['a', 'b', 'c']);
+  expect(toArray('a\\|b|c', { splitChar: '|' })).toEqual(['a|b', 'c']);
+  expect(toArray('a|| |b', { splitChar: '|', retainEmptyStrings: true })).toEqual([
+    'a',
+    '',
+    '',
+    'b',
+  ]);
+  expect(toArray('a,b|c', { splitChar: '|' })).toEqual(['a,b', 'c']);
+});

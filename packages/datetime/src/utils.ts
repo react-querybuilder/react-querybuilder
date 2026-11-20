@@ -1,4 +1,5 @@
-import type { RuleProcessor, ValueSource } from '@react-querybuilder/core';
+import type { FullField, RuleProcessor, ValueSource } from '@react-querybuilder/core';
+import { getDatatypeCategory } from '@react-querybuilder/core';
 import type {
   IsDateField,
   IsDateFieldFunction,
@@ -59,13 +60,30 @@ export const resolveRelativeDateTime = (
   return result;
 };
 
+/** Single `getDatatypeCategory` result for a raw `datatype` (no hints), else `null`. */
+const getDatatypeCategoryOnly = (datatype: unknown): string | null => {
+  const cat = getDatatypeCategory({ datatype } as FullField, { hints: false });
+  return typeof cat === 'string' ? cat : null;
+};
+
 /**
  * Whether a `datatype` represents a date-only (no time component) type, e.g. `date`
  * but not `datetime`/`datetimeoffset`/`timestamp`. Used to choose the precision when
  * materializing a relative value to an ISO 8601 string.
  */
 export const isDateOnlyDatatype = (datatype: unknown): boolean =>
-  /^date\b/i.test(datatype as string);
+  /^date\b/i.test(datatype as string) || getDatatypeCategoryOnly(datatype) === 'date';
+
+/**
+ * Whether a `datatype` is date-like: matches `pattern` (legacy check) or normalizes to the
+ * `date`/`datetime` category (e.g. `datetime2`, `timestamptz`, `PgTimestamp`, `datetime2|date`).
+ */
+export const isDateLikeDatatype = (datatype: unknown, pattern: RegExp): boolean => {
+  if (pattern.test(datatype as string)) return true;
+  const cat = getDatatypeCategory({ datatype } as FullField, { hints: false });
+  const cats = Array.isArray(cat) ? cat : [cat];
+  return cats.length > 0 && cats.every(c => c === 'date' || c === 'datetime');
+};
 
 /**
  * Replaces any {@link RelativeDateTimeValue} in `value` (or in each element, if `value`
@@ -153,7 +171,7 @@ export const defaultIsDateField: IsDateFieldFunction = (
   rule.operator !== 'doesNotEndWith' &&
   rule.operator !== 'null' &&
   rule.operator !== 'notNull' &&
-  /^(?:date|datetime|datetimeoffset|timestamp)\b/i.test(opts?.fieldData?.datatype as string);
+  isDateLikeDatatype(opts?.fieldData?.datatype, /^(?:date|datetime|datetimeoffset|timestamp)\b/i);
 
 export const processIsDateField = (
   isDateField: IsDateField,

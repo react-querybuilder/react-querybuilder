@@ -10,6 +10,16 @@ import * as core from '../index';
  * Update the list below in the same commit that changes the surface.
  */
 const publicApi: string[] = [
+  'datatypeCategoryComparator',
+  'datatypeOperatorValidator',
+  'datatypeRuleValidator',
+  'defaultDatatypeOperatorLabels',
+  'defaultInferOperatorsMap',
+  'getDatatypeCategory',
+  'getDatatypeCategoryComparator',
+  'getOperatorsByDatatype',
+  'inferFieldDefaults',
+  'inferOperators',
   'LogType',
   'QueryManager',
   'QueryManagerError',

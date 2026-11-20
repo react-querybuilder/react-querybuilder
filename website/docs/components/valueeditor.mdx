@@ -312,7 +312,7 @@ const fields: Field[] = {
 }
 ```
 
-The `comparator` property can also be a function that takes a `Field` object as its parameter. Each field in the `fields` prop is evaluated by this function, which should return `true` to include the field in the list or `false` to exclude it. The equivalent configuration using a function for `comparator`:
+The `comparator` property can also be a function. Each field in the `fields` prop is evaluated by this function, which receives the candidate field, the current operator, and a meta object whose `fieldData` property is the field declaring the `comparator` (the rule's selected field). It should return `true` to include the candidate in the list or `false` to exclude it. The equivalent configuration using a function for `comparator`:
 
 ```tsx
 const fields: Field[] = {
@@ -328,4 +328,32 @@ const fields: Field[] = {
   { name: 'f4', label: 'f4', datatype: 'string' },
   { name: 'f5', label: 'f5', datatype: 'string' },
 }
+```
+
+#### Comparing by datatype category
+
+Exact `datatype` matching fails when types are equivalent but spelled differently (e.g. `"INTEGER"` and `"numeric(10,2)"`). The `datatypeCategoryComparator` function compares the normalized [datatype categories](../typescript#data-types) of both fields instead:
+
+- `number` and `bigint` are compatible, as are `date` and `datetime` (`time` is only compatible with itself).
+- Multi-type fields (e.g. `datatype: "string|number"`) match when any category overlaps.
+- Fields with no determinable category are excluded.
+- For custom types, use `getDatatypeCategoryComparator({ datatypeMap })` instead (see [`datatypeCategoryComparator`](../utils/misc#datatypecategorycomparator)).
+
+```tsx
+import { datatypeCategoryComparator } from 'react-querybuilder';
+
+const fields: Field[] = [
+  {
+    name: 'age',
+    label: 'Age',
+    datatype: 'INTEGER',
+    // highlight-start
+    valueSources: ['value', 'field'],
+    comparator: datatypeCategoryComparator,
+    // highlight-end
+  },
+  { name: 'yearsEmployed', label: 'Years Employed', datatype: 'numeric(10,2)' }, // listed
+  { name: 'employeeId', label: 'Employee ID', datatype: 'bigint' }, // listed
+  { name: 'lastName', label: 'Last Name', datatype: 'VARCHAR(50)' }, // excluded
+];
 ```

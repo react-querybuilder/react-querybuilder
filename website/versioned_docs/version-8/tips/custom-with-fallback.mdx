@@ -12,7 +12,7 @@ Consider a scenario where you need a custom date picker for specific fields, whi
 
 Instead of duplicating the default `ValueEditor` code, you can leverage its existing functionality by spreading the same props (`<ValueEditor {...props} />`) and returning it when your custom behavior doesn't apply.
 
-This example creates a custom value editor using the [`react-datepicker`](https://reactdatepicker.com/) library. We'll start by configuring the `fields` array with standard `Field` objects, adding a custom `datatype` attribute to date fields that signals when to display the date picker.
+This example creates a custom value editor using the [`react-datepicker`](https://reactdatepicker.com/) library. We'll start by configuring the `fields` array with standard `Field` objects, adding a `datatype` property to date fields that signals when to display the date picker.
 
 ```ts
 // fields.ts
