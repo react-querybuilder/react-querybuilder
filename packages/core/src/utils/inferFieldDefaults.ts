@@ -77,6 +77,7 @@ export type InferFieldDefaultsProp = boolean | InferFieldDefaultsOptions;
 /**
  * Applies {@link inferFieldDefaults} to a prepared field list and its lookup map (see
  * {@link prepareOptionList}). Returns the same objects when `opts` is falsy or nothing changed.
+ * List and map entries are separate objects (as from `prepareOptionList`), so each is inferred.
  *
  * @group Option Lists
  */

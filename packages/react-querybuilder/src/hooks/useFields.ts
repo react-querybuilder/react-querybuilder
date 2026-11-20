@@ -6,11 +6,7 @@ import type {
   FullOptionRecord,
   RuleGroupTypeAny,
 } from '@react-querybuilder/core';
-import {
-  inferFieldDefaults,
-  inferFieldListDefaults,
-  prepareOptionList,
-} from '@react-querybuilder/core';
+import { inferFieldListDefaults, prepareOptionList } from '@react-querybuilder/core';
 import { useMemo } from 'react';
 import type { QueryBuilderProps, TranslationsFull } from '../types';
 
@@ -37,13 +33,8 @@ export const useFields = <F extends FullField>(
       autoSelectOption: props.autoSelectField,
       baseOption: props.baseField,
     });
-    const opts = props.inferFieldDefaults;
-    return {
-      ...inferFieldListDefaults(prepared, opts),
-      defaultOption: opts
-        ? inferFieldDefaults(prepared.defaultOption as F, opts === true ? {} : opts)
-        : prepared.defaultOption,
-    };
+    // `defaultOption` is always the placeholder (no `datatype`), so no inference needed
+    return { ...prepared, ...inferFieldListDefaults(prepared, props.inferFieldDefaults) };
   }, [
     props.autoSelectField,
     props.baseField,

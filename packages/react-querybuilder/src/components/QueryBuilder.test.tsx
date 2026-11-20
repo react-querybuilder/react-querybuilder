@@ -49,7 +49,7 @@ import { ValueSelector } from './ValueSelector';
 
 const user = userEvent.setup();
 
-const { consoleError } = consoleMocks();
+const { consoleError, consoleWarn } = consoleMocks();
 
 describe('when rendered', () => {
   it('has the correct role', () => {
@@ -261,6 +261,61 @@ describe('inferOperators / inferFieldDefaults props', () => {
     expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'number');
   });
 
+  it('applies type-specific labels', () => {
+    render(
+      <QueryBuilder
+        defaultQuery={{ combinator: 'and', rules: [{ field: 'd', operator: '<', value: '' }] }}
+        fields={[{ name: 'd', label: 'D', datatype: 'date' }]}
+        inferOperators={{ labels: true }}
+      />
+    );
+    const lt = within(screen.getByTestId(TestID.operators)).getByRole('option', { name: 'before' });
+    expect(lt).toHaveValue('<');
+  });
+
+  it('warns for conflicting field.operators', () => {
+    consoleWarn.mockClear();
+    render(
+      <QueryBuilder
+        defaultQuery={{ combinator: 'and', rules: [{ field: 'qbWarn', operator: '=', value: '' }] }}
+        fields={[{ name: 'qbWarn', label: 'W', datatype: 'int', operators: ['=', 'contains'] }]}
+        inferOperators={{ warn: true }}
+      />
+    );
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('qbWarn'));
+    expect(opValues()).toContain('contains');
+  });
+
+  it('does not warn for getOperators results', () => {
+    consoleWarn.mockClear();
+    render(
+      <QueryBuilder
+        defaultQuery={{
+          combinator: 'and',
+          rules: [{ field: 'qbNoWarn', operator: '=', value: '' }],
+        }}
+        fields={[{ name: 'qbNoWarn', label: 'W', datatype: 'int' }]}
+        getOperators={() => ['=', 'contains']}
+        inferOperators={{ warn: true }}
+      />
+    );
+    expect(consoleWarn).not.toHaveBeenCalled();
+    expect(opValues()).toContain('contains');
+  });
+
+  it('keeps placeholder w/ autoSelectOperator={false} and dropUnknownOperators', () => {
+    render(
+      <QueryBuilder
+        defaultQuery={query}
+        fields={fields}
+        autoSelectOperator={false}
+        inferOperators={{ dropUnknownOperators: true }}
+      />
+    );
+    expect(opValues()[0]).toBe('~');
+    expect(opValues()).not.toContain('contains');
+  });
+
   describe('subqueries', () => {
     const subFields: Field[] = [
       { name: 'list', label: 'List', matchModes: true, subproperties: fields },
@@ -339,6 +394,29 @@ describe('inferOperators / inferFieldDefaults props', () => {
         />
       );
       expect(nestedEditor()).not.toHaveAttribute('type', 'number');
+    });
+
+    const nestedOpValues = () =>
+      within(screen.getAllByTestId(TestID.operators).at(-1)!)
+        .getAllByRole('option')
+        .map(o => (o as HTMLOptionElement).value);
+
+    it('inherits inferOperators', () => {
+      render(<QueryBuilder defaultQuery={subQuery} fields={subFields} inferOperators />);
+      expect(nestedOpValues()).not.toContain('contains');
+      expect(nestedOpValues()).toContain('between');
+    });
+
+    it('preserves explicit inferOperators false from getSubQueryBuilderProps', () => {
+      render(
+        <QueryBuilder
+          defaultQuery={subQuery}
+          fields={subFields}
+          inferOperators
+          getSubQueryBuilderProps={() => ({ inferOperators: false })}
+        />
+      );
+      expect(nestedOpValues()).toContain('contains');
     });
   });
 });

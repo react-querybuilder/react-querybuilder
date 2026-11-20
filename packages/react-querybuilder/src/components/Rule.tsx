@@ -5,6 +5,7 @@ import type {
   FullOperator,
   FullOption,
   InferFieldDefaultsProp,
+  InferOperatorsProp,
   InputType,
   MatchModeOptions,
   Option,
@@ -389,6 +390,9 @@ export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
     inferFieldDefaults:
       (r.subQueryBuilderProps.inferFieldDefaults as InferFieldDefaultsProp | undefined) ??
       r.schema.inferFieldDefaults,
+    inferOperators:
+      (r.subQueryBuilderProps.inferOperators as InferOperatorsProp | undefined) ??
+      r.schema.inferOperators,
     // Update the value on first render if the value is not a valid rule group
     enableMountQueryChange: !isRuleGroup(r.rule.value) || !r.rule.value.id,
     query: isRuleGroup(r.rule.value) ? (r.rule.value as RuleGroupType) : initialQuery,

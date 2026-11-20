@@ -71,6 +71,8 @@ export const resolveOperatorList = <
       inferOperators(fieldData, { ...inferOpts, operators: [] });
     }
   } else {
+    // Placeholder (`autoSelectOption: false`) may be dropped here (`dropUnknownOperators`);
+    // `prepareOptionList` below re-adds it
     optionList =
       inferOpts && fieldData
         ? inferOperators<O>(fieldData, {

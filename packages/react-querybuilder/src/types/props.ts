@@ -706,6 +706,7 @@ export interface Schema<F extends FullField, O extends string> {
   showLockButtons: boolean;
   showMuteButtons: boolean;
   inferFieldDefaults?: InferFieldDefaultsProp;
+  inferOperators?: InferOperatorsProp;
   autoSelectField: boolean;
   autoSelectOperator: boolean;
   autoSelectValue: boolean;
@@ -1006,11 +1007,13 @@ export type QueryBuilderProps<
        * Narrows each field's operator list based on its `datatype` (or `inputType`,
        * `valueEditorType`, `values` hints) via {@link inferOperators}. `true` uses default
        * options. Precedence: `field.operators` > `getOperators` > inference > `operators`.
+       * Also applies to subquery builders (overridable via `getSubQueryBuilderProps`). With
+       * `warn: true`, only `field.operators` is checked (not `getOperators` results).
        * Memoize option objects (inline objects cause re-resolution every render).
        *
        * @default false
        */
-      inferOperators?: InferOperatorsProp;
+      inferOperators?: InferOperatorsProp<O>;
       /**
        * Fills absent `inputType`/`valueEditorType` for each field based on its `datatype`
        * via {@link inferFieldDefaults}. `true` uses default options. Memoize option objects.
