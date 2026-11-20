@@ -249,6 +249,17 @@ describe('inferOperators / inferFieldDefaults props', () => {
     render(<QueryBuilder defaultQuery={query} fields={fields} inferFieldDefaults />);
     expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'number');
   });
+
+  it('fills field defaults w/ options object', () => {
+    render(
+      <QueryBuilder
+        defaultQuery={{ combinator: 'and', rules: [{ field: 'qty', operator: '=', value: '' }] }}
+        fields={[{ name: 'qty', label: 'Qty', datatype: 'custom_num' }]}
+        inferFieldDefaults={{ datatypeMap: { custom_num: 'number' } }}
+      />
+    );
+    expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'number');
+  });
 });
 
 describe('actions', () => {
