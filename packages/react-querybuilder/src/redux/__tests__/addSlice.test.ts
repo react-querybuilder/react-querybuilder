@@ -8,7 +8,11 @@ it('adds a slice with addSlice', () => {
   const counterSliceAS = createSlice({
     name: 'counter-as',
     initialState: { value: 0 },
-    reducers: { increment: state => void state.value++ },
+    reducers: {
+      increment: state => {
+        state.value++;
+      },
+    },
     selectors: { selectValue: state => state.value },
   });
 
@@ -48,7 +52,11 @@ it('adds a slice with injectSlice', () => {
   const counterSliceIS = createSlice({
     name: 'counter-is',
     initialState: { value: 0 },
-    reducers: { increment: state => void state.value++ },
+    reducers: {
+      increment: state => {
+        state.value++;
+      },
+    },
     selectors: { selectValue: state => state.value },
   });
 

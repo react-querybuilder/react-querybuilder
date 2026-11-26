@@ -153,19 +153,19 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
     case 'beginswith':
     case 'doesnotbeginwith':
       return (operatorLC === 'doesnotbeginwith' ? notLike : like)(
-        column as SQL,
+        column as Column | SQL,
         valueIsField ? sql`${asFieldOrValue(value)} || '%'` : `${value}%`
       );
     case 'contains':
     case 'doesnotcontain':
       return (operatorLC === 'doesnotcontain' ? notLike : like)(
-        column as SQL,
+        column as Column | SQL,
         valueIsField ? sql`'%' || ${asFieldOrValue(value)} || '%'` : `%${value}%`
       );
     case 'endswith':
     case 'doesnotendwith':
       return (operatorLC === 'doesnotendwith' ? notLike : like)(
-        column as SQL,
+        column as Column | SQL,
         valueIsField ? sql`'%' || ${asFieldOrValue(value)}` : `%${value}`
       );
     case 'null':

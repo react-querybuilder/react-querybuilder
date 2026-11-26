@@ -113,6 +113,13 @@
       }
     },
     {
+      // Mongoose types `SchemaTypeOptions` as a class, but object literals are its intended usage.
+      "files": ["**/dbquery.mongodb*.test.ts"],
+      "rules": {
+        "typescript/no-unsafe-class-instance-assignment": "off"
+      }
+    },
+    {
       "files": ["babel.config.js", "utils/devapp/**"],
       "rules": {
         "unicorn/prefer-module": "off"

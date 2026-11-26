@@ -130,7 +130,7 @@ const checkValueTypeMismatch = (value: unknown, inputType: string): string | und
   if (inputType === 'url') {
     if (typeof value !== 'string') return 'VALUE_TYPE_MISMATCH';
     try {
-      void new URL(value.trim());
+      const _ = new URL(value.trim());
       return undefined;
     } catch {
       return 'VALUE_TYPE_MISMATCH';
