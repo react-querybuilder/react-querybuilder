@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#1155] `parseSQL` accepts a `preset` option (`SQLPreset`, as in `formatQuery`). With `preset: "mysql"`, backslash escape sequences in string literals are unescaped (default `sql_mode`) and `\` is the default `LIKE` escape character, so `formatQuery(query, { preset: "mysql" })` output (with or without `escapeLikeWildcards`) round-trips through `parseSQL`. Other presets don't change parsing.
+
+### Fixed
+
+- [#1154] `parseSQL` honors the `LIKE ... ESCAPE` clause: escaped characters are literals, and only an unescaped `%` at the start or end determines the operator. `formatQuery` output with `escapeLikeWildcards: true` now round-trips (e.g. `endsWith "50%"` was parsed as `contains "50\"`).
+- [#1155] `parseSQL` treats a trailing `ESCAPE` character with nothing after it as a literal, even if it is `%`, and ignores non-literal (e.g. `escape col`) and multi-character `ESCAPE` values instead of stringifying them.
+- [#1155] `parseSQL` drops `LIKE` rules that have an `ESCAPE` clause and an unescaped interior `%` or any unescaped `_`, since no string-match operator can represent them. Previously the wildcards were kept as literal characters in the value, changing the rule's meaning. `LIKE` patterns without an `ESCAPE` clause are unaffected.
+
 ## [v8.28.0] - 2026-11-20
 
 ### Added
@@ -2709,6 +2719,8 @@ _TL;DR: These are probably not breaking changes._
 [#1151]: https://github.com/react-querybuilder/react-querybuilder/pull/1151
 [#1152]: https://github.com/react-querybuilder/react-querybuilder/pull/1152
 [#1153]: https://github.com/react-querybuilder/react-querybuilder/pull/1153
+[#1154]: https://github.com/react-querybuilder/react-querybuilder/pull/1154
+[#1155]: https://github.com/react-querybuilder/react-querybuilder/pull/1155
 
 <!-- #endregion -->
 
