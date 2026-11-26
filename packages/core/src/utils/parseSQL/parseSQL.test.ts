@@ -829,24 +829,27 @@ describe('regex', () => {
 });
 
 describe('LIKE escape clause', () => {
-  const values = ['50%', 'a_b', '%', '_', 'x\\y', 'x\\', '\\%', '[a]', "a'%"];
-  for (const operator of [
+  const operators = [
     'contains',
     'beginsWith',
     'endsWith',
     'doesNotContain',
     'doesNotBeginWith',
     'doesNotEndWith',
-  ] as const) {
-    it(`round-trips ${operator} with escapeLikeWildcards`, () => {
-      for (const preset of ['ansi', 'postgresql', 'mssql'] as const) {
-        for (const value of values) {
-          const q = wrapRule({ field: 's', operator, value });
-          expect(parseSQL(formatQuery(q, { preset, escapeLikeWildcards: true }))).toEqual(q);
-        }
+  ] as const;
+  const presets = ['ansi', 'sqlite', 'postgresql', 'mysql', 'mssql', 'oracle'] as const;
+  const values = ['50%', 'a_b', '%', '_', 'x\\y', 'x\\', '\\%', '[a]', "a'%"];
+
+  describe.each(operators)('%s', operator => {
+    it.each(presets.flatMap(preset => values.map(value => [preset, value] as const)))(
+      'round-trips w/ escapeLikeWildcards (%s, %j)',
+      (preset, value) => {
+        const q = wrapRule({ field: 's', operator, value });
+        const sql = formatQuery(q, { preset, escapeLikeWildcards: true });
+        expect(parseSQL(sql, { preset })).toEqual(q);
       }
-    });
-  }
+    );
+  });
 
   it('treats escaped characters as literals', () => {
     expect(parseSQL(`s like '%50\\%' escape '\\'`)).toEqual(
@@ -866,10 +869,88 @@ describe('LIKE escape clause', () => {
       wrapRule({ field: 's', operator: '=', value: 'a!' })
     );
   });
+
+  it('keeps a trailing escape char literal even when it is a wildcard', () => {
+    expect(parseSQL(`s like 'a%' escape '%'`)).toEqual(
+      wrapRule({ field: 's', operator: '=', value: 'a%' })
+    );
+    expect(parseSQL(`s like '%' escape '%'`)).toEqual(
+      wrapRule({ field: 's', operator: '=', value: '%' })
+    );
+    expect(parseSQL(`s not like '%' escape '%'`)).toEqual(
+      wrapRule({ field: 's', operator: '!=', value: '%' })
+    );
+    expect(parseSQL(`s like '%'`)).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: '' })
+    );
+  });
+
+  it('ignores non-literal and multi-char escapes', () => {
+    expect(parseSQL(`s like '%a\\%' escape t`)).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: 'a\\' })
+    );
+    expect(parseSQL(`s like '%a\\%' escape 1`)).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: 'a\\' })
+    );
+    expect(parseSQL(`s like '%a!!%' escape '!!'`)).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: 'a!!' })
+    );
+  });
+
+  it('drops rules w/ unescaped interior wildcards when an escape clause is present', () => {
+    expect(parseSQL(`s like 'a%b' escape '\\'`)).toEqual(wrapRule());
+    expect(parseSQL(`s like '%a_b%' escape '\\'`)).toEqual(wrapRule());
+    expect(parseSQL(`s like '_ab' escape '\\'`)).toEqual(wrapRule());
+    // No escape clause: unchanged (interior wildcards kept in value)
+    expect(parseSQL(`s like '%a_b%'`)).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: 'a_b' })
+    );
+  });
+});
+
+describe('mysql preset', () => {
+  it('keeps backslashes in substituted params', () => {
+    const value = String.raw`C:\temp`;
+    expect(parseSQL('s = ?', { preset: 'mysql', params: [value] })).toEqual(
+      wrapRule({ field: 's', operator: '=', value })
+    );
+    expect(parseSQL('s = :p', { preset: 'mysql', params: { p: value } })).toEqual(
+      wrapRule({ field: 's', operator: '=', value })
+    );
+  });
+
+  it('unescapes backslash sequences in string literals', () => {
+    expect(parseSQL(`s = 'a\\\\b\\n\\x'`, { preset: 'mysql' })).toEqual(
+      wrapRule({ field: 's', operator: '=', value: 'a\\b\nx' })
+    );
+    expect(parseSQL(`s in ('a\\\\', 'b')`, { preset: 'mysql', listsAsArrays: true })).toEqual(
+      wrapRule({ field: 's', operator: 'in', value: ['a\\', 'b'] })
+    );
+    // Without the preset, backslashes are literal
+    expect(parseSQL(`s = 'a\\\\b'`)).toEqual(
+      wrapRule({ field: 's', operator: '=', value: 'a\\\\b' })
+    );
+  });
+
+  it('uses `\\` as the default LIKE escape character', () => {
+    expect(parseSQL(`s like '%50\\%'`, { preset: 'mysql' })).toEqual(
+      wrapRule({ field: 's', operator: 'endsWith', value: '50%' })
+    );
+    expect(parseSQL(`s like '%a%b%'`, { preset: 'mysql' })).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: 'a%b' })
+    );
+  });
+
+  it.each(['x\\y', 'x\\', "a'b", "\\'"])('round-trips %j w/o escapeLikeWildcards', value => {
+    for (const operator of ['=', 'contains', 'beginsWith', 'endsWith'] as const) {
+      const q = wrapRule({ field: 's', operator, value });
+      expect(parseSQL(formatQuery(q, { preset: 'mysql' }), { preset: 'mysql' })).toEqual(q);
+    }
+  });
 });
 
 describe('quotes adjacent to wildcards (#1135)', () => {
-  // LIKE wildcards in values aren't escaped by formatQuery, so only quotes here
+  // W/o `escapeLikeWildcards`, `%`/`_` in values stay wildcards, so only quotes here
   const values = ["'s", "s'", "'", "''", "a'b", "''s''"];
   for (const operator of [
     'contains',

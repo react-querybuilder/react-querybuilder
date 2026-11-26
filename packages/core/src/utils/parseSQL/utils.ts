@@ -59,39 +59,63 @@ export const isWildcardsOnly = (sqlExpr: SQLExpression): boolean =>
 /**
  * Splits a `LIKE` pattern into its value and unescaped leading/trailing `%` wildcards.
  * Characters preceded by `escapeChar` (from an `ESCAPE` clause) are kept as literals
- * and the escape characters are removed.
+ * and the escape characters are removed. A trailing `escapeChar` w/ nothing to escape is
+ * kept as a literal. `interiorWildcard` flags any other unescaped `%` or `_`.
  */
 export const splitLikePattern = (
   pattern: string,
   escapeChar: string
-): { value: string; leading: boolean; trailing: boolean } => {
+): { value: string; leading: boolean; trailing: boolean; interiorWildcard: boolean } => {
   let value = '';
   let leading = false;
   let trailing = false;
+  let interiorWildcard = false;
   for (let i = 0; i < pattern.length; i++) {
     const c = pattern[i];
-    if (c === escapeChar && i + 1 < pattern.length) {
-      value += pattern[++i];
+    if (c === escapeChar) {
+      value += i + 1 < pattern.length ? pattern[++i] : c;
     } else if (c === '%' && i === 0) {
       leading = true;
     } else if (c === '%' && i === pattern.length - 1) {
       trailing = true;
     } else {
+      if (c === '%' || c === '_') interiorWildcard = true;
       value += c;
     }
   }
-  return { value, leading, trailing };
+  return { value, leading, trailing, interiorWildcard };
 };
 
+const mysqlEscapeSequences: Record<string, string> = {
+  '0': '\0',
+  b: '\b',
+  n: '\n',
+  r: '\r',
+  t: '\t',
+  Z: '\x1A',
+};
+
+/**
+ * Unescapes MySQL backslash sequences in a string literal (default `sql_mode`). `\%` and `\_`
+ * keep the backslash, as in MySQL, so they still escape `LIKE` wildcards.
+ *
+ * @see https://dev.mysql.com/doc/refman/8.4/en/string-literals.html
+ */
+export const unescapeMySQLString = (s: string): string =>
+  s.replaceAll(/\\(.)/gs, (m, c: string) =>
+    c === '%' || c === '_' ? m : (mysqlEscapeSequences[c] ?? c)
+  );
+
 // oxlint-disable-next-line typescript/no-explicit-any
-export const getParamString = (param: any): string => {
+export const getParamString = (param: any, { preset }: ParseSQLOptions = {}): string => {
   switch (typeof param) {
     case 'number':
       return `${param}`;
     case 'boolean':
       return param ? 'TRUE' : 'FALSE';
     default:
-      return `'${param}'`;
+      // Keep backslashes literal after MySQL string unescaping
+      return `'${preset === 'mysql' ? `${param}`.replaceAll('\\', '\\\\') : param}'`;
   }
 };
 
@@ -125,7 +149,7 @@ export const normalizeOperator = (op: ComparisonOperator, flip?: boolean): Defau
 
 export const evalSQLLiteralValue = (
   valueObj: SQLLiteralValue | SQLSignedNumberValue,
-  { bigIntOnOverflow }: ParseSQLOptions = {}
+  { bigIntOnOverflow, preset }: ParseSQLOptions = {}
   // oxlint-disable-next-line typescript/no-explicit-any
 ): any => {
   if (valueObj.type === 'String') {
@@ -134,8 +158,8 @@ export const evalSQLLiteralValue = (
       (valueString.startsWith(`'`) && valueString.endsWith(`'`)) ||
       (valueString.startsWith(`"`) && valueString.endsWith(`"`))
     ) {
-      const innerString = valueString.slice(1, -1);
-      return innerString.replaceAll(/''/gm, "'");
+      const innerString = valueString.slice(1, -1).replaceAll(/''/gm, "'");
+      return preset === 'mysql' ? unescapeMySQLString(innerString) : innerString;
     }
     // Theoretically we should never get here since all strings will be wrapped in
     // single or double quotes, but if we do get here we return the string as is.

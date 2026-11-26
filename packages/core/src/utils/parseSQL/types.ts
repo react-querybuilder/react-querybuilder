@@ -1,4 +1,4 @@
-import type { DefaultCombinatorNameExtended } from '../../types';
+import type { DefaultCombinatorNameExtended, SQLPreset } from '../../types';
 
 type AnyCase<T extends string> = string extends T
   ? string
@@ -324,6 +324,8 @@ export type SQLExpressionOperand =
  */
 export interface ParseSQLExpressionContext {
   bigIntOnOverflow?: boolean;
+  /** SQL dialect of the input (see `ParseSQLOptions.preset`). */
+  preset?: SQLPreset;
   /** `true` when the field exists in the configured fields (or no fields were configured). */
   fieldExists: (fieldName: string) => boolean;
 }

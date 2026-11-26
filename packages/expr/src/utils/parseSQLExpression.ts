@@ -42,7 +42,10 @@ export const parseSQLExpression =
       if (isSQLLiteralOrSignedNumberValue(n)) {
         return {
           kind: 'value',
-          value: evalSQLLiteralValue(n, { bigIntOnOverflow: ctx.bigIntOnOverflow }),
+          value: evalSQLLiteralValue(n, {
+            bigIntOnOverflow: ctx.bigIntOnOverflow,
+            preset: ctx.preset,
+          }),
         };
       }
       if (isSQLBitExpression(n)) {

@@ -7,6 +7,7 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   ExpressionNode,
+  SQLPreset,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
 import type { Except } from '../../types/typeUtils';
@@ -129,6 +130,14 @@ export interface ParseSQLOptions extends ParserCommonOptions {
    * - `{ positional }` — enable/disable positional `?` (default enabled).
    */
   parseParameters?: boolean | { prefix?: string | string[]; positional?: boolean };
+  /**
+   * SQL dialect of the input, matching `formatQuery`'s `preset` option. Only "mysql" currently
+   * changes parsing: backslash escape sequences in string literals are unescaped (default
+   * `sql_mode`, not `NO_BACKSLASH_ESCAPES`), and `\` is the default `LIKE` escape character.
+   *
+   * @default undefined
+   */
+  preset?: SQLPreset;
 }
 /**
  * Converts a SQL `SELECT` statement into a query suitable for the
@@ -168,6 +177,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
     bigIntOnOverflow,
     getExpression,
     parseParameters,
+    preset,
   } = options;
 
   let sqlString = /^\s*select\b/i.test(sql)
@@ -184,7 +194,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
     if (Array.isArray(params)) {
       let i = 0;
       sqlString = sqlString.replaceAll('?', () => {
-        const paramString = getParamString(params[i]);
+        const paramString = getParamString(params[i], { preset });
         i++;
         return paramString;
       });
@@ -194,7 +204,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
       for (const p of keys) {
         sqlString = sqlString.replaceAll(
           new RegExp(`\\${prefix}${p}\\b`, 'ig'),
-          getParamString(params[p])
+          getParamString(params[p], { preset })
         );
       }
     }
@@ -223,6 +233,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
 
   const exprCtx: ParseSQLExpressionContext = {
     bigIntOnOverflow,
+    preset,
     fieldExists: fieldName => fieldsFlat.length === 0 || fieldsFlat.some(f => f.name === fieldName),
   };
 
@@ -237,7 +248,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
     const f = getFieldName(left);
     const operator = negate ? 'doesNotMatch' : 'matches';
     if (!shouldParseRegex(options, f) || !fieldIsValid(f, operator)) return null;
-    let value = evalSQLLiteralValue(right as SQLStringValue) as string;
+    let value = evalSQLLiteralValue(right as SQLStringValue, { preset }) as string;
     if (tilde) {
       // PostgreSQL ARE embedded options (last wins); default newline mode `s` → JS `s`
       let i = flags.includes('i');
@@ -270,7 +281,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
     let flags = '';
     if (flagsNode) {
       if (flagsNode.type !== 'String') return null;
-      for (const c of evalSQLLiteralValue(flagsNode) as string) {
+      for (const c of evalSQLLiteralValue(flagsNode, { preset }) as string) {
         if (c === 'i' || c === 'm') flags = `${flags.replace(c, '')}${c}`;
         else if (c === 'n') flags = `${flags.replace('s', '')}s`;
         else if (c === 'c') flags = flags.replace('i', '');
@@ -397,7 +408,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
               return {
                 field: f,
                 operator,
-                value: evalSQLLiteralValue(valueObj, { bigIntOnOverflow }),
+                value: evalSQLLiteralValue(valueObj, { bigIntOnOverflow, preset }),
               };
             }
           } else if (parseParameters && isSQLPlaceHolder(valueObj)) {
@@ -459,7 +470,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
               field: '',
               operator,
               lhs,
-              value: evalSQLLiteralValue(otherSide, { bigIntOnOverflow }),
+              value: evalSQLLiteralValue(otherSide, { bigIntOnOverflow, preset }),
             };
           }
           return null;
@@ -472,7 +483,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           const f = getFieldName(expr.left);
           const valueArray = expr.right.value
             .filter(v => isSQLLiteralOrSignedNumberValue(v))
-            .map(v => evalSQLLiteralValue(v, { bigIntOnOverflow }));
+            .map(v => evalSQLLiteralValue(v, { bigIntOnOverflow, preset }));
           const operator = expr.hasNot ? 'notIn' : 'in';
           const fieldArray = expr.right.value
             .filter(v => isSQLIdentifier(v))
@@ -504,7 +515,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           isSQLLiteralOrSignedNumberValue(expr.right.right)
         ) {
           const valueArray = [expr.right.left, expr.right.right].map(v =>
-            evalSQLLiteralValue(v, { bigIntOnOverflow })
+            evalSQLLiteralValue(v, { bigIntOnOverflow, preset })
           );
           const value = options?.listsAsArrays ? valueArray : joinWith(valueArray, ', ');
           const operator = expr.hasNot ? 'notBetween' : 'between';
@@ -555,16 +566,28 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
       case 'LikePredicate': {
         /* v8 ignore else -- @preserve */
         if (isSQLIdentifier(expr.left) && expr.right.type === 'String') {
-          const valueWithWildcards = evalSQLLiteralValue(expr.right) as string;
-          const escapeChar = expr.escape ? `${evalSQLLiteralValue(expr.escape)}` : '';
+          const valueWithWildcards = evalSQLLiteralValue(expr.right, { preset }) as string;
+          const escapeValue =
+            expr.escape?.type === 'String' ? evalSQLLiteralValue(expr.escape, { preset }) : null;
+          // Non-literal or multi-char escapes are ignored. MySQL defaults to `\`.
+          const escapeChar =
+            typeof escapeValue === 'string' && escapeValue.length === 1
+              ? escapeValue
+              : !expr.escape && preset === 'mysql'
+                ? '\\'
+                : '';
           const {
             value: valueWithoutWildcards,
             leading,
             trailing,
+            interiorWildcard,
           } = splitLikePattern(valueWithWildcards, escapeChar);
+          // W/ an `ESCAPE` clause, an unescaped interior wildcard is a real pattern that no
+          // string-match operator can represent
+          if (expr.escape && escapeChar && interiorWildcard) return null;
           let operator: DefaultOperatorName = '=';
           /* v8 ignore else -- @preserve */
-          if ((leading && trailing) || valueWithWildcards === '%') {
+          if (leading && (trailing || valueWithWildcards === '%')) {
             operator = expr.hasNot ? 'doesNotContain' : 'contains';
           } else if (trailing) {
             operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
