@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [#1155] `parseSQL` accepts a `preset` option (`SQLPreset`, as in `formatQuery`). With `preset: "mysql"`, backslash escape sequences in string literals are unescaped (default `sql_mode`) and `\` is the default `LIKE` escape character, so `formatQuery(query, { preset: "mysql" })` output (with or without `escapeLikeWildcards`) round-trips through `parseSQL`. Other presets don't change parsing.
+- [#1155] `parseSQL` accepts a `preset` option (`SQLPreset`, as in `formatQuery`). With `preset: "mysql"`, backslash escape sequences in string literals are unescaped (default `sql_mode`) and `\` is the default `LIKE` escape character, so `formatQuery(query, { preset: "mysql" })` output (with or without `escapeLikeWildcards`) round-trips through `parseSQL`. Substituted `params` keep their backslashes, and the preset is passed to `getExpression` handlers via `ParseSQLExpressionContext` (`expressionParserSQL` from `@react-querybuilder/expr` uses it for operand literals). Other presets don't change parsing.
 
 ### Fixed
 

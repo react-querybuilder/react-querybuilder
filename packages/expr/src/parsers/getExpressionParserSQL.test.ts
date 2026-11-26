@@ -19,6 +19,19 @@ const opt = { getExpression: expressionParserSQL, fields } as const;
 const anyCtx: ParseSQLExpressionContext = { fieldExists: () => true };
 
 describe('parseSQL with expressionParserSQL', () => {
+  it('decodes MySQL string literals in operands w/ preset "mysql"', () => {
+    const sql = String.raw`x = LOWER('a\\b\n')`;
+    const lit = (value: string) => ({
+      kind: 'func',
+      fn: 'lower',
+      args: [{ kind: 'value', value }],
+    });
+    expect(parseSQL(sql, { ...opt, preset: 'mysql' }).rules[0]).toMatchObject({
+      value: lit('a\\b\n'),
+    });
+    expect(parseSQL(sql, opt).rules[0]).toMatchObject({ value: lit(String.raw`a\\b\n`) });
+  });
+
   it('converts arithmetic RHS', () => {
     expect(parseSQL('price > (cost * 2)', opt).rules[0]).toEqual({
       field: 'price',

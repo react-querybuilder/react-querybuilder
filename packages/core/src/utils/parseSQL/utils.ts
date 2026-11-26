@@ -107,14 +107,15 @@ export const unescapeMySQLString = (s: string): string =>
   );
 
 // oxlint-disable-next-line typescript/no-explicit-any
-export const getParamString = (param: any): string => {
+export const getParamString = (param: any, { preset }: ParseSQLOptions = {}): string => {
   switch (typeof param) {
     case 'number':
       return `${param}`;
     case 'boolean':
       return param ? 'TRUE' : 'FALSE';
     default:
-      return `'${param}'`;
+      // Keep backslashes literal after MySQL string unescaping
+      return `'${preset === 'mysql' ? `${param}`.replaceAll('\\', '\\\\') : param}'`;
   }
 };
 

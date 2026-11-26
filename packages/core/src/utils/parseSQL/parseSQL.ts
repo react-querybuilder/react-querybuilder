@@ -194,7 +194,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
     if (Array.isArray(params)) {
       let i = 0;
       sqlString = sqlString.replaceAll('?', () => {
-        const paramString = getParamString(params[i]);
+        const paramString = getParamString(params[i], { preset });
         i++;
         return paramString;
       });
@@ -204,7 +204,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
       for (const p of keys) {
         sqlString = sqlString.replaceAll(
           new RegExp(`\\${prefix}${p}\\b`, 'ig'),
-          getParamString(params[p])
+          getParamString(params[p], { preset })
         );
       }
     }
@@ -233,6 +233,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
 
   const exprCtx: ParseSQLExpressionContext = {
     bigIntOnOverflow,
+    preset,
     fieldExists: fieldName => fieldsFlat.length === 0 || fieldsFlat.some(f => f.name === fieldName),
   };
 
@@ -586,7 +587,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           if (expr.escape && escapeChar && interiorWildcard) return null;
           let operator: DefaultOperatorName = '=';
           /* v8 ignore else -- @preserve */
-          if ((leading && trailing) || valueWithWildcards === '%') {
+          if (leading && (trailing || valueWithWildcards === '%')) {
             operator = expr.hasNot ? 'doesNotContain' : 'contains';
           } else if (trailing) {
             operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';

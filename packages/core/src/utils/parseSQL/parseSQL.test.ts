@@ -874,6 +874,15 @@ describe('LIKE escape clause', () => {
     expect(parseSQL(`s like 'a%' escape '%'`)).toEqual(
       wrapRule({ field: 's', operator: '=', value: 'a%' })
     );
+    expect(parseSQL(`s like '%' escape '%'`)).toEqual(
+      wrapRule({ field: 's', operator: '=', value: '%' })
+    );
+    expect(parseSQL(`s not like '%' escape '%'`)).toEqual(
+      wrapRule({ field: 's', operator: '!=', value: '%' })
+    );
+    expect(parseSQL(`s like '%'`)).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: '' })
+    );
   });
 
   it('ignores non-literal and multi-char escapes', () => {
@@ -900,6 +909,16 @@ describe('LIKE escape clause', () => {
 });
 
 describe('mysql preset', () => {
+  it('keeps backslashes in substituted params', () => {
+    const value = String.raw`C:\temp`;
+    expect(parseSQL('s = ?', { preset: 'mysql', params: [value] })).toEqual(
+      wrapRule({ field: 's', operator: '=', value })
+    );
+    expect(parseSQL('s = :p', { preset: 'mysql', params: { p: value } })).toEqual(
+      wrapRule({ field: 's', operator: '=', value })
+    );
+  });
+
   it('unescapes backslash sequences in string literals', () => {
     expect(parseSQL(`s = 'a\\\\b\\n\\x'`, { preset: 'mysql' })).toEqual(
       wrapRule({ field: 's', operator: '=', value: 'a\\b\nx' })
