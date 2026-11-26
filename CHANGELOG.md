@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.29.0] - 2026-11-26
+
 ### Added
 
 - [#1155] `parseSQL` accepts a `preset` option (`SQLPreset`, as in `formatQuery`). With `preset: "mysql"`, backslash escape sequences in string literals are unescaped (default `sql_mode`) and `\` is the default `LIKE` escape character, so `formatQuery(query, { preset: "mysql" })` output (with or without `escapeLikeWildcards`) round-trips through `parseSQL`. Substituted `params` keep their backslashes, and the preset is passed to `getExpression` handlers via `ParseSQLExpressionContext` (`expressionParserSQL` from `@react-querybuilder/expr` uses it for operand literals). Other presets don't change parsing.
@@ -2726,7 +2728,8 @@ _TL;DR: These are probably not breaking changes._
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.28.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.29.0...HEAD
+[v8.29.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.28.0...v8.29.0
 [v8.28.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.27.1...v8.28.0
 [v8.27.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.27.0...v8.27.1
 [v8.27.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.26.0...v8.27.0
