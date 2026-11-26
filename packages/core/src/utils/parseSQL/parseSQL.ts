@@ -37,6 +37,7 @@ import {
   isSQLLiteralOrSignedNumberValue,
   isSQLPlaceHolder,
   normalizeOperator,
+  splitLikePattern,
 } from './utils';
 
 /**
@@ -555,17 +556,19 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         /* v8 ignore else -- @preserve */
         if (isSQLIdentifier(expr.left) && expr.right.type === 'String') {
           const valueWithWildcards = evalSQLLiteralValue(expr.right) as string;
-          const valueWithoutWildcards = valueWithWildcards.replaceAll(/(^%)|(%$)/g, '');
+          const escapeChar = expr.escape ? `${evalSQLLiteralValue(expr.escape)}` : '';
+          const {
+            value: valueWithoutWildcards,
+            leading,
+            trailing,
+          } = splitLikePattern(valueWithWildcards, escapeChar);
           let operator: DefaultOperatorName = '=';
           /* v8 ignore else -- @preserve */
-          if (
-            (valueWithWildcards.endsWith('%') && valueWithWildcards.startsWith('%')) ||
-            valueWithWildcards === '%'
-          ) {
+          if ((leading && trailing) || valueWithWildcards === '%') {
             operator = expr.hasNot ? 'doesNotContain' : 'contains';
-          } else if (valueWithWildcards.endsWith('%')) {
+          } else if (trailing) {
             operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
-          } else if (valueWithWildcards.startsWith('%')) {
+          } else if (leading) {
             operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
           } else if (expr.hasNot && operator === '=') {
             operator = '!=';
