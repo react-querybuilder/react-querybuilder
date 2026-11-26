@@ -1,6 +1,6 @@
 import { formatQuery } from '@react-querybuilder/core';
-import { parseMongoDB } from '@react-querybuilder/core/parseMongoDB';
 import type { ParseMongoDBExpressionContext } from '@react-querybuilder/core/parseMongoDB';
+import { parseMongoDB } from '@react-querybuilder/core/parseMongoDB';
 import { expressionRuleProcessorMongoDBQuery } from '../index';
 import { expressionParserMongoDB, getExpressionParserMongoDB } from './getExpressionParserMongoDB';
 

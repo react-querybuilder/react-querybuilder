@@ -1,6 +1,6 @@
 import type { ControlKey } from '@react-querybuilder/core';
-import { controlKeys, controlKind, controlPropKeys } from '@react-querybuilder/core';
 import type { FullField } from '@react-querybuilder/core';
+import { controlKeys, controlKind, controlPropKeys } from '@react-querybuilder/core';
 import type { UseRuleGroup } from '../components/RuleGroup';
 import { defaultControlElements } from '../defaults';
 import type {

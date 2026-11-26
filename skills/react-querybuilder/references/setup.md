@@ -24,8 +24,8 @@ import 'react-querybuilder/dist/query-builder.css';
 
 ```tsx
 import { useState } from 'react';
-import { QueryBuilder } from 'react-querybuilder';
 import type { Field, RuleGroupType } from 'react-querybuilder';
+import { QueryBuilder } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
 
 const fields: Field[] = [

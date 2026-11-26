@@ -26,8 +26,8 @@ import {
   getDragItem,
   handleDrop,
 } from '../dndLogic';
-import { DragPreviewContext } from '../DragPreviewContext';
 import type { DragPreviewContextValue } from '../DragPreviewContext';
+import { DragPreviewContext } from '../DragPreviewContext';
 import { isHotkeyPressed } from '../isHotkeyPressed';
 import { computeShadowQuery } from '../shadowQuery';
 import type { DragPreviewState, OnDragMoveCallback } from '../types';

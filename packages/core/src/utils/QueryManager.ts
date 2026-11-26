@@ -67,13 +67,13 @@ import type { InferFieldDefaultsProp } from './inferFieldDefaults';
 import { inferFieldListDefaults } from './inferFieldDefaults';
 import { isRuleGroup, isRuleGroupTypeIC } from './isRuleGroup';
 import { prepareOptionList } from './optGroupUtils';
+import type { InferOperatorsProp } from './optionResolvers';
 import {
   resolveDefaultOperator,
   resolveOperatorList,
   resolveValueEditorType,
   resolveValueList,
 } from './optionResolvers';
-import type { InferOperatorsProp } from './optionResolvers';
 import { optionsEqual } from './optionsEqual';
 import type { FindPathReturnType } from './pathUtils';
 import { findPath, getParentPath, pathIsDisabled } from './pathUtils';

@@ -2,8 +2,8 @@ import type {
   JsonLogicExpressionOperand,
   ParseJsonLogicExpressionContext,
 } from '@react-querybuilder/core/parseJsonLogic';
-import { defaultJsonLogicInverse, mergeJsonLogicInverse } from '../functions/jsonLogic';
 import type { JsonLogicInverse } from '../functions/jsonLogic';
+import { defaultJsonLogicInverse, mergeJsonLogicInverse } from '../functions/jsonLogic';
 import { mergeFunctionMeta } from '../registry';
 import type { ExpressionFunctionMetaRegistry, ExpressionNode } from '../types';
 import { parseJsonLogicExpression } from '../utils/parseJsonLogicExpression';

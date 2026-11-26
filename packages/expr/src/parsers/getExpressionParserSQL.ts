@@ -2,8 +2,8 @@ import type {
   ParseSQLExpressionContext,
   SQLExpressionOperand,
 } from '@react-querybuilder/core/parseSQL';
-import { defaultSQLInverse, mergeSQLInverse } from '../functions/sql';
 import type { SQLInverse } from '../functions/sql';
+import { defaultSQLInverse, mergeSQLInverse } from '../functions/sql';
 import { mergeFunctionMeta } from '../registry';
 import type { ExpressionFunctionMetaRegistry, ExpressionNode } from '../types';
 import { parseSQLExpression } from '../utils/parseSQLExpression';

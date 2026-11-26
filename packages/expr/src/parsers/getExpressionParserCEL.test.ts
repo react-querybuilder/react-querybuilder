@@ -1,9 +1,9 @@
 import { formatQuery } from '@react-querybuilder/core';
-import { parseCEL } from '@react-querybuilder/core/parseCEL';
 import type {
   CELExpressionOperand,
   ParseCELExpressionContext,
 } from '@react-querybuilder/core/parseCEL';
+import { parseCEL } from '@react-querybuilder/core/parseCEL';
 import { expressionRuleProcessorCEL } from '../index';
 import { expressionParserCEL, getExpressionParserCEL } from './getExpressionParserCEL';
 

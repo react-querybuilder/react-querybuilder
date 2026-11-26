@@ -1,8 +1,8 @@
 /* @vitest-environment node */
 
 import type { RuleGroupType, RuleType } from '@react-querybuilder/core';
-import { formatQuery } from '@react-querybuilder/core';
 import type { FullField } from '@react-querybuilder/core';
+import { formatQuery } from '@react-querybuilder/core';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
 import { getDatetimeRuleProcessorDrizzle } from '../getDatetimeRuleProcessorDrizzle';
 import { getDatetimeRuleProcessorSequelize } from '../getDatetimeRuleProcessorSequelize';

@@ -1,9 +1,9 @@
 import { formatQuery } from '@react-querybuilder/core';
-import { parseSQL } from '@react-querybuilder/core/parseSQL';
 import type {
   ParseSQLExpressionContext,
   SQLExpressionOperand,
 } from '@react-querybuilder/core/parseSQL';
+import { parseSQL } from '@react-querybuilder/core/parseSQL';
 import { expressionRuleProcessorSQL } from '../index';
 import { expressionParserSQL, getExpressionParserSQL } from './getExpressionParserSQL';
 

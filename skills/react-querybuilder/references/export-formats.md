@@ -130,8 +130,8 @@ There is **no** `listsAsArrays` option on `formatQuery`: list values may be arra
 Extend the default for the target format instead of reimplementing it:
 
 ```ts
-import { defaultRuleProcessorSQL, formatQuery } from '@react-querybuilder/core';
 import type { RuleProcessor } from '@react-querybuilder/core';
+import { defaultRuleProcessorSQL, formatQuery } from '@react-querybuilder/core';
 
 const ruleProcessor: RuleProcessor = (rule, opts) =>
   rule.operator === 'isAdult' ? `(${rule.field} >= 18)` : defaultRuleProcessorSQL(rule, opts);

@@ -7,8 +7,8 @@ import type {
 } from 'react-querybuilder';
 import { defaultFunctionMeta } from '../functions/meta';
 import type { ExpressionFunctionMetaRegistry } from '../types';
-import { defaultTranslationsExpr } from './defaults';
 import type { TranslationsFullExpr } from './defaults';
+import { defaultTranslationsExpr } from './defaults';
 
 /**
  * Whether (and when) the left-hand side may wrap its field in a function. `boolean`

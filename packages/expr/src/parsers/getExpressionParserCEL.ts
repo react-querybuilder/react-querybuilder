@@ -2,8 +2,8 @@ import type {
   CELExpressionOperand,
   ParseCELExpressionContext,
 } from '@react-querybuilder/core/parseCEL';
-import { celTemplateFns, defaultCELInverse, mergeCELInverse } from '../functions/cel';
 import type { CELInverse } from '../functions/cel';
+import { celTemplateFns, defaultCELInverse, mergeCELInverse } from '../functions/cel';
 import { mergeFunctionMeta } from '../registry';
 import type { ExpressionFunctionMetaRegistry, ExpressionNode } from '../types';
 import { parseCELExpression } from '../utils/parseCELExpression';

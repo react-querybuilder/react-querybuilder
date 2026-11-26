@@ -1,3 +1,4 @@
+import type { Duration } from 'date-fns';
 import {
   toDate as dateFnsToDate,
   add as dateFnsAdd,
@@ -16,7 +17,6 @@ import {
   startOfWeek,
   startOfYear,
 } from 'date-fns';
-import type { Duration } from 'date-fns';
 import type {
   RelativeDateTimeTruncationUnit,
   RelativeDateTimeUnit,

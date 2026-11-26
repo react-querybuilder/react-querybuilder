@@ -13,9 +13,9 @@ import type {
   ValueSourceSelectorProps,
 } from 'react-querybuilder';
 import { getCompatContextProvider, QueryBuilder, TestID } from 'react-querybuilder';
+import type { AllowFunctionsOnLHS, TranslationsExpr } from '../index.ui';
 // Import through the public `/ui` barrel so the re-export modules are covered too.
 import { ExprTestID, QueryBuilderExpressions } from '../index.ui';
-import type { AllowFunctionsOnLHS, TranslationsExpr } from '../index.ui';
 import type { ExpressionFunctionMetaRegistry } from '../types';
 
 // Core control testIDs we drive: field selector, value editor, value-source selector.

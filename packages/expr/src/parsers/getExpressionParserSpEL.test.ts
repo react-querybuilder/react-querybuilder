@@ -1,9 +1,9 @@
 import { formatQuery } from '@react-querybuilder/core';
-import { parseSpEL } from '@react-querybuilder/core/parseSpEL';
 import type {
   ParseSpELExpressionContext,
   SpELExpressionOperand,
 } from '@react-querybuilder/core/parseSpEL';
+import { parseSpEL } from '@react-querybuilder/core/parseSpEL';
 import { expressionRuleProcessorSpEL } from '../index';
 import { expressionParserSpEL, getExpressionParserSpEL } from './getExpressionParserSpEL';
 

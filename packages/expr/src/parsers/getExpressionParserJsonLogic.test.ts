@@ -1,10 +1,10 @@
-import { formatQuery } from '@react-querybuilder/core';
 import type { RQBJsonLogic } from '@react-querybuilder/core';
-import { parseJsonLogic } from '@react-querybuilder/core/parseJsonLogic';
+import { formatQuery } from '@react-querybuilder/core';
 import type {
   JsonLogicExpressionOperand,
   ParseJsonLogicExpressionContext,
 } from '@react-querybuilder/core/parseJsonLogic';
+import { parseJsonLogic } from '@react-querybuilder/core/parseJsonLogic';
 import { expressionRuleProcessorJsonLogic } from '../index';
 import {
   expressionParserJsonLogic,

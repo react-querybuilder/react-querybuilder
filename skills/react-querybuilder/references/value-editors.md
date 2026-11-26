@@ -26,8 +26,8 @@ Set via `field.valueEditorType` (or the `getValueEditorType` prop):
 4. Pass the component reference: `controlElements={{ valueEditor: MyValueEditor }}`.
 
 ```tsx
-import { QueryBuilder, ValueEditor } from 'react-querybuilder';
 import type { ValueEditorProps } from 'react-querybuilder';
+import { QueryBuilder, ValueEditor } from 'react-querybuilder';
 
 const MyValueEditor = (props: ValueEditorProps) => {
   if (props.fieldData.datatype === 'rating') {

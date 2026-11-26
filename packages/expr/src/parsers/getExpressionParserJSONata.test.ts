@@ -1,6 +1,6 @@
 import { formatQuery } from '@react-querybuilder/core';
-import { parseJSONata } from '@react-querybuilder/core/parseJSONata';
 import type { ParseJSONataExpressionContext } from '@react-querybuilder/core/parseJSONata';
+import { parseJSONata } from '@react-querybuilder/core/parseJSONata';
 import { expressionRuleProcessorJSONata } from '../index';
 import { expressionParserJSONata, getExpressionParserJSONata } from './getExpressionParserJSONata';
 

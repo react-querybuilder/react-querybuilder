@@ -71,8 +71,8 @@ Adjust the whitelists to the operators/combinators/value sources the app actuall
 ## Pipeline: validate → format → execute
 
 ```ts
-import { formatQuery } from '@react-querybuilder/core';
 import type { Field, RuleGroupTypeAny } from '@react-querybuilder/core';
+import { formatQuery } from '@react-querybuilder/core';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First name' },

@@ -1,5 +1,5 @@
-import { RulePilot } from 'rulepilot';
 import type { Rule as RulePilotRule } from 'rulepilot';
+import { RulePilot } from 'rulepilot';
 import type { RulesEngine } from '../../types';
 import { formatRulesEngine } from './formatRulesEngine';
 

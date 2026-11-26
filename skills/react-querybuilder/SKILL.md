@@ -56,8 +56,8 @@ If the `rqb` MCP server (`@react-querybuilder/mcp`) is available, use its tools 
 
 ```tsx
 import { useState } from 'react';
-import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import type { Field, RuleGroupType } from 'react-querybuilder';
+import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
 
 // Module scope: stable references, no re-render churn

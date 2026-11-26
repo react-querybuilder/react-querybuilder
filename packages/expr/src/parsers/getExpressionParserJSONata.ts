@@ -2,8 +2,8 @@ import type {
   JSONataExpressionOperand,
   ParseJSONataExpressionContext,
 } from '@react-querybuilder/core/parseJSONata';
-import { defaultJSONataInverse, mergeJSONataInverse } from '../functions/jsonata';
 import type { JSONataInverse } from '../functions/jsonata';
+import { defaultJSONataInverse, mergeJSONataInverse } from '../functions/jsonata';
 import { mergeFunctionMeta } from '../registry';
 import type { ExpressionFunctionMetaRegistry, ExpressionNode } from '../types';
 import { parseJSONataExpression } from '../utils/parseJSONataExpression';

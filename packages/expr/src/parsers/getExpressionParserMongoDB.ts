@@ -2,8 +2,8 @@ import type {
   MongoDBExpressionOperand,
   ParseMongoDBExpressionContext,
 } from '@react-querybuilder/core/parseMongoDB';
-import { defaultMongoDBInverse, mergeMongoDBInverse } from '../functions/mongodb';
 import type { MongoDBInverse } from '../functions/mongodb';
+import { defaultMongoDBInverse, mergeMongoDBInverse } from '../functions/mongodb';
 import { mergeFunctionMeta } from '../registry';
 import type { ExpressionFunctionMetaRegistry, ExpressionNode } from '../types';
 import { parseMongoDBExpression } from '../utils/parseMongoDBExpression';

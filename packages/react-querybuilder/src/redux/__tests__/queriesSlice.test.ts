@@ -1,6 +1,6 @@
 import type { RuleGroupTypeAny } from '@react-querybuilder/core';
-import { queriesSlice } from '../queriesSlice';
 import type { QueriesSliceState } from '../queriesSlice';
+import { queriesSlice } from '../queriesSlice';
 
 const { setQueryState, unsetQueryState } = queriesSlice.actions;
 const reducer = queriesSlice.reducer;

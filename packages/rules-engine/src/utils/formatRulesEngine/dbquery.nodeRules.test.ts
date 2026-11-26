@@ -1,5 +1,5 @@
-import { RuleEngine } from 'node-rules';
 import type { Fact, Rule as NodeRule } from 'node-rules';
+import { RuleEngine } from 'node-rules';
 import type { RulesEngine } from '../../types';
 import { formatRulesEngine } from './formatRulesEngine';
 

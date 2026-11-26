@@ -34,8 +34,8 @@ import {
   getDragItem,
   handleDrop,
 } from '../dndLogic';
-import { DragPreviewContext } from '../DragPreviewContext';
 import type { DragPreviewContextValue } from '../DragPreviewContext';
+import { DragPreviewContext } from '../DragPreviewContext';
 import { isHotkeyPressed } from '../isHotkeyPressed';
 import { getQuadrant } from '../quadrantDetection';
 import { computeShadowQuery } from '../shadowQuery';

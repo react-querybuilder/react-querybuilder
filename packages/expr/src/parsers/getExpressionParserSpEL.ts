@@ -2,8 +2,8 @@ import type {
   ParseSpELExpressionContext,
   SpELExpressionOperand,
 } from '@react-querybuilder/core/parseSpEL';
-import { defaultSpELInverse, mergeSpELInverse } from '../functions/spel';
 import type { SpELInverse } from '../functions/spel';
+import { defaultSpELInverse, mergeSpELInverse } from '../functions/spel';
 import { mergeFunctionMeta } from '../registry';
 import type { ExpressionFunctionMetaRegistry, ExpressionNode } from '../types';
 import { parseSpELExpression } from '../utils/parseSpELExpression';

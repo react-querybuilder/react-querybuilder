@@ -2,13 +2,13 @@ import type { RuleGroupTypeAny } from '@react-querybuilder/core';
 import { signatureOf, structuralSignature, unchangedSignature } from '@react-querybuilder/core';
 import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice, original } from '@reduxjs/toolkit';
+import type { SetQueryStateAction } from '../redux/queriesSlice';
 // Imported relatively rather than from `react-querybuilder` on purpose: this slice is only used
 // for its action matchers, which compare action `type` strings, so a duplicated copy in this
 // entry point's bundle still matches actions dispatched by the main bundle. Anything whose
 // _identity_ matters (the store, the React contexts, the `dispatchQuery` registry) must come
 // from `react-querybuilder` so that both bundles share one instance.
 import { queriesSlice } from '../redux/queriesSlice';
-import type { SetQueryStateAction } from '../redux/queriesSlice';
 import type { QueryHistoryEntry, QueryHistorySliceState } from './types';
 
 export interface RegisterHistoryParams {

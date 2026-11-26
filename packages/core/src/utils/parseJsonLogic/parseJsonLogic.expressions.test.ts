@@ -5,8 +5,8 @@ import type {
   RQBJsonLogic,
 } from '../../types';
 import type { Except } from '../../types/typeUtils';
-import { parseJsonLogic } from './parseJsonLogic';
 import type { ParseJsonLogicOptions } from './parseJsonLogic';
+import { parseJsonLogic } from './parseJsonLogic';
 import type { JsonLogicExpressionOperand, ParseJsonLogicExpressionContext } from './types';
 import { isRQBJsonLogicVar } from './utils';
 

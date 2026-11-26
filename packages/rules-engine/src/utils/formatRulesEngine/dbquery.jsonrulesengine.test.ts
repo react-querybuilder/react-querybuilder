@@ -1,5 +1,5 @@
-import { Engine } from 'json-rules-engine';
 import type { RuleProperties } from 'json-rules-engine';
+import { Engine } from 'json-rules-engine';
 import type { RulesEngine } from '../../types';
 import { formatRulesEngine } from './formatRulesEngine';
 
