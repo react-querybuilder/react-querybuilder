@@ -56,6 +56,33 @@ export const isSQLExpressionOperand = (v?: SQLWhereObjectAny): boolean => {
 export const isWildcardsOnly = (sqlExpr: SQLExpression): boolean =>
   isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^["']?%+["']?$/.test(sqlExpr.value);
 
+/**
+ * Splits a `LIKE` pattern into its value and unescaped leading/trailing `%` wildcards.
+ * Characters preceded by `escapeChar` (from an `ESCAPE` clause) are kept as literals
+ * and the escape characters are removed.
+ */
+export const splitLikePattern = (
+  pattern: string,
+  escapeChar: string
+): { value: string; leading: boolean; trailing: boolean } => {
+  let value = '';
+  let leading = false;
+  let trailing = false;
+  for (let i = 0; i < pattern.length; i++) {
+    const c = pattern[i];
+    if (c === escapeChar && i + 1 < pattern.length) {
+      value += pattern[++i];
+    } else if (c === '%' && i === 0) {
+      leading = true;
+    } else if (c === '%' && i === pattern.length - 1) {
+      trailing = true;
+    } else {
+      value += c;
+    }
+  }
+  return { value, leading, trailing };
+};
+
 // oxlint-disable-next-line typescript/no-explicit-any
 export const getParamString = (param: any): string => {
   switch (typeof param) {

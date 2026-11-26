@@ -828,6 +828,46 @@ describe('regex', () => {
   });
 });
 
+describe('LIKE escape clause', () => {
+  const values = ['50%', 'a_b', '%', '_', 'x\\y', 'x\\', '\\%', '[a]', "a'%"];
+  for (const operator of [
+    'contains',
+    'beginsWith',
+    'endsWith',
+    'doesNotContain',
+    'doesNotBeginWith',
+    'doesNotEndWith',
+  ] as const) {
+    it(`round-trips ${operator} with escapeLikeWildcards`, () => {
+      for (const preset of ['ansi', 'postgresql', 'mssql'] as const) {
+        for (const value of values) {
+          const q = wrapRule({ field: 's', operator, value });
+          expect(parseSQL(formatQuery(q, { preset, escapeLikeWildcards: true }))).toEqual(q);
+        }
+      }
+    });
+  }
+
+  it('treats escaped characters as literals', () => {
+    expect(parseSQL(`s like '%50\\%' escape '\\'`)).toEqual(
+      wrapRule({ field: 's', operator: 'endsWith', value: '50%' })
+    );
+    expect(parseSQL(`s not like 'a\\_b' escape '\\'`)).toEqual(
+      wrapRule({ field: 's', operator: '!=', value: 'a_b' })
+    );
+    expect(parseSQL(`s like '%50!%%' escape '!'`)).toEqual(
+      wrapRule({ field: 's', operator: 'contains', value: '50%' })
+    );
+    expect(parseSQL(`s like '!%%' escape '!'`)).toEqual(
+      wrapRule({ field: 's', operator: 'beginsWith', value: '%' })
+    );
+    // Trailing escape character is kept as-is
+    expect(parseSQL(`s like 'a!' escape '!'`)).toEqual(
+      wrapRule({ field: 's', operator: '=', value: 'a!' })
+    );
+  });
+});
+
 describe('quotes adjacent to wildcards (#1135)', () => {
   // LIKE wildcards in values aren't escaped by formatQuery, so only quotes here
   const values = ["'s", "s'", "'", "''", "a'b", "''s''"];
